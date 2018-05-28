@@ -4,9 +4,16 @@ project (ElRey)
 set (ElRey_VERSION_MAJOR 0)
 set (ElRey_VERSION_MINOR 5)
 
+# header file to pass some CMake settings
+# to source code
+configure_file (
+	"${PROJECT_SOURCE_DIR}/src/ElReyConfig.h.in"
+	"${PROJECT_BINARY_DIR}/ElReyConfig.h"
+	)
+
 set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
 find_package(SDL2 REQUIRED)
-include_directories(${SDL2_INCLUDE_DIR})
+include_directories(${SDL2_INCLUDE_DIR} "${PROJECT_BINARY_DIR}")
 
 set(SOURCE_FILES ${PROJECT_SOURCE_DIR}/src/MainWindow.cpp)
 

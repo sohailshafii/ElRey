@@ -1,11 +1,14 @@
 #include <SDL.h>
 #include <iostream>
+#include "ElReyConfig.h"
 
 bool initializeSDL();
 SDL_Window* createWindow(int screenWidth, int screenHeight);
 void renderLoop();
 
 int main(int argc, char* argv[]) {
+	std::cout << "ElRey version: " << ElRey_VERSION_MAJOR << "."
+		<< ElRey_VERSION_MINOR << "\n";
 
 	if (!initializeSDL()) {
 		return 2;
