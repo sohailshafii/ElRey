@@ -1,2 +1,6 @@
 *obj
 ElRey
+
+.DS_Store
+
+build/
