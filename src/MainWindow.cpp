@@ -4,7 +4,7 @@
 
 bool initializeSDL();
 SDL_Window* createWindow(int screenWidth, int screenHeight);
-void renderLoop();
+void renderLoop(SDL_Renderer *sdlRenderer, SDL_Texture* frameBufferTex);
 
 int main(int argc, char* argv[]) {
 	std::cout << "ElRey version: " << ElRey_VERSION_MAJOR << "."
@@ -14,7 +14,8 @@ int main(int argc, char* argv[]) {
 		return 2;
 	}
 	
-	SDL_Window *window = createWindow(800, 600);
+	int width = 800, height = 600;
+	SDL_Window *window = createWindow(width, height);
 	if (window == nullptr) {
 		return 3;
 	}
@@ -24,7 +25,15 @@ int main(int argc, char* argv[]) {
 		return 3;
 	}
 
-	renderLoop();
+	SDL_Texture* frameBufferTex = SDL_CreateTexture(sdlRenderer,
+		SDL_GetWindowPixelFormat(window),
+		SDL_TEXTUREACCESS_STREAMING, width, height); 
+	renderLoop(sdlRenderer, frameBufferTex);
+
+	SDL_DestroyTexture(frameBufferTex);
+	SDL_DestroyRenderer(sdlRenderer);
+	SDL_DestroyWindow(window);
+	SDL_Quit();
 
 	return 0;
 }
@@ -47,7 +56,7 @@ SDL_Window* createWindow(int screenWidth, int screenHeight) {
 	return window;
 }
 
-void renderLoop() {
+void renderLoop(SDL_Renderer *sdlRenderer, SDL_Texture* frameBufferTex) {
 	SDL_Event e;
 
 	while(true) {
@@ -57,6 +66,13 @@ void renderLoop() {
 			quitPressed = (e.type == SDL_QUIT);
 		}
 		if (quitPressed) break;
+
+		void* pixels;
+		int pitch;
+		SDL_LockTexture(frameBufferTex, NULL, &pixels, &pitch);
+		// TODO: render here
+		SDL_UnlockTexture(frameBufferTex);
+		SDL_RenderCopy(sdlRenderer, frameBufferTex, NULL, NULL);
 	}
 }
 
