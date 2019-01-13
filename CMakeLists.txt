@@ -13,9 +13,16 @@ configure_file (
 
 set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
 find_package(SDL2 REQUIRED)
-include_directories(${SDL2_INCLUDE_DIR} "${PROJECT_BINARY_DIR}")
 
 set(SOURCE_FILES ${PROJECT_SOURCE_DIR}/src/MainWindow.cpp)
 
 add_executable(ElRey ${SOURCE_FILES})
+
+target_include_directories(ElRey
+	PUBLIC
+		"${SDL2_INCLUDE_DIR}"
+		"${PROJECT_BINARY_DIR}"
+		"${PROJECT_SOURCE_DIR}/src/Math"
+		"${PROJECT_SOURCE_DIR}/src/Materials")
+
 target_link_libraries(ElRey ${SDL2_LIBRARY})
