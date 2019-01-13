@@ -6,11 +6,13 @@
 #include "Math/Ray.h"
 #include "Math/HittableList.h"
 #include "Math/Sphere.h"
-#include "Math/Camera.h"
 #include "Math/Common.h"
 
 #include "Materials/Lambertian.h"
 #include "Materials/Metal.h"
+#include "Materials/Dielectric.h"
+
+#include "Camera/Camera.h"
 
 bool initializeSDL();
 SDL_Window* createWindow(int screenWidth, int screenHeight);
@@ -32,8 +34,12 @@ Vec3 GetColorForRay(const Ray& r) {
 	return (1.0 - t)*Vec3(1.0, 1.0, 1.0) + t*Vec3(0.5, 0.7, 1.0);
 }
 
+int hitBlack = 0;
+int numTotalCasts = 0;
+
 Vec3 GetColorForRay(const Ray &r, Hittable *world, int depth) {
 	HitRecord rec;
+	numTotalCasts++;
 	// first param is 0.001 -- gets rid of shadow acne
 	// due to hitting the object they reflect from
 	if (world->Hit(r, 0.001, MAXFLOAT, rec)) {
@@ -50,6 +56,7 @@ Vec3 GetColorForRay(const Ray &r, Hittable *world, int depth) {
 			return attenuation*GetColorForRay(scattered, world, depth+1);
 		}
 		else {
+			hitBlack++;
 			return Vec3(0.0, 0.0, 0.0);
 		}
 	}
@@ -76,34 +83,92 @@ float HitSphere(const Vec3& center, float radius, const Ray &r) {
 	}
 }
 
+HittableList *randomScene() {
+	int n = 500;
+	Hittable **list = new Hittable*[n+1];
+	list[0] = new Sphere(Vec3(0.0,-1000.0,0.0), 1000,
+		new Lambertian(Vec3(0.5, 0.5, 0.5)));
+	int i = 1;
+	for (int a = -11; a < 11; a++) {
+		for (int b = -11; b < 11; b++) {
+			float chooseMat = drand48();
+			Vec3 center(a + 0.9*drand48(),
+				0.2, b + 0.9*drand48());
+
+			if ((center - Vec3(4,0.2,0)).length() > 0.9) {
+				if (chooseMat < 0.8) {
+					list[i++] = new Sphere(center, 0.2,
+						new Lambertian(
+							Vec3(drand48()*drand48(), drand48()*drand48(), drand48()*drand48())));
+				}
+				else if (chooseMat < 0.95) {
+					list[i++] = new Sphere(center, 0.2,
+						new Metal(
+							Vec3(0.5*(1 + drand48()), 0.5*(1 + drand48()), 0.5*(1 + drand48())),
+							0.5*drand48()));
+				}
+				else {
+					// glass
+					list[i++] = new Sphere(center, 0.2,
+						new Dielectric(1.5));
+				}			
+			}
+		}
+	}
+
+	list[i++] = new Sphere(Vec3(0, 1, 0), 1.0, new Dielectric(1.5));
+	list[i++] = new Sphere(Vec3(-4, 1, 0), 1.0,
+		new Lambertian(Vec3(0.4, 0.2, 0.1)));
+	list[i++] = new Sphere(Vec3(4, 1, 0), 1.0,
+		new Metal(Vec3(0.7, 0.6, 0.5), 0.0));
+
+	return new HittableList(list, i);
+}
+
 int main(int argc, char* argv[]) {
 	std::cout << "ElRey version: " << ElRey_VERSION_MAJOR << "."
 		<< ElRey_VERSION_MINOR << "\n";
 	
-	int width = 500, height = 250, numSamples = 100;
+	int width = 1920, height = 1080, numSamples = 10;
 
 	std::ofstream ppmFile;
 	ppmFile.open("outputImage.ppm");
 	ppmFile << "P3\n" << width << " " << height << "\n255\n";
 	float aspectRatio = (float)width/height;
-	Vec3 lowerLeftCorner(-1.0*aspectRatio, -1.0, -1.0);
+	/*Vec3 lowerLeftCorner(-1.0*aspectRatio, -1.0, -1.0);
 	Vec3 horizontal(2.0*aspectRatio, 0.0, 0.0);
 	Vec3 vertical(0.0, 2.0, 0.0);
-	Vec3 origin(0.0, 0.0, 0.0);
+	Vec3 origin(0.0, 0.0, 0.0);*/
 
-	Hittable *list[4];
-	list[0] = new Sphere(Vec3(0.0, 0.0,-1.0), 0.5,
-		new Lambertian(Vec3(0.8, 0.3, 0.3)));
+	//int numHittables = 2;
+	//Hittable *list[numHittables];
+	/*list[0] = new Sphere(Vec3(0.0, 0.0,-1.0), 0.5,
+		new Lambertian(Vec3(0.1, 0.2, 0.5)));
 	list[1] = new Sphere(Vec3(0.0,-100.5,-1.0), 100,
 		new Lambertian(Vec3(0.8, 0.8, 0.0)));
 
 	list[2] = new Sphere(Vec3(1.0,0.0,-1.0), 0.5,
-		new Metal(Vec3(0.8, 0.6, 0.2), 0.3));
+		new Metal(Vec3(0.8, 0.6, 0.2)));
 	list[3] = new Sphere(Vec3(-1.0,0.0,-1.0), 0.5,
-		new Metal(Vec3(0.8, 0.8, 0.8), 1.0));
+		new Dielectric(1.5));
+	list[4] = new Sphere(Vec3(-1.0,0.0,-1.0), -0.45,
+		new Dielectric(1.5));*/
+	/*float R = cos(M_PI/4); 
+	list[0] = new Sphere(Vec3(-R,0,-1), R,
+		new Lambertian(Vec3(0, 0, 1)));
+	list[1] = new Sphere(Vec3(R,0,-1), R,
+		new Lambertian(Vec3(1, 0, 0)));*/
 
-	Hittable *world = new HittableList(list, 4);
-	Camera cam(aspectRatio);
+	//Hittable *world = new HittableList(list, numHittables);
+	HittableList *world = randomScene();
+
+	//Camera cam(90.0, aspectRatio);
+	Vec3 lookFrom(13, 2, 2);
+	Vec3 lookAt(0, 0, 0);
+	float distanceToFocus = 10.0;//(lookFrom - lookAt).length();
+	float aperture = 0.1;
+	Camera cam(lookFrom, lookAt, Vec3(0, 1, 0), 20,
+		aspectRatio, aperture, distanceToFocus);
 
 	// TODO: move this code to frame buffer eventually
 	for (int row = height-1; row >= 0; row--) {
@@ -133,10 +198,15 @@ int main(int argc, char* argv[]) {
 			ppmFile << ir << " " << ig << " " << ib << "\n";
 		}
 	}
+	std::cout << "out of " << numTotalCasts <<  " casts, hit: " << 
+		hitBlack << " black pixels\n";
 	ppmFile.close();
-	for (int i = 0; i < 4; i++) {
-		delete list[i]->material;
-		delete list[i];
+
+	auto hittableList = world->list;
+	auto numHittables = world->listSize;
+	for (int i = 0; i < numHittables; i++) {
+		delete hittableList[i]->material;
+		delete hittableList[i];
 	}
 	delete world;
 

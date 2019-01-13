@@ -4,6 +4,8 @@ project (ElRey)
 set (ElRey_VERSION_MAJOR 0)
 set (ElRey_VERSION_MINOR 5)
 
+set (CMAKE_CXX_STANDARD 11)
+
 # header file to pass some CMake settings
 # to source code
 configure_file (

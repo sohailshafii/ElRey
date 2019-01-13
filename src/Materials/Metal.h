@@ -5,7 +5,7 @@
 
 class Metal : public Material {
 public:
-	Metal(const Vec3 &a, float f) : albedo(a) { 
+	Metal(const Vec3 &a, float f = 0.0) : albedo(a) { 
 		fuzz = (f < 1) ? f : 1.0;
 	}
 
