@@ -32,7 +32,7 @@ public:
 		Vec3 Rd = lensRadius*RandomInUnitDisk();
 		Vec3 randomOffset = u * Rd.x() + v * Rd.y();
 
-		return Ray(origin,
+		return Ray(origin + randomOffset,
 			lowerLeftCorner + s*horizontal +
 			t*vertical - origin - randomOffset);
 	}
