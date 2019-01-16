@@ -1,12 +1,15 @@
 #pragma once
 
-#include "../Math/Ray.h"
+#include "Math/Ray.h"
 #include <cmath>
 
 class Camera {
 public:
 	Camera(Vec3 lookFrom, Vec3 lookAt, Vec3 vup, float vfov, float aspectRatio,
-		float aperture, float focusDist) {
+		float aperture, float focusDist, float t0, float t1) {
+		time0 = t0;
+		time1 = t1;
+
 		lensRadius = aperture*0.5;
 		float theta = vfov*M_PI/180.0;
 		float halfHeight = tan(theta*0.5f);
@@ -32,14 +35,20 @@ public:
 		Vec3 Rd = lensRadius*RandomInUnitDisk();
 		Vec3 randomOffset = u * Rd.x() + v * Rd.y();
 
+		float time = time0 + drand48()*(time1 - time0);
+
 		return Ray(origin + randomOffset,
 			lowerLeftCorner + s*horizontal +
-			t*vertical - origin - randomOffset);
+			t*vertical - origin - randomOffset,
+			time);
 	}
 
 	Vec3 origin, lowerLeftCorner;
 	Vec3 horizontal, vertical;
 	Vec3 u, v, w;
 	float lensRadius;
+
+	// timing
+	float time0, time1;
 };
 

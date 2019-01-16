@@ -1,30 +1,42 @@
 #pragma once
 
 #include "Hittable.h"
+#include "Math/Vec3.h"
+#include "Math/Ray.h"
 #include "Materials/Material.h"
 
-class Sphere : public Hittable {
+class MovingSphere : public Hittable {
 public:
-	Sphere() {}
-	Sphere(Vec3 cen, float r, Material *mat) : 
-		center(cen), radius(r) { 
-		material = mat;
+	MovingSphere() {
 	}
+	MovingSphere(Vec3 cen0, Vec3 cen1, float t0, float t1,
+		float r, Material *m) :
+		center0(cen0), center1(cen1), time0(t0), time1(t1), radius(r)
+		{ material = m; }
 
-	virtual ~Sphere() { }
+	virtual bool Hit(const Ray& r, float tmin, float tmax,
+		HitRecord &rec) const;
 
-	virtual bool Hit(const Ray& r, float tMin, float tMax,
-		HitRecord& rec) const;
-	Vec3 center;
+	Vec3 Center(float time) const;
+
+	Vec3 center0, center1;
+	float time0, time1;
 	float radius;
 };
 
-bool Sphere::Hit(const Ray& r, float tMin, float tMax,
+Vec3 MovingSphere::Center(float time) const {
+	return center0 + ((time - time0)/(time1 - time0))*
+		(center1 - center0);
+}
+
+bool MovingSphere::Hit(const Ray& r, float tMin, float tMax,
 	HitRecord& rec) const {
+	auto timedCenter = Center(r.time());
+
 	// note that we had 2.0 in front of b and 4.0 in
 	// front of a*c originally -- cancelled that with 2.0 in
 	// denominator
-	Vec3 centerToOrigin = r.origin() - center;
+	Vec3 centerToOrigin = r.origin() - timedCenter;
 	float a = dot(r.direction(), r.direction());
 	float b = dot(centerToOrigin, r.direction());
 	float c = dot(centerToOrigin, centerToOrigin) - radius*radius;
@@ -35,14 +47,14 @@ bool Sphere::Hit(const Ray& r, float tMin, float tMax,
 		if (temp < tMax && temp > tMin) {
 			rec.t = temp;
 			rec.p = r.PointAtParam(rec.t);
-			rec.normal = (rec.p - center)/radius;
+			rec.normal = (rec.p - timedCenter)/radius;
 			return true;
 		}
 		temp = (-b + sqrt(b*b - a*c))/a;
 		if (temp < tMax && temp > tMin) {
 			rec.t = temp;
 			rec.p = r.PointAtParam(rec.t);
-			rec.normal = (rec.p - center)/radius;
+			rec.normal = (rec.p - timedCenter)/radius;
 			return true;
 		}
 	}

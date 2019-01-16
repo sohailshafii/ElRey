@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Material.h"
-#include "../Math/Common.h"
+#include "Math/Common.h"
 
 class Metal : public Material {
 public:

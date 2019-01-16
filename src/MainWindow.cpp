@@ -6,6 +6,7 @@
 #include "Math/Ray.h"
 #include "Math/HittableList.h"
 #include "Math/Sphere.h"
+#include "Math/MovingSphere.h"
 #include "Math/Common.h"
 
 #include "Materials/Lambertian.h"
@@ -84,20 +85,21 @@ float HitSphere(const Vec3& center, float radius, const Ray &r) {
 }
 
 HittableList *randomScene() {
-	int n = 500;
+	int n = 50000;
 	Hittable **list = new Hittable*[n+1];
 	list[0] = new Sphere(Vec3(0.0,-1000.0,0.0), 1000,
 		new Lambertian(Vec3(0.5, 0.5, 0.5)));
 	int i = 1;
-	for (int a = -11; a < 11; a++) {
-		for (int b = -11; b < 11; b++) {
+	for (int a = -10; a < 10; a++) {
+		for (int b = -10; b < 10; b++) {
 			float chooseMat = drand48();
 			Vec3 center(a + 0.9*drand48(),
 				0.2, b + 0.9*drand48());
 
 			if ((center - Vec3(4,0.2,0)).length() > 0.9) {
 				if (chooseMat < 0.8) {
-					list[i++] = new Sphere(center, 0.2,
+					list[i++] = new MovingSphere(center, center + Vec3(0, 0.5*drand48(), 0),
+						0.0, 1.0, 0.2,
 						new Lambertian(
 							Vec3(drand48()*drand48(), drand48()*drand48(), drand48()*drand48())));
 				}
@@ -163,12 +165,12 @@ int main(int argc, char* argv[]) {
 	HittableList *world = randomScene();
 
 	//Camera cam(90.0, aspectRatio);
-	Vec3 lookFrom(13, 2, 2);
+	Vec3 lookFrom(13, 2, 3);
 	Vec3 lookAt(0, 0, 0);
 	float distanceToFocus = 10.0;//(lookFrom - lookAt).length();
-	float aperture = 0.1;
+	float aperture = 0.0;
 	Camera cam(lookFrom, lookAt, Vec3(0, 1, 0), 20,
-		aspectRatio, aperture, distanceToFocus);
+		aspectRatio, aperture, distanceToFocus, 0.0, 1.0);
 
 	// TODO: move this code to frame buffer eventually
 	for (int row = height-1; row >= 0; row--) {

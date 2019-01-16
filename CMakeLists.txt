@@ -21,10 +21,9 @@ set(SOURCE_FILES ${PROJECT_SOURCE_DIR}/src/MainWindow.cpp)
 add_executable(ElRey ${SOURCE_FILES})
 
 target_include_directories(ElRey
-	PUBLIC
+	PRIVATE
 		"${SDL2_INCLUDE_DIR}"
 		"${PROJECT_BINARY_DIR}"
-		"${PROJECT_SOURCE_DIR}/src/Math"
-		"${PROJECT_SOURCE_DIR}/src/Materials")
+		"${PROJECT_SOURCE_DIR}/src/")
 
 target_link_libraries(ElRey ${SDL2_LIBRARY})
