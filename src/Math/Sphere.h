@@ -13,11 +13,18 @@ public:
 
 	virtual ~Sphere() { }
 
+	virtual bool BoundingBox(float t0, float t1, AABB &box) const;
 	virtual bool Hit(const Ray& r, float tMin, float tMax,
 		HitRecord& rec) const;
 	Vec3 center;
 	float radius;
 };
+
+bool Sphere::BoundingBox(float t0, float t1, AABB &box) const {
+	box = AABB(center - Vec3(radius, radius, radius),
+		center + Vec3(radius, radius, radius));
+	return true;
+}
 
 bool Sphere::Hit(const Ray& r, float tMin, float tMax,
 	HitRecord& rec) const {

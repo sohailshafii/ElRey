@@ -3,6 +3,7 @@
 #include "Hittable.h"
 #include "Math/Vec3.h"
 #include "Math/Ray.h"
+#include "Math/AABB.h"
 #include "Materials/Material.h"
 
 class MovingSphere : public Hittable {
@@ -16,6 +17,8 @@ public:
 
 	virtual bool Hit(const Ray& r, float tmin, float tmax,
 		HitRecord &rec) const;
+	virtual bool BoundingBox(float t0, float t1,
+		AABB &box) const;
 
 	Vec3 Center(float time) const;
 
@@ -59,4 +62,17 @@ bool MovingSphere::Hit(const Ray& r, float tMin, float tMax,
 		}
 	}
 	return false;
+}
+
+bool MovingSphere::BoundingBox(float t0, float t1,
+		AABB &box) const {
+	Vec3 radiusVec = Vec3(radius, radius, radius);
+	Vec3 Center0 = Center(t0), Center1 = Center(t1);
+
+	AABB box0(Center0 - radiusVec, 
+		Center0 + radiusVec);
+	AABB box1(Center1 - radiusVec, 
+		Center1 + radiusVec);
+	box = SurroundingBox(box0, box1);
+	return true;
 }
