@@ -8,6 +8,7 @@
 #include "Math/Sphere.h"
 #include "Math/MovingSphere.h"
 #include "Math/Common.h"
+#include "Math/BVHNode.h"
 
 #include "Materials/Lambertian.h"
 #include "Materials/Metal.h"
@@ -131,7 +132,7 @@ int main(int argc, char* argv[]) {
 	std::cout << "ElRey version: " << ElRey_VERSION_MAJOR << "."
 		<< ElRey_VERSION_MINOR << "\n";
 	
-	int width = 1920, height = 1080, numSamples = 10;
+	int width = 500, height = 400, numSamples = 10;
 
 	std::ofstream ppmFile;
 	ppmFile.open("outputImage.ppm");
