@@ -52,6 +52,7 @@ public:
 		return true;
 	}
 
+private:
 	Vec3 _min, _max;
 };
 

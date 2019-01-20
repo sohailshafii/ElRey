@@ -1,6 +1,7 @@
 #include <SDL.h>
 #include <iostream>
 #include <fstream>
+#include <ctime>
 #include "ElReyConfig.h"
 #include "Math/Vec3.h"
 #include "Math/Ray.h"
@@ -38,6 +39,7 @@ Vec3 GetColorForRay(const Ray& r) {
 
 int hitBlack = 0;
 int numTotalCasts = 0;
+float tMin = 0.0, tMax = 1.0;
 
 Vec3 GetColorForRay(const Ray &r, Hittable *world, int depth) {
 	HitRecord rec;
@@ -100,7 +102,7 @@ HittableList *randomScene() {
 			if ((center - Vec3(4,0.2,0)).length() > 0.9) {
 				if (chooseMat < 0.8) {
 					list[i++] = new MovingSphere(center, center + Vec3(0, 0.5*drand48(), 0),
-						0.0, 1.0, 0.2,
+						tMin, tMax, 0.2,
 						new Lambertian(
 							Vec3(drand48()*drand48(), drand48()*drand48(), drand48()*drand48())));
 				}
@@ -163,7 +165,9 @@ int main(int argc, char* argv[]) {
 		new Lambertian(Vec3(1, 0, 0)));*/
 
 	//Hittable *world = new HittableList(list, numHittables);
+	std::time_t startBuild = std::time(nullptr);
 	HittableList *world = randomScene();
+	BVHNode bvhWorld(world->list, world->listSize, tMin, tMax);
 
 	//Camera cam(90.0, aspectRatio);
 	Vec3 lookFrom(13, 2, 3);
@@ -172,7 +176,9 @@ int main(int argc, char* argv[]) {
 	float aperture = 0.0;
 	Camera cam(lookFrom, lookAt, Vec3(0, 1, 0), 20,
 		aspectRatio, aperture, distanceToFocus, 0.0, 1.0);
+	std::cout << "Scene construction time: " << difftime(std::time(nullptr), startBuild) << ".\n";
 
+	std::time_t startRender = std::time(nullptr);
 	// TODO: move this code to frame buffer eventually
 	for (int row = height-1; row >= 0; row--) {
 		for (int column = 0; column < width; column++) {
@@ -182,7 +188,7 @@ int main(int argc, char* argv[]) {
 				float v = float(row + drand48())/float(height);
 				Ray r = cam.GetRay(u, v);
 				//Vec3 p = r.PointAtParam(2.0);
-				colorVec += GetColorForRay(r, world, 0);
+				colorVec += GetColorForRay(r, &bvhWorld, 0);
 			}
 			colorVec /= float(numSamples);
 			// gamma-correct (kinda) -- gamma-2
@@ -204,6 +210,7 @@ int main(int argc, char* argv[]) {
 	std::cout << "out of " << numTotalCasts <<  " casts, hit: " << 
 		hitBlack << " black pixels\n";
 	ppmFile.close();
+	std::cout << "Render time: " << difftime(std::time(nullptr), startRender) << ".\n";
 
 	auto hittableList = world->list;
 	auto numHittables = world->listSize;

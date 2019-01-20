@@ -114,7 +114,7 @@ bool BVHNode::BoundingBox(float t0, float t1, AABB& b) const {
 }
 
 bool BVHNode::Hit(const Ray &r, float tmin, float tmax, HitRecord &rec) const {
-	if (box.Hit(r, tmin, tmax)) {
+	if (box.Hit2(r, tmin, tmax)) {
 		HitRecord leftRec, rightRec;
 		bool hitLeft = left->Hit(r, tmin, tmax, leftRec);
 		bool hitRight = right->Hit(r, tmin, tmax, rightRec);
