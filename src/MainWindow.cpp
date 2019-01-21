@@ -2,6 +2,7 @@
 #include <iostream>
 #include <fstream>
 #include <ctime>
+#include <cstdlib>
 #include "ElReyConfig.h"
 #include "Math/Vec3.h"
 #include "Math/Ray.h"
@@ -14,6 +15,8 @@
 #include "Materials/Lambertian.h"
 #include "Materials/Metal.h"
 #include "Materials/Dielectric.h"
+#include "Materials/ConstantTexture.h"
+#include "Materials/CheckerTexture.h"
 
 #include "Camera/Camera.h"
 
@@ -90,8 +93,12 @@ float HitSphere(const Vec3& center, float radius, const Ray &r) {
 HittableList *randomScene() {
 	int n = 50000;
 	Hittable **list = new Hittable*[n+1];
+
+	Texture *checkerTex = new CheckerTexture(
+		new ConstantTexture(Vec3(0.2, 0.3, 0.1)),
+		new ConstantTexture(Vec3(0.9, 0.9, 0.9)));
 	list[0] = new Sphere(Vec3(0.0,-1000.0,0.0), 1000,
-		new Lambertian(Vec3(0.5, 0.5, 0.5)));
+		new Lambertian(checkerTex));
 	int i = 1;
 	for (int a = -10; a < 10; a++) {
 		for (int b = -10; b < 10; b++) {
@@ -103,8 +110,9 @@ HittableList *randomScene() {
 				if (chooseMat < 0.8) {
 					list[i++] = new MovingSphere(center, center + Vec3(0, 0.5*drand48(), 0),
 						tMin, tMax, 0.2,
-						new Lambertian(
-							Vec3(drand48()*drand48(), drand48()*drand48(), drand48()*drand48())));
+						new Lambertian(new ConstantTexture
+							(Vec3(drand48()*drand48(), drand48()*drand48(), drand48()*drand48())))
+						);
 				}
 				else if (chooseMat < 0.95) {
 					list[i++] = new Sphere(center, 0.2,
@@ -123,7 +131,7 @@ HittableList *randomScene() {
 
 	list[i++] = new Sphere(Vec3(0, 1, 0), 1.0, new Dielectric(1.5));
 	list[i++] = new Sphere(Vec3(-4, 1, 0), 1.0,
-		new Lambertian(Vec3(0.4, 0.2, 0.1)));
+		new Lambertian(new ConstantTexture(Vec3(0.4, 0.2, 0.1))));
 	list[i++] = new Sphere(Vec3(4, 1, 0), 1.0,
 		new Metal(Vec3(0.7, 0.6, 0.5), 0.0));
 
@@ -134,7 +142,25 @@ int main(int argc, char* argv[]) {
 	std::cout << "ElRey version: " << ElRey_VERSION_MAJOR << "."
 		<< ElRey_VERSION_MINOR << "\n";
 	
-	int width = 500, height = 400, numSamples = 10;
+	int width = 400, height = 300, numSamples = 10;
+
+	if (argc > 1) {
+		for (int argIndex = 1; argIndex < argc; argIndex++) {
+			if (!strcmp(argv[argIndex], "-w") && argIndex+1 < argc) {
+				width = atoi(argv[++argIndex]);
+			}
+			if (!strcmp(argv[argIndex], "-h") && argIndex+1 < argc) {
+				height = atoi(argv[++argIndex]);
+			}
+			if (!strcmp(argv[argIndex], "-s") && argIndex+1 < argc) {
+				numSamples = atoi(argv[++argIndex]);
+			}
+		}
+	}
+
+	std::cout << "Framebuffer dimensions: " <<  width << "x" << height
+		<< ", num samples: " << numSamples << ".\n";
+
 
 	std::ofstream ppmFile;
 	ppmFile.open("outputImage.ppm");
