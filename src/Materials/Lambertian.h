@@ -6,11 +6,10 @@
 
 class Lambertian : public Material {
 public:
-	Lambertian(Texture* a) : albedo(a) { }
+	Lambertian(std::shared_ptr<Texture> a) { 
+		albedo = a;
+	}
 	~Lambertian() {
-		if (albedo != nullptr) {
-			delete albedo;
-		}
 	}
 
 	virtual bool scatter(const Ray &rIn, const HitRecord& rec,
@@ -20,6 +19,4 @@ public:
 		attenuation = albedo->Value(0, 0, rec.p);
 		return true;
 	}
-
-	Texture *albedo;
 };

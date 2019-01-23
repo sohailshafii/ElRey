@@ -3,6 +3,7 @@
 #include <fstream>
 #include <ctime>
 #include <cstdlib>
+#include <memory>
 #include "ElReyConfig.h"
 #include "Math/Vec3.h"
 #include "Math/Ray.h"
@@ -17,6 +18,7 @@
 #include "Materials/Dielectric.h"
 #include "Materials/ConstantTexture.h"
 #include "Materials/CheckerTexture.h"
+#include "Materials/NoiseTexture.h"
 
 #include "Camera/Camera.h"
 
@@ -94,9 +96,9 @@ HittableList *randomScene() {
 	int n = 50000;
 	Hittable **list = new Hittable*[n+1];
 
-	Texture *checkerTex = new CheckerTexture(
+	std::shared_ptr<CheckerTexture> checkerTex = std::make_shared<CheckerTexture>(CheckerTexture(
 		new ConstantTexture(Vec3(0.2, 0.3, 0.1)),
-		new ConstantTexture(Vec3(0.9, 0.9, 0.9)));
+		new ConstantTexture(Vec3(0.9, 0.9, 0.9))));
 	list[0] = new Sphere(Vec3(0.0,-1000.0,0.0), 1000,
 		new Lambertian(checkerTex));
 	int i = 1;
@@ -110,8 +112,9 @@ HittableList *randomScene() {
 				if (chooseMat < 0.8) {
 					list[i++] = new MovingSphere(center, center + Vec3(0, 0.5*drand48(), 0),
 						tMin, tMax, 0.2,
-						new Lambertian(new ConstantTexture
+						new Lambertian(std::make_shared<ConstantTexture>(ConstantTexture
 							(Vec3(drand48()*drand48(), drand48()*drand48(), drand48()*drand48())))
+							)
 						);
 				}
 				else if (chooseMat < 0.95) {
@@ -131,11 +134,25 @@ HittableList *randomScene() {
 
 	list[i++] = new Sphere(Vec3(0, 1, 0), 1.0, new Dielectric(1.5));
 	list[i++] = new Sphere(Vec3(-4, 1, 0), 1.0,
-		new Lambertian(new ConstantTexture(Vec3(0.4, 0.2, 0.1))));
+			new Lambertian(std::make_shared<ConstantTexture>
+				(ConstantTexture(Vec3(0.4, 0.2, 0.1)))
+			)
+		);
 	list[i++] = new Sphere(Vec3(4, 1, 0), 1.0,
 		new Metal(Vec3(0.7, 0.6, 0.5), 0.0));
 
 	return new HittableList(list, i);
+}
+
+HittableList* TwoPerlinSpheres() {
+	std::shared_ptr<NoiseTexture> perlinTexture = 
+		std::make_shared<NoiseTexture>(NoiseTexture());
+	Hittable **list = new Hittable*[2];
+	list[0] = new Sphere(Vec3(0,-1000, 0), 1000.0,
+		new Lambertian(perlinTexture));
+	list[1] = new Sphere(Vec3(0,2, 0), 2.0,
+		new Lambertian(perlinTexture));
+	return new HittableList(list, 2);
 }
 
 int main(int argc, char* argv[]) {
@@ -192,7 +209,7 @@ int main(int argc, char* argv[]) {
 
 	//Hittable *world = new HittableList(list, numHittables);
 	std::time_t startBuild = std::time(nullptr);
-	HittableList *world = randomScene();
+	HittableList *world = TwoPerlinSpheres();//randomScene();
 	BVHNode bvhWorld(world->list, world->listSize, tMin, tMax);
 
 	//Camera cam(90.0, aspectRatio);
@@ -241,7 +258,9 @@ int main(int argc, char* argv[]) {
 	auto hittableList = world->list;
 	auto numHittables = world->listSize;
 	for (int i = 0; i < numHittables; i++) {
-		delete hittableList[i]->material;
+		if (hittableList[i]->material != nullptr) {
+			delete hittableList[i]->material;
+		}
 		delete hittableList[i];
 	}
 	delete world;
