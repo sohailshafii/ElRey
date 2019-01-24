@@ -7,10 +7,15 @@ class NoiseTexture : public Texture {
 public:
 	NoiseTexture() {
 	}
+	NoiseTexture(float sc) : scale(sc) { }
 
 	virtual Vec3 Value(float u, float v, const Vec3& p) const {
-		return Vec3(1, 1, 1)*Perlin::Noise(p);
+		//return Vec3(1, 1, 1)*Perlin::Noise(scale * p);
+		//return Vec3(1,1,1)*0.5*(1.0 + Perlin::Turbulence(scale*p));
+		//return Vec3(1,1,1)*Perlin::Turbulence(scale*p);
+		return Vec3(1,1,1)*0.5*(1.0 + sin(scale*p.z()
+			+ 5*Perlin::Turbulence(p)));
 	}
 
-	
+	float scale;
 };

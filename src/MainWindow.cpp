@@ -146,7 +146,7 @@ HittableList *randomScene() {
 
 HittableList* TwoPerlinSpheres() {
 	std::shared_ptr<NoiseTexture> perlinTexture = 
-		std::make_shared<NoiseTexture>(NoiseTexture());
+		std::make_shared<NoiseTexture>(NoiseTexture(1.0));
 	Hittable **list = new Hittable*[2];
 	list[0] = new Sphere(Vec3(0,-1000, 0), 1000.0,
 		new Lambertian(perlinTexture));

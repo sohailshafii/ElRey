@@ -42,3 +42,25 @@ float Schlick(float cosine, float refIdx) {
 	return r0 + (1-r0)*pow((1-cosine), 5);
 }
 
+// TODO: do this without a loop
+inline float TrilinearInterp(float c[2][2][2], float u, float v, float w) {
+	float accum = 0.0;
+	for (int x = 0; x < 2; x++) {
+		for (int y = 0; y < 2; y++) {
+			for (int z = 0; z < 2; z++) {
+				accum += (x*u + (1-x)*(1-u))*
+						(y*v + (1-y)*(1-v))*
+						(z*w + (1-z)*(1-w))*c[x][y][z];
+			}
+		}
+	}
+	return accum;
+}
+
+
+
+
+
+
+
+
