@@ -57,10 +57,10 @@ inline float TrilinearInterp(float c[2][2][2], float u, float v, float w) {
 	return accum;
 }
 
-
-
-
-
-
-
+void GetSphereUV(const Vec3& p, float& u, float& v) {
+	float phi = atan2(p.z(), p.x());
+	float theta = asin(p.y());
+	u = 1.0 - (phi + M_PI)/(2.0*M_PI);
+	v = (theta + M_PI*0.5)/M_PI;
+}
 

@@ -4,6 +4,7 @@
 #include <ctime>
 #include <cstdlib>
 #include <memory>
+#include <stdexcept>
 #include "ElReyConfig.h"
 #include "Math/Vec3.h"
 #include "Math/Ray.h"
@@ -19,8 +20,12 @@
 #include "Materials/ConstantTexture.h"
 #include "Materials/CheckerTexture.h"
 #include "Materials/NoiseTexture.h"
+#include "Materials/ImageTexture.h"
 
 #include "Camera/Camera.h"
+
+#define STB_IMAGE_IMPLEMENTATION
+#include "stb_image.h"
 
 bool initializeSDL();
 SDL_Window* createWindow(int screenWidth, int screenHeight);
@@ -148,10 +153,24 @@ HittableList* TwoPerlinSpheres() {
 	std::shared_ptr<NoiseTexture> perlinTexture = 
 		std::make_shared<NoiseTexture>(NoiseTexture(1.0));
 	Hittable **list = new Hittable*[2];
+
+	int nx, ny, nn;
+	unsigned char *texData = stbi_load("earthFromImgur.jpg",
+		&nx, &ny, &nn, 0);
+	ImageTexture* earthTexture = nullptr;
+	if (texData == nullptr) {
+		throw std::runtime_error("Could not load earth texture!");
+	}
+	else {
+		std::cout << "Loaded earth texture: " << nx << 
+			" x " << ny << std::endl;
+		earthTexture = new ImageTexture(texData, nx, ny);
+	}
+
 	list[0] = new Sphere(Vec3(0,-1000, 0), 1000.0,
 		new Lambertian(perlinTexture));
 	list[1] = new Sphere(Vec3(0,2, 0), 2.0,
-		new Lambertian(perlinTexture));
+		new Lambertian(std::shared_ptr<ImageTexture>(earthTexture)));
 	return new HittableList(list, 2);
 }
 

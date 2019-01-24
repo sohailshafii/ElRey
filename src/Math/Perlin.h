@@ -58,10 +58,11 @@ inline float PerlinInterp(Vec3 c[2][2][2],
 	for (int i = 0; i < 2; i++) {
 		for (int j = 0; j < 2; j++) {
 			for (int k = 0; k < 2; k++) {
-				Vec3 weightV(u - i, v - j, w - k);
-				accum += (i*uu + (1-i)*(1-uu))*
-					(j*vv + (1-j)*(1-vv))*
-					(k*ww + (1-k)*(1-ww))*
+				Vec3 weightV(u - (float)i, v - (float)j,
+					w - (float)k);
+				accum += (i*uu + (1.0-(float)i)*(1.0-uu))*
+					(j*vv + (1.0-(float)j)*(1.0-vv))*
+					(k*ww + (1.0-(float)k)*(1.0-ww))*
 					dot(c[i][j][k], weightV);
 			}
 		}

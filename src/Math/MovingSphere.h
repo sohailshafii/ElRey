@@ -5,6 +5,7 @@
 #include "Math/Ray.h"
 #include "Math/AABB.h"
 #include "Materials/Material.h"
+#include "Common.h"
 
 class MovingSphere : public Hittable {
 public:
@@ -50,14 +51,20 @@ bool MovingSphere::Hit(const Ray& r, float tMin, float tMax,
 		if (temp < tMax && temp > tMin) {
 			rec.t = temp;
 			rec.p = r.PointAtParam(rec.t);
-			rec.normal = (rec.p - timedCenter)/radius;
+
+			Vec3 vecFromCenter = (rec.p-timedCenter)/radius;
+			GetSphereUV(vecFromCenter, rec.u, rec.v);
+			rec.normal = vecFromCenter;
 			return true;
 		}
 		temp = (-b + sqrt(b*b - a*c))/a;
 		if (temp < tMax && temp > tMin) {
 			rec.t = temp;
 			rec.p = r.PointAtParam(rec.t);
-			rec.normal = (rec.p - timedCenter)/radius;
+
+			Vec3 vecFromCenter = (rec.p-timedCenter)/radius;
+			GetSphereUV(vecFromCenter, rec.u, rec.v);
+			rec.normal = vecFromCenter;
 			return true;
 		}
 	}

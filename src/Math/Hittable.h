@@ -7,6 +7,7 @@ class Material;
 
 struct HitRecord {
 	float t;
+	float u, v;
 	Vec3 p;
 	Vec3 normal;
 	Material *matPtr;

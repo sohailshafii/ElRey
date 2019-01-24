@@ -1,7 +1,9 @@
 #pragma once
 
+#include <cmath>
 #include "Hittable.h"
 #include "Materials/Material.h"
+#include "Common.h"
 
 class Sphere : public Hittable {
 public:
@@ -16,6 +18,7 @@ public:
 	virtual bool BoundingBox(float t0, float t1, AABB &box) const;
 	virtual bool Hit(const Ray& r, float tMin, float tMax,
 		HitRecord& rec) const;
+
 	Vec3 center;
 	float radius;
 };
@@ -42,14 +45,18 @@ bool Sphere::Hit(const Ray& r, float tMin, float tMax,
 		if (temp < tMax && temp > tMin) {
 			rec.t = temp;
 			rec.p = r.PointAtParam(rec.t);
-			rec.normal = (rec.p - center)/radius;
+			Vec3 vecFromCenter = (rec.p-center)/radius;
+			GetSphereUV(vecFromCenter, rec.u, rec.v);
+			rec.normal = vecFromCenter;
 			return true;
 		}
 		temp = (-b + sqrt(b*b - a*c))/a;
 		if (temp < tMax && temp > tMin) {
 			rec.t = temp;
 			rec.p = r.PointAtParam(rec.t);
-			rec.normal = (rec.p - center)/radius;
+			Vec3 vecFromCenter = (rec.p-center)/radius;
+			GetSphereUV(vecFromCenter, rec.u, rec.v);
+			rec.normal = vecFromCenter;
 			return true;
 		}
 	}

@@ -16,7 +16,7 @@ public:
 		Vec3& attenuation, Ray& scattered) const {
 		Vec3 target = rec.p + rec.normal + RandomPointInUnitSphere();
 		scattered = Ray(rec.p, target - rec.p, rIn.time());
-		attenuation = albedo->Value(0, 0, rec.p);
+		attenuation = albedo->Value(rec.u, rec.v, rec.p);
 		return true;
 	}
 };
