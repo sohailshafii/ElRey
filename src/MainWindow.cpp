@@ -13,6 +13,7 @@
 #include "Math/MovingSphere.h"
 #include "Math/Common.h"
 #include "Math/BVHNode.h"
+#include "Math/XyRect.h"
 
 #include "Materials/Lambertian.h"
 #include "Materials/Metal.h"
@@ -21,6 +22,7 @@
 #include "Materials/CheckerTexture.h"
 #include "Materials/NoiseTexture.h"
 #include "Materials/ImageTexture.h"
+#include "Materials/DiffuseLight.h"
 
 #include "Camera/Camera.h"
 
@@ -65,21 +67,25 @@ Vec3 GetColorForRay(const Ray &r, Hittable *world, int depth) {
 		//	rec.normal.z()+1);
 		Ray scattered;
 		Vec3 attenuation;
+		Vec3 emitted = rec.matPtr->emitted(rec.u, rec.v,
+			rec.p);
+
 		if (depth < 50 && rec.matPtr->scatter(r, rec, attenuation,
 			scattered)) {
-			return attenuation*GetColorForRay(scattered, world, depth+1);
+			return emitted + attenuation*GetColorForRay(scattered, world, depth+1);
 		}
 		else {
 			hitBlack++;
-			return Vec3(0.0, 0.0, 0.0);
+			return emitted;
 		}
 	}
 	else {
-		Vec3 unitDirection = unitVector(r.direction());
+		return Vec3(0.0, 0.0, 0.0);
+		/*Vec3 unitDirection = unitVector(r.direction());
 		// y will go from -1 to 1; scale it to 0-1
 		float t = 0.5*(unitDirection.y() + 1.0);
 		// interpolate from (0.5, 0.7, 1.0) to (1.0, 1.0, 1.0)
-		return (1.0 - t)*Vec3(1.0, 1.0, 1.0) + t*Vec3(0.5, 0.7, 1.0);
+		return (1.0 - t)*Vec3(1.0, 1.0, 1.0) + t*Vec3(0.5, 0.7, 1.0);*/
 	}
 }
 
@@ -174,6 +180,27 @@ HittableList* TwoPerlinSpheres() {
 	return new HittableList(list, 2);
 }
 
+HittableList* simpleLight() {
+	std::shared_ptr<NoiseTexture> perlinTexture = 
+		std::make_shared<NoiseTexture>(NoiseTexture(4.0));
+	Hittable **list = new Hittable*[4];
+	
+	list[0] = new Sphere(Vec3(0,-1000, 0), 1000.0,
+		new Lambertian(perlinTexture));
+	list[1] = new Sphere(Vec3(0, 2, 0), 2.0,
+		new Lambertian(perlinTexture));
+	list[2] = new Sphere(Vec3(0, 7, 0), 2.0,
+		new DiffuseLight(
+			std::make_shared<ConstantTexture>
+			(ConstantTexture(Vec3(4, 4, 4)))
+			));
+	list[3] = new XyRect(3, 5, 1, 3, -2,
+		new DiffuseLight(std::make_shared<ConstantTexture>
+			(ConstantTexture(Vec3(4, 4, 4)))
+			));
+	return new HittableList(list, 4);	
+}
+
 int main(int argc, char* argv[]) {
 	std::cout << "ElRey version: " << ElRey_VERSION_MAJOR << "."
 		<< ElRey_VERSION_MINOR << "\n";
@@ -228,9 +255,10 @@ int main(int argc, char* argv[]) {
 
 	//Hittable *world = new HittableList(list, numHittables);
 	std::time_t startBuild = std::time(nullptr);
-	HittableList *world = TwoPerlinSpheres();//randomScene();
+	HittableList *world = simpleLight();//TwoPerlinSpheres();//randomScene();
 	BVHNode bvhWorld(world->list, world->listSize, tMin, tMax);
 
+	std::cout << "Constructed world and acceleration structure\n";
 	//Camera cam(90.0, aspectRatio);
 	Vec3 lookFrom(13, 2, 3);
 	Vec3 lookAt(0, 0, 0);
