@@ -15,6 +15,10 @@
 #include "Math/BVHNode.h"
 #include "Math/XyRect.h"
 
+#include "Math/XzRect.h"
+#include "Math/YzRect.h"
+#include "Math/FlippedNormalsHittable.h"
+
 #include "Materials/Lambertian.h"
 #include "Materials/Metal.h"
 #include "Materials/Dielectric.h"
@@ -53,6 +57,8 @@ int hitBlack = 0;
 int numTotalCasts = 0;
 float tMin = 0.0, tMax = 1.0;
 
+int scatterAtAll = 0;
+
 Vec3 GetColorForRay(const Ray &r, Hittable *world, int depth) {
 	HitRecord rec;
 	numTotalCasts++;
@@ -72,6 +78,7 @@ Vec3 GetColorForRay(const Ray &r, Hittable *world, int depth) {
 
 		if (depth < 50 && rec.matPtr->scatter(r, rec, attenuation,
 			scattered)) {
+			scatterAtAll++;
 			return emitted + attenuation*GetColorForRay(scattered, world, depth+1);
 		}
 		else {
@@ -111,7 +118,7 @@ HittableList *randomScene() {
 		new ConstantTexture(Vec3(0.2, 0.3, 0.1)),
 		new ConstantTexture(Vec3(0.9, 0.9, 0.9))));
 	list[0] = new Sphere(Vec3(0.0,-1000.0,0.0), 1000,
-		new Lambertian(checkerTex));
+		std::make_shared<Lambertian>(Lambertian(checkerTex)));
 	int i = 1;
 	for (int a = -10; a < 10; a++) {
 		for (int b = -10; b < 10; b++) {
@@ -123,34 +130,39 @@ HittableList *randomScene() {
 				if (chooseMat < 0.8) {
 					list[i++] = new MovingSphere(center, center + Vec3(0, 0.5*drand48(), 0),
 						tMin, tMax, 0.2,
-						new Lambertian(std::make_shared<ConstantTexture>(ConstantTexture
+						std::make_shared<Lambertian>(Lambertian(std::make_shared<ConstantTexture>(ConstantTexture
 							(Vec3(drand48()*drand48(), drand48()*drand48(), drand48()*drand48())))
-							)
+							))
 						);
 				}
 				else if (chooseMat < 0.95) {
 					list[i++] = new Sphere(center, 0.2,
-						new Metal(
-							Vec3(0.5*(1 + drand48()), 0.5*(1 + drand48()), 0.5*(1 + drand48())),
-							0.5*drand48()));
+							std::make_shared<Metal>(Metal(
+								Vec3(0.5*(1 + drand48()), 0.5*(1 + drand48()), 0.5*(1 + drand48())),
+								0.5*drand48())
+							)
+						);
 				}
 				else {
 					// glass
 					list[i++] = new Sphere(center, 0.2,
-						new Dielectric(1.5));
+						std::make_shared<Dielectric>(Dielectric(1.5)));
 				}			
 			}
 		}
 	}
 
-	list[i++] = new Sphere(Vec3(0, 1, 0), 1.0, new Dielectric(1.5));
+	list[i++] = new Sphere(Vec3(0, 1, 0), 1.0, 
+		std::make_shared<Dielectric>(Dielectric(1.5)));
 	list[i++] = new Sphere(Vec3(-4, 1, 0), 1.0,
-			new Lambertian(std::make_shared<ConstantTexture>
-				(ConstantTexture(Vec3(0.4, 0.2, 0.1)))
+			std::make_shared<Lambertian>(Lambertian(std::make_shared<ConstantTexture>
+					(ConstantTexture(Vec3(0.4, 0.2, 0.1)))
+				)
 			)
 		);
 	list[i++] = new Sphere(Vec3(4, 1, 0), 1.0,
-		new Metal(Vec3(0.7, 0.6, 0.5), 0.0));
+		std::make_shared<Metal>(Metal(Vec3(0.7, 0.6, 0.5), 0.0))
+		);
 
 	return new HittableList(list, i);
 }
@@ -174,9 +186,10 @@ HittableList* TwoPerlinSpheres() {
 	}
 
 	list[0] = new Sphere(Vec3(0,-1000, 0), 1000.0,
-		new Lambertian(perlinTexture));
+		std::make_shared<Lambertian>(Lambertian(perlinTexture)));
 	list[1] = new Sphere(Vec3(0,2, 0), 2.0,
-		new Lambertian(std::shared_ptr<ImageTexture>(earthTexture)));
+		std::make_shared<Lambertian>
+		(Lambertian(std::shared_ptr<ImageTexture>(earthTexture))));
 	return new HittableList(list, 2);
 }
 
@@ -186,19 +199,71 @@ HittableList* simpleLight() {
 	Hittable **list = new Hittable*[4];
 	
 	list[0] = new Sphere(Vec3(0,-1000, 0), 1000.0,
-		new Lambertian(perlinTexture));
+		std::make_shared<Lambertian>
+		(Lambertian(perlinTexture)));
 	list[1] = new Sphere(Vec3(0, 2, 0), 2.0,
-		new Lambertian(perlinTexture));
+		std::make_shared<Lambertian>
+		(Lambertian(perlinTexture)));
 	list[2] = new Sphere(Vec3(0, 7, 0), 2.0,
-		new DiffuseLight(
+		std::make_shared<DiffuseLight>
+		(DiffuseLight(
 			std::make_shared<ConstantTexture>
 			(ConstantTexture(Vec3(4, 4, 4)))
-			));
+			))
+		);
 	list[3] = new XyRect(3, 5, 1, 3, -2,
-		new DiffuseLight(std::make_shared<ConstantTexture>
+		std::make_shared<DiffuseLight>(
+			DiffuseLight(std::make_shared<ConstantTexture>
 			(ConstantTexture(Vec3(4, 4, 4)))
-			));
+			))
+		);
 	return new HittableList(list, 4);	
+}
+
+HittableList* CornellBox() {
+	Hittable **listItems = new Hittable*[6];
+
+	std::shared_ptr<Lambertian> red = std::make_shared<Lambertian>(
+			Lambertian(
+			std::make_shared<ConstantTexture>(
+				ConstantTexture(Vec3(0.65, 0.05, 0.05))))
+		);
+	std::shared_ptr<Lambertian> white = std::make_shared<Lambertian>(
+			Lambertian(
+			std::make_shared<ConstantTexture>(
+				ConstantTexture(Vec3(0.73, 0.73, 0.73))))
+		);
+	std::shared_ptr<Lambertian> green = std::make_shared<Lambertian>(
+			Lambertian(
+			std::make_shared<ConstantTexture>(
+				ConstantTexture(Vec3(0.12, 0.45, 0.15))))
+		);
+	std::shared_ptr<DiffuseLight> light = std::make_shared<DiffuseLight>(
+			DiffuseLight(
+			std::make_shared<ConstantTexture>(
+				ConstantTexture(Vec3(15.0, 15.0, 15.0))))
+		);
+
+	int i = 0;
+	listItems[i++] = new FlippedNormalsHittable(
+		std::make_shared<YzRect>(YzRect(0, 555, 0, 555, 555, green)
+			)
+		); 
+	listItems[i++] = new YzRect(0, 555, 0, 555, 0, red);
+
+	listItems[i++] = new XzRect(213, 343, 227, 332, 554, light);
+	listItems[i++] = new FlippedNormalsHittable(
+		std::make_shared<XzRect>(XzRect(0, 555, 0, 555, 555, white))
+		);
+
+	listItems[i++] = new XzRect(0, 555, 0, 555, 0, white);
+	listItems[i++] = new FlippedNormalsHittable(
+		std::make_shared<XyRect>(XyRect(0, 555, 0,
+			555, 555, white)
+		)
+	);
+
+	return new HittableList(listItems, i);
 }
 
 int main(int argc, char* argv[]) {
@@ -255,16 +320,20 @@ int main(int argc, char* argv[]) {
 
 	//Hittable *world = new HittableList(list, numHittables);
 	std::time_t startBuild = std::time(nullptr);
-	HittableList *world = simpleLight();//TwoPerlinSpheres();//randomScene();
+	HittableList *world = CornellBox();//simpleLight();//TwoPerlinSpheres();//randomScene();
 	BVHNode bvhWorld(world->list, world->listSize, tMin, tMax);
 
 	std::cout << "Constructed world and acceleration structure\n";
 	//Camera cam(90.0, aspectRatio);
-	Vec3 lookFrom(13, 2, 3);
-	Vec3 lookAt(0, 0, 0);
+	Vec3 lookFrom(278, 278,-800);
+	Vec3 lookAt(278, 278, 0);
+	//Vec3 lookFrom(13, 2, 3);
+	//Vec3 lookAt(0, 0, 0);
 	float distanceToFocus = 10.0;//(lookFrom - lookAt).length();
 	float aperture = 0.0;
-	Camera cam(lookFrom, lookAt, Vec3(0, 1, 0), 20,
+	float vfov = 40.0;
+
+	Camera cam(lookFrom, lookAt, Vec3(0, 1, 0), vfov,
 		aspectRatio, aperture, distanceToFocus, 0.0, 1.0);
 	std::cout << "Scene construction time: " << difftime(std::time(nullptr), startBuild) << ".\n";
 
@@ -298,16 +367,13 @@ int main(int argc, char* argv[]) {
 		}
 	}
 	std::cout << "out of " << numTotalCasts <<  " casts, hit: " << 
-		hitBlack << " black pixels\n";
+		hitBlack << " black pixels. Scattered: " << scatterAtAll << "\n";
 	ppmFile.close();
 	std::cout << "Render time: " << difftime(std::time(nullptr), startRender) << ".\n";
 
 	auto hittableList = world->list;
 	auto numHittables = world->listSize;
 	for (int i = 0; i < numHittables; i++) {
-		if (hittableList[i]->material != nullptr) {
-			delete hittableList[i]->material;
-		}
 		delete hittableList[i];
 	}
 	delete world;

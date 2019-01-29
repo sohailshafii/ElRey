@@ -3,6 +3,8 @@
 #include "Ray.h"
 #include "AABB.h"
 
+#include <memory>
+
 class Material;
 
 struct HitRecord {
@@ -10,17 +12,20 @@ struct HitRecord {
 	float u, v;
 	Vec3 p;
 	Vec3 normal;
-	Material *matPtr;
+	std::shared_ptr<Material> matPtr;
 };
 
 class Hittable {
 public:
+	Hittable() { material = nullptr; }
+
 	virtual bool Hit(const Ray &r, float tMin, float tMax,
 		HitRecord &rec) const = 0;
 	virtual bool BoundingBox(float t0, float t1,
 		AABB &box) const = 0;
 
-	virtual ~Hittable() { }
+	virtual ~Hittable() { 
+	}
 
-	Material *material;
+	std::shared_ptr<Material> material;
 };

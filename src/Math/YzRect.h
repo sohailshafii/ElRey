@@ -2,46 +2,44 @@
 
 #include "Math/Hittable.h"
 
-class XyRect : public Hittable {
+class YzRect : public Hittable {
 public:
-	XyRect() { }
-	XyRect(float _x0, float _x1, float _y0, float _y1,
+	YzRect() { }
+	YzRect(float _y0, float _y1, float _z0, float _z1,
 		float _k, std::shared_ptr<Material> mat) :
-		x0(_x0), x1(_x1), y0(_y0), y1(_y1),
+		y0(_y0), y1(_y1), z0(_z0), z1(_z1),
 		k(_k) { material = mat; };
-
 	virtual bool Hit(const Ray& r, float tMin, float tMax,
 		HitRecord& rec) const;
 	virtual bool BoundingBox(float t0, float t1, AABB &box) const {
-		box = AABB(Vec3(x0, y0, k-0001),
-			Vec3(x1, y1, k+0.0001));
+		box = AABB(Vec3(k-0.0001, y0, z0),
+			Vec3(k+0.0001, y1, z1));
 		return true;
 	}
-
-	float x0, x1, y0, y1, k;
+;
+	float y0, y1, z0, z1, k;
 };
 
-bool XyRect::Hit(const Ray& r, float tMin, float tMax,
+bool YzRect::Hit(const Ray& r, float tMin, float tMax,
 		HitRecord& rec) const {
 	auto rayOrigin = r.origin();
 	auto rayDirection = r.direction();
 
-	float t = (k - rayOrigin.z()) / rayDirection.z();
+	float t = (k - rayOrigin.x()) / rayDirection.x();
 	if (t < tMin || t > tMax) {
 		return false;
 	}
 
-	float x = rayOrigin.x() + t*rayDirection.x();
 	float y = rayOrigin.y() + t*rayDirection.y();
-	if (x < x0 || x > x1 || y < y0 || y > y1) {
+	float z = rayOrigin.z() + t*rayDirection.z();
+	if (y < y0 || y > y1 || z < z0 || z > z1) {
 		return false;
 	}
-
-	rec.u = (x-x0)/(x1-x0);
-	rec.v = (y-y0)/(y1-y0);
+	rec.u = (y-y0)/(y1-y0);
+	rec.v = (z-z0)/(z1-z0);
 	rec.t = t;
 	rec.matPtr = material;
 	rec.p = r.PointAtParam(t);
-	rec.normal = Vec3(0.0, 0.0, 1.0);
+	rec.normal = Vec3(1.0, 0.0, 0.0);
 	return true;
 }

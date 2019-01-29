@@ -12,7 +12,7 @@ public:
 	MovingSphere() {
 	}
 	MovingSphere(Vec3 cen0, Vec3 cen1, float t0, float t1,
-		float r, Material *m) :
+		float r, std::shared_ptr<Material> m) :
 		center0(cen0), center1(cen1), time0(t0), time1(t1), radius(r)
 		{ material = m; }
 

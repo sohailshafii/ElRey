@@ -8,7 +8,7 @@
 class Sphere : public Hittable {
 public:
 	Sphere() {}
-	Sphere(Vec3 cen, float r, Material *mat) : 
+	Sphere(Vec3 cen, float r, std::shared_ptr<Material> mat) : 
 		center(cen), radius(r) { 
 		material = mat;
 	}
