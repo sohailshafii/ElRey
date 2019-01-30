@@ -19,6 +19,8 @@
 #include "Math/YzRect.h"
 #include "Math/FlippedNormalsHittable.h"
 #include "Math/Box.h"
+#include "Math/Translate.h"
+#include "Math/RotateY.h"
 
 #include "Materials/Lambertian.h"
 #include "Materials/Metal.h"
@@ -264,10 +266,17 @@ HittableList* CornellBox() {
 		)
 	);
 
-	listItems[i++] = new Box(Vec3(130, 0, 65),
-		Vec3(295, 165, 230), white);
-	listItems[i++] = new Box(Vec3(265, 0, 295),
-		Vec3(430, 330, 460), white);
+	auto rotatedBox = new RotateY(new Box(Vec3(0, 0, 0),
+		Vec3(165, 165, 165), white), -18.0);
+	auto translatedBox = new Translate((Hittable*)rotatedBox,
+		Vec3(130, 0, 65));
+	listItems[i++] = translatedBox;
+
+	rotatedBox = new RotateY(new Box(Vec3(0, 0, 0),
+		Vec3(165, 330, 165), white), 15.0);
+	translatedBox = new Translate((Hittable*)rotatedBox,
+		Vec3(265, 0, 295));
+	listItems[i++] = translatedBox;
 
 	return new HittableList(listItems, i);
 }
