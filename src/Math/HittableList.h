@@ -12,7 +12,14 @@ public:
 	virtual bool BoundingBox(float t0, float t1,
 		AABB &box) const;
 
-	virtual ~HittableList() { }
+	virtual ~HittableList() { 
+		if (list != nullptr) {
+			for (int i = 0; i < listSize; i++) {
+				delete list[i];
+			}
+			delete [] list;
+		}
+	}
 
 	Hittable **list;
 	int listSize;

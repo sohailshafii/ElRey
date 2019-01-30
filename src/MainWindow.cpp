@@ -18,6 +18,7 @@
 #include "Math/XzRect.h"
 #include "Math/YzRect.h"
 #include "Math/FlippedNormalsHittable.h"
+#include "Math/Box.h"
 
 #include "Materials/Lambertian.h"
 #include "Materials/Metal.h"
@@ -221,7 +222,7 @@ HittableList* simpleLight() {
 }
 
 HittableList* CornellBox() {
-	Hittable **listItems = new Hittable*[6];
+	Hittable **listItems = new Hittable*[8];
 
 	std::shared_ptr<Lambertian> red = std::make_shared<Lambertian>(
 			Lambertian(
@@ -262,6 +263,11 @@ HittableList* CornellBox() {
 			555, 555, white)
 		)
 	);
+
+	listItems[i++] = new Box(Vec3(130, 0, 65),
+		Vec3(295, 165, 230), white);
+	listItems[i++] = new Box(Vec3(265, 0, 295),
+		Vec3(430, 330, 460), white);
 
 	return new HittableList(listItems, i);
 }
@@ -371,11 +377,6 @@ int main(int argc, char* argv[]) {
 	ppmFile.close();
 	std::cout << "Render time: " << difftime(std::time(nullptr), startRender) << ".\n";
 
-	auto hittableList = world->list;
-	auto numHittables = world->listSize;
-	for (int i = 0; i < numHittables; i++) {
-		delete hittableList[i];
-	}
 	delete world;
 
 	if (!initializeSDL()) {
