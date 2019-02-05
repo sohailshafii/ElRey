@@ -29,7 +29,7 @@ bool HittableList::Hit(const Ray &r, float tMin, float tMax,
 	HitRecord &rec) const {
 	HitRecord tempRec;
 	bool hitAnything = false;
-	double closestSoFar = tMax;
+	float closestSoFar = tMax;
 	for (int i = 0; i < listSize; i++) {
 		if (list[i]->Hit(r, tMin, closestSoFar, tempRec)) {
 			hitAnything = true;

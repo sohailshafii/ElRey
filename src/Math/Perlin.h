@@ -9,9 +9,9 @@ float PerlinInterp(Vec3 c[2][2][2],
 class Perlin {
 public:
 	static float Noise(const Vec3 p) {
-		int i = floor(p.x());
-		int j = floor(p.y());
-		int k = floor(p.z());
+		int i = (int)floor(p.x());
+		int j = (int)floor(p.y());
+		int k = (int)floor(p.z());
 
 		float u = p.x() - floor(p.x());
 		float v = p.y() - floor(p.y());
@@ -49,10 +49,10 @@ public:
 
 inline float PerlinInterp(Vec3 c[2][2][2],
 	float u, float v, float w) {
-	float uu = u*u*(3.0-2.0*u);
-	float vv = v*v*(3.0-2.0*v);
-	float ww = w*w*(3.0-2.0*w);
-	float accum = 0.0;
+	float uu = u*u*(3.0f-2.0f*u);
+	float vv = v*v*(3.0f-2.0f*v);
+	float ww = w*w*(3.0f-2.0f*w);
+	float accum = 0.0f;
 
 	// TODO: do this without a loop
 	for (int i = 0; i < 2; i++) {
@@ -60,9 +60,9 @@ inline float PerlinInterp(Vec3 c[2][2][2],
 			for (int k = 0; k < 2; k++) {
 				Vec3 weightV(u - (float)i, v - (float)j,
 					w - (float)k);
-				accum += (i*uu + (1.0-(float)i)*(1.0-uu))*
-					(j*vv + (1.0-(float)j)*(1.0-vv))*
-					(k*ww + (1.0-(float)k)*(1.0-ww))*
+				accum += (i*uu + (1.0f-(float)i)*(1.0f-uu))*
+					(j*vv + (1.0f-(float)j)*(1.0f-vv))*
+					(k*ww + (1.0f-(float)k)*(1.0f-ww))*
 					dot(c[i][j][k], weightV);
 			}
 		}
@@ -74,16 +74,16 @@ inline float PerlinInterp(Vec3 c[2][2][2],
 static Vec3* perlinGenerate() {
 	Vec3 * p = new Vec3[256];
 	for (int i = 0; i < 256; ++i) {
-		p[i] = unitVector(Vec3(-1.0 + 2.0*drand48(),
-			-1.0 + 2.0*drand48(),
-			-1.0 + 2.0*drand48()));
+		p[i] = unitVector(Vec3(-1.0f + 2.0f*getRand(),
+			-1.0f + 2.0f*getRand(),
+			-1.0f + 2.0f*getRand()));
 	}
 	return p;
 }
 
 void permute(int *p, int n) {
 	for (int i = n-1; i < 0; i--) {
-		int target = int(drand48()*(i + 1));
+		int target = int(getRand()*(i + 1));
 		int tmp = p[i];
 		p[i] = p[target];
 		p[target] = tmp;

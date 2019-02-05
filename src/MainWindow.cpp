@@ -2,7 +2,8 @@
 #include <iostream>
 #include <fstream>
 #include <ctime>
-#include <cstdlib>
+#include <limits>
+#include <cstdint>
 #include <memory>
 #include <stdexcept>
 #include "ElReyConfig.h"
@@ -42,18 +43,18 @@ void renderLoop(SDL_Renderer *sdlRenderer, SDL_Texture* frameBufferTex);
 float HitSphere(const Vec3& center, float radius, const Ray &r);
 
 Vec3 GetColorForRay(const Ray& r) {
-	Vec3 sphereCenter = Vec3(0.0,0.0,-1.0);
-	float t = HitSphere(sphereCenter, 0.5, r);
-	if (t > 0.0) {
+	Vec3 sphereCenter = Vec3(0.0f,0.0f,-1.0f);
+	float t = HitSphere(sphereCenter, 0.5f, r);
+	if (t > 0.0f) {
 		Vec3 N = unitVector(r.PointAtParam(t) - sphereCenter);
-		return 0.5*Vec3(N.x()+1, N.y()+1, N.z()+1);
+		return 0.5f*Vec3(N.x()+1.0f, N.y()+1.0f, N.z()+1.0f);
 	}
 
 	Vec3 unitDirection = unitVector(r.direction());
 	// y will go from -1 to 1; scale it to 0-1
-	t = 0.5*(unitDirection.y() + 1.0);
+	t = 0.5f*(unitDirection.y() + 1.0f);
 	// interpolate from (0.5, 0.7, 1.0) to (1.0, 1.0, 1.0)
-	return (1.0 - t)*Vec3(1.0, 1.0, 1.0) + t*Vec3(0.5, 0.7, 1.0);
+	return (1.0f - t)*Vec3(1.0f, 1.0f, 1.0f) + t*Vec3(0.5f, 0.7f, 1.0f);
 }
 
 int hitBlack = 0;
@@ -67,7 +68,7 @@ Vec3 GetColorForRay(const Ray &r, Hittable *world, int depth) {
 	numTotalCasts++;
 	// first param is 0.001 -- gets rid of shadow acne
 	// due to hitting the object they reflect from
-	if (world->Hit(r, 0.001, MAXFLOAT, rec)) {
+	if (world->Hit(r, 0.001f, std::numeric_limits<float>::max(), rec)) {
 		// RandomPointInUnitSphere returns values from -1 to 1 in
 		// all dimensions
 		//Vec3 target = rec.p + rec.normal + RandomPointInUnitSphere();
@@ -90,7 +91,7 @@ Vec3 GetColorForRay(const Ray &r, Hittable *world, int depth) {
 		}
 	}
 	else {
-		return Vec3(0.0, 0.0, 0.0);
+		return Vec3(0.0f, 0.0f, 0.0f);
 		/*Vec3 unitDirection = unitVector(r.direction());
 		// y will go from -1 to 1; scale it to 0-1
 		float t = 0.5*(unitDirection.y() + 1.0);
@@ -102,14 +103,14 @@ Vec3 GetColorForRay(const Ray &r, Hittable *world, int depth) {
 float HitSphere(const Vec3& center, float radius, const Ray &r) {
 	Vec3 centerToOrigin = r.origin() - center;
 	float a = dot(r.direction(), r.direction());
-	float b = 2.0 * dot(centerToOrigin, r.direction());
+	float b = 2.0f * dot(centerToOrigin, r.direction());
 	float c = dot(centerToOrigin, centerToOrigin) - radius*radius;
-	float discriminant = b*b - 4*a*c;
-	if (discriminant < 0) {
-		return -1.0;
+	float discriminant = b*b - 4.0f*a*c;
+	if (discriminant < 0.0f) {
+		return -1.0f;
 	}
 	else {
-		return (-b - sqrt(discriminant))/(2.0*a);
+		return (-b - sqrt(discriminant))/(2.0f*a);
 	}
 }
 
@@ -118,53 +119,54 @@ HittableList *randomScene() {
 	Hittable **list = new Hittable*[n+1];
 
 	std::shared_ptr<CheckerTexture> checkerTex = std::make_shared<CheckerTexture>(CheckerTexture(
-		new ConstantTexture(Vec3(0.2, 0.3, 0.1)),
-		new ConstantTexture(Vec3(0.9, 0.9, 0.9))));
-	list[0] = new Sphere(Vec3(0.0,-1000.0,0.0), 1000,
+		new ConstantTexture(Vec3(0.2f, 0.3f, 0.1f)),
+		new ConstantTexture(Vec3(0.9f, 0.9f, 0.9f))));
+	list[0] = new Sphere(Vec3(0.0f,-1000.0f,0.0f), 1000,
 		std::make_shared<Lambertian>(Lambertian(checkerTex)));
 	int i = 1;
 	for (int a = -10; a < 10; a++) {
 		for (int b = -10; b < 10; b++) {
-			float chooseMat = drand48();
-			Vec3 center(a + 0.9*drand48(),
-				0.2, b + 0.9*drand48());
+			float chooseMat = getRand();
+			Vec3 center(a + 0.9f*getRand(),
+				0.2f, b + 0.9f*getRand());
 
-			if ((center - Vec3(4,0.2,0)).length() > 0.9) {
-				if (chooseMat < 0.8) {
-					list[i++] = new MovingSphere(center, center + Vec3(0, 0.5*drand48(), 0),
-						tMin, tMax, 0.2,
+			if ((center - Vec3(4.0f,0.2f,0.0f)).length() > 0.9f) {
+				if (chooseMat < 0.8f) {
+					list[i++] = new MovingSphere(center, center + Vec3(0.0f, 
+						0.5f*getRand(), 0.0f),
+						tMin, tMax, 0.2f,
 						std::make_shared<Lambertian>(Lambertian(std::make_shared<ConstantTexture>(ConstantTexture
-							(Vec3(drand48()*drand48(), drand48()*drand48(), drand48()*drand48())))
+							(Vec3(getRand()*getRand(), getRand()*getRand(), getRand()*getRand())))
 							))
 						);
 				}
-				else if (chooseMat < 0.95) {
-					list[i++] = new Sphere(center, 0.2,
+				else if (chooseMat < 0.95f) {
+					list[i++] = new Sphere(center, 0.2f,
 							std::make_shared<Metal>(Metal(
-								Vec3(0.5*(1 + drand48()), 0.5*(1 + drand48()), 0.5*(1 + drand48())),
-								0.5*drand48())
+								Vec3(0.5f*(1.0f + getRand()), 0.5f*(1.0f + getRand()), 0.5f*(1.0f + getRand())),
+								0.5f*getRand())
 							)
 						);
 				}
 				else {
 					// glass
-					list[i++] = new Sphere(center, 0.2,
-						std::make_shared<Dielectric>(Dielectric(1.5)));
+					list[i++] = new Sphere(center, 0.2f,
+						std::make_shared<Dielectric>(Dielectric(1.5f)));
 				}			
 			}
 		}
 	}
 
-	list[i++] = new Sphere(Vec3(0, 1, 0), 1.0, 
+	list[i++] = new Sphere(Vec3(0.0f, 1.0f, 0.0f), 1.0f,
 		std::make_shared<Dielectric>(Dielectric(1.5)));
-	list[i++] = new Sphere(Vec3(-4, 1, 0), 1.0,
+	list[i++] = new Sphere(Vec3(-4.0f, 1.0f, 0.0f), 1.0f,
 			std::make_shared<Lambertian>(Lambertian(std::make_shared<ConstantTexture>
-					(ConstantTexture(Vec3(0.4, 0.2, 0.1)))
+					(ConstantTexture(Vec3(0.4f, 0.2f, 0.1f)))
 				)
 			)
 		);
-	list[i++] = new Sphere(Vec3(4, 1, 0), 1.0,
-		std::make_shared<Metal>(Metal(Vec3(0.7, 0.6, 0.5), 0.0))
+	list[i++] = new Sphere(Vec3(4.0f, 1.0f, 0.0f), 1.0f,
+		std::make_shared<Metal>(Metal(Vec3(0.7f, 0.6f, 0.5f), 0.0f))
 		);
 
 	return new HittableList(list, i);
@@ -229,22 +231,22 @@ HittableList* CornellBox() {
 	std::shared_ptr<Lambertian> red = std::make_shared<Lambertian>(
 			Lambertian(
 			std::make_shared<ConstantTexture>(
-				ConstantTexture(Vec3(0.65, 0.05, 0.05))))
+				ConstantTexture(Vec3(0.65f, 0.05f, 0.05f))))
 		);
 	std::shared_ptr<Lambertian> white = std::make_shared<Lambertian>(
 			Lambertian(
 			std::make_shared<ConstantTexture>(
-				ConstantTexture(Vec3(0.73, 0.73, 0.73))))
+				ConstantTexture(Vec3(0.73f, 0.73f, 0.73f))))
 		);
 	std::shared_ptr<Lambertian> green = std::make_shared<Lambertian>(
 			Lambertian(
 			std::make_shared<ConstantTexture>(
-				ConstantTexture(Vec3(0.12, 0.45, 0.15))))
+				ConstantTexture(Vec3(0.12f, 0.45f, 0.15f))))
 		);
 	std::shared_ptr<DiffuseLight> light = std::make_shared<DiffuseLight>(
 			DiffuseLight(
 			std::make_shared<ConstantTexture>(
-				ConstantTexture(Vec3(15.0, 15.0, 15.0))))
+				ConstantTexture(Vec3(15.0f, 15.0f, 15.0f))))
 		);
 
 	int i = 0;
@@ -282,6 +284,7 @@ HittableList* CornellBox() {
 }
 
 int main(int argc, char* argv[]) {
+	srand(static_cast <unsigned> (time(0)));
 	std::cout << "ElRey version: " << ElRey_VERSION_MAJOR << "."
 		<< ElRey_VERSION_MINOR << "\n";
 	
@@ -358,8 +361,8 @@ int main(int argc, char* argv[]) {
 		for (int column = 0; column < width; column++) {
 			Vec3 colorVec(0.0, 0.0, 0.0);
 			for (int sample = 0; sample < numSamples; sample++) {
-				float u = float(column + drand48())/float(width);
-				float v = float(row + drand48())/float(height);
+				float u = float(column + getRand())/float(width);
+				float v = float(row + getRand())/float(height);
 				Ray r = cam.GetRay(u, v);
 				//Vec3 p = r.PointAtParam(2.0);
 				colorVec += GetColorForRay(r, &bvhWorld, 0);

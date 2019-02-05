@@ -6,7 +6,7 @@
 class Metal : public Material {
 public:
 	Metal(const Vec3 &a, float f = 0.0) : albedo(a) { 
-		fuzz = (f < 1) ? f : 1.0;
+		fuzz = (f < 1.0f) ? f : 1.0f;
 	}
 
 	virtual bool scatter(const Ray &rIn, const HitRecord& rec,

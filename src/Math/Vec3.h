@@ -50,7 +50,7 @@ inline std::ostream& operator>>(std::ostream &os, Vec3 &t) {
 }
 
 inline void Vec3::makeUnitVector() {
-	float k = 1.0 / sqrt(m[0]*m[0] + m[1]*m[1] + m[2]*m[2]);
+	float k = 1.0f / sqrt(m[0]*m[0] + m[1]*m[1] + m[2]*m[2]);
 	m[0] *= k; m[1] *= k; m[2] *= k;
 }
 
@@ -132,7 +132,7 @@ inline Vec3& Vec3::operator*=(const float t) {
 }
 
 inline Vec3& Vec3::operator/=(const float t) {
-	float k = 1.0/t;
+	float k = 1.0f/t;
 	m[0] *= k;
 	m[1] *= k;
 	m[2] *= k;

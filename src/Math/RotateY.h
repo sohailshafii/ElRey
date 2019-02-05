@@ -26,7 +26,7 @@ public:
 
 RotateY::RotateY(Hittable *p, float angle) 
  : ptr(p) {
- 	float radians = (M_PI/180.)*angle;
+ 	float radians = ((float)M_PI/180.0f)*angle;
  	sinTheta = sin(radians);
  	cosTheta = cos(radians);
 

@@ -12,8 +12,8 @@ public:
 	virtual bool Hit(const Ray& r, float tMin, float tMax,
 		HitRecord& rec) const;
 	virtual bool BoundingBox(float t0, float t1, AABB &box) const {
-		box = AABB(Vec3(k-0.0001, y0, z0),
-			Vec3(k+0.0001, y1, z1));
+		box = AABB(Vec3(k-0.0001f, y0, z0),
+			Vec3(k+0.0001f, y1, z1));
 		return true;
 	}
 ;

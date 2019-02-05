@@ -29,7 +29,7 @@ public:
 		}
 		else {
 			outwardNormal = rec.normal;
-			niOverNt = 1.0 / refIdx;
+			niOverNt = 1.0f / refIdx;
 			cosineTerm = -dot(rIn.direction(), rec.normal) /
 				rIn.direction().length();
 		}
@@ -41,7 +41,7 @@ public:
 			reflectedProb = 1.0;
 		}
 
-		if (drand48() < reflectedProb) {
+		if (getRand() < reflectedProb) {
 			scattered = Ray(rec.p, reflectedVec);
 		}
 		else {

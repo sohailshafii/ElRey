@@ -24,17 +24,17 @@ public:
 int ImageTexture::counter = 0;
 
 Vec3 ImageTexture::Value(float u, float v, const Vec3& p) const {
-	int i = ( u)*(float)nx;
-	int j = (1.0-v)*(float)ny-0.001;
+	int i = (int)((u)*(float)nx);
+	int j = (int)((1.0f-v)*(float)ny-0.001f);
 
 	if (i < 0) i = 0;
 	if (j < 0) j = 0;
 	if (i > nx-1) i = nx-1;
 	if (j > ny-1) j = ny-1;
 
-	float r = int(data[3*i + 3*nx*j])/255.0;
-	float g = int(data[3*i + 3*nx*j+1])/255.0;
-	float b = int(data[3*i + 3*nx*j+2])/255.0;
+	float r = int(data[3*i + 3*nx*j])/255.0f;
+	float g = int(data[3*i + 3*nx*j+1])/255.0f;
+	float b = int(data[3*i + 3*nx*j+2])/255.0f;
 	return Vec3(r, g, b);
 }
 

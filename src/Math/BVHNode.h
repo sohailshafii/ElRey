@@ -24,7 +24,7 @@ private:
 };
 
 BVHNode::BVHNode(Hittable **l, int n, float time0, float time1) {
-	int axis = int(3*drand48());
+	int axis = int(3* getRand());
 	if (axis == 0) {
 		qsort(l, n, sizeof(Hittable *), boxXCompare);
 	}
