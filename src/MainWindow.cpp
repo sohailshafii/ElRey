@@ -15,6 +15,7 @@
 #include "Math/Common.h"
 #include "Math/BVHNode.h"
 #include "Math/XyRect.h"
+#include "Math/ConstantMedium.h"
 
 #include "Math/XzRect.h"
 #include "Math/YzRect.h"
@@ -272,13 +273,19 @@ HittableList* CornellBox() {
 		Vec3(165, 165, 165), white), -18.0);
 	auto translatedBox = new Translate((Hittable*)rotatedBox,
 		Vec3(130, 0, 65));
-	listItems[i++] = translatedBox;
+	auto constantMed = new ConstantMedium((Hittable*)translatedBox,
+		0.01f, std::make_shared<ConstantTexture>(
+			ConstantTexture(Vec3(1.0, 1.0, 1.0))));
+	listItems[i++] = constantMed;
 
 	rotatedBox = new RotateY(new Box(Vec3(0, 0, 0),
 		Vec3(165, 330, 165), white), 15.0);
 	translatedBox = new Translate((Hittable*)rotatedBox,
-		Vec3(265, 0, 295));
-	listItems[i++] = translatedBox;
+		Vec3(265, 0, 295)); 
+	constantMed = new ConstantMedium((Hittable*)translatedBox,
+		0.01f, std::make_shared<ConstantTexture>(
+			ConstantTexture(Vec3(0.0, 0.0, 0.0))));
+	listItems[i++] = constantMed;
 
 	return new HittableList(listItems, i);
 }
