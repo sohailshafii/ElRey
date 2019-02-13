@@ -290,6 +290,43 @@ HittableList* CornellBox() {
 	return new HittableList(listItems, i);
 }
 
+HittableList* Final() {
+	int nb = 20;
+	Hittable **list = new Hittable*[30];
+	Hittable **boxList = new Hittable*[10000];
+	Hittable **boxList2 = new Hittable*[1000];
+
+	std::shared_ptr<Lambertian> white = std::make_shared<Lambertian>(
+			Lambertian(
+			std::make_shared<ConstantTexture>(
+				ConstantTexture(Vec3(0.73f, 0.73f, 0.73f))))
+		);
+	std::shared_ptr<Lambertian> ground = std::make_shared<Lambertian>(
+			Lambertian(
+			std::make_shared<ConstantTexture>(
+				ConstantTexture(Vec3(0.48f, 0.83f, 0.53f))))
+		);
+
+	int b = 0;
+	for (int i = 0; i < nb; i++) {
+		for (int j = 0; j < nb; j++) {
+			float w = 100;
+			float x0 = -1000 + i*w;
+			float z0 = -1000 + j*w;
+			float y0 = 0;
+			float x1 = x0 + w;
+			float y1 = 100*(getRand()+0.01);
+			float z1 = z0 + w;
+			boxlist[b++] = new Box(Vec3(0, 0, 0),
+				Vec3(165, 330, 165), ground);
+		}
+	}
+
+	// TODO: fill out
+	return null;
+}
+
+
 int main(int argc, char* argv[]) {
 	srand(static_cast <unsigned> (time(0)));
 	std::cout << "ElRey version: " << ElRey_VERSION_MAJOR << "."
