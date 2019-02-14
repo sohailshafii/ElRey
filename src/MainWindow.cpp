@@ -317,13 +317,37 @@ HittableList* Final() {
 			float x1 = x0 + w;
 			float y1 = 100*(getRand()+0.01);
 			float z1 = z0 + w;
-			boxlist[b++] = new Box(Vec3(0, 0, 0),
+			boxList[b++] = new Box(Vec3(0, 0, 0),
 				Vec3(165, 330, 165), ground);
 		}
 	}
 
+	int l = 0;
+	list[l++] = boxList;
+	std::shared_ptr<DiffuseLight> light = std::shared_ptr<DiffuseLight> light = std::make_shared<DiffuseLight>(
+			DiffuseLight(
+			std::make_shared<ConstantTexture>(
+				ConstantTexture(Vec3(7.0f, 7.0f, 7.0f))))
+		);
+	list[i++] = new XzRect(123, 423, 
+		147, 412, 554, light);
+	Vec3 center(400, 400, 200);
+	list[i++] = new MovingSphere(center, 
+		center + Vec3(30.0f, 0.0f, 0.0f),
+		0.0f, 1.0f, 50.0f,
+		std::make_shared<Lambertian>(Lambertian(
+			std::make_shared<ConstantTexture>(ConstantTexture
+			(Vec3(0.7, 0.3, 0.1)))
+			))
+		);
+	list[i++] = new Sphere(Vec3(360.0f, 150.0f, 145.0f),
+		70.0f, std::make_shared<Dielectric>(Dielectric(1.5f)));
+	list[i++] = new Sphere(Vec3(0.0f, 150.0f, 145.0f),
+		50.0f, std::make_shared<Metal>(
+			Metal(Vec3(0.8, 0.8, 0.9), 10.0)));
+
 	// TODO: fill out
-	return null;
+	return nullptr;
 }
 
 
