@@ -469,6 +469,9 @@ int main(int argc, char* argv[]) {
 	std::cout << "Scene construction time: " << difftime(std::time(nullptr), startBuild) << ".\n";
 
 	std::time_t startRender = std::time(nullptr);
+	int numTotalSamples = width*height*numSamples;
+	int sampleCount = 0;
+	float lastPercentage = 0.0f;
 	// TODO: move this code to frame buffer eventually
 	for (int row = height-1; row >= 0; row--) {
 		for (int column = 0; column < width; column++) {
@@ -495,6 +498,18 @@ int main(int argc, char* argv[]) {
 			int ig = int(255.99*colorVec[1]);
 			int ib = int(255.99*colorVec[2]);
 			ppmFile << ir << " " << ig << " " << ib << "\n";
+
+			sampleCount++;
+			float newPercentage = (float)sampleCount/
+				(float)numTotalSamples;
+			if ((newPercentage - lastPercentage) > 1.0f) {
+				std::cout << "Percentage complete: " <<
+					newPercentage << ", time so far: " <<
+					difftime(std::time(nullptr), startRender) 
+					<< ".\n";
+
+				lastPercentage = newPercentage;
+			}
 		}
 	}
 	std::cout << "out of " << numTotalCasts <<  " casts, hit: " << 
