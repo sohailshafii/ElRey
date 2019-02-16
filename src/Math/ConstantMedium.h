@@ -15,6 +15,9 @@ public:
 		material = std::make_shared<Isotropic>(Isotropic(albedo));
 	}
 
+	~ConstantMedium() {
+	}
+
 	virtual bool Hit(const Ray &r, float tMin, float tMax,
 		HitRecord &rec) const ;
 	virtual bool BoundingBox(float t0, float t1,

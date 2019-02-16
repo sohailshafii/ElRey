@@ -322,7 +322,7 @@ HittableList* Final() {
 	}
 
 	int l = 0;
-	list[l++] = new BVHNode(boxList, b, 0.0f, 1.0f);
+	list[l++] = new BVHNode(boxList, b, 0.0f, 1.0f, true);
 	std::shared_ptr<DiffuseLight> light = std::make_shared<DiffuseLight>(
 			DiffuseLight(
 			std::make_shared<ConstantTexture>(
@@ -386,7 +386,7 @@ HittableList* Final() {
 		10.0f, white);
 	}
 
-	auto newBvh = new BVHNode(boxList2, ns, 0.0f, 1.0f);
+	auto newBvh = new BVHNode(boxList2, ns, 0.0f, 1.0f, true);
 	auto rotatedBvh = new RotateY(newBvh, 15.0f);
 	auto translatedRotated = new Translate(rotatedBvh,
 		Vec3(-100.0f, 270.0f, 395.0f));
@@ -451,7 +451,7 @@ int main(int argc, char* argv[]) {
 
 	//Hittable *world = new HittableList(list, numHittables);
 	std::time_t startBuild = std::time(nullptr);
-	HittableList *world = CornellBox();//simpleLight();//TwoPerlinSpheres();//randomScene();
+	HittableList *world = Final();//CornellBox();//simpleLight();//TwoPerlinSpheres();//randomScene();
 	BVHNode bvhWorld(world->list, world->listSize, tMin, tMax);
 
 	std::cout << "Constructed world and acceleration structure\n";

@@ -9,7 +9,17 @@
 class BVHNode : public Hittable {
 public:
 	BVHNode() {}
-	BVHNode(Hittable **l, int n, float time0, float time1);
+	BVHNode(Hittable **l, int n, float time0, float time1,
+		bool cleanUp = false);
+
+	~BVHNode() {
+		if (cleanUp) {
+			delete left;
+		}
+		if (cleanUp) { 
+			delete right;
+		}
+	}
 
 	virtual bool Hit(const Ray &r, float tmin, float tmax, HitRecord &rec) const;
 	virtual bool BoundingBox(float t0, float t1, AABB& box) const;
@@ -17,13 +27,18 @@ public:
 	Hittable *left;
 	Hittable *right;
 	AABB box;
+	bool cleanUp;
+
 private:
 	static int boxXCompare(const void *a, const void *b);
 	static int boxYCompare(const void *a, const void *b);
 	static int boxZCompare(const void *a, const void *b);
 };
 
-BVHNode::BVHNode(Hittable **l, int n, float time0, float time1) {
+BVHNode::BVHNode(Hittable **l, int n, float time0, float time1,
+	bool cleanUp) {
+	cleanUp = cleanUp;
+
 	int axis = int(3* getRand());
 	if (axis == 0) {
 		qsort(l, n, sizeof(Hittable *), boxXCompare);
@@ -43,8 +58,8 @@ BVHNode::BVHNode(Hittable **l, int n, float time0, float time1) {
 		right = l[1];
 	}
 	else {
-		left = new BVHNode(l, n/2, time0, time1);
-		right = new BVHNode(l + n/2, n - n/2, time0, time1);
+		left = new BVHNode(l, n/2, time0, time1, cleanUp);
+		right = new BVHNode(l + n/2, n - n/2, time0, time1, cleanUp);
 	}
 	AABB boxLeft, boxRight;
 	if (!left->BoundingBox(time0, time1, boxLeft) ||
