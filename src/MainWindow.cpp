@@ -294,7 +294,7 @@ HittableList* Final() {
 	int nb = 20;
 	Hittable **list = new Hittable*[30];
 	Hittable **boxList = new Hittable*[10000];
-	Hittable **boxList2 = new Hittable*[1000];
+	Hittable **boxList2 = new Hittable*[10000];
 
 	std::shared_ptr<Lambertian> white = std::make_shared<Lambertian>(
 			Lambertian(
@@ -317,22 +317,22 @@ HittableList* Final() {
 			float x1 = x0 + w;
 			float y1 = 100*(getRand()+0.01);
 			float z1 = z0 + w;
-			boxList[b++] = new Box(Vec3(0, 0, 0),
-				Vec3(165, 330, 165), ground);
+			boxList[b++] = new Box(Vec3(x0, y0, z0),
+				Vec3(x1, y1, z1), ground);
 		}
 	}
 
 	int l = 0;
-	list[l++] = boxList;
-	std::shared_ptr<DiffuseLight> light = std::shared_ptr<DiffuseLight> light = std::make_shared<DiffuseLight>(
+	list[l++] = new BVHNode(boxList, b, 0, 1);
+	std::shared_ptr<DiffuseLight> light = std::make_shared<DiffuseLight>(
 			DiffuseLight(
 			std::make_shared<ConstantTexture>(
 				ConstantTexture(Vec3(7.0f, 7.0f, 7.0f))))
 		);
-	list[i++] = new XzRect(123, 423, 
+	list[l++] = new XzRect(123, 423, 
 		147, 412, 554, light);
 	Vec3 center(400, 400, 200);
-	list[i++] = new MovingSphere(center, 
+	list[l++] = new MovingSphere(center, 
 		center + Vec3(30.0f, 0.0f, 0.0f),
 		0.0f, 1.0f, 50.0f,
 		std::make_shared<Lambertian>(Lambertian(
@@ -340,14 +340,61 @@ HittableList* Final() {
 			(Vec3(0.7, 0.3, 0.1)))
 			))
 		);
-	list[i++] = new Sphere(Vec3(360.0f, 150.0f, 145.0f),
-		70.0f, std::make_shared<Dielectric>(Dielectric(1.5f)));
-	list[i++] = new Sphere(Vec3(0.0f, 150.0f, 145.0f),
+	list[l++] = new Sphere(Vec3(260.0f, 150.0f, 45.0f),
+		50.0f, std::make_shared<Dielectric>(Dielectric(1.5f)));
+	list[l++] = new Sphere(Vec3(0.0f, 150.0f, 145.0f),
 		50.0f, std::make_shared<Metal>(
 			Metal(Vec3(0.8, 0.8, 0.9), 10.0)));
+	Hittable *boundary = new Sphere(Vec3(360.0f, 150.0f, 145.0f),
+		70.0f, std::make_shared<Dielectric>(Dielectric(1.5f)));
+	list[l++] = boundary;
+	list[l++] = new ConstantMedium(boundary, 0.2,
+		std::make_shared<ConstantTexture>(ConstantTexture(
+			Vec3(0.2, 0.4, 0.9))));
 
-	// TODO: fill out
-	return nullptr;
+	boundary = new Sphere(Vec3(0.0f, 0.0f, 0.0f),
+		5000.0f, std::make_shared<Dielectric>(Dielectric(1.5f)));
+	list[l++] = new ConstantMedium(boundary, 0.0001,
+		std::make_shared<ConstantTexture>(ConstantTexture(
+			Vec3(1.0, 1.0, 1.0))));
+
+	int nx, ny, nn;
+	unsigned char *texData = stbi_load("earthFromImgur.jpg",
+		&nx, &ny, &nn, 0);
+	ImageTexture* earthTexture = nullptr;
+	if (texData == nullptr) {
+		throw std::runtime_error("Could not load earth texture!");
+	}
+	else {
+		std::cout << "Loaded earth texture: " << nx << 
+			" x " << ny << std::endl;
+		earthTexture = new ImageTexture(texData, nx, ny);
+	}
+	std::shared_ptr<Material> eMat = std::make_shared<Lambertian>(Lambertian(
+			std::make_shared<ConstantTexture>(ConstantTexture
+			(Vec3(0.7, 0.3, 0.1)))
+			));
+	list[l++] = new Sphere(Vec3(400, 200, 400), 100, eMat);
+	std::shared_ptr<Texture> perText =
+		std::make_shared<NoiseTexture>(
+			NoiseTexture(0.1));
+	list[l++] = new Sphere(Vec3(220.0, 280.0, 300),
+		80.0, std::make_shared<Lambertian>
+		(Lambertian(perText)));
+	int ns = 1000;
+	for (int j = 0; j < ns; j++) {
+		boxList2[j] = new Sphere(Vec3(165.0f*getRand(),
+			165.0f*getRand(), 165.0f*getRand()),
+		10.0f, white);
+	}
+
+	auto newBvh = new BVHNode(boxList2, ns, 0.0f, 1.0f);
+	auto rotatedBvh = new RotateY(newBvh, 15.0f);
+	auto translatedRotated = new Translate(rotatedBvh,
+		Vec3(-100.0f,270.0f,395.0f));
+	list[l++] = translatedRotated;
+
+	return new HittableList(list, l);
 }
 
 
