@@ -482,6 +482,18 @@ int main(int argc, char* argv[]) {
 				Ray r = cam.GetRay(u, v);
 				//Vec3 p = r.PointAtParam(2.0);
 				colorVec += GetColorForRay(r, &bvhWorld, 0);
+
+				sampleCount++;
+				float newPercentage = 100.0f*(float)sampleCount/
+					(float)numTotalSamples;
+				if ((newPercentage - lastPercentage) > 1.0f) {
+					std::cout << "Percentage complete: " <<
+						newPercentage << ", time so far: " <<
+						difftime(std::time(nullptr), startRender) 
+						<< ".\n";
+
+					lastPercentage = newPercentage;
+				}
 			}
 			colorVec /= float(numSamples);
 			// gamma-correct (kinda) -- gamma-2
@@ -498,18 +510,6 @@ int main(int argc, char* argv[]) {
 			int ig = int(255.99*colorVec[1]);
 			int ib = int(255.99*colorVec[2]);
 			ppmFile << ir << " " << ig << " " << ib << "\n";
-
-			sampleCount++;
-			float newPercentage = (float)sampleCount/
-				(float)numTotalSamples;
-			if ((newPercentage - lastPercentage) > 1.0f) {
-				std::cout << "Percentage complete: " <<
-					newPercentage << ", time so far: " <<
-					difftime(std::time(nullptr), startRender) 
-					<< ".\n";
-
-				lastPercentage = newPercentage;
-			}
 		}
 	}
 	std::cout << "out of " << numTotalCasts <<  " casts, hit: " << 
