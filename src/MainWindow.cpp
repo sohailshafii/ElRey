@@ -293,8 +293,7 @@ HittableList* CornellBox() {
 HittableList* Final() {
 	int nb = 20;
 	Hittable **list = new Hittable*[30];
-	Hittable **boxList = new Hittable*[10000];
-	Hittable **boxList2 = new Hittable*[10000];
+	Hittable **boxList = new Hittable*[nb*nb];
 
 	std::shared_ptr<Lambertian> white = std::make_shared<Lambertian>(
 			Lambertian(
@@ -310,12 +309,12 @@ HittableList* Final() {
 	int b = 0;
 	for (int i = 0; i < nb; i++) {
 		for (int j = 0; j < nb; j++) {
-			float w = 100;
-			float x0 = -1000 + i*w;
-			float z0 = -1000 + j*w;
+			float w = 100.0f;
+			float x0 = -1000.0f + (float)i*w;
+			float z0 = -1000.0f + (float)j*w;
 			float y0 = 0;
 			float x1 = x0 + w;
-			float y1 = 100*(getRand()+0.01);
+			float y1 = 100.0f*(getRand()+0.01f);
 			float z1 = z0 + w;
 			boxList[b++] = new Box(Vec3(x0, y0, z0),
 				Vec3(x1, y1, z1), ground);
@@ -323,40 +322,39 @@ HittableList* Final() {
 	}
 
 	int l = 0;
-	list[l++] = new BVHNode(boxList, b, 0, 1);
+	list[l++] = new BVHNode(boxList, b, 0.0f, 1.0f);
 	std::shared_ptr<DiffuseLight> light = std::make_shared<DiffuseLight>(
 			DiffuseLight(
 			std::make_shared<ConstantTexture>(
 				ConstantTexture(Vec3(7.0f, 7.0f, 7.0f))))
 		);
-	list[l++] = new XzRect(123, 423, 
-		147, 412, 554, light);
-	Vec3 center(400, 400, 200);
+	list[l++] = new XzRect(123.0f, 423.0f, 147.0f, 412.0f, 554.0f, light);
+	Vec3 center(400.0f, 400.0f, 200.0f);
 	list[l++] = new MovingSphere(center, 
 		center + Vec3(30.0f, 0.0f, 0.0f),
 		0.0f, 1.0f, 50.0f,
 		std::make_shared<Lambertian>(Lambertian(
 			std::make_shared<ConstantTexture>(ConstantTexture
-			(Vec3(0.7, 0.3, 0.1)))
+			(Vec3(0.7f, 0.3f, 0.1f)))
 			))
 		);
 	list[l++] = new Sphere(Vec3(260.0f, 150.0f, 45.0f),
 		50.0f, std::make_shared<Dielectric>(Dielectric(1.5f)));
 	list[l++] = new Sphere(Vec3(0.0f, 150.0f, 145.0f),
 		50.0f, std::make_shared<Metal>(
-			Metal(Vec3(0.8, 0.8, 0.9), 10.0)));
+			Metal(Vec3(0.8f, 0.8f, 0.9f), 10.0f)));
 	Hittable *boundary = new Sphere(Vec3(360.0f, 150.0f, 145.0f),
 		70.0f, std::make_shared<Dielectric>(Dielectric(1.5f)));
 	list[l++] = boundary;
-	list[l++] = new ConstantMedium(boundary, 0.2,
+	list[l++] = new ConstantMedium(boundary, 0.2f,
 		std::make_shared<ConstantTexture>(ConstantTexture(
-			Vec3(0.2, 0.4, 0.9))));
+			Vec3(0.2f, 0.4f, 0.9f))));
 
 	boundary = new Sphere(Vec3(0.0f, 0.0f, 0.0f),
 		5000.0f, std::make_shared<Dielectric>(Dielectric(1.5f)));
-	list[l++] = new ConstantMedium(boundary, 0.0001,
+	list[l++] = new ConstantMedium(boundary, 0.0001f,
 		std::make_shared<ConstantTexture>(ConstantTexture(
-			Vec3(1.0, 1.0, 1.0))));
+			Vec3(1.0f, 1.0f, 1.0))));
 
 	int nx, ny, nn;
 	unsigned char *texData = stbi_load("earthFromImgur.jpg",
@@ -370,18 +368,18 @@ HittableList* Final() {
 			" x " << ny << std::endl;
 		earthTexture = new ImageTexture(texData, nx, ny);
 	}
-	std::shared_ptr<Material> eMat = std::make_shared<Lambertian>(Lambertian(
-			std::make_shared<ConstantTexture>(ConstantTexture
-			(Vec3(0.7, 0.3, 0.1)))
-			));
-	list[l++] = new Sphere(Vec3(400, 200, 400), 100, eMat);
+	std::shared_ptr<Material> eMat = std::make_shared<Lambertian>(
+			Lambertian(std::shared_ptr<ImageTexture>(earthTexture)));
+	list[l++] = new Sphere(Vec3(400.0f, 200.0f, 400.0f), 100.0f, eMat);
 	std::shared_ptr<Texture> perText =
 		std::make_shared<NoiseTexture>(
-			NoiseTexture(0.1));
-	list[l++] = new Sphere(Vec3(220.0, 280.0, 300),
-		80.0, std::make_shared<Lambertian>
+			NoiseTexture(0.1f));
+	list[l++] = new Sphere(Vec3(220.0f, 280.0f, 300.0f),
+		80.0f, std::make_shared<Lambertian>
 		(Lambertian(perText)));
+
 	int ns = 1000;
+	Hittable **boxList2 = new Hittable*[ns];
 	for (int j = 0; j < ns; j++) {
 		boxList2[j] = new Sphere(Vec3(165.0f*getRand(),
 			165.0f*getRand(), 165.0f*getRand()),
@@ -391,7 +389,7 @@ HittableList* Final() {
 	auto newBvh = new BVHNode(boxList2, ns, 0.0f, 1.0f);
 	auto rotatedBvh = new RotateY(newBvh, 15.0f);
 	auto translatedRotated = new Translate(rotatedBvh,
-		Vec3(-100.0f,270.0f,395.0f));
+		Vec3(-100.0f, 270.0f, 395.0f));
 	list[l++] = translatedRotated;
 
 	return new HittableList(list, l);
