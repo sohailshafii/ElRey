@@ -16,6 +16,15 @@ Vec3 RandomPointInUnitSphere() {
 	return p;
 }
 
+Vec3 RandomPointOnUnitSphere() {
+	Vec3 p;
+	do {
+		p = 2.0*Vec3(getRand(), getRand(), getRand()) - Vec3(1,1,1);
+	} while(p.squaredLength() >= 1.0);
+	p.makeUnitVector();
+	return p;
+}
+
 Vec3 RandomInUnitDisk() {
 	Vec3 p;
 	do {
