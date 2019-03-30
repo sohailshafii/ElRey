@@ -497,6 +497,9 @@ int main(int argc, char* argv[]) {
 			}
 			colorVec /= float(numSamples);
 			// gamma-correct (kinda) -- gamma-2
+			// this can cause green-ish pixels to become magenta
+			// like if ground in final scene intersects with light,
+			// it gets shifted from green to magenta
 			colorVec = Vec3(sqrt(colorVec[0]), sqrt(colorVec[1]),
 				sqrt(colorVec[2]));
 
