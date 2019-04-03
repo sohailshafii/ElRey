@@ -7,7 +7,9 @@ public:
 	Dielectric(float ri) : refIdx(ri) { }
 
 	virtual bool scatter(const Ray& rIn, const HitRecord &rec,
-		Vec3 &attenuation, Ray& scattered) const {
+		Vec3 &attenuation, Ray& scattered, float& pdf) const {
+
+		pdf = 1.0;
 		
 		Vec3 outwardNormal;
 		Vec3 reflectedVec = reflect(rIn.direction(), rec.normal);

@@ -77,14 +77,18 @@ Vec3 GetColorForRay(const Ray &r, Hittable *world, int depth) {
 		//return 0.5*Vec3(rec.normal.x()+1, rec.normal.y()+1,
 		//	rec.normal.z()+1);
 		Ray scattered;
-		Vec3 attenuation;
+		Vec3 albedo;
 		Vec3 emitted = rec.matPtr->emitted(rec.u, rec.v,
 			rec.p);
+		float pdf = 1.0;
 
-		if (depth < 50 && rec.matPtr->scatter(r, rec, attenuation,
-			scattered)) {
+		if (depth < 50 && rec.matPtr->scatter(r, rec, albedo,
+			scattered, pdf)) {
 			scatterAtAll++;
-			return emitted + attenuation*GetColorForRay(scattered, world, depth+1);
+			return emitted +
+				albedo*
+				rec.matPtr->scatteringPdf(r, rec, scattered)*
+				GetColorForRay(scattered, world, depth+1)/pdf;
 		}
 		else {
 			hitBlack++;
@@ -290,6 +294,81 @@ HittableList* CornellBox() {
 	return new HittableList(listItems, i);
 }
 
+HittableList* CornellBox2(Camera** cam, float aspectRatio) {
+	Hittable **listItems = new Hittable*[8];
+
+	std::shared_ptr<Lambertian> red = std::make_shared<Lambertian>(
+			Lambertian(
+			std::make_shared<ConstantTexture>(
+				ConstantTexture(Vec3(0.65f, 0.05f, 0.05f))))
+		);
+	std::shared_ptr<Lambertian> white = std::make_shared<Lambertian>(
+			Lambertian(
+			std::make_shared<ConstantTexture>(
+				ConstantTexture(Vec3(0.73f, 0.73f, 0.73f))))
+		);
+	std::shared_ptr<Lambertian> green = std::make_shared<Lambertian>(
+			Lambertian(
+			std::make_shared<ConstantTexture>(
+				ConstantTexture(Vec3(0.12f, 0.45f, 0.15f))))
+		);
+	std::shared_ptr<DiffuseLight> light = std::make_shared<DiffuseLight>(
+			DiffuseLight(
+			std::make_shared<ConstantTexture>(
+				ConstantTexture(Vec3(15.0f, 15.0f, 15.0f))))
+		);
+
+	int i = 0;
+	listItems[i++] = new FlippedNormalsHittable(
+		std::make_shared<YzRect>(YzRect(0, 555, 0, 555, 555, green)
+			)
+		); 
+	listItems[i++] = new YzRect(0, 555, 0, 555, 0, red);
+
+	listItems[i++] = new XzRect(213, 343, 227, 332, 554, light);
+	listItems[i++] = new FlippedNormalsHittable(
+		std::make_shared<XzRect>(XzRect(0, 555, 0, 555, 555, white))
+		);
+
+	listItems[i++] = new XzRect(0, 555, 0, 555, 0, white);
+	listItems[i++] = new FlippedNormalsHittable(
+		std::make_shared<XyRect>(XyRect(0, 555, 0,
+			555, 555, white)
+		)
+	);
+
+	auto rotatedBox = new RotateY(new Box(Vec3(0, 0, 0),
+		Vec3(165, 165, 165), white), -18.0);
+	auto translatedBox = new Translate((Hittable*)rotatedBox,
+		Vec3(130, 0, 65));
+	auto constantMed = new ConstantMedium((Hittable*)translatedBox,
+		0.01f, std::make_shared<ConstantTexture>(
+			ConstantTexture(Vec3(1.0, 1.0, 1.0))));
+	listItems[i++] = constantMed;
+
+	rotatedBox = new RotateY(new Box(Vec3(0, 0, 0),
+		Vec3(165, 330, 165), white), 15.0);
+	translatedBox = new Translate((Hittable*)rotatedBox,
+		Vec3(265, 0, 295)); 
+	constantMed = new ConstantMedium((Hittable*)translatedBox,
+		0.01f, std::make_shared<ConstantTexture>(
+			ConstantTexture(Vec3(0.0, 0.0, 0.0))));
+	listItems[i++] = constantMed;
+
+	Vec3 lookFrom(278, 278,-800);
+	Vec3 lookAt(278, 278, 0);
+	//Vec3 lookFrom(13, 2, 3);
+	//Vec3 lookAt(0, 0, 0);
+	float distanceToFocus = 10.0;//(lookFrom - lookAt).length();
+	float aperture = 0.0;
+	float vfov = 40.0;
+
+	*cam = new Camera(lookFrom, lookAt, Vec3(0, 1, 0), vfov,
+		aspectRatio, aperture, distanceToFocus, 0.0, 1.0);
+
+	return new HittableList(listItems, i);
+}
+
 HittableList* Final() {
 	int nb = 20;
 	Hittable **list = new Hittable*[30];
@@ -451,21 +530,24 @@ int main(int argc, char* argv[]) {
 
 	//Hittable *world = new HittableList(list, numHittables);
 	std::time_t startBuild = std::time(nullptr);
-	HittableList *world = Final();//CornellBox();//simpleLight();//TwoPerlinSpheres();//randomScene();
+	//HittableList *world = Final();//CornellBox();//simpleLight();//TwoPerlinSpheres();//randomScene();
+	Camera *cam;
+	HittableList *world = CornellBox2(&cam, aspectRatio);
+
 	BVHNode bvhWorld(world->list, world->listSize, tMin, tMax);
 
 	std::cout << "Constructed world and acceleration structure\n";
 	//Camera cam(90.0, aspectRatio);
-	Vec3 lookFrom(278, 278,-800);
-	Vec3 lookAt(278, 278, 0);
+	//Vec3 lookFrom(278, 278,-800);
+	//Vec3 lookAt(278, 278, 0);
 	//Vec3 lookFrom(13, 2, 3);
 	//Vec3 lookAt(0, 0, 0);
-	float distanceToFocus = 10.0;//(lookFrom - lookAt).length();
-	float aperture = 0.0;
-	float vfov = 40.0;
+	//float distanceToFocus = 10.0;//(lookFrom - lookAt).length();
+	//float aperture = 0.0;
+	//float vfov = 40.0;
 
-	Camera cam(lookFrom, lookAt, Vec3(0, 1, 0), vfov,
-		aspectRatio, aperture, distanceToFocus, 0.0, 1.0);
+	//Camera cam(lookFrom, lookAt, Vec3(0, 1, 0), vfov,
+	//	aspectRatio, aperture, distanceToFocus, 0.0, 1.0);
 	std::cout << "Scene construction time: " << difftime(std::time(nullptr), startBuild) << ".\n";
 
 	std::time_t startRender = std::time(nullptr);
@@ -479,7 +561,7 @@ int main(int argc, char* argv[]) {
 			for (int sample = 0; sample < numSamples; sample++) {
 				float u = float(column + getRand())/float(width);
 				float v = float(row + getRand())/float(height);
-				Ray r = cam.GetRay(u, v);
+				Ray r = cam->GetRay(u, v);
 				//Vec3 p = r.PointAtParam(2.0);
 				colorVec += GetColorForRay(r, &bvhWorld, 0);
 
@@ -521,6 +603,7 @@ int main(int argc, char* argv[]) {
 	std::cout << "Render time: " << difftime(std::time(nullptr), startRender) << ".\n";
 
 	delete world;
+	delete cam;
 
 	if (!initializeSDL()) {
 		return 2;

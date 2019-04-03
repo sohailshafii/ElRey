@@ -10,7 +10,8 @@ public:
 	}
 
 	virtual bool scatter(const Ray &rIn, const HitRecord& rec,
-		Vec3& attenuation, Ray& scattered) const {
+		Vec3& attenuation, Ray& scattered, float& pdf) const {
+		pdf = 1.0f;
 		return false;
 	}
 
