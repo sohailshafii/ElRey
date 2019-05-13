@@ -277,6 +277,18 @@ HittableList* CornellBox() {
 		Vec3(165, 165, 165), white), -18.0);
 	auto translatedBox = new Translate((Hittable*)rotatedBox,
 		Vec3(130, 0, 65));
+	listItems[i++] = translatedBox;
+
+	rotatedBox = new RotateY(new Box(Vec3(0, 0, 0),
+		Vec3(165, 330, 165), white), 15.0);
+	translatedBox = new Translate((Hittable*)rotatedBox,
+		Vec3(265, 0, 295));
+	listItems[i++] = translatedBox;
+
+	/*auto rotatedBox = new RotateY(new Box(Vec3(0, 0, 0),
+		Vec3(165, 165, 165), white), -18.0);
+	auto translatedBox = new Translate((Hittable*)rotatedBox,
+		Vec3(130, 0, 65));
 	auto constantMed = new ConstantMedium((Hittable*)translatedBox,
 		0.01f, std::make_shared<ConstantTexture>(
 			ConstantTexture(Vec3(1.0, 1.0, 1.0))));
@@ -289,7 +301,7 @@ HittableList* CornellBox() {
 	constantMed = new ConstantMedium((Hittable*)translatedBox,
 		0.01f, std::make_shared<ConstantTexture>(
 			ConstantTexture(Vec3(0.0, 0.0, 0.0))));
-	listItems[i++] = constantMed;
+	listItems[i++] = constantMed;*/
 
 	return new HittableList(listItems, i);
 }
@@ -531,23 +543,23 @@ int main(int argc, char* argv[]) {
 	//Hittable *world = new HittableList(list, numHittables);
 	std::time_t startBuild = std::time(nullptr);
 	//HittableList *world = Final();//CornellBox();//simpleLight();//TwoPerlinSpheres();//randomScene();
-	Camera *cam;
-	HittableList *world = CornellBox2(&cam, aspectRatio);
+	//Camera *cam;
+	HittableList *world = CornellBox();//CornellBox2(&cam, aspectRatio);
 
 	BVHNode bvhWorld(world->list, world->listSize, tMin, tMax);
 
 	std::cout << "Constructed world and acceleration structure\n";
 	//Camera cam(90.0, aspectRatio);
-	//Vec3 lookFrom(278, 278,-800);
-	//Vec3 lookAt(278, 278, 0);
+	Vec3 lookFrom(278, 278,-800);
+	Vec3 lookAt(278, 278, 0);
 	//Vec3 lookFrom(13, 2, 3);
 	//Vec3 lookAt(0, 0, 0);
-	//float distanceToFocus = 10.0;//(lookFrom - lookAt).length();
-	//float aperture = 0.0;
-	//float vfov = 40.0;
+	float distanceToFocus = 10.0;//(lookFrom - lookAt).length();
+	float aperture = 0.0;
+	float vfov = 40.0;
 
-	//Camera cam(lookFrom, lookAt, Vec3(0, 1, 0), vfov,
-	//	aspectRatio, aperture, distanceToFocus, 0.0, 1.0);
+	Camera cam(lookFrom, lookAt, Vec3(0, 1, 0), vfov,
+		aspectRatio, aperture, distanceToFocus, 0.0, 1.0);
 	std::cout << "Scene construction time: " << difftime(std::time(nullptr), startBuild) << ".\n";
 
 	std::time_t startRender = std::time(nullptr);
@@ -561,7 +573,7 @@ int main(int argc, char* argv[]) {
 			for (int sample = 0; sample < numSamples; sample++) {
 				float u = float(column + getRand())/float(width);
 				float v = float(row + getRand())/float(height);
-				Ray r = cam->GetRay(u, v);
+				Ray r = cam.GetRay(u, v);
 				//Vec3 p = r.PointAtParam(2.0);
 				colorVec += GetColorForRay(r, &bvhWorld, 0);
 
@@ -603,7 +615,7 @@ int main(int argc, char* argv[]) {
 	std::cout << "Render time: " << difftime(std::time(nullptr), startRender) << ".\n";
 
 	delete world;
-	delete cam;
+	//delete cam;
 
 	if (!initializeSDL()) {
 		return 2;

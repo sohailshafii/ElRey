@@ -23,7 +23,7 @@ public:
 		scattered = Ray(rec.p, unitVector(direction), rIn.time());
 		//Ray(rec.p, target - rec.p, rIn.time());
 		attenuation = albedo->Value(rec.u, rec.v, rec.p);
-		pdf = 0.5/M_PI;//dot(rec.normal, scattered.direction())/M_PI;
+		pdf = dot(rec.normal, scattered.direction())/M_PI;
 		return true;
 	}
 
