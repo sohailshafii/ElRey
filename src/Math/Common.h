@@ -2,8 +2,19 @@
 
 #include "Vec3.h"
 
-float getRand() {
+
+inline float getRand() {
 	return static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
+}
+
+inline Vec3 RandomCosineDirection() {
+	float r1 = getRand();
+	float r2 = getRand();
+	float z = sqrt(1.0 - r2);
+	float phi = 2.0*M_PI*r1;
+	float x = cos(phi)*2.0*sqrt(r2);
+	float y = sin(phi)*2.0*sqrt(r2);
+	return Vec3(x, y, z);
 }
 
 // create random points in unit cube (-1.0 to 1.0) and reject if not

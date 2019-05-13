@@ -3,6 +3,7 @@
 #include "Material.h"
 #include "Math/Common.h"
 #include "Materials/ConstantTexture.h"
+#include "Math/Onb.h"
 
 class Lambertian : public Material {
 public:
@@ -15,9 +16,12 @@ public:
 	virtual bool scatter(const Ray &rIn, const HitRecord& rec,
 		Vec3& attenuation, Ray& scattered, float &pdf) const {
 		//Vec3 target = rec.p + rec.normal + RandomPointInUnitSphere();
+		ONB uvw;
+		uvw.buildFromW(rec.normal);
 		Vec3 direction;
 		do {
-			direction = RandomPointInUnitSphere();
+			direction = uvw.local(RandomCosineDirection());
+			//RandomPointInUnitSphere();
 		} while(dot(direction, rec.normal) < 0);
 
 		scattered = Ray(rec.p, unitVector(direction), rIn.time());
