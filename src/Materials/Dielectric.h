@@ -7,15 +7,15 @@ public:
 	Dielectric(float ri) : refIdx(ri) { }
 
 	virtual bool scatter(const Ray& rIn, const HitRecord &rec,
-		Vec3 &attenuation, Ray& scattered, float& pdf) const {
+		ScatterRecord &srec) const {
 
-		pdf = 1.0;
+		srec.pdfPtr = nullptr;
 		
 		Vec3 outwardNormal;
 		Vec3 reflectedVec = reflect(rIn.direction(), rec.normal);
 		float niOverNt;
 		// try playing with this atten
-		attenuation = Vec3(1.0, 1.0, 1.0);
+		srec.attenuation = Vec3(1.0, 1.0, 1.0);
 		Vec3 refractedVector;
 		float reflectedProb, cosineTerm;
 
@@ -44,10 +44,10 @@ public:
 		}
 
 		if (getRand() < reflectedProb) {
-			scattered = Ray(rec.p, reflectedVec);
+			srec.specularRay = Ray(rec.p, reflectedVec);
 		}
 		else {
-			scattered = Ray(rec.p, refractedVector);
+			srec.specularRay = Ray(rec.p, refractedVector);
 		}
 
 		return true;

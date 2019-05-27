@@ -4,6 +4,7 @@
 #include "Math/Common.h"
 #include "Materials/ConstantTexture.h"
 #include "Math/Onb.h"
+#include "Math/CosinePdf.h"
 
 class Lambertian : public Material {
 public:
@@ -14,9 +15,9 @@ public:
 	}
 
 	virtual bool scatter(const Ray &rIn, const HitRecord& rec,
-		Vec3& attenuation, Ray& scattered, float &pdf) const {
+		ScatterRecord &sRec) const {
 		//Vec3 target = rec.p + rec.normal + RandomPointInUnitSphere();
-		ONB uvw;
+		/*ONB uvw;
 		uvw.buildFromW(rec.normal);
 		Vec3 direction;
 		do {
@@ -27,7 +28,10 @@ public:
 		scattered = Ray(rec.p, unitVector(direction), rIn.time());
 		//Ray(rec.p, target - rec.p, rIn.time());
 		attenuation = albedo->Value(rec.u, rec.v, rec.p);
-		pdf = dot(rec.normal, scattered.direction())/(float)M_PI;
+		pdf = dot(rec.normal, scattered.direction())/(float)M_PI;*/
+		sRec.isSpecular = false;
+		sRec.attenuation = albedo->Value(rec.u, rec.v, rec.p);
+		sRec.pdfPtr = std::make_shared<CosinePdf>(rec.normal);
 		return true;
 	}
 

@@ -5,6 +5,14 @@
 #include "Math/Ray.h"
 
 #include "Materials/Texture.h"
+#include "Math/Pdf.h"
+
+struct ScatterRecord {
+	Ray specularRay;
+	bool isSpecular;
+	Vec3 attenuation;
+	std::shared_ptr<Pdf> pdfPtr;
+};
 
 class Material {
 public:
@@ -12,7 +20,9 @@ public:
 	virtual ~Material() { }
 
 	virtual bool scatter(const Ray &rIn, const HitRecord& rec,
-		Vec3& attenuation, Ray& scattered, float &pdf) const = 0;
+		ScatterRecord &srec) const {
+		return false;
+	}
 	virtual float scatteringPdf(const Ray &rIn, const HitRecord &rec,
 		const Ray &scattered) const {
 		return false;

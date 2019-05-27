@@ -1,3 +1,5 @@
+#pragma once
+
 #include "Pdf.h"
 #include "Onb.h"
 #include "Common.h"

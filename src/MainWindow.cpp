@@ -68,7 +68,9 @@ float tMin = 0.0, tMax = 1.0;
 
 int scatterAtAll = 0;
 
-Vec3 GetColorForRay(const Ray &r, Hittable *world, int depth) {
+// TODO: figure out if we have to pass shared ptrs by reference
+Vec3 GetColorForRay(const Ray &r, Hittable *world,
+	std::shared_ptr<Hittable> lightShape, int depth) {
 	HitRecord rec;
 	numTotalCasts++;
 	// first param is 0.001 -- gets rid of shadow acne
@@ -80,14 +82,15 @@ Vec3 GetColorForRay(const Ray &r, Hittable *world, int depth) {
 		//return 0.5 * GetColorForRay(Ray(rec.p, target-rec.p), world);
 		//return 0.5*Vec3(rec.normal.x()+1, rec.normal.y()+1,
 		//	rec.normal.z()+1);
-		Ray scattered;
+		/*Ray scattered;
 		Vec3 albedo;
 		Vec3 emitted = rec.matPtr->emitted(r, rec, rec.u, rec.v,
 			rec.p);
-		float pdf = 1.0;
-
-		if (depth < 50 && rec.matPtr->scatter(r, rec, albedo,
-			scattered, pdf)) {
+		float pdf = 1.0;*/
+		ScatterRecord srec;
+		Vec3 emitted = rec.matPtr->emitted(r, rec,
+			rec.u, rec.v, rec.p);
+		if (depth < 50 && rec.matPtr->scatter(r, rec, srec)) {
 			/*Vec3 onLight(213.0f + getRand()*(343.0f - 213.0f),
 				554.0f, 227.0f + getRand()*(332.0f - 227.0f));
 			Vec3 toLight = onLight - rec.p;
@@ -104,23 +107,32 @@ Vec3 GetColorForRay(const Ray &r, Hittable *world, int depth) {
 			pdf = distanceSquared / (lightCosine * lightArea);
 			scattered = Ray(rec.p, toLight, r.time());
 			*/
-			
-			std::shared_ptr<Hittable> lightShape
-				= std::make_shared<XzRect>(213.0f, 343.0f, 227.0f,
-					332.0f, 554.0f, nullptr);
-			std::shared_ptr<HittablePdf> p0
-				=	std::make_shared<HittablePdf>(lightShape, rec.p);
-			std::shared_ptr<CosinePdf> p1
-				= std::make_shared<CosinePdf>(rec.normal);
-			MixturePdf mixPdf(p0, p1);
-			scattered = Ray(rec.p, mixPdf.generate(), r.time());
-			pdf = mixPdf.value(scattered.direction());
+			if (srec.isSpecular) {
+				return srec.attenuation *
+					GetColorForRay(srec.specularRay, world, lightShape, depth + 1);
+			}
+			else {
+				/*std::shared_ptr<Hittable> lightShape
+					= std::make_shared<XzRect>(213.0f, 343.0f, 227.0f,
+						332.0f, 554.0f, nullptr);
+				/*std::shared_ptr<HittablePdf> p0
+					=	std::make_shared<HittablePdf>(lightShape, rec.p);
+				std::shared_ptr<CosinePdf> p1
+					= std::make_shared<CosinePdf>(rec.normal);
+				MixturePdf mixPdf(p0, p1);
+				scattered = Ray(rec.p, mixPdf.generate(), r.time());
+				pdf = mixPdf.value(scattered.direction());*/
+				std::shared_ptr<HittablePdf> pLight =
+					std::make_shared<HittablePdf>(lightShape, rec.p);
+				MixturePdf mixPdf(pLight, srec.pdfPtr);
+				Ray scattered = Ray(rec.p, mixPdf.generate(), r.time());
+				float pdfVal = mixPdf.value(scattered.direction());
 
-			scatterAtAll++;
-			return emitted +
-				albedo*
-				rec.matPtr->scatteringPdf(r, rec, scattered)*
-				GetColorForRay(scattered, world, depth+1)/pdf;
+				scatterAtAll++;
+				return emitted +
+					srec.attenuation*rec.matPtr->scatteringPdf(r, rec, scattered)*
+					GetColorForRay(scattered, world, lightShape, depth + 1) / pdfVal;
+			}
 		}
 		else {
 			hitBlack++;
@@ -313,8 +325,10 @@ HittableList* CornellBox() {
 		Vec3(130, 0, 65));
 	listItems[i++] = translatedBox;
 
+	std::shared_ptr<Material> aluminum =
+		std::make_shared<Metal>(Vec3(0.8f, 0.85f, 0.88f), 0.0f);
 	rotatedBox = new RotateY(new Box(Vec3(0, 0, 0),
-		Vec3(165, 330, 165), white), 15.0);
+		Vec3(165, 330, 165), aluminum), 15.0f);
 	translatedBox = new Translate((Hittable*)rotatedBox,
 		Vec3(265, 0, 295));
 	listItems[i++] = translatedBox;
@@ -601,6 +615,9 @@ int main(int argc, char* argv[]) {
 	int numTotalSamples = width*height*numSamples;
 	int sampleCount = 0;
 	float lastPercentage = 0.0f;
+	std::shared_ptr<Hittable> lightShape = std::make_shared<
+		XzRect>(213.0f, 343.0f, 227.0f,
+		332.0f, 554.0f, nullptr);
 	// TODO: move this code to frame buffer eventually
 	for (int row = height-1; row >= 0; row--) {
 		for (int column = 0; column < width; column++) {
@@ -610,7 +627,7 @@ int main(int argc, char* argv[]) {
 				float v = float(row + getRand())/float(height);
 				Ray r = cam.GetRay(u, v);
 				//Vec3 p = r.PointAtParam(2.0);
-				colorVec += GetColorForRay(r, &bvhWorld, 0);
+				colorVec += GetColorForRay(r, &bvhWorld, lightShape, 0);
 
 				sampleCount++;
 				float newPercentage = 100.0f*(float)sampleCount/
