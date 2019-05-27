@@ -33,6 +33,9 @@
 #include "Materials/ImageTexture.h"
 #include "Materials/DiffuseLight.h"
 
+#include "Math/CosinePdf.h"
+#include "Math/HittablePdf.h"
+
 #include "Camera/Camera.h"
 
 #define STB_IMAGE_IMPLEMENTATION
@@ -78,12 +81,35 @@ Vec3 GetColorForRay(const Ray &r, Hittable *world, int depth) {
 		//	rec.normal.z()+1);
 		Ray scattered;
 		Vec3 albedo;
-		Vec3 emitted = rec.matPtr->emitted(rec.u, rec.v,
+		Vec3 emitted = rec.matPtr->emitted(r, rec, rec.u, rec.v,
 			rec.p);
 		float pdf = 1.0;
 
 		if (depth < 50 && rec.matPtr->scatter(r, rec, albedo,
 			scattered, pdf)) {
+			/*Vec3 onLight(213.0f + getRand()*(343.0f - 213.0f),
+				554.0f, 227.0f + getRand()*(332.0f - 227.0f));
+			Vec3 toLight = onLight - rec.p;
+			float distanceSquared = toLight.squaredLength();
+			toLight.makeUnitVector();
+			if (dot(toLight, rec.normal) < 0.0f) {
+				return emitted;
+			}
+			float lightArea = (343.0f - 213.0f)*(332.0f - 227.0f);
+			float lightCosine = fabs(toLight.y());
+			if (lightCosine < 0.000001f) {
+				return emitted;
+			}
+			pdf = distanceSquared / (lightCosine * lightArea);
+			scattered = Ray(rec.p, toLight, r.time());
+			*/
+			
+			std::shared_ptr<Hittable> lightShape
+				= std::make_shared<XzRect>(213, 343, 227, 332, 554, nullptr);
+			HittablePdf p(lightShape, rec.p);
+			scattered = Ray(rec.p, p.generate(), r.time());
+			pdf = p.value(scattered.direction());
+
 			scatterAtAll++;
 			return emitted +
 				albedo*
@@ -261,7 +287,9 @@ HittableList* CornellBox() {
 		); 
 	listItems[i++] = new YzRect(0, 555, 0, 555, 0, red);
 
-	listItems[i++] = new XzRect(213, 343, 227, 332, 554, light);
+	listItems[i++] = new FlippedNormalsHittable(
+			std::make_shared<XzRect>(XzRect(213, 343, 227, 332, 554, light))
+		);
 	listItems[i++] = new FlippedNormalsHittable(
 		std::make_shared<XzRect>(XzRect(0, 555, 0, 555, 555, white))
 		);

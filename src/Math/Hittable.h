@@ -24,6 +24,14 @@ public:
 	virtual bool BoundingBox(float t0, float t1,
 		AABB &box) const = 0;
 
+	virtual float pdfValue(const Vec3& o, const Vec3& V) const {
+		return 0.0f;
+	}
+
+	virtual Vec3 random(const Vec3& o) const {
+		return Vec3(1.0, 1.0, 1.0);
+	}
+
 	virtual ~Hittable() { 
 	}
 

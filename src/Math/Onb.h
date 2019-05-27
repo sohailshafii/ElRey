@@ -14,7 +14,7 @@ public:
 	Vec3 local(float a, float b, float c) const {
 		return a*u() + b*v() + c*w();
 	}
-	Vec3 local(const Vec3& a) {
+	Vec3 local(const Vec3& a) const {
 		return a.x()*u() + a.y()*v() + a.z()*w();
 	}
 

@@ -16,7 +16,26 @@ public:
 			Vec3(x1, k+0.0001f, z1));
 		return true;
 	}
-;
+
+	virtual float pdfValue(const Vec3& o, const Vec3& v) const {
+		HitRecord rec;
+		if (this->Hit(Ray(o, v), 0.001f, FLT_MAX, rec)) {
+			float area = (x1-x0)*(z1-z0);
+			float distanceSquared = rec.t * rec.t * v.squaredLength();
+			float cosine = fabs(dot(v, rec.normal)/v.length());
+			return distanceSquared / (cosine*area);
+		}
+		else {
+			return 0;
+		}
+	}
+
+	virtual Vec3 random(const Vec3& o) const {
+		Vec3 randomPoint = Vec3(x0 + getRand()*(x1-x0),
+			k, z0 + getRand()*(z1-z0));
+		return randomPoint - o;
+	}
+
 	float x0, x1, z0, z1, k;
 };
 

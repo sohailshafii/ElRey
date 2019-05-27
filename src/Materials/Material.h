@@ -17,7 +17,9 @@ public:
 		const Ray &scattered) const {
 		return false;
 	}
-	virtual Vec3 emitted(float u, float v, const Vec3 &p) const {
+	virtual Vec3 emitted(const Ray& rIn,
+		const HitRecord& rec,
+		float u, float v, const Vec3 &p) const {
 		return Vec3(0.0, 0.0, 0.0);
 	}
 
