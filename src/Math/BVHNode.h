@@ -8,15 +8,19 @@
 
 class BVHNode : public Hittable {
 public:
-	BVHNode() {}
+	BVHNode() {
+		cleanUpChildren = false;
+		left = nullptr;
+		right = nullptr;
+	}
 	BVHNode(Hittable **l, int n, float time0, float time1,
-		bool cleanUp = false);
+		bool cleanUpLeaves);
 
 	~BVHNode() {
-		if (cleanUp) {
+		if (cleanUpChildren) {
 			delete left;
 		}
-		if (cleanUp) { 
+		if (cleanUpChildren) {
 			delete right;
 		}
 	}
@@ -27,7 +31,7 @@ public:
 	Hittable *left;
 	Hittable *right;
 	AABB box;
-	bool cleanUp;
+	bool cleanUpChildren;
 
 private:
 	static int boxXCompare(const void *a, const void *b);
@@ -36,9 +40,7 @@ private:
 };
 
 BVHNode::BVHNode(Hittable **l, int n, float time0, float time1,
-	bool cleanUp) {
-	cleanUp = cleanUp;
-
+	bool cleanUpLeaves) {
 	int axis = int(3* getRand());
 	if (axis == 0) {
 		qsort(l, n, sizeof(Hittable *), boxXCompare);
@@ -50,6 +52,8 @@ BVHNode::BVHNode(Hittable **l, int n, float time0, float time1,
 		qsort(l, n, sizeof(Hittable *), boxZCompare);
 	}
 
+	// don't clean up children -- not owned
+	this->cleanUpChildren = cleanUpLeaves;
 	if (n == 1) {
 		left = right = l[0];
 	}
@@ -58,8 +62,10 @@ BVHNode::BVHNode(Hittable **l, int n, float time0, float time1,
 		right = l[1];
 	}
 	else {
-		left = new BVHNode(l, n/2, time0, time1, cleanUp);
-		right = new BVHNode(l + n/2, n - n/2, time0, time1, cleanUp);
+		left = new BVHNode(l, n/2, time0, time1, cleanUpLeaves);
+		right = new BVHNode(l + n/2, n - n/2, time0, time1, cleanUpLeaves);
+		this->cleanUpChildren = true; // we don't clean up children but always
+		// clean up allocated nodes
 	}
 	AABB boxLeft, boxRight;
 	if (!left->BoundingBox(time0, time1, boxLeft) ||

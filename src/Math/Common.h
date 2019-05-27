@@ -10,10 +10,10 @@ inline float getRand() {
 inline Vec3 RandomCosineDirection() {
 	float r1 = getRand();
 	float r2 = getRand();
-	float z = sqrt(1.0 - r2);
-	float phi = 2.0*M_PI*r1;
-	float x = cos(phi)*2.0*sqrt(r2);
-	float y = sin(phi)*2.0*sqrt(r2);
+	float z = sqrt(1.0f - r2);
+	float phi = 2.0f*(float)M_PI*r1;
+	float x = cos(phi)*2.0f*sqrt(r2);
+	float y = sin(phi)*2.0f*sqrt(r2);
 	return Vec3(x, y, z);
 }
 

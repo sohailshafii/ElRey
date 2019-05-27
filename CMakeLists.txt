@@ -28,7 +28,3 @@ target_include_directories(ElRey
 
 target_link_libraries(ElRey ${SDL2_LIBRARY})
 
-set(SOURCE_FILES_MC ${PROJECT_SOURCE_DIR}/srcMC/Main.cpp)
-
-add_executable(McTest ${SOURCE_FILES_MC})
-

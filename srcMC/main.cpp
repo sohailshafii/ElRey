@@ -1,4 +1,6 @@
+#define _USE_MATH_DEFINES
 #include <cmath>
+#include <ctime>
 #include <cstdlib>
 #include <iostream>
 
@@ -9,7 +11,7 @@ float getRand() {
 }
 
 inline float pdf(const Vec3& p) {
-	return 1.0/(4.0 * M_PI);
+	return 1.0f/(4.0f * (float)M_PI);
 }
 
 Vec3 RandomPointOnUnitSphere() {
@@ -25,7 +27,7 @@ int main() {
 	srand (time(NULL));
 
 	int N = 1000000;
-	float sum;
+	float sum = 0.0f;
 	for (int i = 0; i < N; i++) {
 		Vec3 d = RandomPointOnUnitSphere();
 		float cosineSquared = d.z()*d.z();

@@ -493,6 +493,7 @@ int main(int argc, char* argv[]) {
 		<< ElRey_VERSION_MINOR << "\n";
 	
 	int width = 400, height = 300, numSamples = 10;
+	//int width = 2, height = 2, numSamples = 1;
 
 	if (argc > 1) {
 		for (int argIndex = 1; argIndex < argc; argIndex++) {
@@ -546,7 +547,7 @@ int main(int argc, char* argv[]) {
 	//Camera *cam;
 	HittableList *world = CornellBox();//CornellBox2(&cam, aspectRatio);
 
-	BVHNode bvhWorld(world->list, world->listSize, tMin, tMax);
+	BVHNode bvhWorld(world->list, world->listSize, tMin, tMax, false);
 
 	std::cout << "Constructed world and acceleration structure\n";
 	//Camera cam(90.0, aspectRatio);

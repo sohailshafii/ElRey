@@ -27,7 +27,7 @@ public:
 		scattered = Ray(rec.p, unitVector(direction), rIn.time());
 		//Ray(rec.p, target - rec.p, rIn.time());
 		attenuation = albedo->Value(rec.u, rec.v, rec.p);
-		pdf = dot(rec.normal, scattered.direction())/M_PI;
+		pdf = dot(rec.normal, scattered.direction())/(float)M_PI;
 		return true;
 	}
 
@@ -35,6 +35,6 @@ public:
 		const Ray &scattered) const {
 		float cosine = dot(rec.normal, unitVector(scattered.direction()));
 		if (cosine < 0) cosine = 0;
-		return cosine / M_PI;
+		return cosine / (float)M_PI;
 	}
 };
