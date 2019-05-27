@@ -35,6 +35,7 @@
 
 #include "Math/CosinePdf.h"
 #include "Math/HittablePdf.h"
+#include "Math/MixturePdf.h"
 
 #include "Camera/Camera.h"
 
@@ -105,10 +106,15 @@ Vec3 GetColorForRay(const Ray &r, Hittable *world, int depth) {
 			*/
 			
 			std::shared_ptr<Hittable> lightShape
-				= std::make_shared<XzRect>(213, 343, 227, 332, 554, nullptr);
-			HittablePdf p(lightShape, rec.p);
-			scattered = Ray(rec.p, p.generate(), r.time());
-			pdf = p.value(scattered.direction());
+				= std::make_shared<XzRect>(213.0f, 343.0f, 227.0f,
+					332.0f, 554.0f, nullptr);
+			std::shared_ptr<HittablePdf> p0
+				=	std::make_shared<HittablePdf>(lightShape, rec.p);
+			std::shared_ptr<CosinePdf> p1
+				= std::make_shared<CosinePdf>(rec.normal);
+			MixturePdf mixPdf(p0, p1);
+			scattered = Ray(rec.p, mixPdf.generate(), r.time());
+			pdf = mixPdf.value(scattered.direction());
 
 			scatterAtAll++;
 			return emitted +
