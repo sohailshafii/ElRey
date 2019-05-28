@@ -4,6 +4,7 @@
 #include "Hittable.h"
 #include "Materials/Material.h"
 #include "Common.h"
+#include "Onb.h"
 
 class Sphere : public Hittable {
 public:
@@ -18,6 +19,9 @@ public:
 	virtual bool BoundingBox(float t0, float t1, AABB &box) const;
 	virtual bool Hit(const Ray& r, float tMin, float tMax,
 		HitRecord& rec) const;
+
+	virtual float pdfValue(const Vec3& o, const Vec3& V) const;
+	virtual Vec3 random(const Vec3& o) const;
 
 	Vec3 center;
 	float radius;
@@ -61,4 +65,25 @@ bool Sphere::Hit(const Ray& r, float tMin, float tMax,
 		}
 	}
 	return false;
+}
+
+float Sphere::pdfValue(const Vec3& o, const Vec3& V) const {
+	HitRecord rec;
+	if (this->Hit(Ray(o, V), 0.001f, FLT_MAX, rec)) {
+		float cosThetaMax = sqrt(1.0f - radius*radius /
+			(center - o).squaredLength());
+		float solidAngle = 2.0f*(float)M_PI*(1.0f - cosThetaMax);
+		return 1.0f / solidAngle;
+	}
+	else {
+		return 0.0f;
+	}
+}
+
+Vec3 Sphere::random(const Vec3& o) const {
+	Vec3 direction = center - o;
+	float distanceSquared = direction.squaredLength();
+	ONB uvw;
+	uvw.buildFromW(direction);
+	return uvw.local(RandomToSphere(radius, distanceSquared));
 }

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Hittable.h"
+#include "Common.h"
 
 class HittableList : public Hittable {
 public:
@@ -11,6 +12,9 @@ public:
 
 	virtual bool BoundingBox(float t0, float t1,
 		AABB &box) const;
+
+	virtual float pdfValue(const Vec3& o, const Vec3& V) const;
+	virtual Vec3 random(const Vec3& o) const;
 
 	virtual ~HittableList() { 
 		if (list != nullptr) {
@@ -62,4 +66,19 @@ bool HittableList::BoundingBox(float t0, float t1, AABB &box) const {
 		}
 	}
 	return true;
+}
+
+float HittableList::pdfValue(const Vec3& o, const Vec3& V) const {
+	float weight = 1.0f / listSize;
+	float sum = 0.0f;
+	for (int i = 0; i < listSize; i++) {
+		sum += weight*list[i]->pdfValue(o, V);
+	}
+	return sum;
+}
+
+Vec3 HittableList::random(const Vec3& o) const {
+	auto randVal = getRand();
+	int index = int(randVal * (listSize-1));
+	return list[index]->random(o);
 }

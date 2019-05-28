@@ -319,19 +319,29 @@ HittableList* CornellBox() {
 		)
 	);
 
+	std::shared_ptr<Material> glass =
+		std::make_shared<Dielectric>(1.5f);
+	listItems[i++] = new Sphere(Vec3(190.0f, 90.0f, 190.0f), 90.0f, glass);
+	
 	auto rotatedBox = new RotateY(new Box(Vec3(0, 0, 0),
+		Vec3(165, 330, 165), white), 15.0f);
+	auto translatedBox = new Translate((Hittable*)rotatedBox,
+		Vec3(265, 0, 295));
+	listItems[i++] = translatedBox;
+
+	/*auto rotatedBox = new RotateY(new Box(Vec3(0, 0, 0),
 		Vec3(165, 165, 165), white), -18.0);
 	auto translatedBox = new Translate((Hittable*)rotatedBox,
 		Vec3(130, 0, 65));
 	listItems[i++] = translatedBox;
 
-	std::shared_ptr<Material> aluminum =
+	/*std::shared_ptr<Material> aluminum =
 		std::make_shared<Metal>(Vec3(0.8f, 0.85f, 0.88f), 0.0f);
 	rotatedBox = new RotateY(new Box(Vec3(0, 0, 0),
 		Vec3(165, 330, 165), aluminum), 15.0f);
 	translatedBox = new Translate((Hittable*)rotatedBox,
 		Vec3(265, 0, 295));
-	listItems[i++] = translatedBox;
+	listItems[i++] = translatedBox;*/
 
 	/*auto rotatedBox = new RotateY(new Box(Vec3(0, 0, 0),
 		Vec3(165, 165, 165), white), -18.0);
@@ -615,9 +625,15 @@ int main(int argc, char* argv[]) {
 	int numTotalSamples = width*height*numSamples;
 	int sampleCount = 0;
 	float lastPercentage = 0.0f;
-	std::shared_ptr<Hittable> lightShape = std::make_shared<
-		XzRect>(213.0f, 343.0f, 227.0f,
+	Hittable* lightShape = new XzRect(213.0f, 343.0f, 227.0f,
 		332.0f, 554.0f, nullptr);
+	Hittable* glassSphere = new Sphere(Vec3(190.0f, 90.0f,
+		190.0f), 90.0f, nullptr);
+	Hittable **lightList = new Hittable*[2];
+	lightList[0] = lightShape;
+	lightList[1] = glassSphere;
+	std::shared_ptr<HittableList> hittableList =
+		std::make_shared<HittableList>(lightList, 2);
 	// TODO: move this code to frame buffer eventually
 	for (int row = height-1; row >= 0; row--) {
 		for (int column = 0; column < width; column++) {
@@ -627,7 +643,7 @@ int main(int argc, char* argv[]) {
 				float v = float(row + getRand())/float(height);
 				Ray r = cam.GetRay(u, v);
 				//Vec3 p = r.PointAtParam(2.0);
-				colorVec += GetColorForRay(r, &bvhWorld, lightShape, 0);
+				colorVec += deNan(GetColorForRay(r, &bvhWorld, hittableList, 0));
 
 				sampleCount++;
 				float newPercentage = 100.0f*(float)sampleCount/

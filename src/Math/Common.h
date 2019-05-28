@@ -2,6 +2,13 @@
 
 #include "Vec3.h"
 
+Vec3 deNan(const Vec3& c) {
+	Vec3 temp = c;
+	if (!(temp[0] == temp[0])) temp[0] = 0.0f;
+	if (!(temp[1] == temp[1])) temp[1] = 0.0f;
+	if (!(temp[2] == temp[2])) temp[2] = 0.0f;
+	return temp;
+}
 
 inline float getRand() {
 	return static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
@@ -34,6 +41,16 @@ Vec3 RandomPointOnUnitSphere() {
 	} while(p.squaredLength() >= 1.0);
 	p.makeUnitVector();
 	return p;
+}
+
+Vec3 RandomToSphere(float radius, float distanceSquared) {
+	float r1 = getRand();
+	float r2 = getRand();
+	float z = 1.0f + r2*(sqrt(1.0f - radius*radius / distanceSquared) - 1.0f);
+	float phi = 2.0f*(float)M_PI*r1;
+	float x = cos(phi)*sqrt(1.0f - z*z);
+	float y = sin(phi)*sqrt(1.0f - z*z);
+	return Vec3(x, y, z);
 }
 
 Vec3 RandomInUnitDisk() {
