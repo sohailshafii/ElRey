@@ -551,6 +551,7 @@ int main(int argc, char* argv[]) {
 		<< ElRey_VERSION_MINOR << "\n";
 	
 	int width = 400, height = 300, numSamples = 10;
+	bool offlineRender = false;
 	//int width = 2, height = 2, numSamples = 1;
 
 	if (argc > 1) {
@@ -564,6 +565,9 @@ int main(int argc, char* argv[]) {
 			if (!strcmp(argv[argIndex], "-s") && argIndex+1 < argc) {
 				numSamples = atoi(argv[++argIndex]);
 			}
+			if (!strcmp(argv[argIndex], "-offline")) {
+				offlineRender = true;
+			}
 		}
 	}
 
@@ -571,43 +575,16 @@ int main(int argc, char* argv[]) {
 		<< ", num samples: " << numSamples << ".\n";
 
 
-	std::ofstream ppmFile;
-	ppmFile.open("outputImage.ppm");
-	ppmFile << "P3\n" << width << " " << height << "\n255\n";
+	//std::ofstream ppmFile;
+	//ppmFile.open("outputImage.ppm");
+	//ppmFile << "P3\n" << width << " " << height << "\n255\n";
 	float aspectRatio = (float)width/height;
 	/*Vec3 lowerLeftCorner(-1.0*aspectRatio, -1.0, -1.0);
 	Vec3 horizontal(2.0*aspectRatio, 0.0, 0.0);
 	Vec3 vertical(0.0, 2.0, 0.0);
 	Vec3 origin(0.0, 0.0, 0.0);*/
 
-	//int numHittables = 2;
-	//Hittable *list[numHittables];
-	/*list[0] = new Sphere(Vec3(0.0, 0.0,-1.0), 0.5,
-		new Lambertian(Vec3(0.1, 0.2, 0.5)));
-	list[1] = new Sphere(Vec3(0.0,-100.5,-1.0), 100,
-		new Lambertian(Vec3(0.8, 0.8, 0.0)));
-
-	list[2] = new Sphere(Vec3(1.0,0.0,-1.0), 0.5,
-		new Metal(Vec3(0.8, 0.6, 0.2)));
-	list[3] = new Sphere(Vec3(-1.0,0.0,-1.0), 0.5,
-		new Dielectric(1.5));
-	list[4] = new Sphere(Vec3(-1.0,0.0,-1.0), -0.45,
-		new Dielectric(1.5));*/
-	/*float R = cos(M_PI/4); 
-	list[0] = new Sphere(Vec3(-R,0,-1), R,
-		new Lambertian(Vec3(0, 0, 1)));
-	list[1] = new Sphere(Vec3(R,0,-1), R,
-		new Lambertian(Vec3(1, 0, 0)));*/
-
-	//Hittable *world = new HittableList(list, numHittables);
-	std::time_t startBuild = std::time(nullptr);
-	//HittableList *world = Final();//CornellBox();//simpleLight();//TwoPerlinSpheres();//randomScene();
-	//Camera *cam;
-	HittableList *world = CornellBox();//CornellBox2(&cam, aspectRatio);
-
-	BVHNode bvhWorld(world->list, world->listSize, tMin, tMax, false);
-
-	std::cout << "Constructed world and acceleration structure\n";
+	//std::cout << "Constructed world and acceleration structure\n";
 	//Camera cam(90.0, aspectRatio);
 	Vec3 lookFrom(278, 278,-800);
 	Vec3 lookAt(278, 278, 0);
@@ -619,9 +596,9 @@ int main(int argc, char* argv[]) {
 
 	Camera cam(lookFrom, lookAt, Vec3(0, 1, 0), vfov,
 		aspectRatio, aperture, distanceToFocus, 0.0, 1.0);
-	std::cout << "Scene construction time: " << difftime(std::time(nullptr), startBuild) << ".\n";
+	//std::cout << "Scene construction time: " << difftime(std::time(nullptr), startBuild) << ".\n";
 
-	std::time_t startRender = std::time(nullptr);
+	/*std::time_t startRender = std::time(nullptr);
 	int numTotalSamples = width*height*numSamples;
 	int sampleCount = 0;
 	float lastPercentage = 0.0f;
@@ -682,7 +659,7 @@ int main(int argc, char* argv[]) {
 	ppmFile.close();
 	std::cout << "Render time: " << difftime(std::time(nullptr), startRender) << ".\n";
 
-	delete world;
+	delete world;*/
 	//delete cam;
 
 	if (!initializeSDL()) {
