@@ -45,7 +45,7 @@
 bool initializeSDL();
 SDL_Window* createWindow(int screenWidth, int screenHeight); 
 void renderLoop(SDL_Renderer *sdlRenderer, SDL_Texture* frameBufferTex,
-	int width, int height, int bytesPerRow);
+	int width, int height);
 
 int hitBlack = 0;
 int numTotalCasts = 0;
@@ -169,10 +169,13 @@ int main(int argc, char* argv[]) {
 	}
 
 	auto renderFormat = SDL_GetWindowPixelFormat(window);
+	std::cout << "Render format: " <<
+		SDL_GetPixelFormatName(renderFormat) << ", bits per pixel: "
+		<< SDL_BITSPERPIXEL(renderFormat) << ".\n";
+
 	SDL_Texture* frameBufferTex = SDL_CreateTexture(sdlRenderer,
-		SDL_PIXELFORMAT_BGRA8888, SDL_TEXTUREACCESS_STREAMING, width, height);
-	std::cout << "Render format: " << renderFormat << ".\n";
-	renderLoop(sdlRenderer, frameBufferTex, width, height, 4);
+		renderFormat, SDL_TEXTUREACCESS_STREAMING, width, height);
+	renderLoop(sdlRenderer, frameBufferTex, width, height);
 
 	SDL_DestroyTexture(frameBufferTex);
 	SDL_DestroyRenderer(sdlRenderer);
@@ -201,10 +204,21 @@ SDL_Window* createWindow(int screenWidth, int screenHeight) {
 }
 
 void renderLoop(SDL_Renderer *sdlRenderer, SDL_Texture* frameBufferTex,
-	int width, int height, int bytesPerRow) {
+	int width, int height) {
 	SDL_Event e;
 
 	int numPixels = width*height;
+	unsigned char* pixels;
+	int pitch;
+	SDL_LockTexture(frameBufferTex, NULL, (void**)&pixels, &pitch);
+
+	int bytesPerPixel = pitch / width;
+	int numBytes = pitch*height;
+	std::cout << "Bytes per pixel: " << bytesPerPixel
+		<< ", num bytes: " << numBytes << std::endl;
+
+	std::time_t lastReportTime = std::time(nullptr);
+	std::cout.precision(5);
 	while(true) {
 		bool quitPressed = false;
 		while(SDL_PollEvent(&e) != 0) {
@@ -212,18 +226,31 @@ void renderLoop(SDL_Renderer *sdlRenderer, SDL_Texture* frameBufferTex,
 		}
 		if (quitPressed) break;
 
-		unsigned char* pixels;
-		int pitch;
+		std::time_t startFrameTime = std::time(nullptr);
 		SDL_LockTexture(frameBufferTex, NULL, (void**) &pixels, &pitch);
-		for (int i = 0; i < numPixels; i++) {
-			int pixelIndex = i*4;
-			pixels[pixelIndex] = 0;
-			pixels[pixelIndex+1] = 255;
-			pixels[pixelIndex+2] = 0;
-			pixels[pixelIndex+3] = 255;
+		
+		for (int byteIndex = 0; byteIndex < numBytes-bytesPerPixel;
+			byteIndex += bytesPerPixel) {
+			pixels[byteIndex] = 0;
+			pixels[byteIndex +1] = 255;
+			pixels[byteIndex +2] = 0;
+			if (bytesPerPixel == 4) {
+				pixels[byteIndex + 3] = 255;
+			}
 		}
 		SDL_UnlockTexture(frameBufferTex);
+		SDL_RenderClear(sdlRenderer);
 		SDL_RenderCopy(sdlRenderer, frameBufferTex, NULL, NULL);
+		SDL_RenderPresent(sdlRenderer);
+
+		double diffRepTime =
+			std::difftime(std::time(nullptr), lastReportTime);
+		if (diffRepTime > 1.0) {
+			double diffTime = std::difftime(std::time(nullptr), startFrameTime);
+			std::cout << "FPS: "
+				<<  1.0/diffRepTime << ".\n";
+			lastReportTime = std::time(nullptr);
+		}
 	}
 }
 
