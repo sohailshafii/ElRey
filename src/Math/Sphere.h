@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cmath>
+#include <cfloat>
 #include "Hittable.h"
 #include "Materials/Material.h"
 #include "Common.h"

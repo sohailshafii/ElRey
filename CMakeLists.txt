@@ -18,6 +18,8 @@ find_package(SDL2 REQUIRED)
 
 set(SOURCE_FILES ${PROJECT_SOURCE_DIR}/src/MainWindow.cpp)
 
+AUX_SOURCE_DIRECTORY(${PROJECT_SOURCE_DIR}/src/Performance SOURCE_FILES) 
+
 add_executable(ElRey ${SOURCE_FILES})
 
 target_include_directories(ElRey

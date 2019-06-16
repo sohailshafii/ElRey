@@ -1,7 +1,6 @@
 #include <SDL.h>
 #include <iostream>
 #include <fstream>
-#include <ctime>
 #include <limits>
 #include <cstdint>
 #include <memory>
@@ -38,6 +37,7 @@
 #include "Math/MixturePdf.h"
 
 #include "Camera/Camera.h"
+#include "Performance/FPSCounter.h"
 
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
@@ -53,6 +53,7 @@ float tMin = 0.0, tMax = 1.0;
 
 int scatterAtAll = 0;
 
+Uint32 lastFPSTickTime = 0; 
 
 int main(int argc, char* argv[]) {
 	srand(static_cast <unsigned> (time(0)));
@@ -217,7 +218,9 @@ void renderLoop(SDL_Renderer *sdlRenderer, SDL_Texture* frameBufferTex,
 	std::cout << "Bytes per pixel: " << bytesPerPixel
 		<< ", num bytes: " << numBytes << std::endl;
 
-	std::time_t lastReportTime = std::time(nullptr);
+	uint32_t lastFpsReportTime = SDL_GetTicks();
+	FPSCounter fpsCounter;
+
 	std::cout.precision(5);
 	while(true) {
 		bool quitPressed = false;
@@ -226,7 +229,8 @@ void renderLoop(SDL_Renderer *sdlRenderer, SDL_Texture* frameBufferTex,
 		}
 		if (quitPressed) break;
 
-		std::time_t startFrameTime = std::time(nullptr);
+		fpsCounter.PreFrame();
+
 		SDL_LockTexture(frameBufferTex, NULL, (void**) &pixels, &pitch);
 		
 		for (int byteIndex = 0; byteIndex < numBytes-bytesPerPixel;
@@ -243,13 +247,13 @@ void renderLoop(SDL_Renderer *sdlRenderer, SDL_Texture* frameBufferTex,
 		SDL_RenderCopy(sdlRenderer, frameBufferTex, NULL, NULL);
 		SDL_RenderPresent(sdlRenderer);
 
-		double diffRepTime =
-			std::difftime(std::time(nullptr), lastReportTime);
-		if (diffRepTime > 1.0) {
-			double diffTime = std::difftime(std::time(nullptr), startFrameTime);
-			std::cout << "FPS: "
-				<<  1.0/diffRepTime << ".\n";
-			lastReportTime = std::time(nullptr);
+		fpsCounter.PostFrame();
+		uint32_t currTicks = SDL_GetTicks();
+		if (currTicks > (lastFpsReportTime + 1000)) {
+
+			std::cout << "Current FPS: "
+				<< fpsCounter.GetFPS() << "\n";
+			lastFpsReportTime = currTicks;
 		}
 	}
 }
