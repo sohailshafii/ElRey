@@ -1,42 +1,6 @@
 #include <SDL.h>
 #include <iostream>
-#include <fstream>
-#include <limits>
-#include <cstdint>
-#include <memory>
-#include <stdexcept>
 #include "ElReyConfig.h"
-#include "Math/Vec3.h"
-#include "Math/Ray.h"
-#include "Math/HittableList.h"
-#include "Math/Sphere.h"
-#include "Math/MovingSphere.h"
-#include "Math/Common.h"
-#include "Math/BVHNode.h"
-#include "Math/XyRect.h"
-#include "Math/ConstantMedium.h"
-
-#include "Math/XzRect.h"
-#include "Math/YzRect.h"
-#include "Math/FlippedNormalsHittable.h"
-#include "Math/Box.h"
-#include "Math/Translate.h"
-#include "Math/RotateY.h"
-
-#include "Materials/Lambertian.h"
-#include "Materials/Metal.h"
-#include "Materials/Dielectric.h"
-#include "Materials/ConstantTexture.h"
-#include "Materials/CheckerTexture.h"
-#include "Materials/NoiseTexture.h"
-#include "Materials/ImageTexture.h"
-#include "Materials/DiffuseLight.h"
-
-#include "Math/CosinePdf.h"
-#include "Math/HittablePdf.h"
-#include "Math/MixturePdf.h"
-
-#include "Camera/Camera.h"
 #include "Performance/FPSCounter.h"
 
 #define STB_IMAGE_IMPLEMENTATION
@@ -46,12 +10,6 @@ bool initializeSDL();
 SDL_Window* createWindow(int screenWidth, int screenHeight); 
 void renderLoop(SDL_Renderer *sdlRenderer, SDL_Texture* frameBufferTex,
 	int width, int height);
-
-int hitBlack = 0;
-int numTotalCasts = 0;
-float tMin = 0.0, tMax = 1.0;
-
-int scatterAtAll = 0;
 
 Uint32 lastFPSTickTime = 0; 
 
@@ -84,76 +42,7 @@ int main(int argc, char* argv[]) {
 	std::cout << "Framebuffer dimensions: " <<  width << "x" << height
 		<< ", num samples: " << numSamples << ".\n";
 
-
-	//std::ofstream ppmFile;
-	//ppmFile.open("outputImage.ppm");
-	//ppmFile << "P3\n" << width << " " << height << "\n255\n";
 	float aspectRatio = (float)width/height;
-
-	Vec3 lookFrom(278, 278,-800);
-	Vec3 lookAt(278, 278, 0);
-	float distanceToFocus = 10.0;//(lookFrom - lookAt).length();
-	float aperture = 0.0;
-	float vfov = 40.0;
-
-	Camera cam(lookFrom, lookAt, Vec3(0, 1, 0), vfov,
-		aspectRatio, aperture, distanceToFocus, 0.0, 1.0);
-
-	/*std::time_t startRender = std::time(nullptr);
-	int numTotalSamples = width*height*numSamples;
-	int sampleCount = 0;
-	float lastPercentage = 0.0f;
-
-	// TODO: move this code to frame buffer eventually
-	for (int row = height-1; row >= 0; row--) {
-		for (int column = 0; column < width; column++) {
-			Vec3 colorVec(0.0, 0.0, 0.0);
-			for (int sample = 0; sample < numSamples; sample++) {
-				float u = float(column + getRand())/float(width);
-				float v = float(row + getRand())/float(height);
-				Ray r = cam.GetRay(u, v);
-				//Vec3 p = r.PointAtParam(2.0);
-				colorVec += deNan(GetColorForRay(r, &bvhWorld, hittableList, 0));
-
-				sampleCount++;
-				float newPercentage = 100.0f*(float)sampleCount/
-					(float)numTotalSamples;
-				if ((newPercentage - lastPercentage) > 1.0f) {
-					std::cout << "Percentage complete: " <<
-						newPercentage << ", time so far: " <<
-						difftime(std::time(nullptr), startRender) 
-						<< ".\n";
-
-					lastPercentage = newPercentage;
-				}
-			}
-			colorVec /= float(numSamples);
-			// gamma-correct (kinda) -- gamma-2
-			// this can cause green-ish pixels to become magenta
-			// like if ground in final scene intersects with light,
-			// it gets shifted from green to magenta
-			colorVec = Vec3(sqrt(colorVec[0]), sqrt(colorVec[1]),
-				sqrt(colorVec[2]));
-
-			//float u = float(column)/float(width),
-			//	v = float(row)/float(height);
-			//Vec3 colorVec(float(column)/float(width), float(row)/float(height),
-			//	0.2);
-			//Ray r(origin, lowerLeftCorner + u*horizontal + v*vertical);
-			//Vec3 colorVec = GetColorForRay(r, world);
-			int ir = int(255.99*colorVec[0]);
-			int ig = int(255.99*colorVec[1]);
-			int ib = int(255.99*colorVec[2]);
-			ppmFile << ir << " " << ig << " " << ib << "\n";
-		}
-	}
-	std::cout << "out of " << numTotalCasts <<  " casts, hit: " << 
-		hitBlack << " black pixels. Scattered: " << scatterAtAll << "\n";
-	ppmFile.close();
-	std::cout << "Render time: " << difftime(std::time(nullptr), startRender) << ".\n";
-
-	delete world;*/
-	//delete cam;
 
 	if (!initializeSDL()) {
 		return 2;
