@@ -2,7 +2,7 @@
 #include <iostream>
 #include "ElReyConfig.h"
 #include "Performance/FPSCounter.h"
-#include "Math/Primitive.h" // to test compilation
+#include "Math/Plane.h"
 
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
@@ -108,6 +108,8 @@ void renderLoop(SDL_Renderer *sdlRenderer, SDL_Texture* frameBufferTex,
 	std::cout << "Bytes per pixel: " << bytesPerPixel
 		<< ", num bytes: " << numBytes << std::endl;
 
+	Plane simplePlane(Point4(0.0, 0.0, 0.0, 1.0),
+		Vector3(0.0, 1.0, 0.0), Color(1.0, 0.5, 0.0, 1.0));
 	uint32_t lastFpsReportTime = SDL_GetTicks();
 	FPSCounter fpsCounter;
 

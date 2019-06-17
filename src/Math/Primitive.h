@@ -8,6 +8,7 @@ public:
 	Primitive() { }
 	~Primitive() { }
 
-	virtual bool GetHit(const Ray &ray, Color &newColor) = 0;
+	virtual bool Intersect(const Ray &ray, Color &newColor,
+		float& tMin, float tMax) = 0;
 
 };

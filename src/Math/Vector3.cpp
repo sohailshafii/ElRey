@@ -1,4 +1,5 @@
 #include "Vector3.h"
+#include <cstring>
 
 Vector3::Vector3(float x, float y, float z) {
 	comp[0] = x;
@@ -17,10 +18,10 @@ Vector3& Vector3::operator=(const Vector3& other) {
 	return *this;
 }
 
-int &Vector3::operator[] (int index) {
+float &Vector3::operator[] (int index) {
 	return comp[index];	
 }
 
-int Vector3::operator[] (int index) const {
+float Vector3::operator[] (int index) const {
 	return comp[index];	
 }

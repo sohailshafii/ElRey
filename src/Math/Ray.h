@@ -5,10 +5,21 @@
 
 class Ray {
 public:
-	Ray(Point4 origin, Vector3 direction);
+	Ray() {
+		
+	}
+	Ray(const Point4& origin, const Vector3& direction);
 
 	Ray(const Ray &p2);
 	Ray& operator=(const Ray& other);
+
+	Point4 GetOrigin() const {
+		return origin;
+	}
+
+	Vector3 GetDirection() const {
+		return direction;
+	}
 
 private:
 	Point4 origin;
