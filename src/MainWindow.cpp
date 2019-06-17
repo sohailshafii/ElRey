@@ -2,6 +2,7 @@
 #include <iostream>
 #include "ElReyConfig.h"
 #include "Performance/FPSCounter.h"
+#include "Math/Primitive.h" // to test compilation
 
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
