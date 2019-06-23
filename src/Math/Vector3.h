@@ -7,10 +7,20 @@ public:
 
 	Vector3(const Vector3 &p2);
 	Vector3& operator=(const Vector3& other);
-	// TODO: r-value stuff
 
-	float &operator[] (int index);
-	float operator[] (int index) const;
+	inline float &operator[] (int index);
+	inline float operator[] (int index) const;
+
+	inline Vector3& operator+=(const Vector3 &v2);
+	inline Vector3& operator-=(const Vector3 &v2);
+	inline float operator*=(const Vector3 &v2);
+
+	inline Vector3& operator*=(float t);
+	inline Vector3& operator/=(float t);
+
+	inline Vector3 operator+(const Vector3 &v2);
+	inline Vector3 operator-(const Vector3 &v2);
+	inline float operator*(const Vector3 &v2);
 
 private:
 	float comp[3];

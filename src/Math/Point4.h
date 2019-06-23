@@ -7,7 +7,6 @@ public:
 
 	Point4(const Point4 &p2);
 	Point4& operator=(const Point4& other);
-	// TODO: r-value stuff
 
 	float &operator[] (int index);
 	float operator[] (int index) const;

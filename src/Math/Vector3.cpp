@@ -25,3 +25,54 @@ float &Vector3::operator[] (int index) {
 float Vector3::operator[] (int index) const {
 	return comp[index];	
 }
+
+Vector3& Vector3::operator+=(const Vector3 &v2) {
+	comp[0] += v2.comp[0];
+	comp[1] += v2.comp[1];
+	comp[2] += v2.comp[2];
+	return *this;
+}
+
+Vector3& Vector3::operator-=(const Vector3 &v2) {
+	comp[0] -= v2.comp[0];
+	comp[1] -= v2.comp[1];
+	comp[2] -= v2.comp[2];
+	return *this;
+}
+
+float Vector3::operator*=(const Vector3 &v2) {
+	return (comp[0]*v2.comp[0] + comp[1]*v2.comp[1]
+		+ comp[2]*v2.comp[2]);
+}
+
+Vector3& Vector3::operator*=(float t) {
+	comp[0] *= t;
+	comp[1] *= t;
+	comp[2] *= t;
+	return *this;
+}
+
+Vector3& Vector3::operator/=(float t) {
+	comp[0] /= t;
+	comp[1] /= t;
+	comp[2] /= t;
+	return *this;
+}
+
+Vector3 Vector3::operator+(const Vector3 &v2) {
+	Vector3 summedVector(comp[0] + v2.comp[0],
+		comp[1] + v2.comp[1], comp[2] + v2.comp[2]);
+	return summedVector;
+}
+
+Vector3 Vector3::operator-(const Vector3 &v2) {
+	Vector3 subbedVector(comp[0] - v2.comp[0],
+		comp[1] - v2.comp[1], comp[2] - v2.comp[2]);
+	return subbedVector;
+}
+
+float Vector3::operator*(const Vector3 &v2) {
+	return (comp[0]*v2.comp[0] + comp[1]*v2.comp[1]
+		+ comp[2]*v2.comp[2]);
+}
+
