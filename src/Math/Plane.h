@@ -11,6 +11,7 @@ public:
 		this->origin = origin;
 		this->normal = normal;
 		this->color = color;
+		//distance = -origin*normal;
 	}
 
 	bool Intersect(const Ray &ray, Color &newColor,
@@ -19,5 +20,6 @@ public:
 private:
 	Point4 origin;
 	Vector3 normal;
+	float distance;
 	Color color;
 };

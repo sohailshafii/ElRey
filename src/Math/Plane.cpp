@@ -6,8 +6,8 @@ bool Plane::Intersect(const Ray &ray, Color &newColor,
 	Vector3 rayDirection = ray.GetDirection();
 
 	// TODO: implement later
-	//float vDotNormal = rayDirection*normal;
-	//float t = -(rayOrigin*normal + rayDirection)/vDotNormal;
+	float vDotNormal = rayDirection*normal;
+	float t = -(rayOrigin*normal + distance)/vDotNormal;
 
 	/*if (t < tMin || t > tMax) {
 		return false;

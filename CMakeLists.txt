@@ -28,7 +28,8 @@ target_include_directories(ElRey
 	PRIVATE
 		"${SDL2_INCLUDE_DIR}"
 		"${PROJECT_BINARY_DIR}"
-		"${PROJECT_SOURCE_DIR}/src/")
+		"${PROJECT_SOURCE_DIR}/src/"
+		"${PROJECT_SOURCE_DIR}/src/Math")
 
 target_link_libraries(ElRey ${SDL2_LIBRARY})
 

@@ -1,4 +1,5 @@
 #include "Point4.h"
+#include "Math/Vector3.h"
 #include <cstring>
 
 Point4::Point4(float x, float y, float z, float w) {
@@ -19,10 +20,7 @@ Point4& Point4::operator=(const Point4& other) {
 	return *this;
 }
 
-float &Point4::operator[] (int index) {
-	return comp[index];
-}
-
-float Point4::operator[] (int index) const {
-	return comp[index];
+float Point4::operator*(const Vector3 &vector) const {
+	return (comp[0]*vector[0] + comp[1]*vector[1]
+		+ comp[2]*vector[2]);
 }
