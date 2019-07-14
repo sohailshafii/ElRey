@@ -20,6 +20,8 @@ public:
 	inline Point4& operator/=(float t);
 
 	float operator*(const Vector3 &vector) const;
+	Point4 operator+(const Vector3 &vector) const;
+	Point4 operator-(const Vector3 &vector) const;
 
 	inline Point4 operator+(const Point4 &p2) const;
 	inline Point4 operator-(const Point4 &p2) const;

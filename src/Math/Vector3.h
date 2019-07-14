@@ -21,12 +21,17 @@ public:
 	inline Vector3& operator/=(float t);
 
 	float operator*(const Point4 &point) const;
+	Point4 operator+(const Point4 &point) const;
 
 	inline Vector3 operator+(const Vector3 &v2) const;
 	inline Vector3 operator-(const Vector3 &v2) const;
 	inline float operator*(const Vector3 &v2) const;
 
 	inline Vector3 operator-() const;
+
+	void Normalize();
+	float Norm() const;
+	float NormSqr() const;
 
 private:
 	float comp[3];

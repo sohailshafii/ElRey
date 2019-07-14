@@ -24,3 +24,14 @@ float Point4::operator*(const Vector3 &vector) const {
 	return (comp[0]*vector[0] + comp[1]*vector[1]
 		+ comp[2]*vector[2]);
 }
+
+
+Point4 Point4::operator+(const Vector3 &vector) const {
+	return Point4(comp[0]+vector[0], comp[1]+vector[1],
+		comp[2]+vector[2], comp[3]);
+}
+
+Point4 Point4::operator-(const Vector3 &vector) const {
+	return Point4(comp[0]-vector[0], comp[1]-vector[1],
+		comp[2]-vector[2], comp[3]);
+}
