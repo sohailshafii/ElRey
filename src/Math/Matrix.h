@@ -8,6 +8,7 @@ public:
 	~Matrix();
 
 	Matrix(const Matrix &rhs);
+	Matrix(Matrix &&rhs);
 	Matrix& operator=(const Matrix& rhs);
 
 	Matrix Transpose() const;
@@ -41,8 +42,7 @@ public:
 	float* operator[](unsigned int rowIndex);
 
 	float& operator()(unsigned int row, unsigned int col);
-	float operator()(unsigned int row,
-		unsigned int col) const;
+	float operator()(unsigned int row, unsigned int col) const;
 
 private:
 	unsigned int numRows, numColumns, numElements;

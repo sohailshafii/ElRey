@@ -6,12 +6,10 @@
 
 class Plane : public Primitive {
 public:
-	Plane(const Point4& origin, const Vector3& normal,
-		const Color& color) {
-		this->origin = origin;
-		this->normal = normal;
-		this->color = color;
-		//distance = -origin*normal;
+	Plane(const Point4& iOrigin, const Vector3& iNormal,
+		const Color& iColor) : origin(iOrigin),
+		normal(iNormal), color(iColor) {
+		this->distance = -origin*normal;
 	}
 
 	bool Intersect(const Ray &ray, Color &newColor,

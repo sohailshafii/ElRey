@@ -13,11 +13,11 @@ public:
 	Ray(const Ray &p2);
 	Ray& operator=(const Ray& other);
 
-	Point4 GetOrigin() const {
+	const Point4& GetOrigin() const {
 		return origin;
 	}
 
-	Vector3 GetDirection() const {
+	const Vector3& GetDirection() const {
 		return direction;
 	}
 

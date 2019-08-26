@@ -21,6 +21,7 @@ set(SOURCE_FILES ${PROJECT_SOURCE_DIR}/src/MainWindow.cpp)
 AUX_SOURCE_DIRECTORY(${PROJECT_SOURCE_DIR}/src/Performance SOURCE_FILES) 
 AUX_SOURCE_DIRECTORY(${PROJECT_SOURCE_DIR}/src/Materials SOURCE_FILES) 
 AUX_SOURCE_DIRECTORY(${PROJECT_SOURCE_DIR}/src/Math SOURCE_FILES) 
+AUX_SOURCE_DIRECTORY(${PROJECT_SOURCE_DIR}/src/WorldData SOURCE_FILES) 
 
 add_executable(ElRey ${SOURCE_FILES})
 
@@ -29,7 +30,10 @@ target_include_directories(ElRey
 		"${SDL2_INCLUDE_DIR}"
 		"${PROJECT_BINARY_DIR}"
 		"${PROJECT_SOURCE_DIR}/src/"
-		"${PROJECT_SOURCE_DIR}/src/Math")
+		"${PROJECT_SOURCE_DIR}/src/Math"
+		"${PROJECT_SOURCE_DIR}/src/Materials"
+		"${PROJECT_SOURCE_DIR}/src/Performance"
+		"${PROJECT_SOURCE_DIR}/src/WorldData")
 
 target_link_libraries(ElRey ${SDL2_LIBRARY})
 

@@ -24,6 +24,11 @@ Matrix::Matrix(const Matrix &rhs) {
 	AllocateAndCopyFrom(rhs);
 }
 
+Matrix::Matrix(Matrix &&rhs): m(rhs.m),
+	numRows(rhs.numRows), numColumns(rhs.numColumns),
+	numElements(rhs.numElements) {
+}
+
 Matrix& Matrix::operator=(const Matrix& rhs) {
 	if (&rhs != this) {
 		AllocateAndCopyFrom(rhs);
