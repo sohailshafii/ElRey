@@ -13,7 +13,8 @@ public:
 	virtual void AddPrimitive(Primitive *newPrimitive);
 	virtual void AddPrimitives(Primitive **newPrimitives,
 		unsigned int numNewPrimitives);
-	// TODO: intersection function, accessors
+	virtual bool Intersect(const Ray &ray, Color &newColor,
+		float tMin, float& tMax);
 
 	Primitive* GetPrimitive(unsigned int index) {
 		return primitives[index];	

@@ -1,7 +1,7 @@
 #include "Plane.h"
 
 bool Plane::Intersect(const Ray &ray, Color &newColor,
-	float& tMin, float tMax) {
+	float tMin, float& tMax) {
 	const Point4& rayOrigin = ray.GetOrigin();
 	const Vector3& rayDirection = ray.GetDirection();
 

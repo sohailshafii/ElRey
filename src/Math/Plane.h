@@ -13,7 +13,7 @@ public:
 	}
 
 	bool Intersect(const Ray &ray, Color &newColor,
-		float& tMin, float tMax) override;
+		float tMin, float& tMax) override;
 
 private:
 	Point4 origin;
