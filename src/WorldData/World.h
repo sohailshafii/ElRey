@@ -23,6 +23,10 @@ public:
 		return numPrimitives;
 	}
 
+private:
+	void cleanUpPrimitives(Primitive **primitivesToClean, unsigned int
+		numToClean);
+
 protected:
 	// each item is a pointer to a primitive type,
 	// whatever that might be

@@ -12,11 +12,16 @@ World::World(Primitive **primitives, unsigned int numPrimitives) {
 }
 
 World::~World() {
-	if (primitives != nullptr) {
-		for(int i = 0; i < numPrimitives; i++) {
-			delete this->primitives[i];
+	cleanUpPrimitives(this->primitives, this->numPrimitives);
+}
+
+void World::cleanUpPrimitives(Primitive **primitivesToClean, unsigned int
+	numToClean) {
+	if (primitivesToClean != nullptr) {
+		for(int i = 0; i < numToClean; i++) {
+			delete primitivesToClean[i];
 		}
-		delete [] this->primitives;
+		delete [] primitivesToClean;
 	}
 }
 
@@ -38,7 +43,7 @@ void World::AddPrimitive(Primitive *newPrimitive) {
 		memcpy(this->primitives, oldPrimitives, numOldPrimitives*
 			sizeof(Primitive*));
 		this->primitives[this->numPrimitives-1] = newPrimitive;
-		delete [] oldPrimitives;
+		cleanUpPrimitives(oldPrimitives, numOldPrimitives);
 	}
 }
 
@@ -60,6 +65,6 @@ void World::AddPrimitives(Primitive **newPrimitives, unsigned int numNewPrimitiv
 			sizeof(Primitive*));
 		memcpy(&this->primitives[numOldPrimitives], newPrimitives,
 			numNewPrimitives*sizeof(Primitive*));
-		delete oldPrimitives;
+		cleanUpPrimitives(oldPrimitives, numOldPrimitives);
 	}
 }
