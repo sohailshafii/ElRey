@@ -11,8 +11,8 @@ bool Plane::Intersect(const Ray &ray, Color &newColor,
 	if (t < tMin || t > tMax) {
 		return false;
 	}
-	t = tMin;
-
+	
+	tMax = t;
 	newColor = color;
 	return true;
 }
