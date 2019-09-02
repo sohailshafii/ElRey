@@ -6,9 +6,8 @@
 class Primitive {
 public:
 	Primitive() { }
-	~Primitive() { }
+	virtual ~Primitive() { }
 
 	virtual bool Intersect(const Ray &ray, Color &newColor,
 		float& tMin, float tMax) = 0;
-
 };

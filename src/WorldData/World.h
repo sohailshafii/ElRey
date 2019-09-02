@@ -2,16 +2,30 @@
 
 #include "Math/Primitive.h"
 
-// abstract class for all acceleration structures, or really anything
-// that represents our world
+// simple base class for all acceleration structures, or really anything
+// that represents our world.
 class World {
 public:
 	World();
-	~World();
+	World(Primitive **primitives, unsigned int numPrimitives);
+	virtual ~World();
 
-	virtual void AddPrimitive(Primitive *primitive) = 0;
-	virtual void AddPrimitives(Primitive *primitives,
-		int numPrimitives) = 0;
+	virtual void AddPrimitive(Primitive *newPrimitive);
+	virtual void AddPrimitives(Primitive **newPrimitives,
+		unsigned int numNewPrimitives);
 	// TODO: intersection function, accessors
 
+	Primitive* GetPrimitive(unsigned int index) {
+		return primitives[index];	
+	}
+
+	unsigned int GetNumPrimitives() const {
+		return numPrimitives;
+	}
+
+protected:
+	// each item is a pointer to a primitive type,
+	// whatever that might be
+	Primitive** primitives;
+	unsigned int numPrimitives;
 };
