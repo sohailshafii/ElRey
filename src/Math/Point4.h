@@ -5,6 +5,8 @@ class Vector3;
 class Point4 {
 public:
 	Point4() {}
+	Point4(float x, float y, float z);
+	// TODO do we really need w here????
 	Point4(float x, float y, float z, float w);
 
 	Point4(const Point4 &p2);

@@ -3,12 +3,14 @@
 #include "ElReyConfig.h"
 #include "Performance/FPSCounter.h"
 #include "Math/Plane.h"
+#include "WorldData/World.h"
 
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
 
 bool initializeSDL();
-SDL_Window* createWindow(int screenWidth, int screenHeight); 
+SDL_Window* createWindow(int screenWidth, int screenHeight);
+World* createSimplePlane(); 
 void renderLoop(SDL_Renderer *sdlRenderer, SDL_Texture* frameBufferTex,
 	int width, int height);
 
@@ -66,7 +68,10 @@ int main(int argc, char* argv[]) {
 
 	SDL_Texture* frameBufferTex = SDL_CreateTexture(sdlRenderer,
 		renderFormat, SDL_TEXTUREACCESS_STREAMING, width, height);
+
+	World *simpleWorld = createSimplePlane();
 	renderLoop(sdlRenderer, frameBufferTex, width, height);
+	delete simpleWorld;
 
 	SDL_DestroyTexture(frameBufferTex);
 	SDL_DestroyRenderer(sdlRenderer);
@@ -92,6 +97,16 @@ SDL_Window* createWindow(int screenWidth, int screenHeight) {
 		std::cerr << "Could not create window, error: " << SDL_GetError() << std::endl;
 	}
 	return window;
+}
+
+World* createSimplePlane() {
+	Plane* simplePlane = new Plane(Point4(0.0, 0.0, 0.0, 1.0),
+		Vector3(0.0, 1.0, 0.0f), Color(0.0, 0.35, 0.55, 1.0));
+	Primitive** simplePrimitives = new Primitive*[1];
+	simplePrimitives[0] = simplePlane;
+	World *planeWorld = new World(simplePrimitives, 1);
+	delete [] simplePrimitives;
+	return planeWorld;
 }
 
 void renderLoop(SDL_Renderer *sdlRenderer, SDL_Texture* frameBufferTex,
