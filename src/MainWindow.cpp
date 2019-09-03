@@ -1,5 +1,6 @@
 #include <SDL.h>
 #include <iostream>
+#include <ctime>
 #include "ElReyConfig.h"
 #include "Performance/FPSCounter.h"
 #include "Math/Plane.h"
@@ -70,6 +71,7 @@ int main(int argc, char* argv[]) {
 		renderFormat, SDL_TEXTUREACCESS_STREAMING, width, height);
 
 	World *simpleWorld = createSimplePlane();
+	std::cout << simpleWorld->GetPrimitive(0) << std::endl;
 	renderLoop(sdlRenderer, frameBufferTex, width, height);
 	delete simpleWorld;
 
@@ -100,12 +102,11 @@ SDL_Window* createWindow(int screenWidth, int screenHeight) {
 }
 
 World* createSimplePlane() {
-	Plane* simplePlane = new Plane(Point4(0.0, 0.0, 0.0, 1.0),
-		Vector3(0.0, 1.0, 0.0f), Color(0.0, 0.35, 0.55, 1.0));
+	Plane* simplePlane = new Plane(Point4(0.0f, 0.0f, 0.0f, 1.0f),
+		Vector3(0.0f, 1.0f, 0.0f), Color(0.0f, 0.35f, 0.55f, 1.0f));
 	Primitive** simplePrimitives = new Primitive*[1];
 	simplePrimitives[0] = simplePlane;
 	World *planeWorld = new World(simplePrimitives, 1);
-	delete [] simplePrimitives;
 	return planeWorld;
 }
 

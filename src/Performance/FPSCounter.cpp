@@ -32,7 +32,7 @@ float FPSCounter::GetFPS() const {
 	}
 
 	uint32_t totalFrameTimeMs = 0;
-	for(int i = 0; i < framesToConsider; i++) {
+	for(unsigned int i = 0; i < framesToConsider; i++) {
 		totalFrameTimeMs += frameTimes[i];
 	}
 	// in case frame time is too small
