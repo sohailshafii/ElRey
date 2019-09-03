@@ -21,6 +21,14 @@ public:
 		return direction;
 	}
 
+	void SetOrigin(const Point4 &newOrigin) {
+		this->origin = newOrigin;
+	}
+
+	void SetDirection(const Vector3 &newDirection) {
+		this->direction = newDirection;
+	}
+
 private:
 	Point4 origin;
 	Vector3 direction;

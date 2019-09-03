@@ -1,6 +1,6 @@
 #pragma once
 
-class Vector3;
+#include "Math/Vector3.h"
 
 class Point4 {
 public:
@@ -26,7 +26,7 @@ public:
 	Point4 operator-(const Vector3 &vector) const;
 
 	inline Point4 operator+(const Point4 &p2) const;
-	inline Point4 operator-(const Point4 &p2) const;
+	inline Vector3 operator-(const Point4 &p2) const;
 
 	inline Point4 operator-() const;
 
@@ -77,11 +77,9 @@ inline Point4 Point4::operator+(const Point4 &p2) const {
 	return summedPoint;
 }
 
-inline Point4 Point4::operator-(const Point4 &p2) const {
-	Point4 subbedPoint(comp[0] - p2.comp[0],
-		comp[1] - p2.comp[1], comp[2] - p2.comp[2],
-		comp[3] - p2.comp[3]);
-	return subbedPoint;
+inline Vector3 Point4::operator-(const Point4 &p2) const {
+	return Vector3(comp[0] - p2[0], comp[1] - p2[1],
+		comp[2] - p2[2]);
 }
 
 inline Point4 Point4::operator-() const {

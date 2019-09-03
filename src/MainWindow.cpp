@@ -13,7 +13,7 @@ bool initializeSDL();
 SDL_Window* createWindow(int screenWidth, int screenHeight);
 World* createSimplePlane(); 
 void renderLoop(SDL_Renderer *sdlRenderer, SDL_Texture* frameBufferTex,
-	int width, int height);
+	int width, int height, const World* gameWorld);
 
 Uint32 lastFPSTickTime = 0; 
 
@@ -71,8 +71,7 @@ int main(int argc, char* argv[]) {
 		renderFormat, SDL_TEXTUREACCESS_STREAMING, width, height);
 
 	World *simpleWorld = createSimplePlane();
-	std::cout << simpleWorld->GetPrimitive(0) << std::endl;
-	renderLoop(sdlRenderer, frameBufferTex, width, height);
+	renderLoop(sdlRenderer, frameBufferTex, width, height, simpleWorld);
 	delete simpleWorld;
 
 	SDL_DestroyTexture(frameBufferTex);
@@ -111,7 +110,7 @@ World* createSimplePlane() {
 }
 
 void renderLoop(SDL_Renderer *sdlRenderer, SDL_Texture* frameBufferTex,
-	int width, int height) {
+	int width, int height, const World* gameWorld) {
 	SDL_Event e;
 
 	int numPixels = width*height;
@@ -124,8 +123,32 @@ void renderLoop(SDL_Renderer *sdlRenderer, SDL_Texture* frameBufferTex,
 	std::cout << "Bytes per pixel: " << bytesPerPixel
 		<< ", num bytes: " << numBytes << std::endl;
 
-	Plane simplePlane(Point4(0.0, 0.0, 0.0, 1.0),
-		Vector3(0.0, 1.0, 0.0), Color(1.0, 0.5, 0.0, 1.0));
+	Ray *raysToCast = new Ray[numPixels];
+	// assume left-handed coordinate system, where z goes into screen
+	Point4 eyePosition(0.0f, 1.0f, 0.0f, 1.0f);
+	float castPlaneHeight = 2.0f;
+	float castPlaneWidth = castPlaneHeight * (float)width / (float)height;
+	float rowHeight = castPlaneHeight / height;
+	float colWidth = castPlaneWidth / width;
+	std::cout << "Image plane dimensions: " << castPlaneWidth << " x "
+		<< castPlaneHeight << " Row height: " << rowHeight << ", col width: "
+		<< colWidth << ".\n";
+	Point4 planeUpperLeft(-castPlaneWidth * 0.5f + eyePosition[0],
+		castPlaneHeight*0.5f + eyePosition[1], 1.0f + eyePosition[2], 1.0f);
+
+	for (int row = 0, pixel = 0; row < height; row++) {
+		for (int column = 0; column < width; column++, pixel++) {
+			// find pixel center in world space
+			Point4 pixelCenterWorld = planeUpperLeft + Point4(
+				colWidth*(column + 0.5f),
+				rowHeight*(row + 0.5f), 0.0f, 1.0f);
+			Vector3 vecToPixelCenter = pixelCenterWorld - eyePosition;
+			vecToPixelCenter.Normalize();
+			raysToCast[pixel].SetDirection(vecToPixelCenter);
+			raysToCast[pixel].SetOrigin(eyePosition);
+		}
+	}
+
 	uint32_t lastFpsReportTime = SDL_GetTicks();
 	FPSCounter fpsCounter;
 
@@ -140,7 +163,7 @@ void renderLoop(SDL_Renderer *sdlRenderer, SDL_Texture* frameBufferTex,
 		fpsCounter.PreFrame();
 
 		SDL_LockTexture(frameBufferTex, NULL, (void**) &pixels, &pitch);
-		
+
 		for (int byteIndex = 0; byteIndex < numBytes-bytesPerPixel;
 			byteIndex += bytesPerPixel) {
 			pixels[byteIndex] = 0;
@@ -164,5 +187,7 @@ void renderLoop(SDL_Renderer *sdlRenderer, SDL_Texture* frameBufferTex,
 			lastFpsReportTime = currTicks;
 		}
 	}
+
+	delete[] raysToCast;
 }
 
