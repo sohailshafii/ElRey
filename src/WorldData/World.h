@@ -14,7 +14,7 @@ public:
 	virtual void AddPrimitives(Primitive **newPrimitives,
 		unsigned int numNewPrimitives);
 	virtual bool Intersect(const Ray &ray, Color &newColor,
-		float tMin, float& tMax);
+		float tMin, float& tMax) const;
 
 	Primitive* GetPrimitive(unsigned int index) {
 		return primitives[index];	

@@ -18,7 +18,12 @@ public:
 	// TODO: rvalue stuff
 
 	float &operator[] (int index);
-	float operator[] (int index) const; 
+	float operator[] (int index) const;
+
+	static Color Black();
+	static Color Red();
+	static Color Green();
+	static Color Blue();
 
 private:
 	float comp[4];

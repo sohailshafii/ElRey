@@ -102,7 +102,7 @@ SDL_Window* createWindow(int screenWidth, int screenHeight) {
 
 World* createSimplePlane() {
 	Plane* simplePlane = new Plane(Point4(0.0f, 0.0f, 0.0f, 1.0f),
-		Vector3(0.0f, 1.0f, 0.0f), Color(0.0f, 0.35f, 0.55f, 1.0f));
+		Vector3(0.0f, 1.0f, 0.0f), Color(0.0f, 0.0f, 0.8f, 1.0f));
 	Primitive** simplePrimitives = new Primitive*[1];
 	simplePrimitives[0] = simplePlane;
 	World *planeWorld = new World(simplePrimitives, 1);
@@ -164,11 +164,16 @@ void renderLoop(SDL_Renderer *sdlRenderer, SDL_Texture* frameBufferTex,
 
 		SDL_LockTexture(frameBufferTex, NULL, (void**) &pixels, &pitch);
 
-		for (int byteIndex = 0; byteIndex < numBytes-bytesPerPixel;
-			byteIndex += bytesPerPixel) {
-			pixels[byteIndex] = 0;
-			pixels[byteIndex +1] = 255;
-			pixels[byteIndex +2] = 0;
+		float maxDist = std::numeric_limits<float>::max();
+		for (int byteIndex = 0, pixelIndex = 0; byteIndex < numBytes-bytesPerPixel;
+			byteIndex += bytesPerPixel, pixelIndex++) {
+			Color intersectedColor = Color::Black();
+			float tMin = 0.0f, tMax = maxDist;
+			gameWorld->Intersect(raysToCast[pixelIndex], intersectedColor,
+				0.0f, tMax);
+			pixels[byteIndex] = (unsigned char)(intersectedColor[2] * 255.0f); // B
+			pixels[byteIndex + 1] = (unsigned char)(intersectedColor[1] * 255.0f); // G
+			pixels[byteIndex + 2] = (unsigned char)(intersectedColor[0] * 255.0f); // R
 			if (bytesPerPixel == 4) {
 				pixels[byteIndex + 3] = 255;
 			}

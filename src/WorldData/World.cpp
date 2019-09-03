@@ -70,7 +70,7 @@ void World::AddPrimitives(Primitive **newPrimitives, unsigned int numNewPrimitiv
 }
 
 bool World::Intersect(const Ray &ray, Color &newColor,
-	float tMin, float& tMax) {
+	float tMin, float& tMax) const {
 	bool struckPrimitive = false;
 	for (unsigned int i = 0; i < numPrimitives; i++) {
 		auto hitPrimitive = this->primitives[i]->Intersect(ray, newColor,
