@@ -125,7 +125,7 @@ void renderLoop(SDL_Renderer *sdlRenderer, SDL_Texture* frameBufferTex,
 
 	Ray *raysToCast = new Ray[numPixels];
 	// assume left-handed coordinate system, where z goes into screen
-	Point4 eyePosition(0.0f, 1.0f, 0.0f, 1.0f);
+	Point4 eyePosition(0.0f,-1.0f, 0.0f, 1.0f);
 	float castPlaneHeight = 2.0f;
 	float castPlaneWidth = castPlaneHeight * (float)width / (float)height;
 	float rowHeight = castPlaneHeight / height;
@@ -133,13 +133,13 @@ void renderLoop(SDL_Renderer *sdlRenderer, SDL_Texture* frameBufferTex,
 	std::cout << "Image plane dimensions: " << castPlaneWidth << " x "
 		<< castPlaneHeight << " Row height: " << rowHeight << ", col width: "
 		<< colWidth << ".\n";
-	Point4 planeUpperLeft(-castPlaneWidth * 0.5f + eyePosition[0],
-		castPlaneHeight*0.5f + eyePosition[1], 1.0f + eyePosition[2], 1.0f);
+	Point4 planeLowerLeft(-castPlaneWidth * 0.5f + eyePosition[0],
+		-castPlaneHeight*0.5f + eyePosition[1], 1.0f + eyePosition[2], 1.0f);
 
 	for (int row = 0, pixel = 0; row < height; row++) {
 		for (int column = 0; column < width; column++, pixel++) {
 			// find pixel center in world space
-			Point4 pixelCenterWorld = planeUpperLeft + Point4(
+			Point4 pixelCenterWorld = planeLowerLeft + Point4(
 				colWidth*(column + 0.5f),
 				rowHeight*(row + 0.5f), 0.0f, 1.0f);
 			Vector3 vecToPixelCenter = pixelCenterWorld - eyePosition;
@@ -164,20 +164,27 @@ void renderLoop(SDL_Renderer *sdlRenderer, SDL_Texture* frameBufferTex,
 
 		SDL_LockTexture(frameBufferTex, NULL, (void**) &pixels, &pitch);
 
+		// need to invert pixel coordinates y because window systems
+		// have their y-origin at top not bottom (ugh)
 		float maxDist = std::numeric_limits<float>::max();
-		for (int byteIndex = 0, pixelIndex = 0; byteIndex < numBytes-bytesPerPixel;
-			byteIndex += bytesPerPixel, pixelIndex++) {
-			Color intersectedColor = Color::Black();
-			float tMin = 0.0f, tMax = maxDist;
-			gameWorld->Intersect(raysToCast[pixelIndex], intersectedColor,
-				0.0f, tMax);
-			pixels[byteIndex] = (unsigned char)(intersectedColor[2] * 255.0f); // B
-			pixels[byteIndex + 1] = (unsigned char)(intersectedColor[1] * 255.0f); // G
-			pixels[byteIndex + 2] = (unsigned char)(intersectedColor[0] * 255.0f); // R
-			if (bytesPerPixel == 4) {
-				pixels[byteIndex + 3] = 255;
+		for (int row = 0, pixelIndex = 0; row < height; row++) {
+			for (int col = 0; col < width; col++, pixelIndex++) {
+				int invertedCol = width - col - 1;
+				int invertedPixelIndex = row * width + invertedCol;
+				int byteIndex = invertedPixelIndex * 4;
+
+				float tMin = 0.0f, tMax = maxDist; Color intersectedColor = Color::Black();
+				gameWorld->Intersect(raysToCast[pixelIndex], intersectedColor,
+					0.0f, tMax);
+				pixels[byteIndex] = (unsigned char)(intersectedColor[2] * 255.0f); // B
+				pixels[byteIndex + 1] = (unsigned char)(intersectedColor[1] * 255.0f); // G
+				pixels[byteIndex + 2] = (unsigned char)(intersectedColor[0] * 255.0f); // R
+				if (bytesPerPixel == 4) {
+					pixels[byteIndex + 3] = 255;
+				}
 			}
 		}
+
 		SDL_UnlockTexture(frameBufferTex);
 		SDL_RenderClear(sdlRenderer);
 		SDL_RenderCopy(sdlRenderer, frameBufferTex, NULL, NULL);

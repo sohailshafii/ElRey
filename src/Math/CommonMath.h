@@ -4,6 +4,8 @@
 #include <random>
 #include <cstdlib>
 
+#define EPSILON 0.0000001f
+
 class CommonMath {
 public:
 	// returns random value between 0 and 1
