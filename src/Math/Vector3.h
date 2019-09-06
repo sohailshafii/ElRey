@@ -27,6 +27,8 @@ public:
 	inline Vector3 operator-(const Vector3 &v2) const;
 	inline float operator*(const Vector3 &v2) const;
 
+	inline Vector3 operator*(float t) const;
+
 	inline Vector3 operator-() const;
 
 	void Normalize();
@@ -93,6 +95,10 @@ inline Vector3 Vector3::operator-(const Vector3 &v2) const {
 inline float Vector3::operator*(const Vector3 &v2) const {
 	return (comp[0]*v2.comp[0] + comp[1]*v2.comp[1]
 		+ comp[2]*v2.comp[2]);
+}
+
+inline Vector3 Vector3::operator*(float t) const {
+	return Vector3(comp[0]*t, comp[1]*t, comp[2]*t);
 }
 
 inline Vector3 Vector3::operator-() const {
