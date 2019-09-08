@@ -4,7 +4,10 @@
 #include "Math/Point4.h"
 
 class Sphere : public Primitive {
-	Sphere(const Point4& iCenter, float iRadius) : center(iCenter),
+public:
+	Sphere(const Point4& iCenter, float iRadius,
+		const Color& iColor) : center(iCenter),
+		color(iColor),
 		radius(iRadius) {
 		radius = iRadius*iRadius;
 	}
@@ -14,5 +17,6 @@ class Sphere : public Primitive {
 
 private:
 	Point4 center;
+	Color color;
 	float radius, radiusSqr;
 };

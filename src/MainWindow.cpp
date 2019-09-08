@@ -4,16 +4,17 @@
 #include "ElReyConfig.h"
 #include "Performance/FPSCounter.h"
 #include "Math/Plane.h"
-#include "WorldData/World.h"
+#include "SceneData/Scene.h"
+#include "Math/Sphere.h"
 
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
 
 bool initializeSDL();
 SDL_Window* createWindow(int screenWidth, int screenHeight);
-World* createSimplePlane(); 
+Scene* createSimpleWorld(); 
 void renderLoop(SDL_Renderer *sdlRenderer, SDL_Texture* frameBufferTex,
-	int width, int height, const World* gameWorld);
+	int width, int height, const Scene* gameWorld);
 
 Uint32 lastFPSTickTime = 0; 
 
@@ -70,7 +71,7 @@ int main(int argc, char* argv[]) {
 	SDL_Texture* frameBufferTex = SDL_CreateTexture(sdlRenderer,
 		renderFormat, SDL_TEXTUREACCESS_STREAMING, width, height);
 
-	World *simpleWorld = createSimplePlane();
+	Scene *simpleWorld = createSimpleWorld();
 	renderLoop(sdlRenderer, frameBufferTex, width, height, simpleWorld);
 	delete simpleWorld;
 
@@ -100,17 +101,21 @@ SDL_Window* createWindow(int screenWidth, int screenHeight) {
 	return window;
 }
 
-World* createSimplePlane() {
+Scene* createSimpleWorld() {
 	Plane* simplePlane = new Plane(Point4(0.0f, 0.0f, 0.0f, 1.0f),
 		Vector3(0.0f, 1.0f, 0.0f), Color(0.0f, 0.0f, 0.8f, 1.0f));
-	Primitive** simplePrimitives = new Primitive*[1];
+	Sphere* sphere = new Sphere(Point4(0.0f, 1.0f, 1.0f, 1.0f),
+		1.0f, Color(1.0f, 0.0f, 0.0f, 1.0f));
+
+	Primitive** simplePrimitives = new Primitive*[2];
 	simplePrimitives[0] = simplePlane;
-	World *planeWorld = new World(simplePrimitives, 1);
-	return planeWorld;
+	simplePrimitives[1] = sphere;
+	Scene *simpleWorld = new Scene(simplePrimitives, 1);
+	return simpleWorld;
 }
 
 void renderLoop(SDL_Renderer *sdlRenderer, SDL_Texture* frameBufferTex,
-	int width, int height, const World* gameWorld) {
+	int width, int height, const Scene* gameWorld) {
 	SDL_Event e;
 
 	int numPixels = width*height;
@@ -125,7 +130,7 @@ void renderLoop(SDL_Renderer *sdlRenderer, SDL_Texture* frameBufferTex,
 
 	Ray *raysToCast = new Ray[numPixels];
 	// assume left-handed coordinate system, where z goes into screen
-	Point4 eyePosition(0.0f,-1.0f, 0.0f, 1.0f);
+	Point4 eyePosition(0.0f, 1.0f, 0.0f, 1.0f);
 	float castPlaneHeight = 2.0f;
 	float castPlaneWidth = castPlaneHeight * (float)width / (float)height;
 	float rowHeight = castPlaneHeight / height;
@@ -133,15 +138,16 @@ void renderLoop(SDL_Renderer *sdlRenderer, SDL_Texture* frameBufferTex,
 	std::cout << "Image plane dimensions: " << castPlaneWidth << " x "
 		<< castPlaneHeight << " Row height: " << rowHeight << ", col width: "
 		<< colWidth << ".\n";
-	Point4 planeLowerLeft(-castPlaneWidth * 0.5f + eyePosition[0],
-		-castPlaneHeight*0.5f + eyePosition[1], 1.0f + eyePosition[2], 1.0f);
+	Point4 planeUpperLeft(-castPlaneWidth * 0.5f + eyePosition[0],
+		castPlaneHeight*0.5f + eyePosition[1], 1.0f + eyePosition[2], 1.0f);
 
 	for (int row = 0, pixel = 0; row < height; row++) {
 		for (int column = 0; column < width; column++, pixel++) {
 			// find pixel center in world space
-			Point4 pixelCenterWorld = planeLowerLeft + Point4(
-				colWidth*(column + 0.5f),
-				rowHeight*(row + 0.5f), 0.0f, 1.0f);
+			Point4 pixelCenterWorld = planeUpperLeft + Point4(
+				colWidth*(column + 0.5f), -rowHeight*(row + 0.5f), 0.0f, 1.0f);
+			//std::cout << pixelCenterWorld[0] << " " << pixelCenterWorld[1]
+			//<< " " << pixelCenterWorld[2] << std::endl;
 			Vector3 vecToPixelCenter = pixelCenterWorld - eyePosition;
 			vecToPixelCenter.Normalize();
 			raysToCast[pixel].SetDirection(vecToPixelCenter);
@@ -164,24 +170,17 @@ void renderLoop(SDL_Renderer *sdlRenderer, SDL_Texture* frameBufferTex,
 
 		SDL_LockTexture(frameBufferTex, NULL, (void**) &pixels, &pitch);
 
-		// need to invert pixel coordinates y because window systems
-		// have their y-origin at top not bottom (ugh)
 		float maxDist = std::numeric_limits<float>::max();
-		for (int row = 0, pixelIndex = 0; row < height; row++) {
-			for (int col = 0; col < width; col++, pixelIndex++) {
-				int invertedCol = width - col - 1;
-				int invertedPixelIndex = row * width + invertedCol;
-				int byteIndex = invertedPixelIndex * 4;
-
-				float tMin = 0.0f, tMax = maxDist; Color intersectedColor = Color::Black();
-				gameWorld->Intersect(raysToCast[pixelIndex], intersectedColor,
-					0.0f, tMax);
-				pixels[byteIndex] = (unsigned char)(intersectedColor[2] * 255.0f); // B
-				pixels[byteIndex + 1] = (unsigned char)(intersectedColor[1] * 255.0f); // G
-				pixels[byteIndex + 2] = (unsigned char)(intersectedColor[0] * 255.0f); // R
-				if (bytesPerPixel == 4) {
-					pixels[byteIndex + 3] = 255;
-				}
+		for (int pixelIndex = 0, byteIndex = 0; pixelIndex < numPixels;
+			pixelIndex++, byteIndex +=4) {
+			float tMin = 0.0f, tMax = maxDist; Color intersectedColor = Color::Black();
+			gameWorld->Intersect(raysToCast[pixelIndex], intersectedColor,
+				0.0f, tMax);
+			pixels[byteIndex] = (unsigned char)(intersectedColor[2] * 255.0f); // B
+			pixels[byteIndex + 1] = (unsigned char)(intersectedColor[1] * 255.0f); // G
+			pixels[byteIndex + 2] = (unsigned char)(intersectedColor[0] * 255.0f); // R
+			if (bytesPerPixel == 4) {
+				pixels[byteIndex + 3] = 255;
 			}
 		}
 

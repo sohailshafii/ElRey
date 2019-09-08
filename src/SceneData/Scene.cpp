@@ -1,21 +1,21 @@
-#include "World.h"
+#include "Scene.h"
 #include <stdexcept>
 #include <cstring>
 
-World::World() {
+Scene::Scene() {
 	primitives = nullptr;
 }
 
-World::World(Primitive **primitives, unsigned int numPrimitives) {
+Scene::Scene(Primitive **primitives, unsigned int numPrimitives) {
 	this->primitives = primitives;
 	this->numPrimitives = numPrimitives;
 }
 
-World::~World() {
+Scene::~Scene() {
 	cleanUpPrimitives(this->primitives, this->numPrimitives);
 }
 
-void World::cleanUpPrimitives(Primitive **primitivesToClean, unsigned int
+void Scene::cleanUpPrimitives(Primitive **primitivesToClean, unsigned int
 	numToClean) {
 	if (primitivesToClean != nullptr) {
 		for(unsigned int i = 0; i < numToClean; i++) {
@@ -25,7 +25,7 @@ void World::cleanUpPrimitives(Primitive **primitivesToClean, unsigned int
 	}
 }
 
-void World::AddPrimitive(Primitive *newPrimitive) {
+void Scene::AddPrimitive(Primitive *newPrimitive) {
 	if (newPrimitive == nullptr) {
 		throw std::runtime_error("Trying to add invalid primitive!");
 	}
@@ -47,7 +47,7 @@ void World::AddPrimitive(Primitive *newPrimitive) {
 	}
 }
 
-void World::AddPrimitives(Primitive **newPrimitives, unsigned int numNewPrimitives) {
+void Scene::AddPrimitives(Primitive **newPrimitives, unsigned int numNewPrimitives) {
 	if (newPrimitives == nullptr || numNewPrimitives == 0) {
 		throw std::runtime_error("Trying to add invalid primitives!");
 	}
@@ -69,7 +69,7 @@ void World::AddPrimitives(Primitive **newPrimitives, unsigned int numNewPrimitiv
 	}
 }
 
-bool World::Intersect(const Ray &ray, Color &newColor,
+bool Scene::Intersect(const Ray &ray, Color &newColor,
 	float tMin, float& tMax) const {
 	bool struckPrimitive = false;
 	for (unsigned int i = 0; i < numPrimitives; i++) {

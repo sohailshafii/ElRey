@@ -4,11 +4,11 @@
 
 // simple base class for all acceleration structures, or really anything
 // that represents our world.
-class World {
+class Scene {
 public:
-	World();
-	World(Primitive **primitives, unsigned int numPrimitives);
-	virtual ~World();
+	Scene();
+	Scene(Primitive **primitives, unsigned int numPrimitives);
+	virtual ~Scene();
 
 	virtual void AddPrimitive(Primitive *newPrimitive);
 	virtual void AddPrimitives(Primitive **newPrimitives,
