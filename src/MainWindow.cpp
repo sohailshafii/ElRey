@@ -169,12 +169,15 @@ void renderLoop(SDL_Renderer *sdlRenderer, SDL_Texture* frameBufferTex,
 
 		SDL_LockTexture(frameBufferTex, NULL, (void**) &pixels, &pitch);
 
+		float invGamma = (1.0/1.8f);
 		float maxDist = std::numeric_limits<float>::max();
 		for (int pixelIndex = 0, byteIndex = 0; pixelIndex < numPixels;
 			pixelIndex++, byteIndex +=4) {
 			float tMin = 0.0f, tMax = maxDist; Color intersectedColor = Color::Black();
 			gameWorld->Intersect(raysToCast[pixelIndex], intersectedColor,
 				0.0f, tMax);
+			// gamma-correct
+			intersectedColor ^= invGamma;
 			pixels[byteIndex] = (unsigned char)(intersectedColor[2] * 255.0f); // B
 			pixels[byteIndex + 1] = (unsigned char)(intersectedColor[1] * 255.0f); // G
 			pixels[byteIndex + 2] = (unsigned char)(intersectedColor[0] * 255.0f); // R

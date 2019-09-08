@@ -15,6 +15,9 @@ public:
 
 	Color(const Color &p2);
 	Color& operator=(const Color& other);
+
+	Color operator^(float power);
+	Color& operator^=(float power);
 	// TODO: rvalue stuff
 
 	float &operator[] (int index);

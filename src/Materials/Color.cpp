@@ -1,5 +1,6 @@
 #include "Color.h"
 #include <cstring>
+#include <cmath>
 
 Color::Color(const Color &p2) {
 	memcpy(comp, p2.comp, sizeof(float)*4);
@@ -18,6 +19,19 @@ float &Color::operator[] (int index) {
 
 float Color::operator[] (int index) const {
 	return comp[index];
+}
+
+Color Color::operator^(float power) {
+	return Color(pow(comp[0], power), pow(comp[1], power),
+		pow(comp[2], power), pow(comp[3], power));
+}
+
+Color& Color::operator^=(float power) {
+	comp[0] = pow(comp[0], power);
+	comp[1] = pow(comp[1], power);
+	comp[2] = pow(comp[2], power);
+	comp[3] = pow(comp[3], power);
+	return *this;
 }
 
 Color Color::Black() {
