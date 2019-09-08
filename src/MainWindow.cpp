@@ -105,12 +105,12 @@ Scene* createSimpleWorld() {
 	Plane* simplePlane = new Plane(Point4(0.0f, 0.0f, 0.0f, 1.0f),
 		Vector3(0.0f, 1.0f, 0.0f), Color(0.0f, 0.0f, 0.8f, 1.0f));
 	Sphere* sphere = new Sphere(Point4(0.0f, 1.0f, 1.0f, 1.0f),
-		1.0f, Color(1.0f, 0.0f, 0.0f, 1.0f));
+		0.3f, Color(1.0f, 0.0f, 0.0f, 1.0f));
 
 	Primitive** simplePrimitives = new Primitive*[2];
 	simplePrimitives[0] = simplePlane;
 	simplePrimitives[1] = sphere;
-	Scene *simpleWorld = new Scene(simplePrimitives, 1);
+	Scene *simpleWorld = new Scene(simplePrimitives, 2);
 	return simpleWorld;
 }
 
@@ -146,8 +146,7 @@ void renderLoop(SDL_Renderer *sdlRenderer, SDL_Texture* frameBufferTex,
 			// find pixel center in world space
 			Point4 pixelCenterWorld = planeUpperLeft + Point4(
 				colWidth*(column + 0.5f), -rowHeight*(row + 0.5f), 0.0f, 1.0f);
-			//std::cout << pixelCenterWorld[0] << " " << pixelCenterWorld[1]
-			//<< " " << pixelCenterWorld[2] << std::endl;
+
 			Vector3 vecToPixelCenter = pixelCenterWorld - eyePosition;
 			vecToPixelCenter.Normalize();
 			raysToCast[pixel].SetDirection(vecToPixelCenter);
