@@ -15,8 +15,8 @@ public:
 	inline float &operator[] (int index);
 	inline float operator[] (int index) const;
 
-	inline Point4& operator+=(const Point4 &p2);
-	inline Point4& operator-=(const Point4 &p2);
+	inline Point4& operator+=(const Vector3 &vec);
+	inline Point4& operator-=(const Vector3 &vec);
 
 	inline Point4& operator*=(float t);
 	inline Point4& operator/=(float t);
@@ -26,6 +26,7 @@ public:
 	Point4 operator-(const Vector3 &vector) const;
 
 	inline Point4 operator+(const Point4 &p2) const;
+
 	inline Vector3 operator-(const Point4 &p2) const;
 
 	inline Point4 operator-() const;
@@ -42,17 +43,17 @@ inline float Point4::operator[] (int index) const {
 	return comp[index];
 }
 
-inline Point4& Point4::operator+=(const Point4 &p2) {
-	comp[0] += p2.comp[0];
-	comp[1] += p2.comp[1];
-	comp[2] += p2.comp[2];
+inline Point4& Point4::operator+=(const Vector3 &vec) {
+	comp[0] += vec[0];
+	comp[1] += vec[1];
+	comp[2] += vec[2];
 	return *this;
 }
 
-inline Point4& Point4::operator-=(const Point4 &p2) {
-	comp[0] -= p2.comp[0];
-	comp[1] -= p2.comp[1];
-	comp[2] -= p2.comp[2];
+inline Point4& Point4::operator-=(const Vector3 &vec) {
+	comp[0] -= vec[0];
+	comp[1] -= vec[1];
+	comp[2] -= vec[2];
 	return *this;
 }
 
@@ -70,20 +71,18 @@ inline Point4& Point4::operator/=(float t) {
 	return *this;
 }
 
-inline Point4 Point4::operator+(const Point4 &p2) const {
-	Point4 summedPoint(comp[0] + p2.comp[0],
-		comp[1] + p2.comp[1], comp[2] + p2.comp[2],
-		comp[3] + p2.comp[3]);
-	return summedPoint;
-}
-
 inline Vector3 Point4::operator-(const Point4 &p2) const {
 	return Vector3(comp[0] - p2[0], comp[1] - p2[1],
 		comp[2] - p2[2]);
 }
 
+inline Point4 Point4::operator+(const Point4 &p2) const {
+	return Point4(comp[0] + p2[0], comp[1] + p2[1],
+		comp[2] + p2[2], comp[3]);
+}
+
 inline Point4 Point4::operator-() const {
 	Point4 negatedPoint(-comp[0], -comp[1],
-		-comp[2], -comp[3]);
+		-comp[2], comp[3]);
 	return negatedPoint;
 }
