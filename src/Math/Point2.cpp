@@ -12,5 +12,8 @@ Point2::Point2(const Point2 &p2) {
 }
 
 Point2& Point2::operator=(const Point2& p2) {
-	memcpy(comp, p2.comp, sizeof(float)*2);
+	if (this != &p2) {
+		memcpy(comp, p2.comp, sizeof(float) * 2);
+	}
+	return *this;
 }

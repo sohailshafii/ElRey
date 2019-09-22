@@ -1,4 +1,5 @@
 #include "RandomSampler.h"
+#include "Math/CommonMath.h"
 
 RandomSampler::RandomSampler(unsigned int numSets,
 	unsigned int numSamples) {

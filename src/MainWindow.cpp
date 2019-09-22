@@ -169,7 +169,7 @@ void renderLoop(SDL_Renderer *sdlRenderer, SDL_Texture* frameBufferTex,
 
 		SDL_LockTexture(frameBufferTex, NULL, (void**) &pixels, &pitch);
 
-		float invGamma = (1.0/1.8f);
+		float invGamma = (1.0f/1.8f);
 		float maxDist = std::numeric_limits<float>::max();
 		for (int pixelIndex = 0, byteIndex = 0; pixelIndex < numPixels;
 			pixelIndex++, byteIndex +=4) {
