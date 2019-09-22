@@ -8,9 +8,4 @@ public:
 	~RandomSampler();
 
 	Point2 genSampleOnUnitSquare() override;
-
-private:
-	unsigned int numSets;
-	unsigned int numSamples;
-	Point2* samples;
 };

@@ -2,7 +2,7 @@
 #include "Math/CommonMath.h"
 
 RandomSampler::RandomSampler(unsigned int numSets,
-	unsigned int numSamples) {
+	unsigned int numSamples) : GenericSampler(numSets, numSamples) {
 	this->numSets = numSets;
 	this->numSamples = numSamples;
 	samples = new Point2[numSets*numSamples];
