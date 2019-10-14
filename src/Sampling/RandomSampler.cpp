@@ -21,7 +21,7 @@ RandomSampler::~RandomSampler() {
 	delete [] samples;	
 }
 
-Point2 RandomSampler::genSampleOnUnitSquare() {
+Point2 RandomSampler::GenSampleOnUnitSquare() {
 	return Point2(0.0f, 0.0f);
 }
 
