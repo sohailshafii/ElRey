@@ -1,12 +1,19 @@
 #include "GenericSampler.h"
 #include <algorithm>
 
-void GenericSampler::ShuffleSampleIndices() {
-	// TODO
-}
+void GenericSampler::SetupShuffledIndices() {
+	shuffledIndices = new unsigned int[numSamples * numSets];
+	unsigned int* indices = new unsigned int[numSamples];
 
-void GenericSampler::ShuffleSamples() {
+	for (unsigned int j = 0; j < numSets; j++) {
+		indices[j] = j;
+	}
 
+	for (int setIndex = 0; setIndex < numSets; setIndex++) {
+
+	}
+
+	delete indices;
 }
 
 Point2 GenericSampler::SampleUnitSphere() {

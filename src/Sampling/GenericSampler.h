@@ -37,9 +37,7 @@ protected:
 	unsigned int jump;
 
 	Point2* samples;
-	int* shuffledIndices;
+	unsigned int* shuffledIndices;
 
-	void ShuffleSampleIndices();
-	void ShuffleSamples();
 	void SetupShuffledIndices();
 };
