@@ -9,7 +9,7 @@
 class CommonMath {
 public:
 	// returns random value between 0 and 1
-	static float randomUnitValue() {
+	static float RandomUnitValue() {
 		// I have NO IDEA why, but using std::random_device
 		// causes strange memory errors using Dr. Memory like
 		// "UNADDRESSABLE ACCESS" beyond top of stack. Sticking with C
@@ -19,6 +19,14 @@ public:
 		//std::mt19937 gen(rd());
 		//std::uniform_real_distribution<>dis(0.0f, 1.0f);
 		//return (float)dis(gen);
+	}
+
+	static int RandInt() {
+		return rand();
+	}
+
+	static void SetRandSeed(unsigned int seed) {
+		srand(seed);
 	}
 
 	static const float randMaxInverse;

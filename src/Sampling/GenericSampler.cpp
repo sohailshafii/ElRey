@@ -1,4 +1,5 @@
 #include "GenericSampler.h"
+#include "CommonMath.h"
 #include <algorithm>
 
 GenericSampler::GenericSampler() {
@@ -41,9 +42,13 @@ void GenericSampler::CreateShuffledIndices() {
 		}
 	}
 
-	delete indices;
+	delete [] indices;
 }
 
 Point2 GenericSampler::SampleUnitSphere() {
-	return Point2();
+	if ((count % numSamples) == 0) {
+		jump = (CommonMath::RandInt() % numSamples) * numSamples;
+	}
+	return (samples[jump + shuffledIndices[jump +
+		count++ % numSamples]]);
 }

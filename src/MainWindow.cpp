@@ -7,6 +7,7 @@
 #include "SceneData/Scene.h"
 #include "Math/Sphere.h"
 #include "Sampling/RandomSampler.h"
+#include "CommonMath.h"
 
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
@@ -20,7 +21,7 @@ void renderLoop(SDL_Renderer *sdlRenderer, SDL_Texture* frameBufferTex,
 Uint32 lastFPSTickTime = 0; 
 
 int main(int argc, char* argv[]) {
-	srand(static_cast <unsigned> (time(0)));
+	CommonMath::SetRandSeed(static_cast <unsigned> (time(0)));
 	std::cout << "ElRey version: " << ElRey_VERSION_MAJOR << "."
 		<< ElRey_VERSION_MINOR << "\n";
 	
