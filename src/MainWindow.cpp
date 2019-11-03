@@ -6,6 +6,7 @@
 #include "Math/Plane.h"
 #include "SceneData/Scene.h"
 #include "Math/Sphere.h"
+#include "Sampling/RandomSampler.h"
 
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
@@ -127,6 +128,8 @@ void renderLoop(SDL_Renderer *sdlRenderer, SDL_Texture* frameBufferTex,
 	int numBytes = pitch*height;
 	std::cout << "Bytes per pixel: " << bytesPerPixel
 		<< ", num bytes: " << numBytes << std::endl;
+
+	RandomSampler randomSampler(34, 300);
 
 	Ray *raysToCast = new Ray[numPixels];
 	// assume left-handed coordinate system, where z goes into screen

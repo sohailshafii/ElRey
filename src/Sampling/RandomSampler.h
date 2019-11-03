@@ -7,5 +7,7 @@ public:
 	RandomSampler(unsigned int numSets, unsigned int numSamples);
 	~RandomSampler();
 
+	void GenerateSamples();
+
 	Point2 GenSampleOnUnitSquare() override;
 };

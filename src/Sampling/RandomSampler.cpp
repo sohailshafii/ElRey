@@ -3,10 +3,6 @@
 
 RandomSampler::RandomSampler(unsigned int numSets,
 	unsigned int numSamples) : GenericSampler(numSets, numSamples) {
-	this->numSets = numSets;
-	this->numSamples = numSamples;
-	samples = new Point2[numSets*numSamples];
-
 	for (unsigned int setIndex = 0, oneDimIndex = 0; setIndex < numSets;
 		setIndex++) {
 		for (unsigned int sampleIndex = 0; sampleIndex < numSamples;
@@ -18,7 +14,10 @@ RandomSampler::RandomSampler(unsigned int numSets,
 }
 
 RandomSampler::~RandomSampler() {
-	delete [] samples;	
+}
+
+void RandomSampler::GenerateSamples() {
+	// TODO
 }
 
 Point2 RandomSampler::GenSampleOnUnitSquare() {

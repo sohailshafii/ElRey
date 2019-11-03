@@ -4,27 +4,10 @@
 
 class GenericSampler {
 public:
-	GenericSampler() {
-		this->numSets = 1;
-		this->numSamples = 83;
-		this->count = 0;
-		this->jump = 0;
-		this->samples = nullptr;
-	}
+	GenericSampler();
+	GenericSampler(unsigned int numSets, unsigned int numSamples);
 
-	GenericSampler(unsigned int numSets, unsigned int numSamples) {
-		this->numSets = numSets;
-		this->numSamples = numSamples;
-		this->count = 0;
-		this->jump = 0;
-		this->samples = new Point2[numSets * numSamples];
-	}
-
-	virtual ~GenericSampler() {
-		if (samples != nullptr) {
-			delete[] samples;
-		}
-	}
+	virtual ~GenericSampler();
 
 	virtual Point2 GenSampleOnUnitSquare() = 0;
 	Point2 SampleUnitSphere();
@@ -39,5 +22,5 @@ protected:
 	Point2* samples;
 	unsigned int* shuffledIndices;
 
-	void SetupShuffledIndices();
+	void CreateShuffledIndices();
 };
