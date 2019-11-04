@@ -20,8 +20,4 @@ void RandomSampler::GenerateSamples() {
 	}
 }
 
-Point2 RandomSampler::GenSampleOnUnitSquare() {
-	// TODO
-	return Point2(0.0f, 0.0f);
-}
 

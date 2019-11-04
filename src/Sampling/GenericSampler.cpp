@@ -1,5 +1,4 @@
 #include "GenericSampler.h"
-#include "CommonMath.h"
 #include <algorithm>
 
 GenericSampler::GenericSampler() {
@@ -8,6 +7,9 @@ GenericSampler::GenericSampler() {
 	this->count = 0;
 	this->jump = 0;
 	this->samples = nullptr;
+	this->diskSamples = nullptr;
+	this->shuffledIndices = nullptr;
+	AllocateSamples();
 	CreateShuffledIndices();
 }
 
@@ -16,13 +18,27 @@ GenericSampler::GenericSampler(unsigned int numSets, unsigned int numSamples) {
 	this->numSamples = numSamples;
 	this->count = 0;
 	this->jump = 0;
-	this->samples = new Point2[numSets * numSamples];
+	this->samples = nullptr;
+	this->diskSamples = nullptr;
+	this->shuffledIndices = nullptr;
+	AllocateSamples();
 	CreateShuffledIndices();
+}
+
+void GenericSampler::AllocateSamples() {
+	this->samples = new Point2[numSets * numSamples];
+	this->diskSamples = new Point2[numSets * numSamples];
 }
 
 GenericSampler::~GenericSampler() {
 	if (samples != nullptr) {
 		delete[] samples;
+	}
+	if (diskSamples != nullptr) {
+		delete[] diskSamples;
+	}
+	if (shuffledIndices != nullptr) {
+		delete[] shuffledIndices;
 	}
 }
 
@@ -45,10 +61,12 @@ void GenericSampler::CreateShuffledIndices() {
 	delete [] indices;
 }
 
-Point2 GenericSampler::SampleUnitSphere() {
-	if ((count % numSamples) == 0) {
-		jump = (CommonMath::RandInt() % numSamples) * numSamples;
-	}
-	return (samples[jump + shuffledIndices[jump +
-		count++ % numSamples]]);
+Point2 GenericSampler::GetSampleOnUnitSquare() {
+	CheckForNewJumpValue();
+	return samples[GetNewSampleIndex()];
+}
+
+Point2 GenericSampler::GetSampleOnUnitDisk() {
+	CheckForNewJumpValue();
+	return diskSamples[GetNewSampleIndex()];
 }

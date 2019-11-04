@@ -8,6 +8,4 @@ public:
 	~RandomSampler();
 
 	void GenerateSamples();
-
-	Point2 GenSampleOnUnitSquare() override;
 };
