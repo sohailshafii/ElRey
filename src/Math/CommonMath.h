@@ -3,8 +3,13 @@
 
 #include <random>
 #include <cstdlib>
+#include <cmath>
 
 #define EPSILON 0.0000001f
+
+#ifndef M_PI
+# define M_PI 3.14159265358979323846
+#endif
 
 class CommonMath {
 public:

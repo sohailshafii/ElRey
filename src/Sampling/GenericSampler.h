@@ -25,8 +25,8 @@ protected:
 	unsigned int* shuffledIndices;
 
 	void AllocateSamples();
-
 	void CreateShuffledIndices();
+	void MapSamplesToUnitDisk();
 
 	void CheckForNewJumpValue() {
 		if ((count % numSamples) == 0) {
