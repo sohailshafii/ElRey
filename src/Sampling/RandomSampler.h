@@ -1,8 +1,8 @@
 #pragma once
 
-#include "Sampling/GenericSampler.h"
+#include "Sampling/GenericMultiSampler.h"
 
-class RandomSampler : public GenericSampler {
+class RandomSampler : public GenericMultiSampler {
 public:
 	RandomSampler(unsigned int numSets, unsigned int numSamples);
 	~RandomSampler();

@@ -7,6 +7,7 @@
 #include "SceneData/Scene.h"
 #include "Math/Sphere.h"
 #include "Sampling/RandomSampler.h"
+#include "Sampling/OneSampleSampler.h"
 #include "CommonMath.h"
 
 #define STB_IMAGE_IMPLEMENTATION
@@ -130,7 +131,8 @@ void renderLoop(SDL_Renderer *sdlRenderer, SDL_Texture* frameBufferTex,
 	std::cout << "Bytes per pixel: " << bytesPerPixel
 		<< ", num bytes: " << numBytes << std::endl;
 
-	RandomSampler randomSampler(34, 300);
+	RandomSampler randomSampler(1, 10);
+	OneSampleSampler oneSampleSampler;
 
 	Ray *raysToCast = new Ray[numPixels];
 	// assume left-handed coordinate system, where z goes into screen
@@ -149,7 +151,7 @@ void renderLoop(SDL_Renderer *sdlRenderer, SDL_Texture* frameBufferTex,
 		for (int column = 0; column < width; column++, pixel++) {
 			// find pixel center in world space
 			Point4 pixelCenterWorld = planeUpperLeft + Point4(
-				colWidth*(column + 0.5f), -rowHeight*(row + 0.5f), 0.0f, 1.0f);
+				colWidth*((float)column + 0.5f), -rowHeight*((float)row + 0.5f), 0.0f, 1.0f);
 
 			Vector3 vecToPixelCenter = pixelCenterWorld - eyePosition;
 			vecToPixelCenter.Normalize();

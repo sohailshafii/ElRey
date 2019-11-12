@@ -1,40 +1,23 @@
 #pragma once
 
 #include "Math/Point2.h"
-#include "CommonMath.h"
 
 class GenericSampler {
 public:
 	GenericSampler();
+	GenericSampler(unsigned int numSamples);
 	GenericSampler(unsigned int numSets, unsigned int numSamples);
 
 	virtual ~GenericSampler();
 
-	Point2 GetSampleOnUnitSquare();
-	Point2 GetSampleOnUnitDisk();
+	virtual Point2 GetSampleOnUnitSquare() = 0;
+	virtual Point2 GetSampleOnUnitDisk() = 0;
 
 protected:
-	unsigned int numSets;
 	unsigned int numSamples;
-	// count is the number of sample points used
-	unsigned long count;
-	unsigned int jump;
-
+	unsigned int numSets;
 	Point2* samples;
-	Point2* diskSamples;
-	unsigned int* shuffledIndices;
 
-	void AllocateSamples();
-	void CreateShuffledIndices();
-	void MapSamplesToUnitDisk();
-
-	void CheckForNewJumpValue() {
-		if ((count % numSamples) == 0) {
-			jump = (CommonMath::RandInt() % numSamples) * numSamples;
-		}
-	}
-
-	unsigned int GetNewSampleIndex() {
-		return jump + shuffledIndices[jump + count++ % numSamples];
-	}
+private:
+	void AllocateGenericSamples(unsigned int numSets, unsigned int numSamples);
 };

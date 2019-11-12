@@ -2,8 +2,8 @@
 #include "Math/CommonMath.h"
 
 RandomSampler::RandomSampler(unsigned int numSets,
-	unsigned int numSamples) : GenericSampler(numSets, numSamples) {
-	
+	unsigned int numSamples) : GenericMultiSampler(numSets, numSamples) {
+	GenerateSamples();
 }
 
 RandomSampler::~RandomSampler() {

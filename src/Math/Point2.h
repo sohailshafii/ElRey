@@ -2,7 +2,7 @@
 
 class Point2 {
 public:
-	Point2() {}
+	Point2() { comp[0] = 0.0f; comp[1] = 0.0f; }
 	Point2(float x, float y);
 
 	Point2(const Point2 &p2);
