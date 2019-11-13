@@ -30,7 +30,7 @@ protected:
 
 	void CheckForNewJumpValue() {
 		if ((count % numSamples) == 0) {
-			jump = (CommonMath::RandInt() % numSamples) * numSamples;
+			jump = (CommonMath::RandInt() % numSets) * numSamples;
 		}
 	}
 

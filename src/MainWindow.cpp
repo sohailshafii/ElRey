@@ -17,7 +17,7 @@ bool initializeSDL();
 SDL_Window* createWindow(int screenWidth, int screenHeight);
 Scene* createSimpleWorld(); 
 void renderLoop(SDL_Renderer *sdlRenderer, SDL_Texture* frameBufferTex,
-	int width, int height, const Scene* gameWorld);
+	int width, int height, int numSamples, const Scene* gameWorld);
 
 Uint32 lastFPSTickTime = 0; 
 
@@ -26,9 +26,8 @@ int main(int argc, char* argv[]) {
 	std::cout << "ElRey version: " << ElRey_VERSION_MAJOR << "."
 		<< ElRey_VERSION_MINOR << "\n";
 	
-	int width = 400, height = 300, numSamples = 10;
+	int width = 640, height = 480, numSamples = 10;
 	bool offlineRender = false;
-	//int width = 2, height = 2, numSamples = 1;
 
 	if (argc > 1) {
 		for (int argIndex = 1; argIndex < argc; argIndex++) {
@@ -75,7 +74,7 @@ int main(int argc, char* argv[]) {
 		renderFormat, SDL_TEXTUREACCESS_STREAMING, width, height);
 
 	Scene *simpleWorld = createSimpleWorld();
-	renderLoop(sdlRenderer, frameBufferTex, width, height, simpleWorld);
+	renderLoop(sdlRenderer, frameBufferTex, width, height, numSamples, simpleWorld);
 	delete simpleWorld;
 
 	SDL_DestroyTexture(frameBufferTex);
@@ -118,7 +117,7 @@ Scene* createSimpleWorld() {
 }
 
 void renderLoop(SDL_Renderer *sdlRenderer, SDL_Texture* frameBufferTex,
-	int width, int height, const Scene* gameWorld) {
+	int width, int height, int numSamples, const Scene* gameWorld) {
 	SDL_Event e;
 
 	int numPixels = width*height;
@@ -128,11 +127,16 @@ void renderLoop(SDL_Renderer *sdlRenderer, SDL_Texture* frameBufferTex,
 
 	int bytesPerPixel = pitch / width;
 	int numBytes = pitch*height;
-	std::cout << "Bytes per pixel: " << bytesPerPixel
-		<< ", num bytes: " << numBytes << std::endl;
+	std::cout << "Bytes per pixel: " << bytesPerPixel << ", num bytes: "
+		<< numBytes << std::endl;
 
-	RandomSampler randomSampler(1, 10);
-	OneSampleSampler oneSampleSampler;
+	GenericSampler* sampler = nullptr;
+	if (numSamples == 0) {
+		sampler = new OneSampleSampler();
+	}
+	else {
+		sampler = new RandomSampler(1, numSamples);
+	}
 
 	Ray *raysToCast = new Ray[numPixels];
 	// assume left-handed coordinate system, where z goes into screen
@@ -151,12 +155,12 @@ void renderLoop(SDL_Renderer *sdlRenderer, SDL_Texture* frameBufferTex,
 		for (int column = 0; column < width; column++, pixel++) {
 			// find pixel center in world space
 			Point4 pixelCenterWorld = planeUpperLeft + Point4(
-				colWidth*((float)column + 0.5f), -rowHeight*((float)row + 0.5f), 0.0f, 1.0f);
+				colWidth*(float)column, -rowHeight*(float)row, 0.0f, 1.0f);
 
 			Vector3 vecToPixelCenter = pixelCenterWorld - eyePosition;
 			vecToPixelCenter.Normalize();
 			raysToCast[pixel].SetDirection(vecToPixelCenter);
-			raysToCast[pixel].SetOrigin(eyePosition);
+			raysToCast[pixel].SetOrigin(pixelCenterWorld);
 		}
 	}
 
@@ -179,14 +183,27 @@ void renderLoop(SDL_Renderer *sdlRenderer, SDL_Texture* frameBufferTex,
 		float maxDist = std::numeric_limits<float>::max();
 		for (int pixelIndex = 0, byteIndex = 0; pixelIndex < numPixels;
 			pixelIndex++, byteIndex +=4) {
-			float tMin = 0.0f, tMax = maxDist; Color intersectedColor = Color::Black();
-			gameWorld->Intersect(raysToCast[pixelIndex], intersectedColor,
+			float tMin = 0.0f, tMax = maxDist; Color accumColor = Color::Black();
+			Color sampleColor = Color::Black();
+			Point4 oldOrigin = raysToCast[pixelIndex].GetOrigin();
+			for (int sampleIndex = 0; sampleIndex < numSamples; sampleIndex++) {
+				Point2 newSample = sampler->GetSampleOnUnitSquare();
+				raysToCast[pixelIndex].SetOrigin(Point4(newSample[0]*colWidth + oldOrigin[0],
+					newSample[1]*rowHeight + oldOrigin[1], oldOrigin[2], oldOrigin[3]));
+				gameWorld->Intersect(raysToCast[pixelIndex], sampleColor,
+					0.0f, tMax);
+				accumColor += sampleColor;
+			}
+			raysToCast[pixelIndex].SetOrigin(oldOrigin);
+
+			accumColor /= (float)numSamples;
+			gameWorld->Intersect(raysToCast[pixelIndex], accumColor,
 				0.0f, tMax);
 			// gamma-correct
-			intersectedColor ^= invGamma;
-			pixels[byteIndex] = (unsigned char)(intersectedColor[2] * 255.0f); // B
-			pixels[byteIndex + 1] = (unsigned char)(intersectedColor[1] * 255.0f); // G
-			pixels[byteIndex + 2] = (unsigned char)(intersectedColor[0] * 255.0f); // R
+			accumColor ^= invGamma;
+			pixels[byteIndex] = (unsigned char)(accumColor[2] * 255.0f); // B
+			pixels[byteIndex + 1] = (unsigned char)(accumColor[1] * 255.0f); // G
+			pixels[byteIndex + 2] = (unsigned char)(accumColor[0] * 255.0f); // R
 			if (bytesPerPixel == 4) {
 				pixels[byteIndex + 3] = 255;
 			}
@@ -208,5 +225,6 @@ void renderLoop(SDL_Renderer *sdlRenderer, SDL_Texture* frameBufferTex,
 	}
 
 	delete[] raysToCast;
+	delete sampler;
 }
 
