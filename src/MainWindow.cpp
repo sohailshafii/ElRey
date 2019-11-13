@@ -188,8 +188,12 @@ void renderLoop(SDL_Renderer *sdlRenderer, SDL_Texture* frameBufferTex,
 			Point4 oldOrigin = raysToCast[pixelIndex].GetOrigin();
 			for (int sampleIndex = 0; sampleIndex < numSamples; sampleIndex++) {
 				Point2 newSample = sampler->GetSampleOnUnitSquare();
-				raysToCast[pixelIndex].SetOrigin(Point4(newSample[0]*colWidth + oldOrigin[0],
-					newSample[1]*rowHeight + oldOrigin[1], oldOrigin[2], oldOrigin[3]));
+				Point4 newPixelPnt = Point4(newSample[0] * colWidth + oldOrigin[0],
+					-newSample[1] * rowHeight + oldOrigin[1], oldOrigin[2], oldOrigin[3]);
+				Vector3 vecToPixelCenter = newPixelPnt - eyePosition;
+				vecToPixelCenter.Normalize();
+				raysToCast[pixelIndex].SetDirection(vecToPixelCenter);
+				raysToCast[pixelIndex].SetOrigin(newPixelPnt);
 				gameWorld->Intersect(raysToCast[pixelIndex], sampleColor,
 					0.0f, tMax);
 				accumColor += sampleColor;
