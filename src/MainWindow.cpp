@@ -26,7 +26,7 @@ int main(int argc, char* argv[]) {
 	std::cout << "ElRey version: " << ElRey_VERSION_MAJOR << "."
 		<< ElRey_VERSION_MINOR << "\n";
 	
-	int width = 640, height = 480, numSamples = 10;
+	int width = 300, height = 200, numSamples = 1;
 	bool offlineRender = false;
 
 	if (argc > 1) {
@@ -117,50 +117,46 @@ Scene* createSimpleWorld() {
 }
 
 void renderLoop(SDL_Renderer *sdlRenderer, SDL_Texture* frameBufferTex,
-	int width, int height, int numSamples, const Scene* gameWorld) {
+	int widthPixels, int heightPixels, int numSamples, const Scene* gameWorld) {
 	SDL_Event e;
 
-	int numPixels = width*height;
+	int numPixels = widthPixels*heightPixels;
 	unsigned char* pixels;
 	int pitch;
 	SDL_LockTexture(frameBufferTex, NULL, (void**)&pixels, &pitch);
 
-	int bytesPerPixel = pitch / width;
-	int numBytes = pitch*height;
+	int bytesPerPixel = pitch / widthPixels;
+	int numBytes = pitch*heightPixels;
 	std::cout << "Bytes per pixel: " << bytesPerPixel << ", num bytes: "
 		<< numBytes << std::endl;
 
 	GenericSampler* sampler = nullptr;
-	if (numSamples == 0) {
+	if (numSamples == 1) {
 		sampler = new OneSampleSampler();
 	}
 	else {
 		sampler = new RandomSampler(1, numSamples);
 	}
 
-	Ray *raysToCast = new Ray[numPixels];
+	Point4*gridPositions = new Point4[numPixels];
 	// assume left-handed coordinate system, where z goes into screen
-	Point4 eyePosition(0.0f, 1.0f, 0.0f, 1.0f);
-	float castPlaneHeight = 2.0f;
-	float castPlaneWidth = castPlaneHeight * (float)width / (float)height;
-	float rowHeight = castPlaneHeight / height;
-	float colWidth = castPlaneWidth / width;
+	Point4 eyePosition(0.0f, 1.0f, 0.6f, 1.0f);
+	float castPlaneHeight = 0.8f;
+	float castPlaneWidth = castPlaneHeight * (float)widthPixels / (float)heightPixels;
+	float rowHeight = castPlaneHeight / heightPixels;
+	float colWidth = castPlaneWidth / widthPixels;
 	std::cout << "Image plane dimensions: " << castPlaneWidth << " x "
 		<< castPlaneHeight << " Row height: " << rowHeight << ", col width: "
 		<< colWidth << ".\n";
 	Point4 planeUpperLeft(-castPlaneWidth * 0.5f + eyePosition[0],
-		castPlaneHeight*0.5f + eyePosition[1], 1.0f + eyePosition[2], 1.0f);
+		castPlaneHeight*0.5f + eyePosition[1], 0.2f + eyePosition[2], 1.0f);
 
-	for (int row = 0, pixel = 0; row < height; row++) {
-		for (int column = 0; column < width; column++, pixel++) {
+	for (int row = 0, pixel = 0; row < heightPixels; row++) {
+		for (int column = 0; column < widthPixels; column++, pixel++) {
 			// find pixel center in world space
 			Point4 pixelCenterWorld = planeUpperLeft + Point4(
 				colWidth*(float)column, -rowHeight*(float)row, 0.0f, 1.0f);
-
-			Vector3 vecToPixelCenter = pixelCenterWorld - eyePosition;
-			vecToPixelCenter.Normalize();
-			raysToCast[pixel].SetDirection(vecToPixelCenter);
-			raysToCast[pixel].SetOrigin(pixelCenterWorld);
+			gridPositions[pixel] = pixelCenterWorld;
 		}
 	}
 
@@ -168,6 +164,8 @@ void renderLoop(SDL_Renderer *sdlRenderer, SDL_Texture* frameBufferTex,
 	FPSCounter fpsCounter;
 
 	std::cout.precision(5);
+	Ray rayToCast;
+	rayToCast.SetOrigin(eyePosition);
 	while(true) {
 		bool quitPressed = false;
 		while(SDL_PollEvent(&e) != 0) {
@@ -185,24 +183,20 @@ void renderLoop(SDL_Renderer *sdlRenderer, SDL_Texture* frameBufferTex,
 			pixelIndex++, byteIndex +=4) {
 			float tMin = 0.0f, tMax = maxDist; Color accumColor = Color::Black();
 			Color sampleColor = Color::Black();
-			Point4 oldOrigin = raysToCast[pixelIndex].GetOrigin();
+			Point4& oldOrigin = gridPositions[pixelIndex];
 			for (int sampleIndex = 0; sampleIndex < numSamples; sampleIndex++) {
 				Point2 newSample = sampler->GetSampleOnUnitSquare();
 				Point4 newPixelPnt = Point4(newSample[0] * colWidth + oldOrigin[0],
 					-newSample[1] * rowHeight + oldOrigin[1], oldOrigin[2], oldOrigin[3]);
 				Vector3 vecToPixelCenter = newPixelPnt - eyePosition;
 				vecToPixelCenter.Normalize();
-				raysToCast[pixelIndex].SetDirection(vecToPixelCenter);
-				raysToCast[pixelIndex].SetOrigin(newPixelPnt);
-				gameWorld->Intersect(raysToCast[pixelIndex], sampleColor,
-					0.0f, tMax);
+				rayToCast.SetDirection(vecToPixelCenter);
+				tMax = maxDist;
+				gameWorld->Intersect(rayToCast, sampleColor, 0.0f, tMax);
 				accumColor += sampleColor;
 			}
-			raysToCast[pixelIndex].SetOrigin(oldOrigin);
 
 			accumColor /= (float)numSamples;
-			gameWorld->Intersect(raysToCast[pixelIndex], accumColor,
-				0.0f, tMax);
 			// gamma-correct
 			accumColor ^= invGamma;
 			pixels[byteIndex] = (unsigned char)(accumColor[2] * 255.0f); // B
@@ -228,7 +222,7 @@ void renderLoop(SDL_Renderer *sdlRenderer, SDL_Texture* frameBufferTex,
 		}
 	}
 
-	delete[] raysToCast;
+	delete[] gridPositions;
 	delete sampler;
 }
 
