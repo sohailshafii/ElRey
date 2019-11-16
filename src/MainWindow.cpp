@@ -8,16 +8,20 @@
 #include "Math/Sphere.h"
 #include "Sampling/RandomSampler.h"
 #include "Sampling/OneSampleSampler.h"
+#include "Sampling/JitteredSampler.h"
 #include "CommonMath.h"
 
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
 
+enum RandomSamplerType { None = 0, Random, Jittered };
+
 bool initializeSDL();
 SDL_Window* createWindow(int screenWidth, int screenHeight);
 Scene* createSimpleWorld(); 
 void renderLoop(SDL_Renderer *sdlRenderer, SDL_Texture* frameBufferTex,
-	int width, int height, int numSamples, const Scene* gameWorld);
+	int width, int height, int numSamples, RandomSamplerType randomSamplerType,
+	const Scene* gameWorld);
 
 Uint32 lastFPSTickTime = 0; 
 
@@ -28,6 +32,7 @@ int main(int argc, char* argv[]) {
 	
 	int width = 300, height = 200, numSamples = 1;
 	bool offlineRender = false;
+	RandomSamplerType randomSamplerType = None;
 
 	if (argc > 1) {
 		for (int argIndex = 1; argIndex < argc; argIndex++) {
@@ -37,11 +42,24 @@ int main(int argc, char* argv[]) {
 			if (!strcmp(argv[argIndex], "-h") && argIndex+1 < argc) {
 				height = atoi(argv[++argIndex]);
 			}
-			if (!strcmp(argv[argIndex], "-s") && argIndex+1 < argc) {
+			if (!strcmp(argv[argIndex], "-ns") && argIndex+1 < argc) {
 				numSamples = atoi(argv[++argIndex]);
 			}
 			if (!strcmp(argv[argIndex], "-offline")) {
 				offlineRender = true;
+			}
+			if (!strcmp(argv[argIndex], "-samplerType") && argIndex + 1 < argc) {
+				auto samplerTypeToken = argv[++argIndex];
+				if (!strcmp(samplerTypeToken, "Random")) {
+					randomSamplerType = Random;
+				}
+				else if (!strcmp(samplerTypeToken, "Jittered")) {
+					randomSamplerType = Jittered;
+				}
+				else {
+					std::cerr << "Cannot understand sampler type specified: "
+						<< samplerTypeToken << std::endl;
+				}
 			}
 		}
 	}
@@ -74,7 +92,8 @@ int main(int argc, char* argv[]) {
 		renderFormat, SDL_TEXTUREACCESS_STREAMING, width, height);
 
 	Scene *simpleWorld = createSimpleWorld();
-	renderLoop(sdlRenderer, frameBufferTex, width, height, numSamples, simpleWorld);
+	renderLoop(sdlRenderer, frameBufferTex, width, height, numSamples, randomSamplerType,
+		simpleWorld);
 	delete simpleWorld;
 
 	SDL_DestroyTexture(frameBufferTex);
@@ -117,7 +136,8 @@ Scene* createSimpleWorld() {
 }
 
 void renderLoop(SDL_Renderer *sdlRenderer, SDL_Texture* frameBufferTex,
-	int widthPixels, int heightPixels, int numSamples, const Scene* gameWorld) {
+	int widthPixels, int heightPixels, int numSamples,
+	RandomSamplerType randomSamplerType, const Scene* gameWorld) {
 	SDL_Event e;
 
 	int numPixels = widthPixels*heightPixels;
@@ -129,13 +149,26 @@ void renderLoop(SDL_Renderer *sdlRenderer, SDL_Texture* frameBufferTex,
 	int numBytes = pitch*heightPixels;
 	std::cout << "Bytes per pixel: " << bytesPerPixel << ", num bytes: "
 		<< numBytes << std::endl;
+	if (randomSamplerType != None && numSamples == 1) {
+		std::cerr << "You can't specify a random sampler with one sample. Defaulting " <<
+			"to no random sampler.\n";
+		randomSamplerType = None;
+	}
+	else if (randomSamplerType == None && numSamples > 1) {
+		std::cerr << "An ordinary sampler cannot have more than one sample per pixel!\n";
+	}
 
 	GenericSampler* sampler = nullptr;
-	if (numSamples == 1) {
-		sampler = new OneSampleSampler();
-	}
-	else {
-		sampler = new RandomSampler(1, numSamples);
+	switch (randomSamplerType) {
+		case Jittered:
+			sampler = new JitteredSampler(1, numSamples);
+			break;
+		case Random:
+			sampler = new RandomSampler(1, numSamples);
+			break;
+		default:
+			sampler = new OneSampleSampler();
+			break;
 	}
 
 	Point4*gridPositions = new Point4[numPixels];
