@@ -20,4 +20,3 @@ void RandomSampler::GenerateSamples() {
 	}
 }
 
-

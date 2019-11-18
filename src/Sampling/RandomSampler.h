@@ -7,5 +7,6 @@ public:
 	RandomSampler(unsigned int numSets, unsigned int numSamples);
 	~RandomSampler();
 
+private:
 	void GenerateSamples();
 };

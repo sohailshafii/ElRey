@@ -7,5 +7,6 @@ public:
 	JitteredSampler(unsigned int numSets, unsigned int numSamples);
 	~JitteredSampler();
 
+private:
 	void GenerateSamples();
 };

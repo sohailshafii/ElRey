@@ -1,6 +1,8 @@
 #include <SDL.h>
 #include <iostream>
 #include <ctime>
+#include <algorithm>
+#include <cctype>
 #include "ElReyConfig.h"
 #include "Performance/FPSCounter.h"
 #include "Math/Plane.h"
@@ -9,12 +11,13 @@
 #include "Sampling/RandomSampler.h"
 #include "Sampling/OneSampleSampler.h"
 #include "Sampling/JitteredSampler.h"
+#include "Sampling/NRooksSampler.h"
 #include "CommonMath.h"
 
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
 
-enum RandomSamplerType { None = 0, Random, Jittered };
+enum RandomSamplerType { None = 0, Random, Jittered, NRooks };
 
 bool initializeSDL();
 SDL_Window* createWindow(int screenWidth, int screenHeight);
@@ -36,29 +39,40 @@ int main(int argc, char* argv[]) {
 
 	if (argc > 1) {
 		for (int argIndex = 1; argIndex < argc; argIndex++) {
-			if (!strcmp(argv[argIndex], "-w") && argIndex+1 < argc) {
+			std::string currentToken = argv[argIndex];
+			std::transform(currentToken.begin(),
+				currentToken.end(), currentToken.begin(),
+				[](unsigned char c) { return std::tolower(c); });
+
+			if (currentToken == "-w" && argIndex+1 < argc) {
 				width = atoi(argv[++argIndex]);
 			}
-			if (!strcmp(argv[argIndex], "-h") && argIndex+1 < argc) {
+			if (currentToken == "-h" && argIndex+1 < argc) {
 				height = atoi(argv[++argIndex]);
 			}
-			if (!strcmp(argv[argIndex], "-ns") && argIndex+1 < argc) {
+			if (currentToken == "-ns" && argIndex+1 < argc) {
 				numSamples = atoi(argv[++argIndex]);
 			}
-			if (!strcmp(argv[argIndex], "-offline")) {
+			if (currentToken == "-offline") {
 				offlineRender = true;
 			}
-			if (!strcmp(argv[argIndex], "-samplerType") && argIndex + 1 < argc) {
-				auto samplerTypeToken = argv[++argIndex];
-				if (!strcmp(samplerTypeToken, "Random")) {
+			if (currentToken == "-samplertype" && argIndex + 1 < argc) {
+				std::string samplerTypeToken = argv[++argIndex];
+				std::transform(samplerTypeToken.begin(),
+					samplerTypeToken.end(), samplerTypeToken.begin(),
+					[](unsigned char c) { return std::tolower(c); });
+				if (samplerTypeToken == "random") {
 					randomSamplerType = Random;
 				}
-				else if (!strcmp(samplerTypeToken, "Jittered")) {
+				else if (samplerTypeToken == "jittered") {
 					randomSamplerType = Jittered;
+				}
+				else if (samplerTypeToken == "nrooks") {
+					randomSamplerType = NRooks;
 				}
 				else {
 					std::cerr << "Cannot understand sampler type specified: "
-						<< samplerTypeToken << std::endl;
+						<< samplerTypeToken.c_str() << std::endl;
 				}
 			}
 		}
@@ -156,6 +170,7 @@ void renderLoop(SDL_Renderer *sdlRenderer, SDL_Texture* frameBufferTex,
 	}
 	else if (randomSamplerType == None && numSamples > 1) {
 		std::cerr << "An ordinary sampler cannot have more than one sample per pixel!\n";
+		numSamples = 1;
 	}
 
 	GenericSampler* sampler = nullptr;
@@ -165,6 +180,9 @@ void renderLoop(SDL_Renderer *sdlRenderer, SDL_Texture* frameBufferTex,
 			break;
 		case Random:
 			sampler = new RandomSampler(1, numSamples);
+			break;
+		case NRooks:
+			sampler = new NRooksSampler(1, numSamples);
 			break;
 		default:
 			sampler = new OneSampleSampler();
