@@ -12,6 +12,7 @@
 #include "Sampling/OneSampleSampler.h"
 #include "Sampling/JitteredSampler.h"
 #include "Sampling/NRooksSampler.h"
+#include "Sampling/MultiJitteredSampler.h"
 #include "CommonMath.h"
 
 #define STB_IMAGE_IMPLEMENTATION
