@@ -25,9 +25,20 @@ public:
 		//std::uniform_real_distribution<>dis(0.0f, 1.0f);
 		//return (float)dis(gen);
 	}
+	
+	static float RandomRangeValue(float low, float high) {
+		return RandomUnitValue() * (high - low) + low;
+	}
 
 	static int RandInt() {
 		return rand();
+	}
+
+	static int RandInt(int low, int high) {
+		// add one to be inclusive of end
+		float randomFloat = RandomRangeValue(0.0f,
+			high - low + 1.0f);
+		return (int)randomFloat + low;
 	}
 
 	static void SetRandSeed(unsigned int seed) {

@@ -18,7 +18,7 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
 
-enum RandomSamplerType { None = 0, Random, Jittered, NRooks };
+enum RandomSamplerType { None = 0, Random, Jittered, NRooks, MultiJittered };
 
 bool initializeSDL();
 SDL_Window* createWindow(int screenWidth, int screenHeight);
@@ -70,6 +70,9 @@ int main(int argc, char* argv[]) {
 				}
 				else if (samplerTypeToken == "nrooks") {
 					randomSamplerType = NRooks;
+				}
+				else if (samplerTypeToken == "multijittered") {
+					randomSamplerType = MultiJittered;
 				}
 				else {
 					std::cerr << "Cannot understand sampler type specified: "
@@ -184,6 +187,9 @@ void renderLoop(SDL_Renderer *sdlRenderer, SDL_Texture* frameBufferTex,
 			break;
 		case NRooks:
 			sampler = new NRooksSampler(1, numSamples);
+			break;
+		case MultiJittered:
+			sampler = new MultiJitteredSampler(1, numSamples);
 			break;
 		default:
 			sampler = new OneSampleSampler();
