@@ -63,9 +63,9 @@ void MultiJitteredSampler::GenerateSamples() {
 		for (unsigned int gridCol = 0; gridCol < gridDim;
 			gridCol++) {
 			for (unsigned int gridRow = 0; gridRow < gridDim; gridRow++) {
-				unsigned int randomX = (unsigned int)CommonMath::RandInt((int)gridRow, (int)gridDim - 1);
+				unsigned int randomY = (unsigned int)CommonMath::RandInt((int)gridRow, (int)gridDim - 1);
 				unsigned int tempIndex = gridRow * gridDim + gridCol + setOffset;
-				unsigned int otherIndex = randomX * gridDim + gridCol + setOffset;
+				unsigned int otherIndex = randomY * gridDim + gridCol + setOffset;
 				float t = samples[tempIndex][1];
 				samples[tempIndex][1] = samples[otherIndex][1];
 				samples[otherIndex][1] = t;
