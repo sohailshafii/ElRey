@@ -33,18 +33,6 @@ public:
 		return Point3(0.0f, 0.0f, 0.0f);
 	}
 
-	static Point3 Right() {
-		return Point3(1.0f, 0.0f, 0.0f);
-	}
-
-	static Point3 Up() {
-		return Point3(0.0f, 1.0f, 0.0f);
-	}
-
-	static Point3 Forward() {
-		return Point3(0.0f, 0.0f, 1.0f);
-	}
-
 private:
 	float comp[3];
 };

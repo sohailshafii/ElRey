@@ -37,18 +37,6 @@ public:
 		return Point4(0.0f, 0.0f, 0.0f, 1.0f);
 	}
 
-	static Point4 Up() {
-		return Point4(0.0f, 1.0f, 0.0f, 1.0f);
-	}
-
-	static Point4 Right() {
-		return Point4(1.0f, 0.0f, 0.0f, 1.0f);
-	}
-
-	static Point4 Forward() {
-		return Point4(0.0f, 0.0f, 1.0f, 1.0f);
-	}
-
 private:
 	float comp[4];
 };

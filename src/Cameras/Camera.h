@@ -1,20 +1,23 @@
 #pragma once
 
+#include "Math/Point3.h"
 #include "Math/Vector3.h"
-#include "Math/Point4.h"
 
 class Camera {
 public:
 	Camera();
-	Camera(Point4 eyePosition, Point4 lookAtPosition,
-		float horizontalFov, Vector3 up);
+	Camera(const Point3& eyePosition, const Point3& lookAtPosition,
+		float horizontalFov, const Vector3& up);
+
+protected:
+	void ComputeCoordinateFrameAxes();
 
 private:
-	Point4 eyePosition;
-	Point4 lookAtPosition;
+	Point3 eyePosition;
+	Point3 lookAtPosition;
 	float horizontalFov;
-	Vector3 up;
 
-	Vector3 forward;
 	Vector3 right;
+	Vector3 up;
+	Vector3 forward;
 };

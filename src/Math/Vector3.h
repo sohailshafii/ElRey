@@ -32,6 +32,8 @@ public:
 	inline float operator*(const Vector3 &v2) const;
 
 	inline Vector3 operator*(float t) const;
+	
+	inline Vector3 operator^(const Vector3& v2) const;
 
 	inline Vector3 operator-() const;
 
@@ -39,16 +41,32 @@ public:
 	float Norm() const;
 	float NormSqr() const;
 
+	static Vector3 Zero() {
+		return Vector3(0.0f, 0.0f, 0.0f);
+	}
+
+	static Vector3 Right() {
+		return Vector3(1.0f, 0.0f, 0.0f);
+	}
+
+	static Vector3 Up() {
+		return Vector3(0.0f, 1.0f, 0.0f);
+	}
+
+	static Vector3 Forward() {
+		return Vector3(0.0f, 0.0f, 1.0f);
+	}
+
 private:
 	float comp[3];
 };
 
 inline float &Vector3::operator[] (int index) {
-	return comp[index];	
+	return comp[index];
 }
 
 inline float Vector3::operator[] (int index) const {
-	return comp[index];	
+	return comp[index];
 }
 
 inline Vector3& Vector3::operator+=(const Vector3 &v2) {
@@ -99,6 +117,12 @@ inline Vector3 Vector3::operator-(const Vector3 &v2) const {
 inline float Vector3::operator*(const Vector3 &v2) const {
 	return (comp[0]*v2.comp[0] + comp[1]*v2.comp[1]
 		+ comp[2]*v2.comp[2]);
+}
+
+inline Vector3 Vector3::operator^(const Vector3& v2) const {
+	return Vector3(comp[1] * v2[2] - comp[2] * v2[1],
+		comp[2] * v2[0] - comp[0] * v2[2],
+		comp[0] * v2[1] - comp[1] * v2[0]);
 }
 
 inline Vector3 Vector3::operator*(float t) const {
