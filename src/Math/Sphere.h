@@ -6,7 +6,7 @@
 
 class Sphere : public Primitive {
 public:
-	Sphere(const Point4& iCenter, float iRadius,
+	Sphere(const Point3& iCenter, float iRadius,
 		const Color& iColor) : center(iCenter),
 		color(iColor), radius(iRadius) {
 		radiusSqr = radius*radius;
@@ -16,7 +16,7 @@ public:
 		float tMin, float& tMax) override;
 
 private:
-	Point4 center;
+	Point3 center;
 	Color color;
 	float radius, radiusSqr;
 };

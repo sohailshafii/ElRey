@@ -5,7 +5,7 @@
 
 class Camera {
 public:
-	Camera() {}
+	Camera();
 	Camera(Point4 eyePosition, Point4 lookAtPosition,
 		float horizontalFov, Vector3 up);
 

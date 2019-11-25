@@ -2,11 +2,13 @@
 
 #include "Math/Vector3.h"
 
+// This class represents a homogenous point. We probably don't need
+// this and can rely on the Point3 data type. But this exists in case
+// we require it.
 class Point4 {
 public:
 	Point4() {}
 	Point4(float x, float y, float z);
-	// TODO do we really need w here????
 	Point4(float x, float y, float z, float w);
 
 	Point4(const Point4 &p2);
@@ -30,6 +32,22 @@ public:
 	inline Vector3 operator-(const Point4 &p2) const;
 
 	inline Point4 operator-() const;
+
+	static Point4 Zero() {
+		return Point4(0.0f, 0.0f, 0.0f, 1.0f);
+	}
+
+	static Point4 Up() {
+		return Point4(0.0f, 1.0f, 0.0f, 1.0f);
+	}
+
+	static Point4 Right() {
+		return Point4(1.0f, 0.0f, 0.0f, 1.0f);
+	}
+
+	static Point4 Forward() {
+		return Point4(0.0f, 0.0f, 1.0f, 1.0f);
+	}
 
 private:
 	float comp[4];

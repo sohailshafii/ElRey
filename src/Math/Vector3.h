@@ -1,6 +1,7 @@
 #pragma once
 
 class Point4;
+class Point3;
 
 class Vector3 {
 public:
@@ -19,6 +20,9 @@ public:
 
 	inline Vector3& operator*=(float t);
 	inline Vector3& operator/=(float t);
+
+	float operator*(const Point3& point) const;
+	Point3 operator+(const Point3& point) const;
 
 	float operator*(const Point4 &point) const;
 	Point4 operator+(const Point4 &point) const;

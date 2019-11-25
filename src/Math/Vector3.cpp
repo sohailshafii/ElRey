@@ -1,5 +1,6 @@
 #include "Vector3.h"
 #include "Math/Point4.h"
+#include "Math/Point3.h"
 #include <cstring>
 #include <cmath>
 
@@ -18,6 +19,16 @@ Vector3& Vector3::operator=(const Vector3& other) {
 		memcpy(comp, other.comp, sizeof(float)*3);
 	}
 	return *this;
+}
+
+float Vector3::operator*(const Point3& point) const {
+	return (comp[0] * point[0] + comp[1] * point[1]
+		+ comp[2] * point[2]);
+}
+
+Point3 Vector3::operator+(const Point3& point) const {
+	return Point3(comp[0] + point[0], comp[1] + point[1],
+		comp[2] + point[2]);
 }
 
 float Vector3::operator*(const Point4 &point) const {

@@ -6,7 +6,7 @@
 
 bool Sphere::Intersect(const Ray &ray, Color &newColor,
 	float tMin, float& tMax) {
-	const Point4& rayOrigin = ray.GetOrigin();
+	const Point3& rayOrigin = ray.GetOrigin();
 	const Vector3& rayDirection = ray.GetDirection();
 
 	Vector3 centerToRayOrigin = rayOrigin - center;

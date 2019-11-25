@@ -1,12 +1,12 @@
 #pragma once
 
 #include "Primitive.h"
-#include "Math/Point4.h"
+#include "Math/Point3.h"
 #include "Math/Vector3.h"
 
 class Plane : public Primitive {
 public:
-	Plane(const Point4& iOrigin, const Vector3& iNormal,
+	Plane(const Point3& iOrigin, const Vector3& iNormal,
 		const Color& iColor) : origin(iOrigin),
 		normal(iNormal), color(iColor) {
 		this->distance = -origin*normal;
@@ -16,7 +16,7 @@ public:
 		float tMin, float& tMax) override;
 
 private:
-	Point4 origin;
+	Point3 origin;
 	Vector3 normal;
 	float distance;
 	Color color;

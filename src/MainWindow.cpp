@@ -141,9 +141,9 @@ SDL_Window* createWindow(int screenWidth, int screenHeight) {
 }
 
 Scene* createSimpleWorld() {
-	Plane* simplePlane = new Plane(Point4(0.0f, 0.0f, 0.0f, 1.0f),
+	Plane* simplePlane = new Plane(Point3(0.0f, 0.0f, 0.0f),
 		Vector3(0.0f, 1.0f, 0.0f), Color(0.0f, 0.0f, 0.8f, 1.0f));
-	Sphere* sphere = new Sphere(Point4(0.0f, 1.0f, 1.0f, 1.0f),
+	Sphere* sphere = new Sphere(Point3(0.0f, 1.0f, 1.0f),
 		0.3f, Color(1.0f, 0.0f, 0.0f, 1.0f));
 
 	Primitive** simplePrimitives = new Primitive*[2];
@@ -196,9 +196,9 @@ void renderLoop(SDL_Renderer *sdlRenderer, SDL_Texture* frameBufferTex,
 			break;
 	}
 
-	Point4*gridPositions = new Point4[numPixels];
+	Point3* gridPositions = new Point3[numPixels];
 	// assume left-handed coordinate system, where z goes into screen
-	Point4 eyePosition(0.0f, 1.0f, 0.6f, 1.0f);
+	Point3 eyePosition(0.0f, 1.0f, 0.6f);
 	float castPlaneHeight = 0.8f;
 	float castPlaneWidth = castPlaneHeight * (float)widthPixels / (float)heightPixels;
 	float rowHeight = castPlaneHeight / heightPixels;
@@ -206,14 +206,14 @@ void renderLoop(SDL_Renderer *sdlRenderer, SDL_Texture* frameBufferTex,
 	std::cout << "Image plane dimensions: " << castPlaneWidth << " x "
 		<< castPlaneHeight << " Row height: " << rowHeight << ", col width: "
 		<< colWidth << ".\n";
-	Point4 planeUpperLeft(-castPlaneWidth * 0.5f + eyePosition[0],
-		castPlaneHeight*0.5f + eyePosition[1], 0.2f + eyePosition[2], 1.0f);
+	Point3 planeUpperLeft(-castPlaneWidth * 0.5f + eyePosition[0],
+		castPlaneHeight*0.5f + eyePosition[1], 0.2f + eyePosition[2]);
 
 	for (int row = 0, pixel = 0; row < heightPixels; row++) {
 		for (int column = 0; column < widthPixels; column++, pixel++) {
 			// find pixel center in world space
-			Point4 pixelCenterWorld = planeUpperLeft + Point4(
-				colWidth*(float)column, -rowHeight*(float)row, 0.0f, 1.0f);
+			Point3 pixelCenterWorld = planeUpperLeft + Point3(
+				colWidth*(float)column, -rowHeight*(float)row, 0.0f);
 			gridPositions[pixel] = pixelCenterWorld;
 		}
 	}
@@ -241,11 +241,11 @@ void renderLoop(SDL_Renderer *sdlRenderer, SDL_Texture* frameBufferTex,
 			pixelIndex++, byteIndex +=4) {
 			float tMin = 0.0f, tMax = maxDist; Color accumColor = Color::Black();
 			Color sampleColor = Color::Black();
-			Point4& oldOrigin = gridPositions[pixelIndex];
+			Point3& oldOrigin = gridPositions[pixelIndex];
 			for (int sampleIndex = 0; sampleIndex < numSamples; sampleIndex++) {
 				Point2 newSample = sampler->GetSampleOnUnitSquare();
-				Point4 newPixelPnt = Point4(newSample[0] * colWidth + oldOrigin[0],
-					-newSample[1] * rowHeight + oldOrigin[1], oldOrigin[2], oldOrigin[3]);
+				Point3 newPixelPnt = Point3(newSample[0] * colWidth + oldOrigin[0],
+					-newSample[1] * rowHeight + oldOrigin[1], oldOrigin[2]);
 				Vector3 vecToPixelCenter = newPixelPnt - eyePosition;
 				vecToPixelCenter.Normalize();
 				rayToCast.SetDirection(vecToPixelCenter);

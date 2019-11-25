@@ -3,7 +3,8 @@
 #include <stdexcept>
 #include <iostream>
 
-MultiJitteredSampler::MultiJitteredSampler(unsigned int numSets, unsigned int numSamples)
+MultiJitteredSampler::MultiJitteredSampler(unsigned int numSets,
+	unsigned int numSamples)
 	: GenericMultiSampler(numSets, numSamples) {
 	GenerateSamples();
 }

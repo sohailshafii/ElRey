@@ -1,19 +1,18 @@
 #pragma once
 
-#include "Math/Point4.h"
+#include "Math/Point3.h"
 #include "Math/Vector3.h"
 
 class Ray {
 public:
 	Ray() {
-		
 	}
-	Ray(const Point4& origin, const Vector3& direction);
+	Ray(const Point3& origin, const Vector3& direction);
 
 	Ray(const Ray &p2);
 	Ray& operator=(const Ray& other);
 
-	const Point4& GetOrigin() const {
+	const Point3& GetOrigin() const {
 		return origin;
 	}
 
@@ -21,7 +20,7 @@ public:
 		return direction;
 	}
 
-	void SetOrigin(const Point4 &newOrigin) {
+	void SetOrigin(const Point3 &newOrigin) {
 		this->origin = newOrigin;
 	}
 
@@ -30,6 +29,6 @@ public:
 	}
 
 private:
-	Point4 origin;
+	Point3 origin;
 	Vector3 direction;
 };

@@ -16,6 +16,10 @@ public:
 
 	inline Point2 operator-() const;
 
+	static Point2 Zero() {
+		return Point2(0.0f, 0.0f);
+	}
+
 private:
 	float comp[2];
 };
