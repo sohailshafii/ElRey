@@ -2,20 +2,53 @@
 #include "CommonMath.h"
 #include <cmath>
 
+#include "Sampling/RandomSampler.h"
+#include "Sampling/OneSampleSampler.h"
+#include "Sampling/JitteredSampler.h"
+#include "Sampling/NRooksSampler.h"
+#include "Sampling/MultiJitteredSampler.h"
+
 Camera::Camera() {
 	this->eyePosition = Point3::Zero();
 	this->lookAtPosition = Point3::Zero();
 	this->horizontalFov = 0.0f;
 	this->up = up;
+	this->viewPlaneSampler = nullptr;
+}
+
+Camera::~Camera() {
+	if (viewPlaneSampler != nullptr) {
+		delete viewPlaneSampler;
+	}
 }
 
 Camera::Camera(const Point3& eyePosition, const Point3& lookAtPosition,
-	float horizontalFov, const Vector3& up) {
+	float horizontalFov, const Vector3& up, RandomSamplerType
+	randomSamplerType, unsigned int numRandomSamples,
+	unsigned int numRandomSets) {
 	this->eyePosition = eyePosition;
 	this->lookAtPosition = lookAtPosition;
 	this->horizontalFov = horizontalFov;
 	this->up = up;
 	ComputeCoordinateFrameAxes();
+
+	switch (randomSamplerType) {
+	case Jittered:
+		viewPlaneSampler = new JitteredSampler(numRandomSets, numRandomSamples);
+		break;
+	case Random:
+		viewPlaneSampler = new RandomSampler(numRandomSets, numRandomSamples);
+		break;
+	case NRooks:
+		viewPlaneSampler = new NRooksSampler(numRandomSets, numRandomSamples);
+		break;
+	case MultiJittered:
+		viewPlaneSampler = new MultiJitteredSampler(numRandomSets, numRandomSamples);
+		break;
+	default:
+		viewPlaneSampler = new OneSampleSampler();
+		break;
+	}
 }
 
 // Note that up is recomputed to be perpendicular

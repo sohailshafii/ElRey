@@ -4,6 +4,7 @@
 #include <algorithm>
 #include <cctype>
 #include "ElReyConfig.h"
+#include "Common.h"
 #include "Performance/FPSCounter.h"
 #include "Math/Plane.h"
 #include "SceneData/Scene.h"
@@ -17,8 +18,6 @@
 
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
-
-enum RandomSamplerType { None = 0, Random, Jittered, NRooks, MultiJittered };
 
 bool initializeSDL();
 SDL_Window* createWindow(int screenWidth, int screenHeight);
@@ -236,7 +235,7 @@ void renderLoop(SDL_Renderer *sdlRenderer, SDL_Texture* frameBufferTex,
 		SDL_LockTexture(frameBufferTex, NULL, (void**) &pixels, &pitch);
 
 		float invGamma = (1.0f/1.8f);
-		float maxDist = std::numeric_limits<float>::max();
+		float constexpr maxDist = std::numeric_limits<float>::max();
 		for (int pixelIndex = 0, byteIndex = 0; pixelIndex < numPixels;
 			pixelIndex++, byteIndex +=4) {
 			float tMin = 0.0f, tMax = maxDist; Color accumColor = Color::Black();
