@@ -23,13 +23,15 @@ Camera::~Camera() {
 }
 
 Camera::Camera(const Point3& eyePosition, const Point3& lookAtPosition,
-	float horizontalFov, const Vector3& up, RandomSamplerType
-	randomSamplerType, unsigned int numRandomSamples,
-	unsigned int numRandomSets) {
+	float horizontalFov, const Vector3& up, unsigned int frameBufferWidth,
+	unsigned int frameBufferHeight, RandomSamplerType randomSamplerType,
+	unsigned int numRandomSamples, unsigned int numRandomSets) {
 	this->eyePosition = eyePosition;
 	this->lookAtPosition = lookAtPosition;
 	this->horizontalFov = horizontalFov;
 	this->up = up;
+	this->width = width;
+	this->height = height;
 	ComputeCoordinateFrameAxes();
 
 	switch (randomSamplerType) {
