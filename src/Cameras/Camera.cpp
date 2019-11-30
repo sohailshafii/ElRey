@@ -11,30 +11,35 @@
 Camera::Camera() {
 	this->eyePosition = Point3::Zero();
 	this->lookAtPosition = Point3::Zero();
-	this->horizontalFovDegrees = 0.0f;
+	this->right = Vector3::Zero();
 	this->up = Vector3::Zero();
+	this->forward = Vector3::Zero();
 	this->viewPlaneSampler = nullptr;
-	this->viewPlaneDistance = 0.0f;
+	this->gridPositions = nullptr;
 }
 
 Camera::~Camera() {
 	if (viewPlaneSampler != nullptr) {
 		delete viewPlaneSampler;
 	}
+	if (gridPositions != nullptr) {
+		delete gridPositions;
+	}
 }
 
 Camera::Camera(const Point3& eyePosition, const Point3& lookAtPosition,
-			   float horizontalFovDegrees, float aspectRatio, const Vector3& up, RandomSamplerType
-			   randomSamplerType, unsigned int numRandomSamples, unsigned int
-			   numRandomSets) {
+			   unsigned int numColumnsPixels, unsigned int numRowsPixels, float
+			   viewPlaneWidth, float viewPlaneHeight, const Vector3& up, RandomSamplerType
+			   randomSamplerType, unsigned int numRandomSamples, unsigned int numRandomSets) {
 	this->eyePosition = eyePosition;
 	this->lookAtPosition = lookAtPosition;
-	this->horizontalFovDegrees = horizontalFovDegrees;
 	this->up = up;
 	ComputeCoordinateFrameAxes();
+	this->numColumnsPixels = numColumnsPixels;
+	this->numRowsPixels = numRowsPixels;
+	this->viewPlaneWidth = viewPlaneWidth;
+	this->viewPlaneHeight = viewPlaneHeight;
 	viewPlaneDistance = (this->lookAtPosition - this->eyePosition).Norm();
-	frameBufferWidth = 2.0f * tan(horizontalFovDegrees*0.5f*DEG_2_RAD)*viewPlaneDistance;
-	frameBufferHeight = (1.0f/aspectRatio)*frameBufferWidth;
 	
 	switch (randomSamplerType) {
 	case Jittered:
@@ -53,6 +58,28 @@ Camera::Camera(const Point3& eyePosition, const Point3& lookAtPosition,
 		viewPlaneSampler = new OneSampleSampler();
 		break;
 	}
+	
+	maxCastDist = std::numeric_limits<float>::max();
+	unsigned int numPixels = numColumnsPixels*numRowsPixels;
+	gridPositions = new Point3[numPixels];
+
+	pixelRowHeight = viewPlaneHeight / numRowsPixels;
+	pixelColWidth = viewPlaneWidth / numColumnsPixels;
+	// center position of upper-left pixel. Note that raster y values
+	// increase downwards
+	Point3 planeUpperLeft = lookAtPosition +
+		right*-(viewPlaneWidth*0.5f + pixelColWidth*0.5f) +
+		up*(viewPlaneHeight*0.5f + pixelRowHeight*0.5f);
+
+	for (int row = 0, pixel = 0; row < numRowsPixels; row++) {
+		for (int column = 0; column < numColumnsPixels; column++, pixel++) {
+			// find pixel center in world space
+			Point3 pixelCenterWorld = planeUpperLeft + Point3(
+				pixelColWidth*(float)column, -pixelRowHeight*(float)row, 0.0f);
+			gridPositions[pixel] = pixelCenterWorld;
+		}
+	}
+	
 }
 
 // Note that up is recomputed to be perpendicular

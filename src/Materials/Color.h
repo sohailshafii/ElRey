@@ -29,6 +29,7 @@ public:
 	float &operator[] (int index);
 	float operator[] (int index) const;
 
+	static Color White();
 	static Color Black();
 	static Color Red();
 	static Color Green();

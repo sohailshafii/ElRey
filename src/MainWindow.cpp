@@ -15,6 +15,7 @@
 #include "Sampling/NRooksSampler.h"
 #include "Sampling/MultiJitteredSampler.h"
 #include "CommonMath.h"
+#include "Cameras/PinholeCamera.h"
 
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
@@ -218,6 +219,9 @@ void renderLoop(SDL_Renderer *sdlRenderer, SDL_Texture* frameBufferTex,
 	uint32_t lastFpsReportTime = SDL_GetTicks();
 	FPSCounter fpsCounter;
 
+	PinholeCamera mainCamera(eyePosition, Point3::Zero(),
+							 widthPixels, heightPixels, castPlaneWidth, castPlaneHeight,
+							 Vector3::Up(), randomSamplerType, numSamples, 1);
 	std::cout.precision(5);
 	Ray rayToCast;
 	rayToCast.SetOrigin(eyePosition);

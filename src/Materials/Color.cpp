@@ -60,6 +60,10 @@ Color& Color::operator/=(float divisor) {
 	return *this;
 }
 
+Color Color::White() {
+	return Color(1.0f, 1.0f, 1.0f, 1.0f);
+}
+
 Color Color::Black() {
 	return Color(0.0f, 0.0f, 0.0f, 1.0f);
 }

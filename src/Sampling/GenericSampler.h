@@ -12,6 +12,14 @@ public:
 
 	virtual Point2 GetSampleOnUnitSquare() = 0;
 	virtual Point2 GetSampleOnUnitDisk() = 0;
+	
+	unsigned int GetNumSets() const {
+		return numSets;
+	}
+	
+	unsigned int GetNumSamples() const {
+		return numSamples;
+	}
 
 protected:
 	unsigned int numSets;
