@@ -72,7 +72,6 @@ void Matrix::FillWithZeros() {
 }
 
 void Matrix::FillWithRandomValues(float min, float max) {
-	float range = max - min;
 	for (unsigned int elementIndex = 0; elementIndex <
 		numElements; elementIndex++) {
 		m[elementIndex] = CommonMath::RandomUnitValue();

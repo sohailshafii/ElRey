@@ -14,8 +14,8 @@ public:
 	virtual Point2 GetSampleOnUnitDisk() = 0;
 
 protected:
-	unsigned int numSamples;
 	unsigned int numSets;
+	unsigned int numSamples;
 	Point2* samples;
 
 private:

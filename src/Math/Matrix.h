@@ -45,8 +45,8 @@ public:
 	float operator()(unsigned int row, unsigned int col) const;
 
 private:
-	unsigned int numRows, numColumns, numElements;
 	float *m;
+	unsigned int numRows, numColumns, numElements;
 
 	void AllocateAndCopyFrom(const Matrix& other);
 };

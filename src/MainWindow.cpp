@@ -84,8 +84,6 @@ int main(int argc, char* argv[]) {
 	std::cout << "Framebuffer dimensions: " <<  width << "x" << height
 		<< ", num samples: " << numSamples << ".\n";
 
-	float aspectRatio = (float)width/height;
-
 	if (!initializeSDL()) {
 		return 2;
 	}
@@ -238,7 +236,7 @@ void renderLoop(SDL_Renderer *sdlRenderer, SDL_Texture* frameBufferTex,
 		float constexpr maxDist = std::numeric_limits<float>::max();
 		for (int pixelIndex = 0, byteIndex = 0; pixelIndex < numPixels;
 			pixelIndex++, byteIndex +=4) {
-			float tMin = 0.0f, tMax = maxDist; Color accumColor = Color::Black();
+			float tMax = maxDist; Color accumColor = Color::Black();
 			Color sampleColor = Color::Black();
 			Point3& oldOrigin = gridPositions[pixelIndex];
 			for (int sampleIndex = 0; sampleIndex < numSamples; sampleIndex++) {

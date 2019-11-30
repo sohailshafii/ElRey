@@ -15,5 +15,4 @@ private:
 	uint32_t frameCount;
 	uint32_t frameTimes[NUM_FRAMES];
 	uint32_t frameTimePreFrame;
-	uint32_t fps;
 };

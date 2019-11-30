@@ -12,7 +12,7 @@ Camera::Camera() {
 	this->eyePosition = Point3::Zero();
 	this->lookAtPosition = Point3::Zero();
 	this->horizontalFov = 0.0f;
-	this->up = up;
+	this->up = Vector3::Zero();
 	this->viewPlaneSampler = nullptr;
 }
 
@@ -30,8 +30,8 @@ Camera::Camera(const Point3& eyePosition, const Point3& lookAtPosition,
 	this->lookAtPosition = lookAtPosition;
 	this->horizontalFov = horizontalFov;
 	this->up = up;
-	this->width = width;
-	this->height = height;
+	//this->width = TODO;
+	//this->height = TODO;
 	ComputeCoordinateFrameAxes();
 
 	switch (randomSamplerType) {
