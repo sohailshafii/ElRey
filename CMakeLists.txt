@@ -37,7 +37,9 @@ target_include_directories(ElRey
 		"${PROJECT_SOURCE_DIR}/src/Materials"
 		"${PROJECT_SOURCE_DIR}/src/Performance"
 		"${PROJECT_SOURCE_DIR}/src/WorldData"
-		"${PROJECT_SOURCE_DIR}/src/Sampling")
+		"${PROJECT_SOURCE_DIR}/src/Sampling"
+		"${PROJECT_SOURCE_DIR}/src/Cameras"
+		"${PROJECT_SOURCE_DIR}/src/SceneData")
 
 target_link_libraries(ElRey ${SDL2_LIBRARY})
 

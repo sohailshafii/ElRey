@@ -11,6 +11,9 @@
 # define M_PI 3.14159265358979323846
 #endif
 
+#define DEG_2_RAD M_PI/180.0f
+#define RAD_2_DEG 180.0f/M_PI
+
 class CommonMath {
 public:
 	// returns random value between 0 and 1

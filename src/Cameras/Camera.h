@@ -10,8 +10,7 @@ class Camera {
 public:
 	Camera();
 	Camera(const Point3& eyePosition, const Point3& lookAtPosition,
-		float horizontalFov, const Vector3& up, unsigned int frameBufferWidth,
-		unsigned int frameBufferHeight, RandomSamplerType randomSamplerType,
+		float horizontalFovDegrees, float aspectRatio, const Vector3& up, RandomSamplerType randomSamplerType,
 		unsigned int numRandomSamples, unsigned int numRandomSets);
 
 	virtual ~Camera();
@@ -25,7 +24,7 @@ protected:
 protected:
 	Point3 eyePosition;
 	Point3 lookAtPosition;
-	float horizontalFov;
+	float horizontalFovDegrees;
 
 	Vector3 right;
 	Vector3 up;
@@ -33,6 +32,9 @@ protected:
 
 	unsigned int width;
 	unsigned int height;
+	float viewPlaneDistance;
+	float frameBufferWidth;
+	float frameBufferHeight;
 
 	GenericSampler* viewPlaneSampler;
 };

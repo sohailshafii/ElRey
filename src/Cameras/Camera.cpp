@@ -11,9 +11,10 @@
 Camera::Camera() {
 	this->eyePosition = Point3::Zero();
 	this->lookAtPosition = Point3::Zero();
-	this->horizontalFov = 0.0f;
+	this->horizontalFovDegrees = 0.0f;
 	this->up = Vector3::Zero();
 	this->viewPlaneSampler = nullptr;
+	this->viewPlaneDistance = 0.0f;
 }
 
 Camera::~Camera() {
@@ -23,17 +24,18 @@ Camera::~Camera() {
 }
 
 Camera::Camera(const Point3& eyePosition, const Point3& lookAtPosition,
-	float horizontalFov, const Vector3& up, unsigned int frameBufferWidth,
-	unsigned int frameBufferHeight, RandomSamplerType randomSamplerType,
-	unsigned int numRandomSamples, unsigned int numRandomSets) {
+			   float horizontalFovDegrees, float aspectRatio, const Vector3& up, RandomSamplerType
+			   randomSamplerType, unsigned int numRandomSamples, unsigned int
+			   numRandomSets) {
 	this->eyePosition = eyePosition;
 	this->lookAtPosition = lookAtPosition;
-	this->horizontalFov = horizontalFov;
+	this->horizontalFovDegrees = horizontalFovDegrees;
 	this->up = up;
-	//this->width = TODO;
-	//this->height = TODO;
 	ComputeCoordinateFrameAxes();
-
+	viewPlaneDistance = (this->lookAtPosition - this->eyePosition).Norm();
+	frameBufferWidth = 2.0f * tan(horizontalFovDegrees*0.5f*DEG_2_RAD)*viewPlaneDistance;
+	frameBufferHeight = (1.0f/aspectRatio)*frameBufferWidth;
+	
 	switch (randomSamplerType) {
 	case Jittered:
 		viewPlaneSampler = new JitteredSampler(numRandomSets, numRandomSamples);
