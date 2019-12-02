@@ -18,8 +18,7 @@ public:
 
 	virtual ~Camera();
 
-	virtual Color GetColorFromCast(unsigned int pixelRow, unsigned int pixelHeight,
-								   unsigned int oneDimPixelIndex, const Scene* scene) const = 0;
+	virtual void CastIntoScene(unsigned char* pixels, unsigned int bytesPerPixel, const Scene* scene) const = 0;
 
 protected:
 	void ComputeCoordinateFrameAxes();

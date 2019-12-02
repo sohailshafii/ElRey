@@ -8,8 +8,7 @@ public:
 				  float viewPlaneHeight, const Vector3& up, RandomSamplerType randomSamplerType,
 				  unsigned int numRandomSamples, unsigned int numRandomSets);
 	
-	Color GetColorFromCast(unsigned int pixelRow, unsigned int pixelHeight,
-						   unsigned int oneDimPixelIndex, const Scene* scene) const override;
+	void CastIntoScene(unsigned char* pixels, unsigned int bytesPerPixel, const Scene* scene) const override;
 
 private:
 };

@@ -11,29 +11,38 @@ unsigned int numRandomSamples, unsigned int numRandomSets)
 			 numRandomSamples, numRandomSets) {
 }
 
- Color PinholeCamera::GetColorFromCast(unsigned int pixelRow, unsigned int pixelHeight,
- unsigned int oneDimPixelIndex, const Scene* scene) const {
-	 
-	 float tMax = maxCastDist;
-	 Color accumColor = Color::Black();
-	 Color sampleColor = Color::Black();
-	 
-	 Point3& oldOrigin = gridPositions[oneDimPixelIndex];
+ void PinholeCamera::CastIntoScene(unsigned char* pixels, unsigned int bytesPerPixel, const Scene* scene) const {
 	 unsigned int numSamples = viewPlaneSampler->GetNumSamples();
 	 Ray rayToCast;
+	 unsigned int numPixels = numColumnsPixels*numRowsPixels;
+	 float invGamma = (1.0f/1.8f);
 	 
-	 for (unsigned int sampleIndex = 0; sampleIndex < numSamples; sampleIndex++) {
-		 Point2 newSample = viewPlaneSampler->GetSampleOnUnitSquare();
-		 Point3 newPixelPnt = Point3(newSample[0] * pixelColWidth + oldOrigin[0],
-			 -newSample[1] * pixelRowHeight + oldOrigin[1], oldOrigin[2]);
-		 Vector3 vecToPixelCenter = newPixelPnt - eyePosition;
-		 vecToPixelCenter.Normalize();
-		 rayToCast.SetDirection(vecToPixelCenter);
-		 tMax = maxCastDist;
-		 scene->Intersect(rayToCast, sampleColor, 0.0f, tMax);
-		 accumColor += sampleColor;
-	 }
+	 for (int pixelIndex = 0, byteIndex = 0; pixelIndex < numPixels;
+		 pixelIndex++, byteIndex += bytesPerPixel) {
+		 float tMax = maxCastDist;
+		 Color accumColor = Color::Black();
+		 Color sampleColor = Color::Black();
+		 Point3& oldOrigin = gridPositions[pixelIndex];
+		 for (int sampleIndex = 0; sampleIndex < numSamples; sampleIndex++) {
+			 Point2 newSample = viewPlaneSampler->GetSampleOnUnitSquare();
+			 Point3 newPixelPnt = Point3(newSample[0] * pixelColWidth + oldOrigin[0],
+				 -newSample[1] * pixelRowHeight + oldOrigin[1], oldOrigin[2]);
+			 Vector3 vecToPixelCenter = newPixelPnt - eyePosition;
+			 vecToPixelCenter.Normalize();
+			 rayToCast.SetDirection(vecToPixelCenter);
+			 tMax = maxCastDist;
+			 scene->Intersect(rayToCast, sampleColor, 0.0f, tMax);
+			 accumColor += sampleColor;
+		 }
 
-	 accumColor /= (float)numSamples;
-	 return accumColor;
+		 accumColor /= (float)numSamples;
+		 // gamma-correct
+		 accumColor ^= invGamma;
+		 pixels[byteIndex] = (unsigned char)(accumColor[2] * 255.0f); // B
+		 pixels[byteIndex + 1] = (unsigned char)(accumColor[1] * 255.0f); // G
+		 pixels[byteIndex + 2] = (unsigned char)(accumColor[0] * 255.0f); // R
+		 if (bytesPerPixel == 4) {
+			 pixels[byteIndex + 3] = 255;
+		 }
+	 }
 }
