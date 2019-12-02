@@ -14,9 +14,12 @@ unsigned int numRandomSamples, unsigned int numRandomSets)
  void PinholeCamera::CastIntoScene(unsigned char* pixels, unsigned int bytesPerPixel, const Scene* scene) const {
 	 unsigned int numSamples = viewPlaneSampler->GetNumSamples();
 	 Ray rayToCast;
+	 rayToCast.SetOrigin(eyePosition);
 	 unsigned int numPixels = numColumnsPixels*numRowsPixels;
 	 float invGamma = (1.0f/1.8f);
 	 
+	 Vector3 rightVectorDisplacement = right*pixelColWidth;
+	 Vector3 upVectorDisplacement = up*pixelRowHeight;
 	 for (int pixelIndex = 0, byteIndex = 0; pixelIndex < numPixels;
 		 pixelIndex++, byteIndex += bytesPerPixel) {
 		 float tMax = maxCastDist;
@@ -25,8 +28,8 @@ unsigned int numRandomSamples, unsigned int numRandomSets)
 		 Point3& oldOrigin = gridPositions[pixelIndex];
 		 for (int sampleIndex = 0; sampleIndex < numSamples; sampleIndex++) {
 			 Point2 newSample = viewPlaneSampler->GetSampleOnUnitSquare();
-			 Point3 newPixelPnt = Point3(newSample[0] * pixelColWidth + oldOrigin[0],
-				 -newSample[1] * pixelRowHeight + oldOrigin[1], oldOrigin[2]);
+			 Point3 newPixelPnt = oldOrigin + (rightVectorDisplacement*newSample[0]
+				- upVectorDisplacement*newSample[1]);
 			 Vector3 vecToPixelCenter = newPixelPnt - eyePosition;
 			 vecToPixelCenter.Normalize();
 			 rayToCast.SetDirection(vecToPixelCenter);

@@ -70,7 +70,7 @@ Camera::Camera(const Point3& eyePosition, const Point3& lookAtPosition,
 	Point3 planeUpperLeft = lookAtPosition +
 		right*-(viewPlaneWidth*0.5f + pixelColWidth*0.5f) +
 		up*(viewPlaneHeight*0.5f + pixelRowHeight*0.5f);
-
+	
 	for (int row = 0, pixel = 0; row < numRowsPixels; row++) {
 		for (int column = 0; column < numColumnsPixels; column++, pixel++) {
 			// find pixel center in world space
@@ -79,7 +79,6 @@ Camera::Camera(const Point3& eyePosition, const Point3& lookAtPosition,
 			gridPositions[pixel] = pixelCenterWorld;
 		}
 	}
-	
 }
 
 // Note that up is recomputed to be perpendicular
@@ -87,7 +86,7 @@ Camera::Camera(const Point3& eyePosition, const Point3& lookAtPosition,
 // orthonormalization.
 void Camera::ComputeCoordinateFrameAxes() {
 	up.Normalize();
-	forward = eyePosition - lookAtPosition;
+	forward = lookAtPosition - eyePosition;
 	forward.Normalize();
 
 	// turn on sanity check in case we need it but leave it off to
@@ -124,6 +123,7 @@ void Camera::ComputeCoordinateFrameAxes() {
 	right = up ^ forward;
 	right.Normalize();
 	up = forward ^ right;
+
 	// (no need to normalize as two normal vectors
 	// crossed results in a normal vector)
 }

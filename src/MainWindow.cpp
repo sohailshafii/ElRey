@@ -156,7 +156,6 @@ void renderLoop(SDL_Renderer *sdlRenderer, SDL_Texture* frameBufferTex,
 	RandomSamplerType randomSamplerType, const Scene* gameWorld) {
 	SDL_Event e;
 
-	int numPixels = widthPixels*heightPixels;
 	unsigned char* pixels;
 	int pitch;
 	SDL_LockTexture(frameBufferTex, NULL, (void**)&pixels, &pitch);
@@ -194,7 +193,7 @@ void renderLoop(SDL_Renderer *sdlRenderer, SDL_Texture* frameBufferTex,
 			break;
 	}
 
-	Point3* gridPositions = new Point3[numPixels];
+	std::cout.precision(5);
 	// assume left-handed coordinate system, where z goes into screen
 	Point3 eyePosition(0.0f, 1.0f, 0.6f);
 	float castPlaneHeight = 0.8f;
@@ -204,27 +203,16 @@ void renderLoop(SDL_Renderer *sdlRenderer, SDL_Texture* frameBufferTex,
 	std::cout << "Image plane dimensions: " << castPlaneWidth << " x "
 		<< castPlaneHeight << " Row height: " << rowHeight << ", col width: "
 		<< colWidth << ".\n";
-	Point3 planeUpperLeft(-castPlaneWidth * 0.5f + eyePosition[0],
-		castPlaneHeight*0.5f + eyePosition[1], 0.2f + eyePosition[2]);
-
-	for (int row = 0, pixel = 0; row < heightPixels; row++) {
-		for (int column = 0; column < widthPixels; column++, pixel++) {
-			// find pixel center in world space
-			Point3 pixelCenterWorld = planeUpperLeft + Point3(
-				colWidth*(float)column, -rowHeight*(float)row, 0.0f);
-			gridPositions[pixel] = pixelCenterWorld;
-		}
-	}
+	
+	Point3 lookAtPosition = eyePosition + Vector3(0.0f, 0.0f, 0.2f);
+	Vector3 upVector = Vector3::Up();
+	PinholeCamera mainCamera(eyePosition, lookAtPosition, widthPixels, heightPixels,
+							 castPlaneWidth, castPlaneHeight, upVector, randomSamplerType,
+							 numSamples, 1);
 
 	uint32_t lastFpsReportTime = SDL_GetTicks();
 	FPSCounter fpsCounter;
 
-	PinholeCamera mainCamera(eyePosition, Point3::Zero(),
-							 widthPixels, heightPixels, castPlaneWidth, castPlaneHeight,
-							 Vector3::Up(), randomSamplerType, numSamples, 1);
-	std::cout.precision(5);
-	Ray rayToCast;
-	rayToCast.SetOrigin(eyePosition);
 	while(true) {
 		bool quitPressed = false;
 		while(SDL_PollEvent(&e) != 0) {
@@ -236,35 +224,7 @@ void renderLoop(SDL_Renderer *sdlRenderer, SDL_Texture* frameBufferTex,
 
 		SDL_LockTexture(frameBufferTex, NULL, (void**) &pixels, &pitch);
 
-		float invGamma = (1.0f/1.8f);
-		float constexpr maxDist = std::numeric_limits<float>::max();
-		for (int pixelIndex = 0, byteIndex = 0; pixelIndex < numPixels;
-			pixelIndex++, byteIndex +=4) {
-			float tMax = maxDist; Color accumColor = Color::Black();
-			Color sampleColor = Color::Black();
-			Point3& oldOrigin = gridPositions[pixelIndex];
-			for (int sampleIndex = 0; sampleIndex < numSamples; sampleIndex++) {
-				Point2 newSample = sampler->GetSampleOnUnitSquare();
-				Point3 newPixelPnt = Point3(newSample[0] * colWidth + oldOrigin[0],
-					-newSample[1] * rowHeight + oldOrigin[1], oldOrigin[2]);
-				Vector3 vecToPixelCenter = newPixelPnt - eyePosition;
-				vecToPixelCenter.Normalize();
-				rayToCast.SetDirection(vecToPixelCenter);
-				tMax = maxDist;
-				gameWorld->Intersect(rayToCast, sampleColor, 0.0f, tMax);
-				accumColor += sampleColor;
-			}
-
-			accumColor /= (float)numSamples;
-			// gamma-correct
-			accumColor ^= invGamma;
-			pixels[byteIndex] = (unsigned char)(accumColor[2] * 255.0f); // B
-			pixels[byteIndex + 1] = (unsigned char)(accumColor[1] * 255.0f); // G
-			pixels[byteIndex + 2] = (unsigned char)(accumColor[0] * 255.0f); // R
-			if (bytesPerPixel == 4) {
-				pixels[byteIndex + 3] = 255;
-			}
-		}
+		mainCamera.CastIntoScene(pixels, bytesPerPixel, gameWorld);
 
 		SDL_UnlockTexture(frameBufferTex);
 		SDL_RenderClear(sdlRenderer);
@@ -274,14 +234,11 @@ void renderLoop(SDL_Renderer *sdlRenderer, SDL_Texture* frameBufferTex,
 		fpsCounter.PostFrame();
 		uint32_t currTicks = SDL_GetTicks();
 		if (currTicks > (lastFpsReportTime + 1000)) {
-
-			std::cout << "Current FPS: "
-				<< fpsCounter.GetFPS() << "\n";
+			std::cout << "Current FPS: " << fpsCounter.GetFPS() << "\n";
 			lastFpsReportTime = currTicks;
 		}
 	}
 
-	delete[] gridPositions;
 	delete sampler;
 }
 
