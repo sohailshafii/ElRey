@@ -9,7 +9,8 @@ public:
 	GenericSampler(unsigned int numSets, unsigned int numSamples);
 
 	virtual ~GenericSampler();
-
+	
+	virtual void MapSamplesToUnitDisk() = 0;
 	virtual Point2 GetSampleOnUnitSquare() = 0;
 	virtual Point2 GetSampleOnUnitDisk() = 0;
 	

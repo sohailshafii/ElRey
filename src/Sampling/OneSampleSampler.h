@@ -7,6 +7,7 @@ public:
 	OneSampleSampler();
 	~OneSampleSampler();
 
+	void MapSamplesToUnitDisk() override;
 	Point2 GetSampleOnUnitSquare() override;
 	Point2 GetSampleOnUnitDisk() override;
 };

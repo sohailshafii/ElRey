@@ -33,6 +33,8 @@ public:
 
 	inline Point4 operator-() const;
 
+	inline Point4 operator*(float t) const;
+
 	static Point4 Zero() {
 		return Point4(0.0f, 0.0f, 0.0f, 1.0f);
 	}
@@ -91,4 +93,10 @@ inline Point4 Point4::operator-() const {
 	Point4 negatedPoint(-comp[0], -comp[1],
 		-comp[2], comp[3]);
 	return negatedPoint;
+}
+
+inline Point4 Point4::operator*(float t) const {
+	Point4 multPoint(t * comp[0], t * comp[1], t * comp[2],
+		t * comp[3]);
+	return multPoint;
 }

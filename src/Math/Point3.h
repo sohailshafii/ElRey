@@ -29,6 +29,8 @@ public:
 
 	inline Point3 operator-() const;
 
+	inline Point3 operator*(float t) const;
+
 	static Point3 Zero() {
 		return Point3(0.0f, 0.0f, 0.0f);
 	}
@@ -86,4 +88,9 @@ inline Point3 Point3::operator+(const Point3&p2) const {
 inline Point3 Point3::operator-() const {
 	Point3 negatedPoint(-comp[0], -comp[1], -comp[2]);
 	return negatedPoint;
+}
+
+inline Point3 Point3::operator*(float t) const {
+	Point3 multPoint(t * comp[0], t * comp[1], t * comp[2]);
+	return multPoint;
 }

@@ -12,6 +12,7 @@ public:
 
 	virtual ~GenericMultiSampler();
 
+	void MapSamplesToUnitDisk() override;
 	Point2 GetSampleOnUnitSquare() override;
 	Point2 GetSampleOnUnitDisk() override;
 
@@ -26,7 +27,6 @@ protected:
 	void InitializeMultiSampler();
 	void AllocateSamples();
 	void CreateShuffledIndices();
-	void MapSamplesToUnitDisk();
 
 	void CheckForNewJumpValue() {
 		if ((count % numSamples) == 0) {

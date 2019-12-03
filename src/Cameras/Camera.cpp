@@ -71,8 +71,8 @@ Camera::Camera(const Point3& eyePosition, const Point3& lookAtPosition,
 		right*-(viewPlaneWidth*0.5f + pixelColWidth*0.5f) +
 		up*(viewPlaneHeight*0.5f + pixelRowHeight*0.5f);
 	
-	for (int row = 0, pixel = 0; row < numRowsPixels; row++) {
-		for (int column = 0; column < numColumnsPixels; column++, pixel++) {
+	for (unsigned int row = 0, pixel = 0; row < numRowsPixels; row++) {
+		for (unsigned int column = 0; column < numColumnsPixels; column++, pixel++) {
 			// find pixel center in world space
 			Point3 pixelCenterWorld = planeUpperLeft + Point3(
 				pixelColWidth*(float)column, -pixelRowHeight*(float)row, 0.0f);

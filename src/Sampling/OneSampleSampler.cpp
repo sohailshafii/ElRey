@@ -8,6 +8,10 @@ OneSampleSampler::OneSampleSampler() : GenericSampler(1, 1) {
 OneSampleSampler::~OneSampleSampler() {
 }
 
+void OneSampleSampler::MapSamplesToUnitDisk() {
+	// nothin to see here
+}
+
 Point2 OneSampleSampler::GetSampleOnUnitSquare() {
 	return samples[0];
 }

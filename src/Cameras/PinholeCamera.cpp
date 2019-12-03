@@ -20,13 +20,13 @@ unsigned int numRandomSamples, unsigned int numRandomSets)
 	 
 	 Vector3 rightVectorDisplacement = right*pixelColWidth;
 	 Vector3 upVectorDisplacement = up*pixelRowHeight;
-	 for (int pixelIndex = 0, byteIndex = 0; pixelIndex < numPixels;
+	 for (unsigned int pixelIndex = 0, byteIndex = 0; pixelIndex < numPixels;
 		 pixelIndex++, byteIndex += bytesPerPixel) {
 		 float tMax = maxCastDist;
 		 Color accumColor = Color::Black();
 		 Color sampleColor = Color::Black();
 		 Point3& oldOrigin = gridPositions[pixelIndex];
-		 for (int sampleIndex = 0; sampleIndex < numSamples; sampleIndex++) {
+		 for (unsigned int sampleIndex = 0; sampleIndex < numSamples; sampleIndex++) {
 			 Point2 newSample = viewPlaneSampler->GetSampleOnUnitSquare();
 			 Point3 newPixelPnt = oldOrigin + (rightVectorDisplacement*newSample[0]
 				- upVectorDisplacement*newSample[1]);
