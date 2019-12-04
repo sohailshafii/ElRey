@@ -7,6 +7,7 @@
 
 class GenericSampler;
 class Scene;
+class Point2;
 
 class Camera {
 public:
@@ -40,5 +41,5 @@ protected:
 	float pixelColWidth;
 
 	GenericSampler* viewPlaneSampler;
-	Point3* gridPositions;
+	Point2* gridPositions;
 };

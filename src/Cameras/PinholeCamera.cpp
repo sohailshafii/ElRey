@@ -18,21 +18,18 @@ unsigned int numRandomSamples, unsigned int numRandomSets)
 	 unsigned int numPixels = numColumnsPixels*numRowsPixels;
 	 float invGamma = (1.0f/1.8f);
 	 
-	 Vector3 rightVectorDisplacement = right*pixelColWidth;
-	 Vector3 upVectorDisplacement = up*pixelRowHeight;
 	 for (unsigned int pixelIndex = 0, byteIndex = 0; pixelIndex < numPixels;
 		 pixelIndex++, byteIndex += bytesPerPixel) {
 		 float tMax = maxCastDist;
 		 Color accumColor = Color::Black();
 		 Color sampleColor = Color::Black();
-		 Point3& oldOrigin = gridPositions[pixelIndex];
+		 const Point2& oldOrigin = gridPositions[pixelIndex];
 		 for (unsigned int sampleIndex = 0; sampleIndex < numSamples; sampleIndex++) {
 			 Point2 newSample = viewPlaneSampler->GetSampleOnUnitSquare();
-			 Point3 newPixelPnt = oldOrigin + (rightVectorDisplacement*newSample[0]
-				- upVectorDisplacement*newSample[1]);
-			 Vector3 vecToPixelCenter = newPixelPnt - eyePosition;
-			 vecToPixelCenter.Normalize();
-			 rayToCast.SetDirection(vecToPixelCenter);
+			 Point2 newPixelPnt = oldOrigin;
+			 newPixelPnt[0] += pixelColWidth * newSample[0];
+			 newPixelPnt[1] += pixelRowHeight * newSample[1];
+			 rayToCast.SetDirection(GetRayDirection(newPixelPnt));
 			 tMax = maxCastDist;
 			 scene->Intersect(rayToCast, sampleColor, 0.0f, tMax);
 			 accumColor += sampleColor;

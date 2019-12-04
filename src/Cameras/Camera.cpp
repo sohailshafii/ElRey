@@ -8,6 +8,8 @@
 #include "Sampling/NRooksSampler.h"
 #include "Sampling/MultiJitteredSampler.h"
 
+#include "Math/Point2.h"
+
 Camera::Camera() {
 	this->eyePosition = Point3::Zero();
 	this->lookAtPosition = Point3::Zero();
@@ -61,22 +63,15 @@ Camera::Camera(const Point3& eyePosition, const Point3& lookAtPosition,
 	
 	maxCastDist = std::numeric_limits<float>::max();
 	unsigned int numPixels = numColumnsPixels*numRowsPixels;
-	gridPositions = new Point3[numPixels];
-
+	gridPositions = new Point2[numPixels];
 	pixelRowHeight = viewPlaneHeight / numRowsPixels;
 	pixelColWidth = viewPlaneWidth / numColumnsPixels;
-	// center position of upper-left pixel. Note that raster y values
-	// increase downwards
-	Point3 planeUpperLeft = lookAtPosition +
-		right*-(viewPlaneWidth*0.5f + pixelColWidth*0.5f) +
-		up*(viewPlaneHeight*0.5f + pixelRowHeight*0.5f);
 	
 	for (unsigned int row = 0, pixel = 0; row < numRowsPixels; row++) {
 		for (unsigned int column = 0; column < numColumnsPixels; column++, pixel++) {
-			// find pixel center in world space
-			Point3 pixelCenterWorld = planeUpperLeft + Point3(
-				pixelColWidth*(float)column, -pixelRowHeight*(float)row, 0.0f);
-			gridPositions[pixel] = pixelCenterWorld;
+			gridPositions[pixel] = Point2(
+				pixelColWidth * (float)column - viewPlaneWidth * 0.5f,
+				-pixelRowHeight * (float)row + viewPlaneHeight * 0.5f);
 		}
 	}
 }

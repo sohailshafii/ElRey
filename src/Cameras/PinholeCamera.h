@@ -1,5 +1,6 @@
 
 #include "Camera.h"
+#include "Math/Point2.h"
 
 class PinholeCamera : public Camera {
 public:
@@ -11,4 +12,13 @@ public:
 	void CastIntoScene(unsigned char* pixels, unsigned int bytesPerPixel, const Scene* scene) const override;
 
 private:
+	inline Vector3 GetRayDirection(const Point2& pixelPoint) const;
 };
+
+inline Vector3 PinholeCamera::GetRayDirection(const Point2& pixelPoint) const {
+	Vector3 direction = right * pixelPoint[0] + up * pixelPoint[1]
+		+ forward * viewPlaneDistance;
+	direction.Normalize();
+	return direction;
+}
+

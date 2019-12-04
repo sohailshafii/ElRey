@@ -34,7 +34,8 @@ ThinLensCamera::ThinLensCamera(const Point3& eyePosition, const Point3& lookAtPo
 		float tMax = maxCastDist;
 		Color accumColor = Color::Black();
 		Color sampleColor = Color::Black();
-		Point3& oldOrigin = gridPositions[pixelIndex];
+		const Point2& oldOrigin = gridPositions[pixelIndex];
+
 		// TODO: fix stupid code
 		for (unsigned int sampleIndex = 0; sampleIndex < numSamples; sampleIndex++) {
 			/*Point2 newSample = viewPlaneSampler->GetSampleOnUnitSquare();
