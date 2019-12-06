@@ -2,6 +2,11 @@
 #include "ThinLensCamera.h"
 #include "Sampling/GenericMultiSampler.h"
 #include "SceneData/Scene.h"
+#include "Sampling/RandomSampler.h"
+#include "Sampling/OneSampleSampler.h"
+#include "Sampling/JitteredSampler.h"
+#include "Sampling/NRooksSampler.h"
+#include "Sampling/MultiJitteredSampler.h"
 #include <stdexcept>
 
 ThinLensCamera::ThinLensCamera(const Point3& eyePosition, const Point3& lookAtPosition,
@@ -14,7 +19,31 @@ ThinLensCamera::ThinLensCamera(const Point3& eyePosition, const Point3& lookAtPo
 	this->lensRadius = lensRadius;
 	this->focalPlaneDistance = focalPlaneDistance;
 	this->exposureTime = exposureTime;
-	viewPlaneSampler->MapSamplesToUnitDisk();
+
+	switch (randomSamplerType) {
+		case Jittered:
+			diskSampler = new JitteredSampler(numRandomSets, numRandomSamples);
+			break;
+		case Random:
+			diskSampler = new RandomSampler(numRandomSets, numRandomSamples);
+			break;
+		case NRooks:
+			diskSampler = new NRooksSampler(numRandomSets, numRandomSamples);
+			break;
+		case MultiJittered:
+			diskSampler = new MultiJitteredSampler(numRandomSets, numRandomSamples);
+			break;
+		default:
+			diskSampler = new OneSampleSampler();
+			break;
+	}
+	diskSampler->MapSamplesToUnitDisk();
+}
+
+ThinLensCamera::~ThinLensCamera() {
+	if (diskSampler != nullptr) {
+		delete diskSampler;
+	}
 }
 
 // TODO fix
@@ -24,10 +53,7 @@ ThinLensCamera::ThinLensCamera(const Point3& eyePosition, const Point3& lookAtPo
 	rayToCast.SetOrigin(eyePosition);
 	unsigned int numPixels = numColumnsPixels*numRowsPixels;
 	float invGamma = (1.0f/1.8f);
-
-	float halfWidth = viewPlaneWidth * 0.5f;
-	float halfHeight = viewPlaneHeight * 0.5f;
-	Vector3 upVectorDisplacement = up*pixelRowHeight;
+	Point2 diskPoint, lensPoint;
 
 	for (unsigned int pixelIndex = 0, byteIndex = 0; pixelIndex < numPixels;
 		pixelIndex++, byteIndex += bytesPerPixel) {
@@ -38,23 +64,19 @@ ThinLensCamera::ThinLensCamera(const Point3& eyePosition, const Point3& lookAtPo
 
 		// TODO: fix stupid code
 		for (unsigned int sampleIndex = 0; sampleIndex < numSamples; sampleIndex++) {
-			/*Point2 newSample = viewPlaneSampler->GetSampleOnUnitSquare();
-			Point2 newPixelPnt(pixelColWidth*((float)column - halfWidth
-				+ newSample[0],
-				pixelRowHeight*((float)row - halfHeight
-				+ newSample[1]);
-			Point2 unitDiskPoint = viewPlaneSampler->GetSampleOnUnitDisk();
-			Point2 lensPoint = unitDiskPoint * lensRadius;
+			Point2 newSample = viewPlaneSampler->GetSampleOnUnitSquare();
+			Point2 newPixelPnt = oldOrigin;
+			newPixelPnt[0] += pixelColWidth * newSample[0];
+			newPixelPnt[1] += pixelRowHeight * newSample[1];
+			diskPoint = diskSampler->GetSampleOnUnitDisk();
+			lensPoint = diskPoint * lensRadius;
 
-			rayToCast.SetOrigin(eyePosition + right * lensPoint[0] +
-				up * lensPoint[1]);
+			rayToCast.SetOrigin(eyePosition + right * lensPoint[0]
+				+ up * lensPoint[1]);
 			rayToCast.SetDirection(GetRayDirection(newPixelPnt, lensPoint));
-			Vector3 vecToPixelCenter = newPixelPnt - eyePosition;
-			vecToPixelCenter.Normalize();
-			rayToCast.SetDirection(vecToPixelCenter);
 			tMax = maxCastDist;
 			scene->Intersect(rayToCast, sampleColor, 0.0f, tMax);
-			accumColor += sampleColor;*/
+			accumColor += sampleColor;
 		}
 
 		accumColor /= (float)numSamples;

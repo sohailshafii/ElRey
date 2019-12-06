@@ -44,21 +44,21 @@ Camera::Camera(const Point3& eyePosition, const Point3& lookAtPosition,
 	viewPlaneDistance = (this->lookAtPosition - this->eyePosition).Norm();
 	
 	switch (randomSamplerType) {
-	case Jittered:
-		viewPlaneSampler = new JitteredSampler(numRandomSets, numRandomSamples);
-		break;
-	case Random:
-		viewPlaneSampler = new RandomSampler(numRandomSets, numRandomSamples);
-		break;
-	case NRooks:
-		viewPlaneSampler = new NRooksSampler(numRandomSets, numRandomSamples);
-		break;
-	case MultiJittered:
-		viewPlaneSampler = new MultiJitteredSampler(numRandomSets, numRandomSamples);
-		break;
-	default:
-		viewPlaneSampler = new OneSampleSampler();
-		break;
+		case Jittered:
+			viewPlaneSampler = new JitteredSampler(numRandomSets, numRandomSamples);
+			break;
+		case Random:
+			viewPlaneSampler = new RandomSampler(numRandomSets, numRandomSamples);
+			break;
+		case NRooks:
+			viewPlaneSampler = new NRooksSampler(numRandomSets, numRandomSamples);
+			break;
+		case MultiJittered:
+			viewPlaneSampler = new MultiJitteredSampler(numRandomSets, numRandomSamples);
+			break;
+		default:
+			viewPlaneSampler = new OneSampleSampler();
+			break;
 	}
 	
 	maxCastDist = std::numeric_limits<float>::max();
