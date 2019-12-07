@@ -26,6 +26,9 @@ public:
 	Color operator/(float divisor);
 	Color& operator/=(float divisor);
 
+	Color operator*(float mult);
+	Color& operator*=(float mult);
+
 	float &operator[] (int index);
 	float operator[] (int index) const;
 

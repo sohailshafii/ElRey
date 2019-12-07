@@ -16,6 +16,7 @@
 #include "Sampling/MultiJitteredSampler.h"
 #include "CommonMath.h"
 #include "Cameras/PinholeCamera.h"
+#include "Cameras/ThinLensCamera.h"
 
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
@@ -23,11 +24,17 @@
 bool initializeSDL();
 SDL_Window* createWindow(int screenWidth, int screenHeight);
 Scene* createSimpleWorld(); 
-void renderLoop(SDL_Renderer *sdlRenderer, SDL_Texture* frameBufferTex,
+void startRenderLoop(SDL_Renderer *sdlRenderer, SDL_Texture* frameBufferTex,
 	int width, int height, int numSamples, RandomSamplerType randomSamplerType,
-	const Scene* gameWorld);
+	Camera::CameraType cameraType, const Scene* gameWorld);
 
 Uint32 lastFPSTickTime = 0; 
+
+void convertTokenToLowerCase(std::string &token) {
+	std::transform(token.begin(),
+		token.end(), token.begin(),
+		[](unsigned char c) { return std::tolower(c); });
+}
 
 int main(int argc, char* argv[]) {
 	CommonMath::SetRandSeed(static_cast <unsigned> (time(0)));
@@ -37,31 +44,35 @@ int main(int argc, char* argv[]) {
 	int width = 300, height = 200, numSamples = 1;
 	bool offlineRender = false;
 	RandomSamplerType randomSamplerType = None;
+	Camera::CameraType cameraType = Camera::CameraType::Pinhole;
 
 	if (argc > 1) {
 		for (int argIndex = 1; argIndex < argc; argIndex++) {
 			std::string currentToken = argv[argIndex];
-			std::transform(currentToken.begin(),
-				currentToken.end(), currentToken.begin(),
-				[](unsigned char c) { return std::tolower(c); });
+			convertTokenToLowerCase(currentToken);
 
 			if (currentToken == "-w" && argIndex+1 < argc) {
 				width = atoi(argv[++argIndex]);
 			}
-			if (currentToken == "-h" && argIndex+1 < argc) {
+			else if (currentToken == "-h" && argIndex+1 < argc) {
 				height = atoi(argv[++argIndex]);
 			}
-			if (currentToken == "-ns" && argIndex+1 < argc) {
+			else if (currentToken == "-ns" && argIndex+1 < argc) {
 				numSamples = atoi(argv[++argIndex]);
 			}
-			if (currentToken == "-offline") {
+			else if (currentToken == "-cameratype" && argIndex + 1 < argc) {
+				std::string cameraTypeToken = argv[++argIndex];
+				convertTokenToLowerCase(cameraTypeToken);
+				if (cameraTypeToken == "thinlens") {
+					cameraType = Camera::CameraType::ThinLens;
+				}
+			}
+			else if (currentToken == "-offline") {
 				offlineRender = true;
 			}
-			if (currentToken == "-samplertype" && argIndex + 1 < argc) {
+			else if (currentToken == "-samplertype" && argIndex + 1 < argc) {
 				std::string samplerTypeToken = argv[++argIndex];
-				std::transform(samplerTypeToken.begin(),
-					samplerTypeToken.end(), samplerTypeToken.begin(),
-					[](unsigned char c) { return std::tolower(c); });
+				convertTokenToLowerCase(samplerTypeToken);
 				if (samplerTypeToken == "random") {
 					randomSamplerType = Random;
 				}
@@ -108,8 +119,8 @@ int main(int argc, char* argv[]) {
 		renderFormat, SDL_TEXTUREACCESS_STREAMING, width, height);
 
 	Scene *simpleWorld = createSimpleWorld();
-	renderLoop(sdlRenderer, frameBufferTex, width, height, numSamples, randomSamplerType,
-		simpleWorld);
+	startRenderLoop(sdlRenderer, frameBufferTex, width, height,
+		numSamples, randomSamplerType, cameraType, simpleWorld);
 	delete simpleWorld;
 
 	SDL_DestroyTexture(frameBufferTex);
@@ -151,9 +162,10 @@ Scene* createSimpleWorld() {
 	return simpleWorld;
 }
 
-void renderLoop(SDL_Renderer *sdlRenderer, SDL_Texture* frameBufferTex,
+void startRenderLoop(SDL_Renderer *sdlRenderer, SDL_Texture* frameBufferTex,
 	int widthPixels, int heightPixels, int numSamples,
-	RandomSamplerType randomSamplerType, const Scene* gameWorld) {
+	RandomSamplerType randomSamplerType, Camera::CameraType cameraType,
+	const Scene* gameWorld) {
 	SDL_Event e;
 
 	unsigned char* pixels;
@@ -174,25 +186,6 @@ void renderLoop(SDL_Renderer *sdlRenderer, SDL_Texture* frameBufferTex,
 		numSamples = 1;
 	}
 
-	GenericSampler* sampler = nullptr;
-	switch (randomSamplerType) {
-		case Jittered:
-			sampler = new JitteredSampler(1, numSamples);
-			break;
-		case Random:
-			sampler = new RandomSampler(1, numSamples);
-			break;
-		case NRooks:
-			sampler = new NRooksSampler(1, numSamples);
-			break;
-		case MultiJittered:
-			sampler = new MultiJitteredSampler(1, numSamples);
-			break;
-		default:
-			sampler = new OneSampleSampler();
-			break;
-	}
-
 	std::cout.precision(5);
 	// assume left-handed coordinate system, where z goes into screen
 	Point3 eyePosition(0.0f, 1.0f, 0.6f);
@@ -206,9 +199,19 @@ void renderLoop(SDL_Renderer *sdlRenderer, SDL_Texture* frameBufferTex,
 	
 	Point3 lookAtPosition = eyePosition + Vector3(0.0f, 0.0f, 0.2f);
 	Vector3 upVector = Vector3::Up();
-	PinholeCamera mainCamera(eyePosition, lookAtPosition, widthPixels, heightPixels,
-							 castPlaneWidth, castPlaneHeight, upVector, randomSamplerType,
-							 numSamples, 1);
+	Camera* mainCamera;
+
+	std::cout << "Camera type: " << cameraType << ".\n";
+	if (cameraType == Camera::CameraType::Pinhole) {
+		mainCamera = new PinholeCamera(eyePosition, lookAtPosition, widthPixels,
+			heightPixels, castPlaneWidth, castPlaneHeight, upVector, randomSamplerType,
+			numSamples, 1);
+	}
+	else {
+		mainCamera = new ThinLensCamera(eyePosition, lookAtPosition, widthPixels, 
+			heightPixels, castPlaneWidth, castPlaneHeight, upVector, randomSamplerType,
+			numSamples, 1, 1.0f, 0.15f, 1.0f);
+	}
 
 	uint32_t lastFpsReportTime = SDL_GetTicks();
 	FPSCounter fpsCounter;
@@ -224,7 +227,7 @@ void renderLoop(SDL_Renderer *sdlRenderer, SDL_Texture* frameBufferTex,
 
 		SDL_LockTexture(frameBufferTex, NULL, (void**) &pixels, &pitch);
 
-		mainCamera.CastIntoScene(pixels, bytesPerPixel, gameWorld);
+		mainCamera->CastIntoScene(pixels, bytesPerPixel, gameWorld);
 
 		SDL_UnlockTexture(frameBufferTex);
 		SDL_RenderClear(sdlRenderer);
@@ -239,6 +242,6 @@ void renderLoop(SDL_Renderer *sdlRenderer, SDL_Texture* frameBufferTex,
 		}
 	}
 
-	delete sampler;
+	delete mainCamera;
 }
 

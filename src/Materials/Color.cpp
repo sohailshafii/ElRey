@@ -60,6 +60,19 @@ Color& Color::operator/=(float divisor) {
 	return *this;
 }
 
+Color Color::operator*(float mult) {
+	return Color(comp[0] * mult, comp[1] * mult,
+		comp[2] * mult, comp[3] * mult);
+}
+
+Color& Color::operator*=(float mult) {
+	comp[0] *= mult;
+	comp[1] *= mult;
+	comp[2] *= mult;
+	comp[3] *= mult;
+	return *this;
+}
+
 Color Color::White() {
 	return Color(1.0f, 1.0f, 1.0f, 1.0f);
 }

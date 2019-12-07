@@ -55,6 +55,8 @@ ThinLensCamera::~ThinLensCamera() {
 	float invGamma = (1.0f/1.8f);
 	Point2 diskPoint, lensPoint;
 
+	float finalColorMultFactor = (float)exposureTime / (float)numSamples;
+
 	for (unsigned int pixelIndex = 0, byteIndex = 0; pixelIndex < numPixels;
 		pixelIndex++, byteIndex += bytesPerPixel) {
 		float tMax = maxCastDist;
@@ -79,7 +81,8 @@ ThinLensCamera::~ThinLensCamera() {
 			accumColor += sampleColor;
 		}
 
-		accumColor /= (float)numSamples;
+		accumColor *= finalColorMultFactor;
+
 		// gamma-correct
 		accumColor ^= invGamma;
 		pixels[byteIndex] = (unsigned char)(accumColor[2] * 255.0f); // B

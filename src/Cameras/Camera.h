@@ -9,8 +9,13 @@ class GenericSampler;
 class Scene;
 class Point2;
 
+// TODO: move all camera logic into here, extra camera classes
+// cause confusion
+
 class Camera {
 public:
+	enum CameraType { Pinhole, ThinLens };
+
 	Camera();
 	Camera(const Point3& eyePosition, const Point3& lookAtPosition,
 		unsigned int numColumnsPixels, unsigned int numRowsPixels, float viewPlaneWidth,
