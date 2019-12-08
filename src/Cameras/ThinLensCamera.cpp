@@ -64,7 +64,6 @@ ThinLensCamera::~ThinLensCamera() {
 		Color sampleColor = Color::Black();
 		const Point2& oldOrigin = gridPositions[pixelIndex];
 
-		// TODO: fix stupid code
 		for (unsigned int sampleIndex = 0; sampleIndex < numSamples; sampleIndex++) {
 			Point2 newSample = viewPlaneSampler->GetSampleOnUnitSquare();
 			Point2 newPixelPnt = oldOrigin;

@@ -210,7 +210,7 @@ void startRenderLoop(SDL_Renderer *sdlRenderer, SDL_Texture* frameBufferTex,
 	else {
 		mainCamera = new ThinLensCamera(eyePosition, lookAtPosition, widthPixels, 
 			heightPixels, castPlaneWidth, castPlaneHeight, upVector, randomSamplerType,
-			numSamples, 1, 1.0f, 0.15f, 1.0f);
+			numSamples, 1, 0.03f, 0.1f, 1.0f);
 	}
 
 	uint32_t lastFpsReportTime = SDL_GetTicks();
