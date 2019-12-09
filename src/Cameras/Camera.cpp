@@ -31,9 +31,9 @@ Camera::~Camera() {
 }
 
 Camera::Camera(const Point3& eyePosition, const Point3& lookAtPosition,
-			   unsigned int numColumnsPixels, unsigned int numRowsPixels, float
-			   viewPlaneWidth, float viewPlaneHeight, const Vector3& up, RandomSamplerType
-			   randomSamplerType, unsigned int numRandomSamples, unsigned int numRandomSets) {
+			unsigned int numColumnsPixels, unsigned int numRowsPixels, float
+			viewPlaneWidth, float viewPlaneHeight, const Vector3& up, RandomSamplerType
+			randomSamplerType, unsigned int numRandomSamples, unsigned int numRandomSets) {
 	this->eyePosition = eyePosition;
 	this->lookAtPosition = lookAtPosition;
 	this->up = up;

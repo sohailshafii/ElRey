@@ -52,8 +52,7 @@ void GenericMultiSampler::CreateShuffledIndices() {
 	}
 
 	for (unsigned int setIndex = 0, oneDimIndex = 0; setIndex < numSets; setIndex++) {
-		std::random_shuffle(&indices[0], &indices[numSamples - 1]);
-
+		std::random_shuffle(&indices[0], &indices[numSamples]);
 		for (unsigned int j = 0; j < numSamples; j++, oneDimIndex++) {
 			shuffledIndices[oneDimIndex] = indices[j];
 		}

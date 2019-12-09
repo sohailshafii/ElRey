@@ -25,6 +25,7 @@ unsigned int numRandomSamples, unsigned int numRandomSets)
 		 Color sampleColor = Color::Black();
 		 const Point2& oldOrigin = gridPositions[pixelIndex];
 		 for (unsigned int sampleIndex = 0; sampleIndex < numSamples; sampleIndex++) {
+			 sampleColor = Color::Black();
 			 Point2 newSample = viewPlaneSampler->GetSampleOnUnitSquare();
 			 Point2 newPixelPnt = oldOrigin;
 			 newPixelPnt[0] += pixelColWidth * newSample[0];
