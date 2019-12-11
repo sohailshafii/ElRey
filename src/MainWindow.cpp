@@ -17,6 +17,7 @@
 #include "CommonMath.h"
 #include "Cameras/PinholeCamera.h"
 #include "Cameras/ThinLensCamera.h"
+#include "Cameras/FisheyeCamera.h"
 
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
@@ -65,6 +66,9 @@ int main(int argc, char* argv[]) {
 				convertTokenToLowerCase(cameraTypeToken);
 				if (cameraTypeToken == "thinlens") {
 					cameraType = Camera::CameraType::ThinLens;
+				}
+				else if (cameraTypeToken == "fisheye") {
+					cameraType = Camera::CameraType::FishEye;
 				}
 			}
 			else if (currentToken == "-offline") {
@@ -206,6 +210,11 @@ void startRenderLoop(SDL_Renderer *sdlRenderer, SDL_Texture* frameBufferTex,
 		mainCamera = new PinholeCamera(eyePosition, lookAtPosition, widthPixels,
 			heightPixels, castPlaneWidth, castPlaneHeight, upVector, randomSamplerType,
 			numSamples, 1);
+	}
+	else if (cameraType == Camera::CameraType::FishEye) {
+		mainCamera = new FisheyeCamera(eyePosition, lookAtPosition, widthPixels,
+			heightPixels, castPlaneWidth, castPlaneHeight, upVector, randomSamplerType,
+			numSamples, 1, 120.0f, 1.0f);
 	}
 	else {
 		mainCamera = new ThinLensCamera(eyePosition, lookAtPosition, widthPixels, 

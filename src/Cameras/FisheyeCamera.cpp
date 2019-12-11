@@ -28,8 +28,9 @@ void FisheyeCamera::CastIntoScene(unsigned char* pixels, unsigned int bytesPerPi
 	float invGamma = (1.0f / 1.8f);
 
 	float finalColorMultFactor = (float)exposureTime / (float)numSamples;
-	float rSquaredNormalized;
-	Point2 normalizedPoint;
+	Point2 normalizedDeviceCoords;
+	float normFactorX = 2.0f / (pixelColWidth * (float)numColumnsPixels);
+	float normFactorY = 2.0f / (pixelRowHeight * (float)numRowsPixels);
 
 	for (unsigned int pixelIndex = 0, byteIndex = 0; pixelIndex < numPixels;
 		pixelIndex++, byteIndex += bytesPerPixel) {
@@ -43,8 +44,13 @@ void FisheyeCamera::CastIntoScene(unsigned char* pixels, unsigned int bytesPerPi
 			Point2 newPixelPnt = oldOrigin;
 			newPixelPnt[0] += pixelColWidth * newSample[0];
 			newPixelPnt[1] += pixelRowHeight * newSample[1];
-			// TODO
-			//rayToCast.SetDirection(GetRayDirection(newPixelPnt));
+			normalizedDeviceCoords[0] = normFactorX * newPixelPnt[0];
+			normalizedDeviceCoords[1] = normFactorY * newPixelPnt[1];
+			float rSquared = normalizedDeviceCoords[0] * normalizedDeviceCoords[0]
+				+ normalizedDeviceCoords[1] * normalizedDeviceCoords[1];
+			float radius = sqrt(rSquared);
+			rayToCast.SetDirection(GetRayDirection(normalizedDeviceCoords,
+				radius, rSquared));
 			tMax = maxCastDist;
 			scene->Intersect(rayToCast, sampleColor, 0.0f, tMax);
 			accumColor += sampleColor;

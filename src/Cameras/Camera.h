@@ -14,7 +14,7 @@ class Point2;
 
 class Camera {
 public:
-	enum CameraType { Pinhole, ThinLens };
+	enum CameraType { Pinhole, ThinLens, FishEye };
 
 	Camera();
 	Camera(const Point3& eyePosition, const Point3& lookAtPosition,

@@ -5,7 +5,11 @@ class Point3;
 
 class Vector3 {
 public:
-	Vector3() {}
+	Vector3() {
+		comp[0] = 0.0f;
+		comp[1] = 0.0f;
+		comp[2] = 0.0f;
+	}
 	Vector3(float x, float y, float z);
 
 	Vector3(const Vector3 &p2);
