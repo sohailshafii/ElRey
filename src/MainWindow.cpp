@@ -18,6 +18,7 @@
 #include "Cameras/PinholeCamera.h"
 #include "Cameras/ThinLensCamera.h"
 #include "Cameras/FisheyeCamera.h"
+#include "Cameras/SphericalPanoramicCamera.h"
 
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
@@ -69,6 +70,9 @@ int main(int argc, char* argv[]) {
 				}
 				else if (cameraTypeToken == "fisheye") {
 					cameraType = Camera::CameraType::FishEye;
+				}
+				else if (cameraTypeToken == "spherical") {
+					cameraType = Camera::CameraType::SphericalPanoramicCamera;
 				}
 			}
 			else if (currentToken == "-offline") {
@@ -206,20 +210,36 @@ void startRenderLoop(SDL_Renderer *sdlRenderer, SDL_Texture* frameBufferTex,
 	Camera* mainCamera;
 
 	std::cout << "Camera type: " << cameraType << ".\n";
+	switch (cameraType) {
+		case Camera::CameraType::SphericalPanoramicCamera:
+			mainCamera = new SphericalPanoramicCamera(eyePosition, lookAtPosition, widthPixels,
+				heightPixels, castPlaneWidth, castPlaneHeight, upVector, randomSamplerType,
+				numSamples, 1, 60.0f, 60.0f, 1.0f);
+			break;
+		case Camera::CameraType::FishEye:
+			mainCamera = new FisheyeCamera(eyePosition, lookAtPosition, widthPixels,
+				heightPixels, castPlaneWidth, castPlaneHeight, upVector, randomSamplerType,
+				numSamples, 1, 120.0f, 1.0f);
+			break;
+		case Camera::CameraType::ThinLens:
+			mainCamera = new ThinLensCamera(eyePosition, lookAtPosition, widthPixels,
+				heightPixels, castPlaneWidth, castPlaneHeight, upVector, randomSamplerType,
+				numSamples, 1, 0.03f, 0.1f, 1.0f);
+			break;
+		default:
+			mainCamera = new PinholeCamera(eyePosition, lookAtPosition, widthPixels,
+				heightPixels, castPlaneWidth, castPlaneHeight, upVector, randomSamplerType,
+				numSamples, 1);
+			break;
+	}
 	if (cameraType == Camera::CameraType::Pinhole) {
-		mainCamera = new PinholeCamera(eyePosition, lookAtPosition, widthPixels,
-			heightPixels, castPlaneWidth, castPlaneHeight, upVector, randomSamplerType,
-			numSamples, 1);
+		
 	}
 	else if (cameraType == Camera::CameraType::FishEye) {
-		mainCamera = new FisheyeCamera(eyePosition, lookAtPosition, widthPixels,
-			heightPixels, castPlaneWidth, castPlaneHeight, upVector, randomSamplerType,
-			numSamples, 1, 120.0f, 1.0f);
+		
 	}
 	else {
-		mainCamera = new ThinLensCamera(eyePosition, lookAtPosition, widthPixels, 
-			heightPixels, castPlaneWidth, castPlaneHeight, upVector, randomSamplerType,
-			numSamples, 1, 0.03f, 0.1f, 1.0f);
+		
 	}
 
 	uint32_t lastFpsReportTime = SDL_GetTicks();

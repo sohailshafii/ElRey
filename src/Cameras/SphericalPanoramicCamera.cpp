@@ -1,24 +1,25 @@
-#include "FisheyeCamera.h"
+#include "SphericalPanoramicCamera.h"
 #include "Sampling/GenericSampler.h"
 #include "Math/Ray.h"
 #include "SceneData/Scene.h"
 
-FisheyeCamera::FisheyeCamera(const Point3& eyePosition, const Point3& lookAtPosition,
+SphericalPanoramicCamera::SphericalPanoramicCamera(const Point3& eyePosition, const Point3& lookAtPosition,
 	unsigned int numColumnsPixels, unsigned int numRowsPixels, float viewPlaneWidth,
 	float viewPlaneHeight, const Vector3& up, RandomSamplerType randomSamplerType,
 	unsigned int numRandomSamples, unsigned int numRandomSets,
-	float psiMax, float exposureTime)
+	float psiMax, float lambdaMax, float exposureTime)
 	: Camera(eyePosition, lookAtPosition, numColumnsPixels, numRowsPixels,
 		viewPlaneWidth, viewPlaneHeight, up, randomSamplerType,
 		numRandomSamples, numRandomSets) {
 	this->psiMax = psiMax;
+	this->lambdaMax = lambdaMax;
 	this->exposureTime = exposureTime;
 }
 
-FisheyeCamera::~FisheyeCamera() {
+SphericalPanoramicCamera::~SphericalPanoramicCamera() {
 }
 
-void FisheyeCamera::CastIntoScene(unsigned char* pixels, unsigned int bytesPerPixel,
+void SphericalPanoramicCamera::CastIntoScene(unsigned char* pixels, unsigned int bytesPerPixel,
 	const Scene* scene) const {
 	unsigned int numSamples = viewPlaneSampler->GetNumSamples();
 	Ray rayToCast;
@@ -45,11 +46,8 @@ void FisheyeCamera::CastIntoScene(unsigned char* pixels, unsigned int bytesPerPi
 			newPixelPnt[1] += pixelRowHeight * newSample[1];
 			normalizedDeviceCoords[0] = normFactorX * newPixelPnt[0];
 			normalizedDeviceCoords[1] = normFactorY * newPixelPnt[1];
-			float rSquared = normalizedDeviceCoords[0] * normalizedDeviceCoords[0]
-				+ normalizedDeviceCoords[1] * normalizedDeviceCoords[1];
-			float radius = sqrt(rSquared);
-			rayToCast.SetDirection(GetRayDirection(normalizedDeviceCoords,
-				radius, rSquared));
+
+			rayToCast.SetDirection(GetRayDirection(normalizedDeviceCoords));
 			tMax = maxCastDist;
 			scene->Intersect(rayToCast, sampleColor, 0.0f, tMax);
 			accumColor += sampleColor;
