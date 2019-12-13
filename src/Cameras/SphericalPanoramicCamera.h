@@ -36,7 +36,9 @@ inline Vector3 SphericalPanoramicCamera::GetRayDirection(
 	float psi = normalizedDevCoords[1] * psiMax * (float)DEG_2_RAD;
 
 	// compute the spherical azimuth and polar angles
-	float phi = (float)M_PI - lambda;
+	// phi and lambda are the same -- measured directly from view direction
+	float phi = lambda;//(float)M_PI - lambda;
+	// psi maps to phi after subtracting 90 degrees
 	float theta = 0.5f * (float)M_PI - psi;
 
 	float sinPhi = sin(phi);

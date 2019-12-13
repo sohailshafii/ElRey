@@ -214,7 +214,7 @@ void startRenderLoop(SDL_Renderer *sdlRenderer, SDL_Texture* frameBufferTex,
 		case Camera::CameraType::SphericalPanoramicCamera:
 			mainCamera = new SphericalPanoramicCamera(eyePosition, lookAtPosition, widthPixels,
 				heightPixels, castPlaneWidth, castPlaneHeight, upVector, randomSamplerType,
-				numSamples, 1, 60.0f, 60.0f, 1.0f);
+				numSamples, 1, 60.0f, 120.0f, 1.0f);
 			break;
 		case Camera::CameraType::FishEye:
 			mainCamera = new FisheyeCamera(eyePosition, lookAtPosition, widthPixels,
@@ -231,15 +231,6 @@ void startRenderLoop(SDL_Renderer *sdlRenderer, SDL_Texture* frameBufferTex,
 				heightPixels, castPlaneWidth, castPlaneHeight, upVector, randomSamplerType,
 				numSamples, 1);
 			break;
-	}
-	if (cameraType == Camera::CameraType::Pinhole) {
-		
-	}
-	else if (cameraType == Camera::CameraType::FishEye) {
-		
-	}
-	else {
-		
 	}
 
 	uint32_t lastFpsReportTime = SDL_GetTicks();
