@@ -17,10 +17,29 @@ public:
 	enum CameraType { Pinhole, ThinLens, FishEye, SphericalPanoramicCamera };
 
 	Camera();
+	// Pinhole
 	Camera(const Point3& eyePosition, const Point3& lookAtPosition,
-		unsigned int numColumnsPixels, unsigned int numRowsPixels, float viewPlaneWidth,
-		float viewPlaneHeight, const Vector3& up, RandomSamplerType randomSamplerType,
-		unsigned int numRandomSamples, unsigned int numRandomSets);
+		   unsigned int numColumnsPixels, unsigned int numRowsPixels, float viewPlaneWidth,
+		   float viewPlaneHeight, const Vector3& up, RandomSamplerType randomSamplerType,
+		   unsigned int numRandomSamples, unsigned int numRandomSets);
+	// Thin lens
+	/*Camera(const Point3& eyePosition, const Point3& lookAtPosition,
+		   unsigned int numColumnsPixels, unsigned int numRowsPixels, float viewPlaneWidth,
+		   float viewPlaneHeight, const Vector3& up, RandomSamplerType randomSamplerType,
+		   unsigned int numRandomSamples, unsigned int numRandomSets,
+		   float lensRadius, float focalPlaneDistance, float exposureTime);
+	// Fisheye
+	Camera(const Point3& eyePosition, const Point3& lookAtPosition,
+		   unsigned int numColumnsPixels, unsigned int numRowsPixels, float viewPlaneWidth,
+		   float viewPlaneHeight, const Vector3& up, RandomSamplerType randomSamplerType,
+		   unsigned int numRandomSamples, unsigned int numRandomSets,
+		   float psiMax, float exposureTime);
+	// spherical panoramic camera
+	Camera(const Point3& eyePosition, const Point3& lookAtPosition,
+		   unsigned int numColumnsPixels, unsigned int numRowsPixels, float viewPlaneWidth,
+		   float viewPlaneHeight, const Vector3& up, RandomSamplerType randomSamplerType,
+		   unsigned int numRandomSamples, unsigned int numRandomSets,
+		   float psiMax, float lambdaMax, float exposureTime);*/
 
 	virtual ~Camera();
 
