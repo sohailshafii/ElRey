@@ -2,6 +2,7 @@
 #include "Sampling/GenericSampler.h"
 #include "Math/Ray.h"
 #include "SceneData/Scene.h"
+#include <limits>
 
 FisheyeCamera::FisheyeCamera(const Point3& eyePosition, const Point3& lookAtPosition,
 	unsigned int numColumnsPixels, unsigned int numRowsPixels, float viewPlaneWidth,
@@ -13,6 +14,7 @@ FisheyeCamera::FisheyeCamera(const Point3& eyePosition, const Point3& lookAtPosi
 		numRandomSamples, numRandomSets) {
 	this->psiMax = psiMax;
 	this->exposureTime = exposureTime;
+	finalMultFactor = exposureTime/(float)viewPlaneSampler->GetNumSamples();
 }
 
 FisheyeCamera::~FisheyeCamera() {
@@ -33,7 +35,7 @@ void FisheyeCamera::CastIntoScene(unsigned char* pixels, unsigned int bytesPerPi
 
 	for (unsigned int pixelIndex = 0, byteIndex = 0; pixelIndex < numPixels;
 		pixelIndex++, byteIndex += bytesPerPixel) {
-		float tMax = maxCastDist;
+		float tMax = std::numeric_limits<float>::max();
 		Color accumColor = Color::Black();
 		Color sampleColor = Color::Black();
 		const Point2& oldOrigin = gridPositions[pixelIndex];
@@ -50,7 +52,7 @@ void FisheyeCamera::CastIntoScene(unsigned char* pixels, unsigned int bytesPerPi
 			float radius = sqrt(rSquared);
 			rayToCast.SetDirection(GetRayDirection(normalizedDeviceCoords,
 				radius, rSquared));
-			tMax = maxCastDist;
+			tMax = std::numeric_limits<float>::max();
 			scene->Intersect(rayToCast, sampleColor, 0.0f, tMax);
 			accumColor += sampleColor;
 		}

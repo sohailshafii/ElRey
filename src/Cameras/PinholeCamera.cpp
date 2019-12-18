@@ -2,6 +2,7 @@
 #include "PinholeCamera.h"
 #include "Sampling/GenericSampler.h"
 #include "SceneData/Scene.h"
+#include <limits>
 
 PinholeCamera::PinholeCamera(const Point3& eyePosition, const Point3& lookAtPosition,
 unsigned int numColumnsPixels, unsigned int numRowsPixels, float viewPlaneWidth,
@@ -9,6 +10,7 @@ float viewPlaneHeight, const Vector3& up, RandomSamplerType randomSamplerType,
 unsigned int numRandomSamples, unsigned int numRandomSets)
 	: Camera(eyePosition, lookAtPosition, numColumnsPixels, numRowsPixels, viewPlaneWidth, viewPlaneHeight, up, randomSamplerType,
 			numRandomSamples, numRandomSets) {
+	finalMultFactor = 1.0f/(float)viewPlaneSampler->GetNumSamples();
 }
 
  void PinholeCamera::CastIntoScene(unsigned char* pixels, unsigned int bytesPerPixel, const Scene* scene) const {
@@ -20,7 +22,7 @@ unsigned int numRandomSamples, unsigned int numRandomSets)
 
 	for (unsigned int pixelIndex = 0, byteIndex = 0; pixelIndex < numPixels;
 		pixelIndex++, byteIndex += bytesPerPixel) {
-		float tMax = maxCastDist;
+		float tMax = std::numeric_limits<float>::max();
 		Color accumColor = Color::Black();
 		Color sampleColor = Color::Black();
 		const Point2& oldOrigin = gridPositions[pixelIndex];
@@ -31,7 +33,7 @@ unsigned int numRandomSamples, unsigned int numRandomSets)
 			newPixelPnt[0] += pixelColWidth * newSample[0];
 			newPixelPnt[1] += pixelRowHeight * newSample[1];
 			rayToCast.SetDirection(GetRayDirection(newPixelPnt));
-			tMax = maxCastDist;
+			tMax = std::numeric_limits<float>::max();
 			scene->Intersect(rayToCast, sampleColor, 0.0f, tMax);
 			accumColor += sampleColor;
 		}

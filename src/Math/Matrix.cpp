@@ -268,21 +268,3 @@ Matrix& Matrix::operator/=(float scalar) {
 
 	return *this;
 }
-
-float* Matrix::GetRow(unsigned int rowIndex) {
-	return m + rowIndex*numColumns;
-}
-
-float* Matrix::operator[](unsigned int rowIndex) {
-	return m + rowIndex*numColumns;
-}
-
-float& Matrix::operator()(unsigned int row,
-	unsigned int col) {
-	return m[row*numColumns + col];
-}
-
-float Matrix::operator()(unsigned int row,
-	unsigned int col) const {
-	return m[row*numColumns + col];
-}

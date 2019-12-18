@@ -23,9 +23,9 @@ public:
 	inline Point4& operator*=(float t);
 	inline Point4& operator/=(float t);
 
-	float operator*(const Vector3 &vector) const;
-	Point4 operator+(const Vector3 &vector) const;
-	Point4 operator-(const Vector3 &vector) const;
+	inline float operator*(const Vector3 &vector) const;
+	inline Point4 operator+(const Vector3 &vector) const;
+	inline Point4 operator-(const Vector3 &vector) const;
 
 	inline Point4 operator+(const Point4 &p2) const;
 
@@ -77,6 +77,22 @@ inline Point4& Point4::operator/=(float t) {
 	comp[1] /= t;
 	comp[2] /= t;
 	return *this;
+}
+
+inline float Point4::operator*(const Vector3 &vector) const {
+	return (comp[0]*vector[0] + comp[1]*vector[1]
+		+ comp[2]*vector[2]);
+}
+
+
+inline Point4 Point4::operator+(const Vector3 &vector) const {
+	return Point4(comp[0]+vector[0], comp[1]+vector[1],
+		comp[2]+vector[2], comp[3]);
+}
+
+inline Point4 Point4::operator-(const Vector3 &vector) const {
+	return Point4(comp[0]-vector[0], comp[1]-vector[1],
+		comp[2]-vector[2], comp[3]);
 }
 
 inline Vector3 Point4::operator-(const Point4 &p2) const {

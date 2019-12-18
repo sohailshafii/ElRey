@@ -21,33 +21,6 @@ Camera::Camera() {
 	this->gridPositions = nullptr;
 }
 
-// Thin lens
-/*Camera::Camera(const Point3& eyePosition, const Point3& lookAtPosition,
-			   unsigned int numColumnsPixels, unsigned int numRowsPixels, float viewPlaneWidth,
-			   float viewPlaneHeight, const Vector3& up, RandomSamplerType randomSamplerType,
-			   unsigned int numRandomSamples, unsigned int numRandomSets,
-			   float lensRadius, float focalPlaneDistance, float exposureTime) {
-	// TODO
-}
-
-// Fisheye
-Camera::Camera(const Point3& eyePosition, const Point3& lookAtPosition,
-			   unsigned int numColumnsPixels, unsigned int numRowsPixels, float viewPlaneWidth,
-			   float viewPlaneHeight, const Vector3& up, RandomSamplerType randomSamplerType,
-			   unsigned int numRandomSamples, unsigned int numRandomSets,
-			   float psiMax, float exposureTime) {
-	// TODO
-}
-
-// spherical panoramic camera
-Camera::Camera(const Point3& eyePosition, const Point3& lookAtPosition,
-			   unsigned int numColumnsPixels, unsigned int numRowsPixels, float viewPlaneWidth,
-			   float viewPlaneHeight, const Vector3& up, RandomSamplerType randomSamplerType,
-			   unsigned int numRandomSamples, unsigned int numRandomSets,
-			   float psiMax, float lambdaMax, float exposureTime) {
-	// TODO
-}*/
-
 Camera::~Camera() {
 	if (viewPlaneSampler != nullptr) {
 		delete viewPlaneSampler;
@@ -89,7 +62,6 @@ Camera::Camera(const Point3& eyePosition, const Point3& lookAtPosition,
 			break;
 	}
 	
-	maxCastDist = std::numeric_limits<float>::max();
 	unsigned int numPixels = numColumnsPixels*numRowsPixels;
 	gridPositions = new Point2[numPixels];
 	pixelRowHeight = viewPlaneHeight / numRowsPixels;

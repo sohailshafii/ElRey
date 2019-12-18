@@ -8,6 +8,7 @@
 #include "Sampling/NRooksSampler.h"
 #include "Sampling/MultiJitteredSampler.h"
 #include <stdexcept>
+#include <limits>
 
 ThinLensCamera::ThinLensCamera(const Point3& eyePosition, const Point3& lookAtPosition,
 	unsigned int numColumnsPixels, unsigned int numRowsPixels, float viewPlaneWidth,
@@ -19,6 +20,7 @@ ThinLensCamera::ThinLensCamera(const Point3& eyePosition, const Point3& lookAtPo
 	this->lensRadius = lensRadius;
 	this->focalPlaneDistance = focalPlaneDistance;
 	this->exposureTime = exposureTime;
+	this->finalMultFactor = (float)exposureTime / (float)viewPlaneSampler->GetNumSamples();
 
 	switch (randomSamplerType) {
 		case Jittered:
@@ -46,8 +48,7 @@ ThinLensCamera::~ThinLensCamera() {
 	}
 }
 
-// TODO fix
- void ThinLensCamera::CastIntoScene(unsigned char* pixels, unsigned int bytesPerPixel, const Scene* scene) const {
+void ThinLensCamera::CastIntoScene(unsigned char* pixels, unsigned int bytesPerPixel, const Scene* scene) const {
 	unsigned int numSamples = viewPlaneSampler->GetNumSamples();
 	Ray rayToCast;
 	rayToCast.SetOrigin(eyePosition);
@@ -59,7 +60,7 @@ ThinLensCamera::~ThinLensCamera() {
 
 	for (unsigned int pixelIndex = 0, byteIndex = 0; pixelIndex < numPixels;
 		pixelIndex++, byteIndex += bytesPerPixel) {
-		float tMax = maxCastDist;
+		float tMax = std::numeric_limits<float>::max();
 		Color accumColor = Color::Black();
 		Color sampleColor = Color::Black();
 		const Point2& oldOrigin = gridPositions[pixelIndex];
@@ -76,7 +77,7 @@ ThinLensCamera::~ThinLensCamera() {
 			rayToCast.SetOrigin(eyePosition + right * lensPoint[0]
 				+ up * lensPoint[1]);
 			rayToCast.SetDirection(GetRayDirection(newPixelPnt, lensPoint));
-			tMax = maxCastDist;
+			tMax = std::numeric_limits<float>::max();
 			scene->Intersect(rayToCast, sampleColor, 0.0f, tMax);
 			accumColor += sampleColor;
 		}

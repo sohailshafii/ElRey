@@ -1,7 +1,9 @@
 #pragma once
 
-class Point4;
+#include <cmath>
+
 class Point3;
+class Point4;
 
 class Vector3 {
 public:
@@ -41,9 +43,9 @@ public:
 
 	inline Vector3 operator-() const;
 
-	void Normalize();
-	float Norm() const;
-	float NormSqr() const;
+	inline void Normalize();
+	inline float Norm() const;
+	inline float NormSqr() const;
 
 	static Vector3 Zero() {
 		return Vector3(0.0f, 0.0f, 0.0f);
@@ -137,4 +139,21 @@ inline Vector3 Vector3::operator-() const {
 	Vector3 negatedVector(-comp[0], -comp[1],
 		-comp[2]);
 	return negatedVector;
+}
+
+inline void Vector3::Normalize() {
+	float vectorNorm = Norm();
+	comp[0] /= vectorNorm;
+	comp[1] /= vectorNorm;
+	comp[2] /= vectorNorm;
+}
+
+inline float Vector3::Norm() const {
+	return sqrt(comp[0]*comp[0] + comp[1]*comp[1] +
+		comp[2]*comp[2]);
+}
+
+inline float Vector3::NormSqr() const {
+	return (comp[0]*comp[0] + comp[1]*comp[1] +
+		comp[2]*comp[2]);
 }

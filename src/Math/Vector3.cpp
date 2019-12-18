@@ -1,8 +1,7 @@
 #include "Vector3.h"
-#include "Math/Point4.h"
 #include "Math/Point3.h"
+#include "Math/Point4.h"
 #include <cstring>
-#include <cmath>
 
 Vector3::Vector3(float x, float y, float z) {
 	comp[0] = x;
@@ -39,21 +38,4 @@ float Vector3::operator*(const Point4 &point) const {
 Point4 Vector3::operator+(const Point4 &point) const {
 	return Point4(comp[0]+point[0], comp[1]+point[1],
 		comp[2]+point[2], point[3]);
-}
-
-void Vector3::Normalize() {
-	float vectorNorm = Norm();
-	comp[0] /= vectorNorm;
-	comp[1] /= vectorNorm;
-	comp[2] /= vectorNorm;
-}
-
-float Vector3::Norm() const {
-	return sqrt(comp[0]*comp[0] + comp[1]*comp[1] +
-		comp[2]*comp[2]);
-}
-
-float Vector3::NormSqr() const {
-	return (comp[0]*comp[0] + comp[1]*comp[1] +
-		comp[2]*comp[2]);
 }

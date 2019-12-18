@@ -18,7 +18,12 @@ public:
 
 	void CastIntoScene(unsigned char* pixels, unsigned int bytesPerPixel,
 		const Scene* scene) const override;
-
+	
+protected:
+	float GetFinalPixelMultFact() const override {
+		return exposureTime;
+	}
+	
 private:
 	float psiMax;
 	float lambdaMax;

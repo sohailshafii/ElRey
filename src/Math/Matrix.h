@@ -38,11 +38,11 @@ public:
 	int GetNumRows() const { return numRows; }
 	int GetNumColumns() const { return numColumns; }
 
-	float* GetRow(unsigned int rowIndex);
-	float* operator[](unsigned int rowIndex);
+	inline float* GetRow(unsigned int rowIndex);
+	inline float* operator[](unsigned int rowIndex);
 
-	float& operator()(unsigned int row, unsigned int col);
-	float operator()(unsigned int row, unsigned int col) const;
+	inline float& operator()(unsigned int row, unsigned int col);
+	inline float operator()(unsigned int row, unsigned int col) const;
 
 private:
 	float *m;
@@ -50,3 +50,21 @@ private:
 
 	void AllocateAndCopyFrom(const Matrix& other);
 };
+
+inline float* Matrix::GetRow(unsigned int rowIndex) {
+	return m + rowIndex*numColumns;
+}
+
+inline float* Matrix::operator[](unsigned int rowIndex) {
+	return m + rowIndex*numColumns;
+}
+
+inline float& Matrix::operator()(unsigned int row,
+	unsigned int col) {
+	return m[row*numColumns + col];
+}
+
+inline float Matrix::operator()(unsigned int row,
+	unsigned int col) const {
+	return m[row*numColumns + col];
+}

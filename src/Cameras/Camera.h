@@ -22,24 +22,6 @@ public:
 		   unsigned int numColumnsPixels, unsigned int numRowsPixels, float viewPlaneWidth,
 		   float viewPlaneHeight, const Vector3& up, RandomSamplerType randomSamplerType,
 		   unsigned int numRandomSamples, unsigned int numRandomSets);
-	// Thin lens
-	/*Camera(const Point3& eyePosition, const Point3& lookAtPosition,
-		   unsigned int numColumnsPixels, unsigned int numRowsPixels, float viewPlaneWidth,
-		   float viewPlaneHeight, const Vector3& up, RandomSamplerType randomSamplerType,
-		   unsigned int numRandomSamples, unsigned int numRandomSets,
-		   float lensRadius, float focalPlaneDistance, float exposureTime);
-	// Fisheye
-	Camera(const Point3& eyePosition, const Point3& lookAtPosition,
-		   unsigned int numColumnsPixels, unsigned int numRowsPixels, float viewPlaneWidth,
-		   float viewPlaneHeight, const Vector3& up, RandomSamplerType randomSamplerType,
-		   unsigned int numRandomSamples, unsigned int numRandomSets,
-		   float psiMax, float exposureTime);
-	// spherical panoramic camera
-	Camera(const Point3& eyePosition, const Point3& lookAtPosition,
-		   unsigned int numColumnsPixels, unsigned int numRowsPixels, float viewPlaneWidth,
-		   float viewPlaneHeight, const Vector3& up, RandomSamplerType randomSamplerType,
-		   unsigned int numRandomSamples, unsigned int numRandomSets,
-		   float psiMax, float lambdaMax, float exposureTime);*/
 
 	virtual ~Camera();
 
@@ -47,6 +29,10 @@ public:
 
 protected:
 	void ComputeCoordinateFrameAxes();
+	
+	// some cameras require the final pixel to be multiplied by some value
+	// like exposure time
+	virtual float GetFinalPixelMultFact() const = 0;
 
 	Point3 eyePosition;
 	Point3 lookAtPosition;
@@ -55,12 +41,14 @@ protected:
 	Vector3 up;
 	Vector3 forward;
 
+	// some of these variables are redundant but
+	// they are pre-computed for efficiency
 	unsigned int numColumnsPixels;
 	unsigned int numRowsPixels;
+	unsigned int numPixels;
 	float viewPlaneWidth;
 	float viewPlaneHeight;
 	float viewPlaneDistance;
-	float maxCastDist;
 	float pixelRowHeight;
 	float pixelColWidth;
 

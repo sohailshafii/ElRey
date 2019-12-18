@@ -15,11 +15,17 @@ public:
 	~ThinLensCamera();
 	
 	void CastIntoScene(unsigned char* pixels, unsigned int bytesPerPixel, const Scene* scene) const override;
+	
+protected:
+	float GetFinalPixelMultFact() const override {
+		return finalMultFactor;
+	}
 
 private:
 	float lensRadius;
 	float focalPlaneDistance;
 	float exposureTime;
+	float finalMultFactor;
 
 	GenericSampler* diskSampler;
 

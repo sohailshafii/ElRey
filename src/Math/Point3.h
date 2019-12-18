@@ -19,9 +19,9 @@ public:
 	inline Point3& operator*=(float t);
 	inline Point3& operator/=(float t);
 
-	float operator*(const Vector3 &vector) const;
-	Point3 operator+(const Vector3 &vector) const;
-	Point3 operator-(const Vector3 &vector) const;
+	inline float operator*(const Vector3 &vector) const;
+	inline Point3 operator+(const Vector3 &vector) const;
+	inline Point3 operator-(const Vector3 &vector) const;
 
 	inline Point3 operator+(const Point3&p2) const;
 
@@ -73,6 +73,21 @@ inline Point3& Point3::operator/=(float t) {
 	comp[1] /= t;
 	comp[2] /= t;
 	return *this;
+}
+
+inline float Point3::operator*(const Vector3 &vector) const {
+	return (comp[0]*vector[0] + comp[1]*vector[1]
+		+ comp[2]*vector[2]);
+}
+
+inline Point3 Point3::operator+(const Vector3 &vector) const {
+	return Point3(comp[0]+vector[0], comp[1]+vector[1],
+		comp[2]+vector[2]);
+}
+
+inline Point3 Point3::operator-(const Vector3 &vector) const {
+	return Point3(comp[0]-vector[0], comp[1]-vector[1],
+		comp[2]-vector[2]);
 }
 
 inline Vector3 Point3::operator-(const Point3&p2) const {

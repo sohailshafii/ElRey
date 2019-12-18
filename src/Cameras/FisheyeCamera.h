@@ -18,13 +18,19 @@ public:
 
 	void CastIntoScene(unsigned char* pixels, unsigned int bytesPerPixel,
 		const Scene* scene) const override;
-
+	
+protected:
+	float GetFinalPixelMultFact() const override {
+		return finalMultFactor;
+	}
+	
 private:
+	inline Vector3 GetRayDirection(const Point2& normalizedDevCoords,
+								   float radius, float radiusSquared) const;
+	
 	float psiMax;
 	float exposureTime;
-
-	inline Vector3 GetRayDirection(const Point2& normalizedDevCoords,
-		float radius, float radiusSquared) const;
+	float finalMultFactor;
 };
 
 inline Vector3 FisheyeCamera::GetRayDirection(const Point2& normalizedDevCoords,

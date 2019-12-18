@@ -2,6 +2,7 @@
 #include "Sampling/GenericSampler.h"
 #include "Math/Ray.h"
 #include "SceneData/Scene.h"
+#include <limits>
 
 SphericalPanoramicCamera::SphericalPanoramicCamera(const Point3& eyePosition, const Point3& lookAtPosition,
 	unsigned int numColumnsPixels, unsigned int numRowsPixels, float viewPlaneWidth,
@@ -34,7 +35,7 @@ void SphericalPanoramicCamera::CastIntoScene(unsigned char* pixels, unsigned int
 
 	for (unsigned int pixelIndex = 0, byteIndex = 0; pixelIndex < numPixels;
 		pixelIndex++, byteIndex += bytesPerPixel) {
-		float tMax = maxCastDist;
+		float tMax = std::numeric_limits<float>::max();
 		Color accumColor = Color::Black();
 		Color sampleColor = Color::Black();
 		const Point2& oldOrigin = gridPositions[pixelIndex];
@@ -48,7 +49,7 @@ void SphericalPanoramicCamera::CastIntoScene(unsigned char* pixels, unsigned int
 			normalizedDeviceCoords[1] = normFactorY * newPixelPnt[1];
 
 			rayToCast.SetDirection(GetRayDirection(normalizedDeviceCoords));
-			tMax = maxCastDist;
+			tMax = std::numeric_limits<float>::max();
 			scene->Intersect(rayToCast, sampleColor, 0.0f, tMax);
 			accumColor += sampleColor;
 		}
