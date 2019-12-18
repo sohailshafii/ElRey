@@ -9,12 +9,17 @@ class GenericSampler;
 class Scene;
 class Point2;
 
-// TODO: move all camera logic into here, extra camera classes
-// cause confusion
+// TODO: move more repeated camera logic into this class
 
 class Camera {
 public:
-	enum CameraType { Pinhole, ThinLens, FishEye, SphericalPanoramicCamera };
+	enum CameraType {
+		Pinhole = 0,
+		ThinLens,
+		FishEye,
+		SphericalPanoramicCamera,
+		Orthographic
+	};
 
 	Camera();
 	// Pinhole
@@ -25,7 +30,7 @@ public:
 
 	virtual ~Camera();
 
-	virtual void CastIntoScene(unsigned char* pixels, unsigned int bytesPerPixel, const Scene* scene) const = 0;
+	virtual void CastIntoScene(unsigned char* pixels, unsigned int bytesPerPixel, const Scene* scene) const;
 
 protected:
 	void ComputeCoordinateFrameAxes();
@@ -33,6 +38,8 @@ protected:
 	// some cameras require the final pixel to be multiplied by some value
 	// like exposure time
 	virtual float GetFinalPixelMultFact() const = 0;
+	
+	virtual Vector3 GetRayDirectionForPixelPoint(const Point2 &pixelPoint) const = 0;
 
 	Point3 eyePosition;
 	Point3 lookAtPosition;

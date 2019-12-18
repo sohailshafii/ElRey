@@ -15,6 +15,10 @@ protected:
 	float GetFinalPixelMultFact() const override {
 		return finalMultFactor;
 	}
+	
+	Vector3 GetRayDirectionForPixelPoint(const Point2 &pixelPoint) const override {
+		return Vector3::Zero();
+	}
 
 private:
 	inline Vector3 GetRayDirection(const Point2& pixelPoint) const;

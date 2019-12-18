@@ -24,6 +24,10 @@ protected:
 		return exposureTime;
 	}
 	
+	Vector3 GetRayDirectionForPixelPoint(const Point2 &pixelPoint) const override {
+		return Vector3::Zero();
+	}
+	
 private:
 	float psiMax;
 	float lambdaMax;

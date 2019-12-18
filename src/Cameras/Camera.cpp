@@ -9,6 +9,8 @@
 #include "Sampling/MultiJitteredSampler.h"
 
 #include "Math/Point2.h"
+#include "Math/Ray.h"
+#include "SceneData/Scene.h"
 
 // TODO: ortho camera
 Camera::Camera() {
@@ -40,6 +42,7 @@ Camera::Camera(const Point3& eyePosition, const Point3& lookAtPosition,
 	ComputeCoordinateFrameAxes();
 	this->numColumnsPixels = numColumnsPixels;
 	this->numRowsPixels = numRowsPixels;
+	this->numPixels = numColumnsPixels*numRowsPixels;
 	this->viewPlaneWidth = viewPlaneWidth;
 	this->viewPlaneHeight = viewPlaneHeight;
 	viewPlaneDistance = (this->lookAtPosition - this->eyePosition).Norm();
@@ -121,4 +124,45 @@ void Camera::ComputeCoordinateFrameAxes() {
 
 	// (no need to normalize as two normal vectors
 	// crossed results in a normal vector)
+}
+
+// TODO: keep refactoring this into something that can be generally re-used
+void Camera::CastIntoScene(unsigned char* pixels, unsigned int bytesPerPixel,
+						   const Scene* scene) const {
+	unsigned int numSamples = viewPlaneSampler->GetNumSamples();
+	Ray rayToCast;
+	rayToCast.SetOrigin(eyePosition);
+	float invGamma = (1.0f / 1.8f);
+	float maxCastDistance = std::numeric_limits<float>::max();
+	float finalColorMultFactor = GetFinalPixelMultFact();
+
+	for (unsigned int pixelIndex = 0, byteIndex = 0; pixelIndex < numPixels;
+		pixelIndex++, byteIndex += bytesPerPixel) {
+		float tMax = std::numeric_limits<float>::max();
+		Color accumColor = Color::Black();
+		Color sampleColor = Color::Black();
+		const Point2& oldOrigin = gridPositions[pixelIndex];
+		for (unsigned int sampleIndex = 0; sampleIndex < numSamples; sampleIndex++) {
+			Point2 newSample = viewPlaneSampler->GetSampleOnUnitSquare();
+			Point2 newPixelPnt(oldOrigin[0] + pixelColWidth * newSample[0],
+							   oldOrigin[1] + pixelRowHeight * newSample[1]);
+			rayToCast.SetDirection(GetRayDirectionForPixelPoint(newPixelPnt));
+			
+			sampleColor = Color::Black();
+			tMax = maxCastDistance;
+			scene->Intersect(rayToCast, sampleColor, 0.0f, tMax);
+			accumColor += sampleColor;
+		}
+
+		accumColor *= finalColorMultFactor;
+		// gamma-correct
+		accumColor ^= invGamma;
+		// RGB->BGR (related to SDL)
+		pixels[byteIndex] = (unsigned char)(accumColor[2] * 255.0f); // B
+		pixels[byteIndex + 1] = (unsigned char)(accumColor[1] * 255.0f); // G
+		pixels[byteIndex + 2] = (unsigned char)(accumColor[0] * 255.0f); // R
+		if (bytesPerPixel == 4) {
+			pixels[byteIndex + 3] = 255;
+		}
+	}
 }
