@@ -22,10 +22,9 @@ protected:
 	}
 	
 	Vector3 GetRayDirectionForPixelPoint(const Point2 &pixelPoint) const override {
-		Point2 normalizedDeviceCoords(normFactorX * pixelPoint[0],
-									 normFactorY * pixelPoint[1]);
-		float rSquared = normalizedDeviceCoords[0] * normalizedDeviceCoords[0]
-			+ normalizedDeviceCoords[1] * normalizedDeviceCoords[1];
+		float normDeviceX = normFactorX * pixelPoint[0];
+		float normDeviceY = normFactorY * pixelPoint[1];
+		float rSquared = normDeviceX * normDeviceX + normDeviceY * normDeviceY;
 		float radius = sqrt(rSquared);
 		Vector3 rayDirection;
 
@@ -33,8 +32,8 @@ protected:
 			float psi = radius * psiMax * (float)DEG_2_RAD;
 			float sinPsi = sin(psi);
 			float cosPsi = cos(psi);
-			float sinAlpha = normalizedDeviceCoords[1] / radius;
-			float cosAlpha = normalizedDeviceCoords[0] / radius;
+			float sinAlpha = normDeviceY / radius;
+			float cosAlpha = normDeviceX / radius;
 			rayDirection = right * sinPsi * cosAlpha +
 				up * sinPsi * sinAlpha + forward * cosPsi;
 		}

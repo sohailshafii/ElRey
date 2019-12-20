@@ -15,9 +15,6 @@ public:
 		unsigned int numRandomSamples, unsigned int numRandomSets,
 		float psiMax, float lambdaMax, float exposureTime);
 	~SphericalPanoramicCamera();
-
-	void CastIntoScene(unsigned char* pixels, unsigned int bytesPerPixel,
-		const Scene* scene) const override;
 	
 protected:
 	float GetFinalPixelMultFact() const override {
@@ -25,38 +22,36 @@ protected:
 	}
 	
 	Vector3 GetRayDirectionForPixelPoint(const Point2 &pixelPoint) const override {
-		return Vector3::Zero();
+		Vector3 rayDirection;
+		float normalizedDeviceCoordsX = normFactorX * pixelPoint[0];
+		float normalizedDeviceCoordsY = normFactorY * pixelPoint[1];
+
+		// convert NDC to angles
+		float lambda = normalizedDeviceCoordsX * lambdaMaxRad;
+		float psi = normalizedDeviceCoordsY * psiMaxRad;
+
+		// compute the spherical azimuth and polar angles
+		// phi and lambda are the same -- measured directly from view direction
+		float phi = lambda;//(float)M_PI - lambda;
+		// psi maps to phi after subtracting 90 degrees
+		float theta = 0.5f * (float)M_PI - psi;
+
+		float sinPhi = sin(phi);
+		float cosPhi = cos(phi);
+		float sinTheta = sin(theta);
+		float cosTheta = cos(theta);
+
+		rayDirection = right * sinTheta * sinPhi +
+			up * cosTheta + forward * sinTheta * cosPhi;
+
+		return rayDirection;
 	}
 	
 private:
-	float psiMax;
-	float lambdaMax;
+	float psiMaxRad;
+	float lambdaMaxRad;
 	float exposureTime;
-
-	inline Vector3 GetRayDirection(const Point2& normalizedDevCoords) const;
+	float normFactorX;
+	float normFactorY;
+	float finalMultFactor;
 };
-
-inline Vector3 SphericalPanoramicCamera::GetRayDirection(
-	const Point2& normalizedDevCoords) const {
-	Vector3 rayDirection;
-
-	// convert NDC to angles
-	float lambda = normalizedDevCoords[0] * lambdaMax * (float)DEG_2_RAD;
-	float psi = normalizedDevCoords[1] * psiMax * (float)DEG_2_RAD;
-
-	// compute the spherical azimuth and polar angles
-	// phi and lambda are the same -- measured directly from view direction
-	float phi = lambda;//(float)M_PI - lambda;
-	// psi maps to phi after subtracting 90 degrees
-	float theta = 0.5f * (float)M_PI - psi;
-
-	float sinPhi = sin(phi);
-	float cosPhi = cos(phi);
-	float sinTheta = sin(theta);
-	float cosTheta = cos(theta);
-
-	rayDirection = right * sinTheta * sinPhi +
-		up * cosTheta + forward * sinTheta * cosPhi;
-
-	return rayDirection;
-}
