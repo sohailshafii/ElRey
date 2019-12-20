@@ -12,9 +12,6 @@
 #include "Math/Ray.h"
 #include "SceneData/Scene.h"
 
-// 1/8
-#define INV_GAMMA 0.125f
-
 // TODO: ortho camera
 Camera::Camera() {
 	this->eyePosition = Point3::Zero();
@@ -129,13 +126,12 @@ void Camera::ComputeCoordinateFrameAxes() {
 	// crossed results in a normal vector)
 }
 
-// TODO: keep refactoring this into something that can be generally re-used
 void Camera::CastIntoScene(unsigned char* pixels, unsigned int bytesPerPixel,
 						   const Scene* scene) const {
 	unsigned int numSamples = viewPlaneSampler->GetNumSamples();
 	Ray rayToCast;
 	rayToCast.SetOrigin(eyePosition);
-	float invGamma = INV_GAMMA;
+	float invGamma = GetInvGamma();
 	float maxCastDistance = std::numeric_limits<float>::max();
 	float finalColorMultFactor = GetFinalPixelMultFact();
 
@@ -146,12 +142,12 @@ void Camera::CastIntoScene(unsigned char* pixels, unsigned int bytesPerPixel,
 		Color sampleColor = Color::Black();
 		const Point2& oldOrigin = gridPositions[pixelIndex];
 		for (unsigned int sampleIndex = 0; sampleIndex < numSamples; sampleIndex++) {
+			sampleColor = Color::Black();
 			Point2 newSample = viewPlaneSampler->GetSampleOnUnitSquare();
 			Point2 newPixelPnt(oldOrigin[0] + pixelColWidth * newSample[0],
 							   oldOrigin[1] + pixelRowHeight * newSample[1]);
-			rayToCast.SetDirection(GetRayDirectionForPixelPoint(newPixelPnt));
+			AffectFirstRay(rayToCast, newPixelPnt);
 			
-			sampleColor = Color::Black();
 			tMax = maxCastDistance;
 			scene->Intersect(rayToCast, sampleColor, 0.0f, tMax);
 			accumColor += sampleColor;

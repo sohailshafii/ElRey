@@ -8,6 +8,7 @@
 class GenericSampler;
 class Scene;
 class Point2;
+class Ray;
 
 // TODO: move more repeated camera logic into this class
 
@@ -38,9 +39,11 @@ protected:
 	// some cameras require the final pixel to be multiplied by some value
 	// like exposure time
 	virtual float GetFinalPixelMultFact() const = 0;
+	virtual void AffectFirstRay(Ray &ray, const Point2 &pixelPoint) const = 0;
+	virtual float GetInvGamma() const {
+		return 0.125f; // 1.0/8.0f by default
+	}
 	
-	virtual Vector3 GetRayDirectionForPixelPoint(const Point2 &pixelPoint) const = 0;
-
 	Point3 eyePosition;
 	Point3 lookAtPosition;
 

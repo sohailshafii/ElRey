@@ -1,6 +1,5 @@
 #include "FisheyeCamera.h"
 #include "Sampling/GenericSampler.h"
-#include "Math/Ray.h"
 #include "SceneData/Scene.h"
 #include <limits>
 

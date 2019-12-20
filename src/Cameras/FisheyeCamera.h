@@ -2,6 +2,7 @@
 #include "Camera.h"
 #include "Math/Point2.h"
 #include "Math/Vector3.h"
+#include "Math/Ray.h"
 #include "CommonMath.h"
 #include <cmath>
 
@@ -21,7 +22,7 @@ protected:
 		return finalMultFactor;
 	}
 	
-	Vector3 GetRayDirectionForPixelPoint(const Point2 &pixelPoint) const override {
+	void AffectFirstRay(Ray &ray, const Point2 &pixelPoint) const override {
 		float normDeviceX = normFactorX * pixelPoint[0];
 		float normDeviceY = normFactorY * pixelPoint[1];
 		float rSquared = normDeviceX * normDeviceX + normDeviceY * normDeviceY;
@@ -38,7 +39,7 @@ protected:
 				up * sinPsi * sinAlpha + forward * cosPsi;
 		}
 
-		return rayDirection;
+		ray.SetDirection(rayDirection);
 	}
 	
 private:

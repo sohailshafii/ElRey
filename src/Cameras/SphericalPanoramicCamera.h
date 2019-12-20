@@ -2,6 +2,7 @@
 #include "Camera.h"
 #include "Math/Point2.h"
 #include "Math/Vector3.h"
+#include "Math/Ray.h"
 #include "CommonMath.h"
 #include <cmath>
 
@@ -21,7 +22,7 @@ protected:
 		return exposureTime;
 	}
 	
-	Vector3 GetRayDirectionForPixelPoint(const Point2 &pixelPoint) const override {
+	void AffectFirstRay(Ray &ray, const Point2 &pixelPoint) const override {
 		Vector3 rayDirection;
 		float normalizedDeviceCoordsX = normFactorX * pixelPoint[0];
 		float normalizedDeviceCoordsY = normFactorY * pixelPoint[1];
@@ -44,7 +45,7 @@ protected:
 		rayDirection = right * sinTheta * sinPhi +
 			up * cosTheta + forward * sinTheta * cosPhi;
 
-		return rayDirection;
+		ray.SetDirection(rayDirection);
 	}
 	
 private:

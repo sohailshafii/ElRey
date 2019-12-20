@@ -1,6 +1,7 @@
 
 #include "Camera.h"
 #include "Math/Point2.h"
+#include "Math/Ray.h"
 
 class PinholeCamera : public Camera {
 public:
@@ -14,11 +15,11 @@ protected:
 		return finalMultFactor;
 	}
 	
-	Vector3 GetRayDirectionForPixelPoint(const Point2 &pixelPoint) const override {
+	void AffectFirstRay(Ray &ray, const Point2 &pixelPoint) const override {
 		Vector3 direction = right * pixelPoint[0] + up * pixelPoint[1]
 			+ forward * viewPlaneDistance;
 		direction.Normalize();
-		return direction;
+		ray.SetDirection(direction);
 	}
 
 private:
