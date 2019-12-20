@@ -12,6 +12,9 @@
 #include "Math/Ray.h"
 #include "SceneData/Scene.h"
 
+// 1/8
+#define INV_GAMMA 0.125f
+
 // TODO: ortho camera
 Camera::Camera() {
 	this->eyePosition = Point3::Zero();
@@ -132,7 +135,7 @@ void Camera::CastIntoScene(unsigned char* pixels, unsigned int bytesPerPixel,
 	unsigned int numSamples = viewPlaneSampler->GetNumSamples();
 	Ray rayToCast;
 	rayToCast.SetOrigin(eyePosition);
-	float invGamma = (1.0f / 1.8f);
+	float invGamma = INV_GAMMA;
 	float maxCastDistance = std::numeric_limits<float>::max();
 	float finalColorMultFactor = GetFinalPixelMultFact();
 

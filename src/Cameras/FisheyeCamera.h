@@ -15,9 +15,6 @@ public:
 		unsigned int numRandomSamples, unsigned int numRandomSets,
 		float psiMax, float exposureTime);
 	~FisheyeCamera();
-
-	void CastIntoScene(unsigned char* pixels, unsigned int bytesPerPixel,
-		const Scene* scene) const override;
 	
 protected:
 	float GetFinalPixelMultFact() const override {
@@ -25,31 +22,30 @@ protected:
 	}
 	
 	Vector3 GetRayDirectionForPixelPoint(const Point2 &pixelPoint) const override {
-		return Vector3::Zero();
+		Point2 normalizedDeviceCoords(normFactorX * pixelPoint[0],
+									 normFactorY * pixelPoint[1]);
+		float rSquared = normalizedDeviceCoords[0] * normalizedDeviceCoords[0]
+			+ normalizedDeviceCoords[1] * normalizedDeviceCoords[1];
+		float radius = sqrt(rSquared);
+		Vector3 rayDirection;
+
+		if (rSquared <= 1.0f) {
+			float psi = radius * psiMax * (float)DEG_2_RAD;
+			float sinPsi = sin(psi);
+			float cosPsi = cos(psi);
+			float sinAlpha = normalizedDeviceCoords[1] / radius;
+			float cosAlpha = normalizedDeviceCoords[0] / radius;
+			rayDirection = right * sinPsi * cosAlpha +
+				up * sinPsi * sinAlpha + forward * cosPsi;
+		}
+
+		return rayDirection;
 	}
 	
 private:
-	inline Vector3 GetRayDirection(const Point2& normalizedDevCoords,
-								   float radius, float radiusSquared) const;
-	
 	float psiMax;
 	float exposureTime;
 	float finalMultFactor;
+	float normFactorX;
+	float normFactorY;
 };
-
-inline Vector3 FisheyeCamera::GetRayDirection(const Point2& normalizedDevCoords,
-	float radius, float radiusSquared) const {
-	Vector3 rayDirection;
-
-	if (radiusSquared <= 1.0f) {
-		float psi = radius * psiMax * (float)DEG_2_RAD;
-		float sinPsi = sin(psi);
-		float cosPsi = cos(psi);
-		float sinAlpha = normalizedDevCoords[1] / radius;
-		float cosAlpha = normalizedDevCoords[0] / radius;
-		rayDirection = right * sinPsi * cosAlpha +
-			up * sinPsi * sinAlpha + forward * cosPsi;
-	}
-
-	return rayDirection;
-}
