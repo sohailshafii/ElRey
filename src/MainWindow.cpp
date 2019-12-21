@@ -19,6 +19,7 @@
 #include "Cameras/ThinLensCamera.h"
 #include "Cameras/FisheyeCamera.h"
 #include "Cameras/SphericalPanoramicCamera.h"
+#include "Cameras/OrthographicCamera.h"
 
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
@@ -73,6 +74,9 @@ int main(int argc, char* argv[]) {
 				}
 				else if (cameraTypeToken == "spherical") {
 					cameraType = Camera::CameraType::SphericalPanoramicCamera;
+				}
+				else if (cameraTypeToken == "orthographic") {
+					cameraType = Camera::CameraType::Orthographic;
 				}
 			}
 			else if (currentToken == "-offline") {
@@ -225,6 +229,12 @@ void startRenderLoop(SDL_Renderer *sdlRenderer, SDL_Texture* frameBufferTex,
 			mainCamera = new ThinLensCamera(eyePosition, lookAtPosition, widthPixels,
 				heightPixels, castPlaneWidth, castPlaneHeight, upVector, randomSamplerType,
 				numSamples, 1, 0.03f, 0.1f, 1.0f);
+			break;
+		case Camera::CameraType::Orthographic:
+			mainCamera = new OrthographicCamera(eyePosition, lookAtPosition, widthPixels,
+												heightPixels, castPlaneWidth, castPlaneHeight,
+												upVector, randomSamplerType,
+												numSamples, 1);
 			break;
 		default:
 			mainCamera = new PinholeCamera(eyePosition, lookAtPosition, widthPixels,

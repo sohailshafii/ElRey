@@ -10,8 +10,6 @@ class Scene;
 class Point2;
 class Ray;
 
-// TODO: move more repeated camera logic into this class
-
 class Camera {
 public:
 	enum CameraType {

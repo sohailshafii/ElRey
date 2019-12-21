@@ -12,7 +12,6 @@
 #include "Math/Ray.h"
 #include "SceneData/Scene.h"
 
-// TODO: ortho camera
 Camera::Camera() {
 	this->eyePosition = Point3::Zero();
 	this->lookAtPosition = Point3::Zero();
