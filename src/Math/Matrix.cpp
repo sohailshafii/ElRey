@@ -2,6 +2,7 @@
 
 #include "Matrix.h"
 #include "CommonMath.h"
+#include "Math/Vector3.h"
 #include <cstring>
 #include <iostream>
 
@@ -12,6 +13,22 @@ Matrix::Matrix(unsigned int numRows, unsigned int numColumns) {
 	numElements = numRows*numColumns;
 	m = new float[numElements];
 	MakeIdentity();
+}
+
+Matrix::Matrix(float m00, float m01, float m02, float m03,
+	float m10, float m11, float m12, float m13,
+	float m20, float m21, float m22, float m23,
+	float m30, float m31, float m32, float m33) {
+
+	this->numRows = numRows;
+	this->numColumns = numColumns;
+
+	numElements = numRows * numColumns;
+	m = new float[numElements];
+	m[0] = m00; m[1] = m01; m[2] = m02; m[3] = m03;
+	m[4] = m10; m[5] = m11; m[6] = m12; m[7] = m13;
+	m[8] = m20; m[9] = m21; m[10] = m22; m[11] = m23;
+	m[12] = m30; m[13] = m31; m[14] = m32; m[15] = m33;
 }
 
 Matrix::~Matrix() {
@@ -267,4 +284,46 @@ Matrix& Matrix::operator/=(float scalar) {
 	}
 
 	return *this;
+}
+
+Matrix Matrix::Translate(const Vector3& translationVec) {
+	return Matrix(
+		1.0f, 0.0f, 0.0f, translationVec[0],
+		0.0f, 1.0f, 0.0f, translationVec[1],
+		0.0f, 0.0f, 1.0f, translationVec[2],
+		0.0f, 0.0f, 0.0f, 1.0f);
+}
+
+Matrix Matrix::Scale(const Vector3& scaleVec) {
+	return Matrix(
+		scaleVec[0], 0.0f, 0.0f, 0.0f,
+		0.0f, scaleVec[1], 0.0f, 0.0f,
+		0.0f, 0.0f, scaleVec[2], 0.0f,
+		0.0f, 0.0f, 0.0f, 1.0f);
+}
+
+Matrix Matrix::Rotate(const Vector3& axis, float angle) {
+	float cosAngle = cos(angle);
+	float sinAngle = sin(angle);
+	float oneMinusCos = 1.0f - cosAngle;
+	float uxUy = axis[0] * axis[1];
+	float uzUy = axis[2] * axis[1];
+	float uzUx = axis[2] * axis[0];
+	return Matrix(
+		cosAngle + axis[0] * axis[0] * oneMinusCos,
+		uxUy * oneMinusCos - axis[2] * sinAngle,
+		uzUx * oneMinusCos + axis[1] * sinAngle,
+		0.0f,
+
+		uxUy * oneMinusCos + axis[2] * sinAngle,
+		cosAngle + axis[1]*axis[1]*oneMinusCos,
+		uzUy*oneMinusCos - axis[0]*sinAngle,
+		0.0f,
+		
+		uzUx*oneMinusCos - axis[1]*sinAngle,
+		uzUy*oneMinusCos + axis[0]*sinAngle,
+		cosAngle + axis[2]*axis[2]*oneMinusCos,
+		0.0f,
+		
+		0.0f, 0.0f, 0.0f, 1.0f);
 }

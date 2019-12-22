@@ -1,10 +1,17 @@
 #pragma once
 
+class Vector3;
+
 // TODO: write tests for this stuff
 // row-order matrix
 class Matrix {
 public:
 	Matrix(unsigned int numRows, unsigned int numColumns);
+	// 4x4
+	Matrix(float m00, float m01, float m02, float m03,
+		float m10, float m11, float m12, float m13,
+		float m20, float m21, float m22, float m23,
+		float m30, float m31, float m32, float m33);
 	~Matrix();
 
 	Matrix(const Matrix &rhs);
@@ -34,6 +41,11 @@ public:
 	Matrix& operator-=(float scalar);
 	Matrix& operator*=(float scalar);
 	Matrix& operator/=(float scalar);
+
+	static Matrix Translate(const Vector3& translationVec);
+	static Matrix Scale(const Vector3& scaleVec);
+	// axis must be normalized!
+	static Matrix Rotate(const Vector3& axis, float angle);
 
 	int GetNumRows() const { return numRows; }
 	int GetNumColumns() const { return numColumns; }
