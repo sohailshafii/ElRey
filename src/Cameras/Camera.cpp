@@ -80,7 +80,7 @@ Camera::Camera(const Point3& eyePosition, const Point3& lookAtPosition,
 
 // Note that up is recomputed to be perpendicular
 // to both right and forward. This is known as Gram-Schmidt
-// orthonormalization.
+// orthonormalization. This coordinate system is left-handed.
 void Camera::ComputeCoordinateFrameAxes() {
 	up.Normalize();
 	forward = lookAtPosition - eyePosition;

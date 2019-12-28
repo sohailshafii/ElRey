@@ -45,8 +45,11 @@ public:
 	static Matrix Translate(const Vector3& translationVec);
 	static Matrix Scale(const Vector3& scaleVec);
 	// axis must be normalized!
-	static Matrix Rotate(const Vector3& axis, float angle);
-
+	static Matrix Rotate(const Vector3& axis, float angleDegrees);
+	static Matrix RotateX(float angleDegrees);
+	static Matrix RotateY(float angleDegrees);
+	static Matrix RotateZ(float angleDegrees);
+	
 	int GetNumRows() const { return numRows; }
 	int GetNumColumns() const { return numColumns; }
 
