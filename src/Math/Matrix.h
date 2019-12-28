@@ -34,6 +34,8 @@ public:
 	Matrix& operator-=(const Matrix& rhs);
 	Matrix& operator*=(const Matrix& rhs);
 	
+	// technically we should check matrix dimensions
+	// but we'll live dangerously and not do so (for speed)
 	Point3 operator*(const Point3& rhs) const;
 	Point4 operator*(const Point4& rhs) const;
 	Vector3 operator*(const Vector3& rhs) const;
