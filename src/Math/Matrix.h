@@ -1,6 +1,8 @@
 #pragma once
 
-class Vector3;
+#include "Math/Point3.h"
+#include "Math/Point4.h"
+#include "Math/Vector3.h"
 
 // TODO: write tests for this stuff
 // row-order matrix
@@ -31,6 +33,14 @@ public:
 	Matrix& operator+=(const Matrix& rhs);
 	Matrix& operator-=(const Matrix& rhs);
 	Matrix& operator*=(const Matrix& rhs);
+	
+	Point3 operator*(const Point3& rhs);
+	Point4 operator*(const Point4& rhs);
+	Vector3 operator*(const Vector3& rhs);
+	
+	Point3 operator*=(const Point3& rhs);
+	Point4 operator*=(const Point4& rhs);
+	Vector3 operator*=(const Vector3& rhs);
 
 	Matrix operator+(float scalar) const;
 	Matrix operator-(float scalar) const;
@@ -42,13 +52,13 @@ public:
 	Matrix& operator*=(float scalar);
 	Matrix& operator/=(float scalar);
 
-	static Matrix Translate(const Vector3& translationVec);
-	static Matrix Scale(const Vector3& scaleVec);
+	static Matrix TranslationMatrix(const Vector3& translationVec);
+	static Matrix ScaleMatrix(const Vector3& scaleVec);
 	// axis must be normalized!
-	static Matrix Rotate(const Vector3& axis, float angleDegrees);
-	static Matrix RotateX(float angleDegrees);
-	static Matrix RotateY(float angleDegrees);
-	static Matrix RotateZ(float angleDegrees);
+	static Matrix RotationMatrix(const Vector3& axis, float angleDegrees);
+	static Matrix RotationMatrixX(float angleDegrees);
+	static Matrix RotationMatrixY(float angleDegrees);
+	static Matrix RotationMatrixZ(float angleDegrees);
 	
 	int GetNumRows() const { return numRows; }
 	int GetNumColumns() const { return numColumns; }

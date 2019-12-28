@@ -3,6 +3,7 @@
 #include "Common.h"
 #include "Math/Point3.h"
 #include "Math/Vector3.h"
+#include "Math/Matrix.h"
 #include "Materials/Color.h"
 
 class GenericSampler;
@@ -30,6 +31,10 @@ public:
 	virtual ~Camera();
 
 	virtual void CastIntoScene(unsigned char* pixels, unsigned int bytesPerPixel, const Scene* scene) const;
+	
+	void MoveForward(float meters);
+	void Rotate(const Matrix& matrix);
+	void Transform(const Matrix& matrix);
 
 protected:
 	void ComputeCoordinateFrameAxes();

@@ -125,6 +125,21 @@ void Camera::ComputeCoordinateFrameAxes() {
 	// crossed results in a normal vector)
 }
 
+void Camera::MoveForward(float meters) {
+	// don't use overloaded operators += for speed
+	eyePosition[0] += meters*forward[0];
+	eyePosition[1] += meters*forward[1];
+	eyePosition[2] += meters*forward[2];
+}
+
+void Camera::Rotate(const Matrix& matrix) {
+	
+}
+
+void Camera::Transform(const Matrix& matrix) {
+	
+}
+
 void Camera::CastIntoScene(unsigned char* pixels, unsigned int bytesPerPixel,
 						   const Scene* scene) const {
 	unsigned int numSamples = viewPlaneSampler->GetNumSamples();

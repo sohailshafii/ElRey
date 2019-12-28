@@ -277,6 +277,30 @@ Matrix& Matrix::operator*=(float scalar) {
 	return *this;
 }
 
+Point3 Matrix::operator*(const Point3& rhs) {
+	return Point3(); // TODO
+}
+
+Point4 Matrix::operator*(const Point4& rhs) {
+	return Point4(); // TODO
+}
+
+Vector3 Matrix::operator*(const Vector3& rhs) {
+	return Vector3(); // TODO
+}
+
+Point3 Matrix::operator*=(const Point3& rhs) {
+	return Point3(); // TODO
+}
+
+Point4 Matrix::operator*=(const Point4& rhs) {
+	return Point4(); // TODO
+}
+
+Vector3 Matrix::operator*=(const Vector3& rhs) {
+	return Vector3(); // TODO
+}
+
 Matrix& Matrix::operator/=(float scalar) {
 	for (unsigned int elementIndex = 0; elementIndex < numElements;
 		elementIndex++) {
@@ -286,7 +310,7 @@ Matrix& Matrix::operator/=(float scalar) {
 	return *this;
 }
 
-Matrix Matrix::Translate(const Vector3& translationVec) {
+Matrix Matrix::TranslationMatrix(const Vector3& translationVec) {
 	return Matrix(
 		1.0f, 0.0f, 0.0f, translationVec[0],
 		0.0f, 1.0f, 0.0f, translationVec[1],
@@ -294,7 +318,7 @@ Matrix Matrix::Translate(const Vector3& translationVec) {
 		0.0f, 0.0f, 0.0f, 1.0f);
 }
 
-Matrix Matrix::Scale(const Vector3& scaleVec) {
+Matrix Matrix::ScaleMatrix(const Vector3& scaleVec) {
 	return Matrix(
 		scaleVec[0], 0.0f, 0.0f, 0.0f,
 		0.0f, scaleVec[1], 0.0f, 0.0f,
@@ -302,7 +326,7 @@ Matrix Matrix::Scale(const Vector3& scaleVec) {
 		0.0f, 0.0f, 0.0f, 1.0f);
 }
 
-Matrix Matrix::Rotate(const Vector3& axis, float angleDegrees) {
+Matrix Matrix::RotationMatrix(const Vector3& axis, float angleDegrees) {
 	float cosAngle = cos(angleDegrees*DEG_2_RAD);
 	float sinAngle = sin(angleDegrees*DEG_2_RAD);
 	float oneMinusCos = 1.0f - cosAngle;
@@ -328,7 +352,7 @@ Matrix Matrix::Rotate(const Vector3& axis, float angleDegrees) {
 		0.0f, 0.0f, 0.0f, 1.0f);
 }
 
-Matrix Matrix::RotateX(float angleDegrees) {
+Matrix Matrix::RotationMatrixX(float angleDegrees) {
 	float cosAngle = cos(angleDegrees*DEG_2_RAD);
 	float sinAngle = sin(angleDegrees*DEG_2_RAD);
 	return Matrix(
@@ -338,7 +362,7 @@ Matrix Matrix::RotateX(float angleDegrees) {
 		0.0f, 0.0f, 0.0f, 1.0f);
 }
 
-Matrix Matrix::RotateY(float angleDegrees) {
+Matrix Matrix::RotationMatrixY(float angleDegrees) {
 	float cosAngle = cos(angleDegrees*DEG_2_RAD);
 	float sinAngle = sin(angleDegrees*DEG_2_RAD);
 	return Matrix(
@@ -348,7 +372,7 @@ Matrix Matrix::RotateY(float angleDegrees) {
 		0.0f, 0.0f, 0.0f, 1.0f);
 }
 
-Matrix Matrix::RotateZ(float angleDegrees) {
+Matrix Matrix::RotationMatrixZ(float angleDegrees) {
 	float cosAngle = cos(angleDegrees*DEG_2_RAD);
 	float sinAngle = sin(angleDegrees*DEG_2_RAD);
 	return Matrix(
