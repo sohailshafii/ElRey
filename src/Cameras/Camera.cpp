@@ -133,11 +133,16 @@ void Camera::MoveForward(float meters) {
 }
 
 void Camera::Rotate(const Matrix& matrix) {
-	
+	right = matrix*right;
+	up = matrix*up;
+	forward = matrix*forward;
 }
 
 void Camera::Transform(const Matrix& matrix) {
-	
+	right = matrix*right;
+	up = matrix*up;
+	forward = matrix*forward;
+	eyePosition = matrix*eyePosition;
 }
 
 void Camera::CastIntoScene(unsigned char* pixels, unsigned int bytesPerPixel,

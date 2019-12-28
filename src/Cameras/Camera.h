@@ -34,6 +34,7 @@ public:
 	
 	void MoveForward(float meters);
 	void Rotate(const Matrix& matrix);
+	// transform includes a rotate but also affects eye position
 	void Transform(const Matrix& matrix);
 
 protected:

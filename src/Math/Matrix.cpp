@@ -277,27 +277,15 @@ Matrix& Matrix::operator*=(float scalar) {
 	return *this;
 }
 
-Point3 Matrix::operator*(const Point3& rhs) {
+Point3 Matrix::operator*(const Point3& rhs) const {
 	return Point3(); // TODO
 }
 
-Point4 Matrix::operator*(const Point4& rhs) {
+Point4 Matrix::operator*(const Point4& rhs) const {
 	return Point4(); // TODO
 }
 
-Vector3 Matrix::operator*(const Vector3& rhs) {
-	return Vector3(); // TODO
-}
-
-Point3 Matrix::operator*=(const Point3& rhs) {
-	return Point3(); // TODO
-}
-
-Point4 Matrix::operator*=(const Point4& rhs) {
-	return Point4(); // TODO
-}
-
-Vector3 Matrix::operator*=(const Vector3& rhs) {
+Vector3 Matrix::operator*(const Vector3& rhs) const {
 	return Vector3(); // TODO
 }
 

@@ -34,13 +34,9 @@ public:
 	Matrix& operator-=(const Matrix& rhs);
 	Matrix& operator*=(const Matrix& rhs);
 	
-	Point3 operator*(const Point3& rhs);
-	Point4 operator*(const Point4& rhs);
-	Vector3 operator*(const Vector3& rhs);
-	
-	Point3 operator*=(const Point3& rhs);
-	Point4 operator*=(const Point4& rhs);
-	Vector3 operator*=(const Vector3& rhs);
+	Point3 operator*(const Point3& rhs) const;
+	Point4 operator*(const Point4& rhs) const;
+	Vector3 operator*(const Vector3& rhs) const;
 
 	Matrix operator+(float scalar) const;
 	Matrix operator-(float scalar) const;
