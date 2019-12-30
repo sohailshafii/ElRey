@@ -30,9 +30,10 @@ public:
 
 	virtual ~Camera();
 
-	virtual void CastIntoScene(unsigned char* pixels, unsigned int bytesPerPixel, const Scene* scene) const;
+	virtual void CastIntoScene(unsigned char* pixels, unsigned int bytesPerPixel, const Scene* scene,
+							   float frameTime) const;
 	
-	void MoveForward(float meters);
+	void Move(const Vector3& displacementVector);
 	void Rotate(const Matrix& matrix);
 	// transform includes a rotate but also affects eye position
 	void Transform(const Matrix& matrix);

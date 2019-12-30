@@ -9,6 +9,7 @@
 #include "Math/Plane.h"
 #include "SceneData/Scene.h"
 #include "Math/Sphere.h"
+#include "Math/Vector3.h"
 #include "Sampling/RandomSampler.h"
 #include "Sampling/OneSampleSampler.h"
 #include "Sampling/JitteredSampler.h"
@@ -23,6 +24,8 @@
 
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
+
+#define TICKS_TO_SECONDS 1.0/1000.0f
 
 bool initializeSDL();
 SDL_Window* createWindow(int screenWidth, int screenHeight);
@@ -174,11 +177,31 @@ Scene* createSimpleWorld() {
 	return simpleWorld;
 }
 
+Vector3 getMovementVectorFromKeyPresses(const SDL_Event &event) {
+	Vector3 movementVector(0.0f, 0.0f, 0.0f);
+	if (event.type == SDL_KEYDOWN) {
+		switch(event.key.keysym.sym) {
+			case SDLK_LEFT:
+				movementVector[0] =-1.0f;
+				break;
+			case SDLK_RIGHT:
+				movementVector[0] = 1.0f;
+				break;
+			case SDLK_UP:
+				movementVector[2] = 1.0f;
+				break;
+			case SDLK_DOWN:
+				movementVector[2] =-1.0f;
+				break;
+		}
+	}
+	return movementVector;
+}
+
 void startRenderLoop(SDL_Renderer *sdlRenderer, SDL_Texture* frameBufferTex,
 	int widthPixels, int heightPixels, int numSamples,
 	RandomSamplerType randomSamplerType, Camera::CameraType cameraType,
 	const Scene* gameWorld) {
-	SDL_Event e;
 
 	unsigned char* pixels;
 	int pitch;
@@ -245,11 +268,20 @@ void startRenderLoop(SDL_Renderer *sdlRenderer, SDL_Texture* frameBufferTex,
 
 	uint32_t lastFpsReportTime = SDL_GetTicks();
 	FPSCounter fpsCounter;
-
+	
+	SDL_Event event;
+	uint32_t lastFrameTicks = SDL_GetTicks();
 	while(true) {
+		uint32_t currTicks = SDL_GetTicks();
+		
 		bool quitPressed = false;
-		while(SDL_PollEvent(&e) != 0) {
-			quitPressed = (e.type == SDL_QUIT);
+		Vector3 cumulativeMovement(0.0f, 0.0f, 0.0f);
+		while(SDL_PollEvent(&event) != 0) {
+			quitPressed = (event.type == SDL_QUIT);
+			if (!quitPressed) {
+				Vector3 currentMovement = getMovementVectorFromKeyPresses(event);
+				cumulativeMovement += currentMovement;
+			}
 		}
 		if (quitPressed) break;
 
@@ -257,7 +289,10 @@ void startRenderLoop(SDL_Renderer *sdlRenderer, SDL_Texture* frameBufferTex,
 
 		SDL_LockTexture(frameBufferTex, NULL, (void**) &pixels, &pitch);
 
-		mainCamera->CastIntoScene(pixels, bytesPerPixel, gameWorld);
+		float frameTime = (float)(currTicks - lastFrameTicks)*TICKS_TO_SECONDS;
+		cumulativeMovement *= 3.0f*frameTime;
+		mainCamera->Move(cumulativeMovement);
+		mainCamera->CastIntoScene(pixels, bytesPerPixel, gameWorld, frameTime);
 
 		SDL_UnlockTexture(frameBufferTex);
 		SDL_RenderClear(sdlRenderer);
@@ -265,11 +300,11 @@ void startRenderLoop(SDL_Renderer *sdlRenderer, SDL_Texture* frameBufferTex,
 		SDL_RenderPresent(sdlRenderer);
 
 		fpsCounter.PostFrame();
-		uint32_t currTicks = SDL_GetTicks();
 		if (currTicks > (lastFpsReportTime + 1000)) {
 			std::cout << "Current FPS: " << fpsCounter.GetFPS() << "\n";
 			lastFpsReportTime = currTicks;
 		}
+		lastFrameTicks = currTicks;
 	}
 
 	delete mainCamera;

@@ -125,11 +125,11 @@ void Camera::ComputeCoordinateFrameAxes() {
 	// crossed results in a normal vector)
 }
 
-void Camera::MoveForward(float meters) {
+void Camera::Move(const Vector3& displacementVector) {
 	// don't use overloaded operators += for speed
-	eyePosition[0] += meters*forward[0];
-	eyePosition[1] += meters*forward[1];
-	eyePosition[2] += meters*forward[2];
+	eyePosition[0] += displacementVector[0];
+	eyePosition[1] += displacementVector[1];
+	eyePosition[2] += displacementVector[2];
 }
 
 void Camera::Rotate(const Matrix& matrix) {
@@ -146,7 +146,7 @@ void Camera::Transform(const Matrix& matrix) {
 }
 
 void Camera::CastIntoScene(unsigned char* pixels, unsigned int bytesPerPixel,
-						   const Scene* scene) const {
+						   const Scene* scene, float frameTime) const {
 	unsigned int numSamples = viewPlaneSampler->GetNumSamples();
 	Ray rayToCast;
 	rayToCast.SetOrigin(eyePosition);
