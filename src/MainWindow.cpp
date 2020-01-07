@@ -132,7 +132,8 @@ int main(int argc, char* argv[]) {
 
 	SDL_Texture* frameBufferTex = SDL_CreateTexture(sdlRenderer,
 		renderFormat, SDL_TEXTUREACCESS_STREAMING, width, height);
-
+	SDL_SetRelativeMouseMode(SDL_TRUE);
+	
 	Scene *simpleWorld = createSimpleWorld();
 	startRenderLoop(sdlRenderer, frameBufferTex, width, height,
 		numSamples, randomSamplerType, cameraType, simpleWorld);
@@ -196,6 +197,16 @@ Vector3 getMovementVectorFromKeyPresses(const SDL_Event &event) {
 		}
 	}
 	return movementVector;
+}
+
+Vector3 getMouseMovementVector(const SDL_Event &event) {
+	Vector3 mouseMoveVector(0.0f, 0.0f, 0.0f);
+	if(event.type == SDL_MOUSEMOTION)
+    {
+		mouseMoveVector[0] = event.motion.xrel;
+		mouseMoveVector[1] = event.motion.yrel;
+	}
+	return mouseMoveVector;
 }
 
 void startRenderLoop(SDL_Renderer *sdlRenderer, SDL_Texture* frameBufferTex,
@@ -275,12 +286,24 @@ void startRenderLoop(SDL_Renderer *sdlRenderer, SDL_Texture* frameBufferTex,
 		uint32_t currTicks = SDL_GetTicks();
 		
 		bool quitPressed = false;
-		Vector3 cumulativeMovement(0.0f, 0.0f, 0.0f);
+		Vector3 translationVector(0.0f, 0.0f, 0.0f);
+		Vector3 rotationVector(0.0f, 0.0f, 0.0f);
 		while(SDL_PollEvent(&event) != 0) {
 			quitPressed = (event.type == SDL_QUIT);
 			if (!quitPressed) {
 				Vector3 currentMovement = getMovementVectorFromKeyPresses(event);
-				cumulativeMovement += currentMovement;
+				translationVector += currentMovement;
+				
+				Vector3 currentRotation = getMouseMovementVector(event);
+				//currentRotation[0] *= 0.1f;
+				//currentRotation[1] *= 0.1f;
+				rotationVector += currentRotation;
+				if (rotationVector[0] > 89.0f) {
+					rotationVector[0] = 89.0f;
+				}
+				if (rotationVector[0] < -89.0f) {
+					rotationVector[0] = -89.0f;
+				}
 			}
 		}
 		if (quitPressed) break;
@@ -290,8 +313,9 @@ void startRenderLoop(SDL_Renderer *sdlRenderer, SDL_Texture* frameBufferTex,
 		SDL_LockTexture(frameBufferTex, NULL, (void**) &pixels, &pitch);
 
 		float frameTime = (float)(currTicks - lastFrameTicks)*TICKS_TO_SECONDS;
-		cumulativeMovement *= 3.0f*frameTime;
-		mainCamera->Move(cumulativeMovement);
+		translationVector *= 3.0f*frameTime;
+		mainCamera->Translate(translationVector);
+		//mainCamera->TranslateAndRotate(translationVector, rotationVector[0], rotationVector[1]);
 		mainCamera->CastIntoScene(pixels, bytesPerPixel, gameWorld, frameTime);
 
 		SDL_UnlockTexture(frameBufferTex);
@@ -303,6 +327,7 @@ void startRenderLoop(SDL_Renderer *sdlRenderer, SDL_Texture* frameBufferTex,
 		if (currTicks > (lastFpsReportTime + 1000)) {
 			std::cout << "Current FPS: " << fpsCounter.GetFPS() << "\n";
 			lastFpsReportTime = currTicks;
+			//std::cout << rotationVector[0] << " " << rotationVector[1] << std::endl;
 		}
 		lastFrameTicks = currTicks;
 	}

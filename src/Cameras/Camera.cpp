@@ -38,7 +38,9 @@ Camera::Camera(const Point3& eyePosition, const Point3& lookAtPosition,
 	this->eyePosition = eyePosition;
 	this->lookAtPosition = lookAtPosition;
 	this->up = up;
-	ComputeCoordinateFrameAxes();
+	this->up.Normalize();
+	ComputeForward();
+	ComputeCoordinateRightAndUp();
 	this->numColumnsPixels = numColumnsPixels;
 	this->numRowsPixels = numRowsPixels;
 	this->numPixels = numColumnsPixels*numRowsPixels;
@@ -78,14 +80,15 @@ Camera::Camera(const Point3& eyePosition, const Point3& lookAtPosition,
 	}
 }
 
+void Camera::ComputeForward() {
+	forward = lookAtPosition - eyePosition;
+	forward.Normalize();
+}
+
 // Note that up is recomputed to be perpendicular
 // to both right and forward. This is known as Gram-Schmidt
 // orthonormalization. This coordinate system is left-handed.
-void Camera::ComputeCoordinateFrameAxes() {
-	up.Normalize();
-	forward = lookAtPosition - eyePosition;
-	forward.Normalize();
-
+void Camera::ComputeCoordinateRightAndUp() {
 	// turn on sanity check in case we need it but leave it off to
 	// avoid excess computational cost
 #if TEST_CAMERA_COORDINATE_SYSTEM
@@ -125,7 +128,7 @@ void Camera::ComputeCoordinateFrameAxes() {
 	// crossed results in a normal vector)
 }
 
-void Camera::Move(const Vector3& displacementVector) {
+void Camera::Translate(const Vector3& displacementVector) {
 	// don't use overloaded operators += for speed
 	eyePosition[0] += displacementVector[0];
 	eyePosition[1] += displacementVector[1];
@@ -143,6 +146,22 @@ void Camera::Transform(const Matrix& matrix) {
 	up = matrix*up;
 	forward = matrix*forward;
 	eyePosition = matrix*eyePosition;
+}
+
+void Camera::TranslateAndRotate(const Vector3& translation, float rightRotationDegrees,
+	float upRotationDegrees) {
+	// don't use overloaded operators += for speed
+	eyePosition[0] += translation[0];
+	eyePosition[1] += translation[1];
+	eyePosition[2] += translation[2];
+	
+	float yawRad = upRotationDegrees*DEG_2_RAD;
+	float pitchRad = rightRotationDegrees*DEG_2_RAD;
+	float cosPitchRad = cos(pitchRad);
+	forward[0] = cos(yawRad) * cosPitchRad;
+    forward[1] = sin(pitchRad);
+    forward[2] = sin(yawRad) * cosPitchRad;
+	ComputeCoordinateRightAndUp();
 }
 
 void Camera::CastIntoScene(unsigned char* pixels, unsigned int bytesPerPixel,

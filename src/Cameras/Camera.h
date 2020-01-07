@@ -33,13 +33,16 @@ public:
 	virtual void CastIntoScene(unsigned char* pixels, unsigned int bytesPerPixel, const Scene* scene,
 							   float frameTime) const;
 	
-	void Move(const Vector3& displacementVector);
+	void Translate(const Vector3& displacementVector);
 	void Rotate(const Matrix& matrix);
-	// transform includes a rotate but also affects eye position
+	// transform includes a rotation but also affects eye position
 	void Transform(const Matrix& matrix);
+	void TranslateAndRotate(const Vector3& translation, float rightRotationDegrees,
+							float upRotationDegrees);
 
 protected:
-	void ComputeCoordinateFrameAxes();
+	void ComputeForward();
+	void ComputeCoordinateRightAndUp();
 	
 	// some cameras require the final pixel to be multiplied by some value
 	// like exposure time
