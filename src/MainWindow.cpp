@@ -183,15 +183,19 @@ Vector3 getMovementVectorFromKeyPresses(const SDL_Event &event) {
 	if (event.type == SDL_KEYDOWN) {
 		switch(event.key.keysym.sym) {
 			case SDLK_LEFT:
+			case SDLK_a:
 				movementVector[0] =-1.0f;
 				break;
 			case SDLK_RIGHT:
+			case SDLK_d:
 				movementVector[0] = 1.0f;
 				break;
 			case SDLK_UP:
+			case SDLK_w:
 				movementVector[2] = 1.0f;
 				break;
 			case SDLK_DOWN:
+			case SDLK_s:
 				movementVector[2] =-1.0f;
 				break;
 		}
@@ -203,8 +207,8 @@ Vector3 getMouseMovementVector(const SDL_Event &event) {
 	Vector3 mouseMoveVector(0.0f, 0.0f, 0.0f);
 	if(event.type == SDL_MOUSEMOTION)
     {
-		mouseMoveVector[0] = event.motion.xrel;
-		mouseMoveVector[1] = event.motion.yrel;
+		mouseMoveVector[0] = -event.motion.yrel;
+		mouseMoveVector[1] = -event.motion.xrel;
 	}
 	return mouseMoveVector;
 }
@@ -282,12 +286,12 @@ void startRenderLoop(SDL_Renderer *sdlRenderer, SDL_Texture* frameBufferTex,
 	
 	SDL_Event event;
 	uint32_t lastFrameTicks = SDL_GetTicks();
+	Vector3 rotationVector(0.0f, 0.0f, 0.0f);
 	while(true) {
 		uint32_t currTicks = SDL_GetTicks();
 		
 		bool quitPressed = false;
 		Vector3 translationVector(0.0f, 0.0f, 0.0f);
-		Vector3 rotationVector(0.0f, 0.0f, 0.0f);
 		while(SDL_PollEvent(&event) != 0) {
 			quitPressed = (event.type == SDL_QUIT);
 			if (!quitPressed) {
@@ -295,8 +299,9 @@ void startRenderLoop(SDL_Renderer *sdlRenderer, SDL_Texture* frameBufferTex,
 				translationVector += currentMovement;
 				
 				Vector3 currentRotation = getMouseMovementVector(event);
-				//currentRotation[0] *= 0.1f;
-				//currentRotation[1] *= 0.1f;
+				// affect by speed
+				currentRotation[0] *= 0.2f;
+				currentRotation[1] *= 0.2f;
 				rotationVector += currentRotation;
 				if (rotationVector[0] > 89.0f) {
 					rotationVector[0] = 89.0f;
@@ -314,8 +319,7 @@ void startRenderLoop(SDL_Renderer *sdlRenderer, SDL_Texture* frameBufferTex,
 
 		float frameTime = (float)(currTicks - lastFrameTicks)*TICKS_TO_SECONDS;
 		translationVector *= 3.0f*frameTime;
-		mainCamera->Translate(translationVector);
-		//mainCamera->TranslateAndRotate(translationVector, rotationVector[0], rotationVector[1]);
+		mainCamera->TranslateAndRotate(translationVector, rotationVector[0], rotationVector[1]);
 		mainCamera->CastIntoScene(pixels, bytesPerPixel, gameWorld, frameTime);
 
 		SDL_UnlockTexture(frameBufferTex);

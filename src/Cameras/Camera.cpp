@@ -91,11 +91,11 @@ void Camera::ComputeForward() {
 void Camera::ComputeCoordinateRightAndUp() {
 	// turn on sanity check in case we need it but leave it off to
 	// avoid excess computational cost
-#if TEST_CAMERA_COORDINATE_SYSTEM
+#if 1
 	// edge-case: what if up and forward to are parallel or
 	// anti-parallel?
 	auto dotProduct = forward * up;
-	if (fabs(dotProduct) - 1.0f < EPSILON) {
+	if (fabs(fabs(dotProduct) - 1.0f) < EPSILON) {
 		// find unit vector in coordinate axis that is perpendicular
 		// to forward
 		Vector3 candidateUp = Vector3::Forward();
@@ -128,7 +128,7 @@ void Camera::ComputeCoordinateRightAndUp() {
 	// crossed results in a normal vector)
 }
 
-void Camera::Translate(const Vector3& displacementVector) {
+void Camera::Displace(const Vector3& displacementVector) {
 	// don't use overloaded operators += for speed
 	eyePosition[0] += displacementVector[0];
 	eyePosition[1] += displacementVector[1];
@@ -150,18 +150,20 @@ void Camera::Transform(const Matrix& matrix) {
 
 void Camera::TranslateAndRotate(const Vector3& translation, float rightRotationDegrees,
 	float upRotationDegrees) {
-	// don't use overloaded operators += for speed
-	eyePosition[0] += translation[0];
-	eyePosition[1] += translation[1];
-	eyePosition[2] += translation[2];
-	
 	float yawRad = upRotationDegrees*DEG_2_RAD;
 	float pitchRad = rightRotationDegrees*DEG_2_RAD;
 	float cosPitchRad = cos(pitchRad);
 	forward[0] = cos(yawRad) * cosPitchRad;
     forward[1] = sin(pitchRad);
     forward[2] = sin(yawRad) * cosPitchRad;
-	ComputeCoordinateRightAndUp();
+	forward.Normalize();
+	right = Vector3::Up() ^ forward;
+	right.Normalize();
+	up = forward ^ right;
+	up.Normalize();
+	
+	eyePosition += right*translation[0] + forward*translation[2];
+	this->lookAtPosition = eyePosition + forward*viewPlaneDistance;
 }
 
 void Camera::CastIntoScene(unsigned char* pixels, unsigned int bytesPerPixel,

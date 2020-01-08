@@ -33,7 +33,7 @@ public:
 	virtual void CastIntoScene(unsigned char* pixels, unsigned int bytesPerPixel, const Scene* scene,
 							   float frameTime) const;
 	
-	void Translate(const Vector3& displacementVector);
+	void Displace(const Vector3& displacementVector);
 	void Rotate(const Matrix& matrix);
 	// transform includes a rotation but also affects eye position
 	void Transform(const Matrix& matrix);
