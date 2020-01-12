@@ -53,6 +53,7 @@ int main(int argc, char* argv[]) {
 	bool offlineRender = false;
 	RandomSamplerType randomSamplerType = None;
 	Camera::CameraType cameraType = Camera::CameraType::Pinhole;
+	std::string scenePath = "../../sceneData.json";
 
 	if (argc > 1) {
 		for (int argIndex = 1; argIndex < argc; argIndex++) {
@@ -64,6 +65,9 @@ int main(int argc, char* argv[]) {
 			}
 			else if (currentToken == "-h" && argIndex+1 < argc) {
 				height = atoi(argv[++argIndex]);
+			}
+			else if (currentToken == "-scenePath" && argIndex+1 < argc) {
+				scenePath = atoi(argv[++argIndex]);
 			}
 			else if (currentToken == "-ns" && argIndex+1 < argc) {
 				numSamples = atoi(argv[++argIndex]);
@@ -136,7 +140,7 @@ int main(int argc, char* argv[]) {
 		renderFormat, SDL_TEXTUREACCESS_STREAMING, width, height);
 	SDL_SetRelativeMouseMode(SDL_TRUE);
 	
-	Scene *simpleWorld = createSimpleWorld("../sceneData.json");
+	Scene *simpleWorld = createSimpleWorld(scenePath);
 	startRenderLoop(sdlRenderer, frameBufferTex, width, height,
 		numSamples, randomSamplerType, cameraType, simpleWorld);
 	delete simpleWorld;
@@ -168,16 +172,7 @@ SDL_Window* createWindow(int screenWidth, int screenHeight) {
 }
 
 Scene* createSimpleWorld(const std::string& sceneFilePath) {
-	Plane* simplePlane = new Plane(Point3(0.0f, 0.0f, 0.0f),
-		Vector3(0.0f, 1.0f, 0.0f), Color(0.0f, 0.0f, 0.8f, 1.0f));
-	Sphere* sphere = new Sphere(Point3(0.0f, 1.0f, 1.0f),
-		0.3f, Color(1.0f, 0.0f, 0.0f, 1.0f));
-
-	Primitive** simplePrimitives = new Primitive*[2];
-	simplePrimitives[0] = simplePlane;
-	simplePrimitives[1] = sphere;
-	Scene *simpleWorld = new Scene(simplePrimitives, 2);
-	
+	Scene *simpleWorld = new Scene();
 	SceneLoader::DeserializeJSONFileIntoScene(simpleWorld,
 											  sceneFilePath);
 	return simpleWorld;
