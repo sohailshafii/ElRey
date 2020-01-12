@@ -11,27 +11,22 @@
 static Primitive* CreatePrimitive(const nlohmann::json& jsonObj);
 
 void SceneLoader::DeserializeJSONFileIntoScene(class Scene* scene,
-											   const std::string &jsonFilePath)
-{
-	try
-	{
+											   const std::string &jsonFilePath) {
+	try {
 		std::ifstream jsonFile(jsonFilePath);
 		nlohmann::json jsonObj;
 	
 		jsonFile >> jsonObj;
 		
 		nlohmann::json objectsArray = jsonObj["objects"];
-		for(auto& element : objectsArray.items())
-		{
+		for(auto& element : objectsArray.items()) {
 			Primitive* newPrimitive = CreatePrimitive(element.value());
-			if (newPrimitive != nullptr)
-			{
+			if (newPrimitive != nullptr) {
 				scene->AddPrimitive(newPrimitive);
 			}
 		}
 	}
-	catch(const std::exception& e)
-	{
+	catch(const std::exception& e) {
 		std::cout << "Could not deserialize JSON file: " << jsonFilePath
 			<< ". Reason: " << e.what() << std::endl;
 	}

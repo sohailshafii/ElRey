@@ -60,7 +60,7 @@ Color& Color::operator/=(float divisor) {
 	return *this;
 }
 
-Color Color::operator*(float mult) {
+Color Color::operator*(float mult) const {
 	return Color(comp[0] * mult, comp[1] * mult,
 		comp[2] * mult, comp[3] * mult);
 }
