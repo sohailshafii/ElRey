@@ -22,6 +22,8 @@
 #include "Cameras/SphericalPanoramicCamera.h"
 #include "Cameras/OrthographicCamera.h"
 
+#include "SceneData/SceneLoader.h"
+
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
 
