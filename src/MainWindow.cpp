@@ -31,7 +31,7 @@
 
 bool initializeSDL();
 SDL_Window* createWindow(int screenWidth, int screenHeight);
-Scene* createSimpleWorld(); 
+Scene* createSimpleWorld(const std::string& sceneFilePath); 
 void startRenderLoop(SDL_Renderer *sdlRenderer, SDL_Texture* frameBufferTex,
 	int width, int height, int numSamples, RandomSamplerType randomSamplerType,
 	Camera::CameraType cameraType, const Scene* gameWorld);
@@ -136,7 +136,7 @@ int main(int argc, char* argv[]) {
 		renderFormat, SDL_TEXTUREACCESS_STREAMING, width, height);
 	SDL_SetRelativeMouseMode(SDL_TRUE);
 	
-	Scene *simpleWorld = createSimpleWorld();
+	Scene *simpleWorld = createSimpleWorld("../sceneData.json");
 	startRenderLoop(sdlRenderer, frameBufferTex, width, height,
 		numSamples, randomSamplerType, cameraType, simpleWorld);
 	delete simpleWorld;
@@ -167,7 +167,7 @@ SDL_Window* createWindow(int screenWidth, int screenHeight) {
 	return window;
 }
 
-Scene* createSimpleWorld() {
+Scene* createSimpleWorld(const std::string& sceneFilePath) {
 	Plane* simplePlane = new Plane(Point3(0.0f, 0.0f, 0.0f),
 		Vector3(0.0f, 1.0f, 0.0f), Color(0.0f, 0.0f, 0.8f, 1.0f));
 	Sphere* sphere = new Sphere(Point3(0.0f, 1.0f, 1.0f),
@@ -177,6 +177,9 @@ Scene* createSimpleWorld() {
 	simplePrimitives[0] = simplePlane;
 	simplePrimitives[1] = sphere;
 	Scene *simpleWorld = new Scene(simplePrimitives, 2);
+	
+	SceneLoader::DeserializeJSONFileIntoScene(simpleWorld,
+											  sceneFilePath);
 	return simpleWorld;
 }
 
