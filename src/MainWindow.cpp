@@ -27,7 +27,7 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
 
-#define TICKS_TO_SECONDS 1.0/1000.0f
+#define TICKS_TO_SECONDS 1.0f/1000.0f
 
 bool initializeSDL();
 SDL_Window* createWindow(int screenWidth, int screenHeight);
@@ -53,7 +53,11 @@ int main(int argc, char* argv[]) {
 	bool offlineRender = false;
 	RandomSamplerType randomSamplerType = None;
 	Camera::CameraType cameraType = Camera::CameraType::Pinhole;
+#if __APPLE__
 	std::string scenePath = "../../sceneData.json";
+#else
+	std::string scenePath = "../sceneData.json";
+#endif
 
 	if (argc > 1) {
 		for (int argIndex = 1; argIndex < argc; argIndex++) {
@@ -206,9 +210,9 @@ Vector3 getMovementVectorFromKeyPresses(const SDL_Event &event) {
 Vector3 getMouseMovementVector(const SDL_Event &event) {
 	Vector3 mouseMoveVector(0.0f, 0.0f, 0.0f);
 	if(event.type == SDL_MOUSEMOTION)
-    {
-		mouseMoveVector[0] = -event.motion.yrel;
-		mouseMoveVector[1] = -event.motion.xrel;
+	{
+		mouseMoveVector[0] = (float)-event.motion.yrel;
+		mouseMoveVector[1] = (float)-event.motion.xrel;
 	}
 	return mouseMoveVector;
 }

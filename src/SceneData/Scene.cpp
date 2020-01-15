@@ -4,6 +4,7 @@
 
 Scene::Scene() {
 	primitives = nullptr;
+	numPrimitives = 0;
 }
 
 Scene::Scene(Primitive **primitives, unsigned int numPrimitives) {

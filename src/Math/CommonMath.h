@@ -8,7 +8,7 @@
 #define EPSILON 0.0000001f
 
 #ifndef M_PI
-# define M_PI 3.14159265358979323846
+# define M_PI 3.14159265358979323846f
 #endif
 
 #define DEG_2_RAD M_PI/180.0f
