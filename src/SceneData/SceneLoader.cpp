@@ -7,8 +7,13 @@
 #include "SceneData/Scene.h"
 #include "Math/Sphere.h"
 #include "Math/Plane.h"
+#include "SceneData/Light.h"
+#include "SceneData/AmbientLight.h"
+#include "SceneData/DirectionalLight.h"
+#include "SceneData/PointLight.h"
 
 static Primitive* CreatePrimitive(const nlohmann::json& jsonObj);
+static Light* CreateLight(const nlohmann::json& jsonObj);
 
 void SceneLoader::DeserializeJSONFileIntoScene(class Scene* scene,
 											   const std::string &jsonFilePath) {
@@ -25,6 +30,14 @@ void SceneLoader::DeserializeJSONFileIntoScene(class Scene* scene,
 				scene->AddPrimitive(newPrimitive);
 			}
 		}
+
+		nlohmann::json lightsArray = jsonObj["lights"];
+		for (auto& element : lightsArray.items()) {
+			Light* newLight = CreateLight(element.value());
+			if (newLight != nullptr) {
+				scene->AddLight(newLight);
+			}
+		}
 	}
 	catch(const std::exception& e) {
 		std::cout << "Could not deserialize JSON file: " << jsonFilePath
@@ -32,8 +45,8 @@ void SceneLoader::DeserializeJSONFileIntoScene(class Scene* scene,
 	}
 }
 
-static inline nlohmann::json safeGetToken(const nlohmann::json& jsonObj,
-								   const std::string& key) {
+static inline nlohmann::json SafeGetToken(const nlohmann::json& jsonObj,
+									const std::string& key) {
 	if (jsonObj.find(key) != jsonObj.end()) {
 		return jsonObj[key];
 	}
@@ -44,12 +57,12 @@ static inline nlohmann::json safeGetToken(const nlohmann::json& jsonObj,
 }
 
 static Primitive* CreatePrimitive(const nlohmann::json& jsonObj) {
-	std::string primitiveType = safeGetToken(jsonObj, "type");
+	std::string primitiveType = SafeGetToken(jsonObj, "type");
 	Primitive* newPrimitive = nullptr;
 	if (primitiveType == "plane") {
-		auto planeOrigin = safeGetToken(jsonObj, "position");
-		auto planeNormal = safeGetToken(jsonObj, "normal");
-		auto planeColor = safeGetToken(jsonObj, "color");
+		auto planeOrigin = SafeGetToken(jsonObj, "position");
+		auto planeNormal = SafeGetToken(jsonObj, "normal");
+		auto planeColor = SafeGetToken(jsonObj, "color");
 		newPrimitive = new Plane(
 			Point3((float)planeOrigin[0],(float)planeOrigin[1],
 				(float)planeOrigin[2]),
@@ -59,15 +72,15 @@ static Primitive* CreatePrimitive(const nlohmann::json& jsonObj) {
 				(float)planeColor[2], (float)planeColor[3]));
 	}
 	else if (primitiveType == "sphere") {
-		auto sphereOrigin = safeGetToken(jsonObj, "position");
-		float sphereRadius = safeGetToken(jsonObj, "radius");
-		auto sphereColor = safeGetToken(jsonObj, "color");
+		auto sphereOrigin = SafeGetToken(jsonObj, "position");
+		float sphereRadius = SafeGetToken(jsonObj, "radius");
+		auto sphereColor = SafeGetToken(jsonObj, "color");
 		newPrimitive = new Sphere(
 			Point3((float)sphereOrigin[0],(float)sphereOrigin[1],
-				   (float)sphereOrigin[2]),
+					(float)sphereOrigin[2]),
 			sphereRadius,
 			Color((float)sphereColor[0], (float)sphereColor[1],
-				  (float)sphereColor[2], (float)sphereColor[3]));
+					(float)sphereColor[2], (float)sphereColor[3]));
 	}
 	else {
 		std::stringstream exceptionMsg;
@@ -76,4 +89,33 @@ static Primitive* CreatePrimitive(const nlohmann::json& jsonObj) {
 		throw exceptionMsg;
 	}
 	return newPrimitive;
+}
+
+Light* CreateLight(const nlohmann::json& jsonObj) {
+	std::string lightType = SafeGetToken(jsonObj, "type");
+	Light* newLight = nullptr;
+	std::string primitiveType = SafeGetToken(jsonObj, "type");
+	if (primitiveType == "ambient") {
+		auto radiance = SafeGetToken(jsonObj, "radiance");
+		float radianceScale = SafeGetToken(jsonObj, "radianceScale");
+		newLight = new AmbientLight(Color3((float)radiance[0], (float)radiance[1],
+			(float)radiance[2]), radianceScale);
+	}
+	else if (primitiveType == "directional") {
+		auto direction = SafeGetToken(jsonObj, "direction");
+		auto radiance = SafeGetToken(jsonObj, "radiance");
+		float radianceScale = SafeGetToken(jsonObj, "radianceScale");
+		newLight = new DirectionalLight(Vector3((float)direction[0], (float)direction[1],
+			(float)direction[2]), Color3((float)radiance[0], (float)radiance[1],
+			(float)radiance[2]), radianceScale);
+	}
+	else if (primitiveType == "point") {
+		auto position = SafeGetToken(jsonObj, "position");
+		auto radiance = SafeGetToken(jsonObj, "radiance");
+		float radianceScale = SafeGetToken(jsonObj, "radianceScale");
+		newLight = new PointLight(Point3((float)position[0], (float)position[1],
+			(float)position[2]), Color3((float)radiance[0], (float)radiance[1],
+			(float)radiance[2]), radianceScale);
+	}
+	return newLight;
 }

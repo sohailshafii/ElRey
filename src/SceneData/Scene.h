@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Math/Primitive.h"
+#include "SceneData/Light.h"
 
 // simple base class for all acceleration structures, or really anything
 // that represents our world.
@@ -13,6 +14,11 @@ public:
 	virtual void AddPrimitive(Primitive *newPrimitive);
 	virtual void AddPrimitives(Primitive **newPrimitives,
 		unsigned int numNewPrimitives);
+
+	virtual void AddLight(Light* newLight);
+	virtual void AddLights(Light** newLights,
+		unsigned int numNewLights);
+
 	virtual bool Intersect(const Ray &ray, Color &newColor,
 		float tMin, float& tMax) const;
 
@@ -27,10 +33,14 @@ public:
 private:
 	void cleanUpPrimitives(Primitive **primitivesToClean, unsigned int
 		numToClean);
+	void cleanUpLights(Light** lightsToClean, unsigned int numToClean);
 
 protected:
 	// each item is a pointer to a primitive type,
 	// whatever that might be
 	Primitive** primitives;
 	unsigned int numPrimitives;
+
+	Light** lights;
+	unsigned int numLights;
 };
