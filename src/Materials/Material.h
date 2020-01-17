@@ -6,5 +6,4 @@
 class Material {
 public:
 	virtual Color GetColor(const IntersectionResult &intersectionResult) = 0;
-private:
 };

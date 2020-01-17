@@ -11,6 +11,8 @@
 # define M_PI 3.14159265358979323846f
 #endif
 
+#define INV_PI 1.0/M_PI
+
 #define DEG_2_RAD M_PI/180.0f
 #define RAD_2_DEG 180.0f/M_PI
 
