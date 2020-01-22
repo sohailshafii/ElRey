@@ -1,6 +1,7 @@
 #include "Sphere.h"
 #include "Math/Vector3.h"
 #include "Math/CommonMath.h"
+#include "SceneData/IntersectionResult.h"
 #include <cmath>
 #include <iostream>
 
@@ -25,7 +26,8 @@ bool Sphere::Intersect(const Ray &ray, Color &newColor,
 	// smaller root
 	if (t > EPSILON && t > tMin && t < tMax) {
 		tMax = t;
-		newColor = color;
+		newColor = material->GetColor(IntersectionResult(ray,
+														 t));
 		// normal is (temp + t * rayDirection)/radius;
 		// local hit point is rayOrigin + t*rayDirection;
 		return true;
@@ -34,7 +36,8 @@ bool Sphere::Intersect(const Ray &ray, Color &newColor,
 	t = (-b+e)/denom;
 	if (t > EPSILON && t > tMin && t < tMax) {
 		tMax = t;
-		newColor = color;
+		newColor = material->GetColor(IntersectionResult(ray,
+														 t));
 		// normal is (temp + t * rayDirection)/radius;
 		// local hit point is rayOrigin + t*rayDirection;
 		return true;

@@ -7,8 +7,8 @@
 class Plane : public Primitive {
 public:
 	Plane(const Point3& iOrigin, const Vector3& iNormal,
-		const Color& iColor) : origin(iOrigin),
-		normal(iNormal), color(iColor) {
+		std::shared_ptr<Material> material) : Primitive(material),
+		origin(iOrigin), normal(iNormal) {
 		this->distance = -origin*normal;
 	}
 
@@ -19,5 +19,4 @@ private:
 	Point3 origin;
 	Vector3 normal;
 	float distance;
-	Color color;
 };

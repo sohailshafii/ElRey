@@ -7,8 +7,8 @@
 class Sphere : public Primitive {
 public:
 	Sphere(const Point3& iCenter, float iRadius,
-		const Color& iColor) : center(iCenter),
-		color(iColor), radius(iRadius) {
+		   std::shared_ptr<Material> material) : Primitive(material),
+		center(iCenter), radius(iRadius) {
 		radiusSqr = radius*radius;
 	}
 
@@ -17,6 +17,5 @@ public:
 
 private:
 	Point3 center;
-	Color color;
 	float radius, radiusSqr;
 };

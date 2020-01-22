@@ -19,6 +19,7 @@ bool Plane::Intersect(const Ray &ray, Color &newColor,
 	}
 	
 	tMax = t;
-	newColor = color;
+	newColor = material->GetColor(IntersectionResult(ray,
+													 t));
 	return true;
 }

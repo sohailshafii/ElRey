@@ -63,6 +63,7 @@ static Primitive* CreatePrimitive(const nlohmann::json& jsonObj) {
 		auto planeOrigin = SafeGetToken(jsonObj, "position");
 		auto planeNormal = SafeGetToken(jsonObj, "normal");
 		auto planeColor = SafeGetToken(jsonObj, "color");
+		// TODO: fix error here
 		newPrimitive = new Plane(
 			Point3((float)planeOrigin[0],(float)planeOrigin[1],
 				(float)planeOrigin[2]),
@@ -75,6 +76,7 @@ static Primitive* CreatePrimitive(const nlohmann::json& jsonObj) {
 		auto sphereOrigin = SafeGetToken(jsonObj, "position");
 		float sphereRadius = SafeGetToken(jsonObj, "radius");
 		auto sphereColor = SafeGetToken(jsonObj, "color");
+		// TODO: fix error here
 		newPrimitive = new Sphere(
 			Point3((float)sphereOrigin[0],(float)sphereOrigin[1],
 					(float)sphereOrigin[2]),
