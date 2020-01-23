@@ -13,8 +13,11 @@ public:
 	{ }
 	virtual ~Primitive() { }
 
-	virtual bool Intersect(const Ray &ray, Color &newColor,
-		float tMin, float& tMax) = 0;
+	virtual bool Intersect(const Ray &ray, float tMin, float& tMax) = 0;
+	
+	std::shared_ptr<Material> GetMaterial() {
+		return material;
+	}
 
 protected:
 	std::shared_ptr<Material> material;

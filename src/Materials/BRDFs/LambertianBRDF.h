@@ -8,10 +8,8 @@ public:
 	LambertianBRDF();
 	LambertianBRDF(float kd, const Color& cd);
 
-	Color GetRadiance(const IntersectionResult& IntersectionResult,
-		const Vector3 &wo) override;
-	Color GetRho(const IntersectionResult& IntersectionResult,
-		const Vector3 &wo) override;
+	Color GetRadiance(const IntersectionResult& IntersectionResult) override;
+	Color GetRho(const IntersectionResult& IntersectionResult) override;
 
 	void setKd(float kd) {
 		this->kd = kd;

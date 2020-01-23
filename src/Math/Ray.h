@@ -27,6 +27,10 @@ public:
 	void SetDirection(const Vector3 &newDirection) {
 		this->direction = newDirection;
 	}
+	
+	Point3 GetPositionAtParam(float param) const {
+		return origin + direction*param;
+	}
 
 private:
 	Point3 origin;

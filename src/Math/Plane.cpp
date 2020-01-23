@@ -1,8 +1,7 @@
 #include "Plane.h"
 #include "CommonMath.h"
 
-bool Plane::Intersect(const Ray &ray, Color &newColor,
-	float tMin, float& tMax) {
+bool Plane::Intersect(const Ray &ray, float tMin, float& tMax) {
 	const Point3& rayOrigin = ray.GetOrigin();
 	const Vector3& rayDirection = ray.GetDirection();
 
@@ -19,7 +18,6 @@ bool Plane::Intersect(const Ray &ray, Color &newColor,
 	}
 	
 	tMax = t;
-	newColor = material->GetColor(IntersectionResult(ray,
-													 t));
+	
 	return true;
 }

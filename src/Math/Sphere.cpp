@@ -5,8 +5,7 @@
 #include <cmath>
 #include <iostream>
 
-bool Sphere::Intersect(const Ray &ray, Color &newColor,
-	float tMin, float& tMax) {
+bool Sphere::Intersect(const Ray &ray, float tMin, float& tMax) {
 	const Point3& rayOrigin = ray.GetOrigin();
 	const Vector3& rayDirection = ray.GetDirection();
 
@@ -26,8 +25,6 @@ bool Sphere::Intersect(const Ray &ray, Color &newColor,
 	// smaller root
 	if (t > EPSILON && t > tMin && t < tMax) {
 		tMax = t;
-		newColor = material->GetColor(IntersectionResult(ray,
-														 t));
 		// normal is (temp + t * rayDirection)/radius;
 		// local hit point is rayOrigin + t*rayDirection;
 		return true;
@@ -36,8 +33,6 @@ bool Sphere::Intersect(const Ray &ray, Color &newColor,
 	t = (-b+e)/denom;
 	if (t > EPSILON && t > tMin && t < tMax) {
 		tMax = t;
-		newColor = material->GetColor(IntersectionResult(ray,
-														 t));
 		// normal is (temp + t * rayDirection)/radius;
 		// local hit point is rayOrigin + t*rayDirection;
 		return true;

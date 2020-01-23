@@ -5,5 +5,6 @@
 
 class Material {
 public:
-	virtual Color GetColor(const IntersectionResult &intersectionResult) = 0;
+	virtual Color GetAmbientColor(const IntersectionResult &intersectionResult) = 0;
+	virtual Color GetDirectColor(const IntersectionResult &intersectionResult) = 0;
 };

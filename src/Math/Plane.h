@@ -12,8 +12,7 @@ public:
 		this->distance = -origin*normal;
 	}
 
-	bool Intersect(const Ray &ray, Color &newColor,
-		float tMin, float& tMax) override;
+	bool Intersect(const Ray &ray, float tMin, float& tMax) override;
 
 private:
 	Point3 origin;

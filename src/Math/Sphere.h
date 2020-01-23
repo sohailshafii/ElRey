@@ -12,8 +12,7 @@ public:
 		radiusSqr = radius*radius;
 	}
 
-	bool Intersect(const Ray &ray, Color &newColor,
-		float tMin, float& tMax) override;
+	bool Intersect(const Ray &ray, float tMin, float& tMax) override;
 
 private:
 	Point3 center;

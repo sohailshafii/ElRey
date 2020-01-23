@@ -1,6 +1,7 @@
 #include "Scene.h"
 #include <stdexcept>
 #include <cstring>
+#include "IntersectionResult.h"
 
 Scene::Scene() {
 	primitives = nullptr;
@@ -134,10 +135,22 @@ bool Scene::Intersect(const Ray &ray, Color &newColor,
 	bool struckPrimitive = false;
 	
 	for (unsigned int i = 0; i < numPrimitives; i++) {
-		auto hitPrimitive = this->primitives[i]->Intersect(ray, newColor,
-			tMin, tMax);
+		auto currentPrimitive = this->primitives[i];
+		auto hitPrimitive = this->primitives[i]->Intersect(ray, tMin, tMax);
 		if (hitPrimitive) {
 			struckPrimitive = true;
+			std::shared_ptr<Material> primitivePtr = currentPrimitive->GetMaterial();
+			IntersectionResult interRes(ray, Vector3(0.0, 0.0, 0.0), tMax);
+			
+			newColor += primitivePtr->GetAmbientColor(interRes);
+			for (unsigned int i = 0; i < numLights; i++) {
+				auto currentLight = this->lights[i];
+				Vector3 vectorToLight = currentLight->GetDirectionFromPosition(
+					ray.GetPositionAtParam(tMax));
+				interRes.SetVectorToLight(vectorToLight);
+				newColor += primitivePtr->GetDirectColor(interRes);
+			}
+			break;
 		}
 	}
 
