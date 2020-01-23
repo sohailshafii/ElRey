@@ -5,13 +5,25 @@
 			"type":"plane",
 			"position":[0.0,0.0,0.0],
 			"normal":[0.0,1.0,0.0],
-			"color":[0.0,0.0,0.8,1.0]
+			"material":
+			{
+				"type":"lambertian",
+				"ka":0.25,
+				"kd":0.35,
+				"color":[1.0,1.0,0.0,1.0]
+			}
 		},
 		{
 			"type":"sphere",
 			"position":[0.0,1.0,1.0],
 			"radius":0.3,
-			"color":[1.0,0.0,0.0,1.0]
+			"material":
+			{
+				"type":"lambertian",
+				"ka":0.25,
+				"kd":0.35,
+				"color":[0.0,1.0,1.0,1.0]
+			}
 		}
 	],
 	"lights":

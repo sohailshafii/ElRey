@@ -13,6 +13,10 @@ public:
 	}
 
 	bool Intersect(const Ray &ray, float tMin, float& tMax) override;
+	
+	virtual Vector3 GetNormalAtPosition(const Point3& position) const override {
+		return normal;
+	}
 
 private:
 	Point3 origin;

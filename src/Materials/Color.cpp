@@ -47,6 +47,19 @@ Color& Color::operator+=(const Color& p2) {
 	return *this;
 }
 
+Color Color::operator*(const Color& p2) {
+	return Color(comp[0] * p2[0], comp[1] * p2[1],
+		comp[2] * p2[2], comp[3] * p2[3]);
+}
+
+Color& Color::operator*=(const Color& p2) {
+	comp[0] *= p2[0];
+	comp[1] *= p2[1];
+	comp[2] *= p2[2];
+	comp[3] *= p2[3];
+	return *this;
+}
+
 Color Color::operator/(float divisor) {
 	return Color(comp[0]/divisor, comp[1]/divisor,
 		comp[2] / divisor, comp[3] / divisor);

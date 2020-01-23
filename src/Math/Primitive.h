@@ -14,6 +14,7 @@ public:
 	virtual ~Primitive() { }
 
 	virtual bool Intersect(const Ray &ray, float tMin, float& tMax) = 0;
+	virtual Vector3 GetNormalAtPosition(const Point3& position) const = 0;
 	
 	std::shared_ptr<Material> GetMaterial() {
 		return material;

@@ -13,6 +13,12 @@ public:
 	}
 
 	bool Intersect(const Ray &ray, float tMin, float& tMax) override;
+	
+	virtual Vector3 GetNormalAtPosition(const Point3& position) const override {
+		Vector3 normalVec = (position - center);
+		normalVec.Normalize();
+		return normalVec;
+	}
 
 private:
 	Point3 center;

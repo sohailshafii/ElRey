@@ -132,27 +132,39 @@ void Scene::AddLights(Light** newLights, unsigned int numNewLights) {
 
 bool Scene::Intersect(const Ray &ray, Color &newColor,
 	float tMin, float& tMax) const {
-	bool struckPrimitive = false;
 	
+	Primitive* closestPrimitive = nullptr;
 	for (unsigned int i = 0; i < numPrimitives; i++) {
 		auto currentPrimitive = this->primitives[i];
 		auto hitPrimitive = this->primitives[i]->Intersect(ray, tMin, tMax);
 		if (hitPrimitive) {
-			struckPrimitive = true;
-			std::shared_ptr<Material> primitivePtr = currentPrimitive->GetMaterial();
-			IntersectionResult interRes(ray, Vector3(0.0, 0.0, 0.0), tMax);
-			
-			newColor += primitivePtr->GetAmbientColor(interRes);
-			for (unsigned int i = 0; i < numLights; i++) {
-				auto currentLight = this->lights[i];
-				Vector3 vectorToLight = currentLight->GetDirectionFromPosition(
-					ray.GetPositionAtParam(tMax));
-				interRes.SetVectorToLight(vectorToLight);
-				newColor += primitivePtr->GetDirectColor(interRes);
-			}
-			break;
+			closestPrimitive = currentPrimitive;
+		}
+	}
+	
+	if (closestPrimitive != nullptr)
+	{
+		std::shared_ptr<Material> primitivePtr = closestPrimitive->GetMaterial();
+		IntersectionResult interRes(ray, Vector3(0.0, 0.0, 0.0), tMax);
+	
+		newColor += primitivePtr->GetAmbientColor(interRes);
+		for (unsigned int i = 0; i < numLights; i++) {
+			auto currentLight = this->lights[i];
+			auto lightRadiance = currentLight->GetRadiance();
+			Color lightRadColor4 = Color(lightRadiance[0], lightRadiance[1],
+										 lightRadiance[2], 1.0);
+			auto intersectionPos = ray.GetPositionAtParam(tMax);
+			Vector3 vectorToLight = currentLight->GetDirectionFromPosition(
+																		   intersectionPos);
+			vectorToLight.Normalize();
+			Vector3 normalVec = closestPrimitive->GetNormalAtPosition(intersectionPos);
+			float projectionTerm = vectorToLight*normalVec;
+			interRes.SetVectorToLight(vectorToLight);
+			// TODO: fix, not working!
+			//newColor += primitivePtr->GetDirectColor(interRes)*lightRadColor4*projectionTerm;
+			//newColor += lightRadColor4*projectionTerm;
 		}
 	}
 
-	return struckPrimitive;
+	return closestPrimitive != nullptr;
 }

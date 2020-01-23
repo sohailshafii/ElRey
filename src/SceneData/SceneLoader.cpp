@@ -7,12 +7,14 @@
 #include "SceneData/Scene.h"
 #include "Math/Sphere.h"
 #include "Math/Plane.h"
+#include "Materials/LambertianMaterial.h"
 #include "SceneData/Light.h"
 #include "SceneData/AmbientLight.h"
 #include "SceneData/DirectionalLight.h"
 #include "SceneData/PointLight.h"
 
 static Primitive* CreatePrimitive(const nlohmann::json& jsonObj);
+static std::shared_ptr<Material> CreateMaterial(const nlohmann::json& jsonObj);
 static Light* CreateLight(const nlohmann::json& jsonObj);
 
 void SceneLoader::DeserializeJSONFileIntoScene(class Scene* scene,
@@ -62,27 +64,28 @@ static Primitive* CreatePrimitive(const nlohmann::json& jsonObj) {
 	if (primitiveType == "plane") {
 		auto planeOrigin = SafeGetToken(jsonObj, "position");
 		auto planeNormal = SafeGetToken(jsonObj, "normal");
-		auto planeColor = SafeGetToken(jsonObj, "color");
+		auto materialNode = SafeGetToken(jsonObj, "material");
+		
+		std::shared_ptr<Material> objMaterial = CreateMaterial(materialNode);
 		// TODO: fix error here
 		newPrimitive = new Plane(
 			Point3((float)planeOrigin[0],(float)planeOrigin[1],
 				(float)planeOrigin[2]),
 			Vector3((float)planeNormal[0],
 				(float)planeNormal[1],(float)planeNormal[2]),
-			Color((float)planeColor[0], (float)planeColor[1],
-				(float)planeColor[2], (float)planeColor[3]));
+			objMaterial);
 	}
 	else if (primitiveType == "sphere") {
 		auto sphereOrigin = SafeGetToken(jsonObj, "position");
 		float sphereRadius = SafeGetToken(jsonObj, "radius");
-		auto sphereColor = SafeGetToken(jsonObj, "color");
+		auto materialNode = SafeGetToken(jsonObj, "material");
+		
+		std::shared_ptr<Material> objMaterial = CreateMaterial(materialNode);
 		// TODO: fix error here
 		newPrimitive = new Sphere(
 			Point3((float)sphereOrigin[0],(float)sphereOrigin[1],
 					(float)sphereOrigin[2]),
-			sphereRadius,
-			Color((float)sphereColor[0], (float)sphereColor[1],
-					(float)sphereColor[2], (float)sphereColor[3]));
+			sphereRadius, objMaterial);
 	}
 	else {
 		std::stringstream exceptionMsg;
@@ -91,6 +94,21 @@ static Primitive* CreatePrimitive(const nlohmann::json& jsonObj) {
 		throw exceptionMsg;
 	}
 	return newPrimitive;
+}
+
+std::shared_ptr<Material> CreateMaterial(const nlohmann::json& jsonObj) {
+	std::shared_ptr<Material> newMaterial;
+	std::string primitiveType = SafeGetToken(jsonObj, "type");
+	if (primitiveType == "lambertian") {
+		float kA = SafeGetToken(jsonObj, "ka");
+		float kD = SafeGetToken(jsonObj, "kd");
+		auto colorObj = SafeGetToken(jsonObj, "color");
+		// TODO: should BRDFs have four-component colors?
+		newMaterial = std::make_shared<LambertianMaterial>(kA, kD,
+												 Color3(colorObj[0], colorObj[1],
+													   colorObj[2]));
+	}
+	return newMaterial;
 }
 
 Light* CreateLight(const nlohmann::json& jsonObj) {

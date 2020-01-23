@@ -6,10 +6,10 @@
 class LambertianBRDF : public BRDF {
 public:
 	LambertianBRDF();
-	LambertianBRDF(float kd, const Color& cd);
+	LambertianBRDF(float kd, const Color3& cd);
 
-	Color GetRadiance(const IntersectionResult& IntersectionResult) override;
-	Color GetRho(const IntersectionResult& IntersectionResult) override;
+	Color3 GetRadiance(const IntersectionResult& IntersectionResult) override;
+	Color3 GetRho(const IntersectionResult& IntersectionResult) override;
 
 	void setKd(float kd) {
 		this->kd = kd;
@@ -17,7 +17,7 @@ public:
 		this->uniformRadiance = this->cdScaled*INV_PI;
 	}
 
-	void setCd(const Color& cd) {
+	void setCd(const Color3& cd) {
 		this->cd = cd;
 		this->cdScaled = cd*kd;
 		this->uniformRadiance = this->cdScaled*INV_PI;
@@ -25,7 +25,7 @@ public:
 
 private:
 	float kd;
-	Color cd;
-	Color cdScaled;
-	Color uniformRadiance;
+	Color3 cd;
+	Color3 cdScaled;
+	Color3 uniformRadiance;
 };

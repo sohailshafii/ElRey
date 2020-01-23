@@ -19,6 +19,9 @@ public:
 
 	Color3 operator+(const Color3& p2);
 	Color3& operator+=(const Color3& p2);
+	
+	Color3 operator*(const Color3& p2);
+	Color3& operator*=(const Color3& p2);
 
 	Color3 operator/(float divisor);
 	Color3& operator/=(float divisor);
