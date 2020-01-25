@@ -1,7 +1,9 @@
 #include "Scene.h"
 #include <stdexcept>
 #include <cstring>
+#include "Math/CommonMath.h"
 #include "IntersectionResult.h"
+#include "SceneData/DirectionalLight.h"
 
 Scene::Scene() {
 	primitives = nullptr;
@@ -147,22 +149,29 @@ bool Scene::Intersect(const Ray &ray, Color &newColor,
 		std::shared_ptr<Material> primitivePtr = closestPrimitive->GetMaterial();
 		IntersectionResult interRes(ray, Vector3(0.0, 0.0, 0.0), tMax);
 	
-		newColor += primitivePtr->GetAmbientColor(interRes);
+		newColor = primitivePtr->GetAmbientColor(interRes);
 		for (unsigned int i = 0; i < numLights; i++) {
 			auto currentLight = this->lights[i];
 			auto lightRadiance = currentLight->GetRadiance();
 			Color lightRadColor4 = Color(lightRadiance[0], lightRadiance[1],
-										 lightRadiance[2], 1.0);
+										 lightRadiance[2], 0.0);
 			auto intersectionPos = ray.GetPositionAtParam(tMax);
-			Vector3 vectorToLight = currentLight->GetDirectionFromPosition(
+			Vector3 vectorToLight = -currentLight->GetDirectionFromPosition(
 																		   intersectionPos);
+			// skip ambient lights, or lights with zero magnitude
+			// TODO: remove ambient light type?
+			float vectorMagn = vectorToLight.Norm();
+			if (vectorMagn < EPSILON) {
+				continue;
+			}
+			
 			vectorToLight.Normalize();
 			Vector3 normalVec = closestPrimitive->GetNormalAtPosition(intersectionPos);
 			float projectionTerm = vectorToLight*normalVec;
-			interRes.SetVectorToLight(vectorToLight);
-			// TODO: fix, not working!
-			//newColor += primitivePtr->GetDirectColor(interRes)*lightRadColor4*projectionTerm;
-			//newColor += lightRadColor4*projectionTerm;
+			if (projectionTerm > 0.0f) {
+				interRes.SetVectorToLight(vectorToLight);
+				newColor += primitivePtr->GetDirectColor(interRes)*lightRadColor4*projectionTerm;
+			}
 		}
 	}
 

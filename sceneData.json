@@ -8,8 +8,8 @@
 			"material":
 			{
 				"type":"lambertian",
-				"ka":0.25,
-				"kd":0.35,
+				"ka":0.001,
+				"kd":0.45,
 				"color":[1.0,1.0,0.0,1.0]
 			}
 		},
@@ -20,8 +20,8 @@
 			"material":
 			{
 				"type":"lambertian",
-				"ka":0.25,
-				"kd":0.35,
+				"ka":0.001,
+				"kd":0.45,
 				"color":[0.0,1.0,1.0,1.0]
 			}
 		}
@@ -36,13 +36,7 @@
 		{
 			"type":"directional",
 			"direction":[-0.5,-0.2,-0.1],
-			"radiance":[0.01,0.01,0.01],
-			"radianceScale":1.0
-		},
-		{
-			"type":"point",
-			"position":[3.0,0.0,3.0],
-			"radiance":[0.01,0.01,0.01],
+			"radiance":[0.4,0.4,0.4],
 			"radianceScale":1.0
 		}
 	]

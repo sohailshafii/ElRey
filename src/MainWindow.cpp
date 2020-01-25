@@ -143,6 +143,9 @@ int main(int argc, char* argv[]) {
 	SDL_Texture* frameBufferTex = SDL_CreateTexture(sdlRenderer,
 		renderFormat, SDL_TEXTUREACCESS_STREAMING, width, height);
 	SDL_SetRelativeMouseMode(SDL_TRUE);
+	SDL_WarpMouseInWindow(window, width / 2, height / 2);
+	SDL_SetWindowGrab(window, SDL_TRUE);
+	SDL_ShowCursor(0);
 	
 	Scene *simpleWorld = createSimpleWorld(scenePath);
 	startRenderLoop(sdlRenderer, frameBufferTex, width, height,

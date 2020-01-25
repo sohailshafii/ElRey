@@ -13,7 +13,7 @@ PointLight::~PointLight()
 
 Vector3 PointLight::GetDirectionFromPosition(const Point3& worldPosition) 
 {
-	Vector3 directionFromPos = (lightPosition - worldPosition);
+	Vector3 directionFromPos = (worldPosition - lightPosition);
 	directionFromPos.Normalize();
 	return directionFromPos;
 }
