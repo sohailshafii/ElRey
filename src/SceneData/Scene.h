@@ -37,6 +37,13 @@ public:
 		}
 		mainCamera = newCamera;
 	}
+	
+	void TranslateAndRotateCamera();
+	void CastIntoScene();
+	
+	void TranslateAndRotate(const Vector3& translation, float rightRotationDegrees,
+							float upRotationDegrees);
+	void CastIntoScene(unsigned char* pixels, unsigned int bytesPerPixel, float frameTime);
 
 private:
 	void cleanUpPrimitives(Primitive **primitivesToClean, unsigned int

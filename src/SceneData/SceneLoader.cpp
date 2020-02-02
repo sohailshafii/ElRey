@@ -103,6 +103,8 @@ static void SetUpRandomSampler(const nlohmann::json& jsonObj,
 
 static Camera* CreateCamera(const nlohmann::json& jsonObj) {
 	std::string cameraType = SafeGetToken(jsonObj, "type");
+	std::cout << "Camera type specified: " << cameraType << ".\n";
+	
 	Camera* mainCamera = nullptr;
 	if (cameraType == "pinhole") {
 		auto eyePosition = SafeGetToken(jsonObj, "eye_position");

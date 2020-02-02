@@ -34,7 +34,7 @@ SDL_Window* createWindow(int screenWidth, int screenHeight);
 Scene* createSimpleWorld(const std::string& sceneFilePath); 
 void startRenderLoop(SDL_Renderer *sdlRenderer, SDL_Texture* frameBufferTex,
 	int width, int height, int numSamples, RandomSamplerType randomSamplerType,
-	Camera::CameraType cameraType, const Scene* gameWorld);
+	Camera::CameraType cameraType, Scene* gameWorld);
 
 Uint32 lastFPSTickTime = 0; 
 
@@ -223,7 +223,7 @@ Vector3 getMouseMovementVector(const SDL_Event &event) {
 void startRenderLoop(SDL_Renderer *sdlRenderer, SDL_Texture* frameBufferTex,
 	int widthPixels, int heightPixels, int numSamples,
 	RandomSamplerType randomSamplerType, Camera::CameraType cameraType,
-	const Scene* gameWorld) {
+	Scene* gameWorld) {
 
 	unsigned char* pixels;
 	int pitch;
@@ -256,7 +256,7 @@ void startRenderLoop(SDL_Renderer *sdlRenderer, SDL_Texture* frameBufferTex,
 	
 	Point3 lookAtPosition = eyePosition + Vector3(0.0f, 0.0f, 0.2f);
 	Vector3 upVector = Vector3::Up();
-	Camera* mainCamera;
+	/*Camera* mainCamera;
 
 	std::cout << "Camera type: " << cameraType << ".\n";
 	switch (cameraType) {
@@ -286,7 +286,7 @@ void startRenderLoop(SDL_Renderer *sdlRenderer, SDL_Texture* frameBufferTex,
 				heightPixels, castPlaneWidth, castPlaneHeight, upVector, randomSamplerType,
 				numSamples, 1);
 			break;
-	}
+	}*/
 
 	uint32_t lastFpsReportTime = SDL_GetTicks();
 	FPSCounter fpsCounter;
@@ -326,8 +326,8 @@ void startRenderLoop(SDL_Renderer *sdlRenderer, SDL_Texture* frameBufferTex,
 		SDL_LockTexture(frameBufferTex, NULL, (void**) &pixels, &pitch);
 
 		translationVector *= 3.0f*frameTime;
-		mainCamera->TranslateAndRotate(translationVector, rotationVector[0], rotationVector[1]);
-		mainCamera->CastIntoScene(pixels, bytesPerPixel, gameWorld, frameTime);
+		gameWorld->TranslateAndRotate(translationVector, rotationVector[0], rotationVector[1]);
+		gameWorld->CastIntoScene(pixels, bytesPerPixel, frameTime);
 
 		SDL_UnlockTexture(frameBufferTex);
 		SDL_RenderClear(sdlRenderer);
@@ -343,6 +343,6 @@ void startRenderLoop(SDL_Renderer *sdlRenderer, SDL_Texture* frameBufferTex,
 		lastFrameTicks = currTicks;
 	}
 
-	delete mainCamera;
+	//delete mainCamera;
 }
 

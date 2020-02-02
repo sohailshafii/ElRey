@@ -182,3 +182,14 @@ bool Scene::Intersect(const Ray &ray, Color &newColor,
 
 	return closestPrimitive != nullptr;
 }
+
+void Scene::TranslateAndRotate(const Vector3& translation, float rightRotationDegrees,
+						float upRotationDegrees)
+{
+	mainCamera->TranslateAndRotate(translation, rightRotationDegrees, upRotationDegrees);
+}
+
+void Scene::CastIntoScene(unsigned char* pixels, unsigned int bytesPerPixel, float frameTime)
+{
+	mainCamera->CastIntoScene(pixels, bytesPerPixel, this, frameTime);
+}
