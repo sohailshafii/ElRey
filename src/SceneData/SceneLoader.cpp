@@ -9,6 +9,7 @@
 #include "Math/Sphere.h"
 #include "Math/Plane.h"
 #include "Materials/LambertianMaterial.h"
+#include "Materials/PhongMaterial.h"
 #include "SceneData/Light.h"
 #include "SceneData/AmbientLight.h"
 #include "SceneData/DirectionalLight.h"
@@ -245,6 +246,15 @@ std::shared_ptr<Material> CreateMaterial(const nlohmann::json& jsonObj) {
 		auto colorObj = SafeGetToken(jsonObj, "color");
 		// TODO: should BRDFs have four-component colors?
 		newMaterial = std::make_shared<LambertianMaterial>(kA, kD,
+												 Color3(colorObj[0], colorObj[1],
+													   colorObj[2]));
+	}
+	else if (primitiveType == "phong") {
+		float kA = SafeGetToken(jsonObj, "ka");
+		float kD = SafeGetToken(jsonObj, "kd");
+		auto colorObj = SafeGetToken(jsonObj, "color");
+		// TODO: should BRDFs have four-component colors?
+		newMaterial = std::make_shared<PhongMaterial>(kA, kD,
 												 Color3(colorObj[0], colorObj[1],
 													   colorObj[2]));
 	}
