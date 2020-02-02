@@ -38,6 +38,10 @@ public:
 		mainCamera = newCamera;
 	}
 	
+	void SetAllowNavigation(bool allowNavigation) {
+		this->allowNavigation = allowNavigation;
+	}
+	
 	void TranslateAndRotateCamera();
 	void CastIntoScene();
 	
@@ -60,4 +64,5 @@ protected:
 	unsigned int numLights;
 	
 	Camera* mainCamera;
+	bool allowNavigation;
 };

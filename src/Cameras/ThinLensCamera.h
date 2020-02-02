@@ -7,6 +7,7 @@
 
 class GenericSampler;
 
+// TODO: debug this camera
 class ThinLensCamera : public Camera {
 public:
 	ThinLensCamera(const Point3& eyePosition, const Point3& lookAtPosition,

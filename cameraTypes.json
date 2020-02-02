@@ -33,7 +33,7 @@ Just some examples of cameras you can use in the sceneData.json file.
 "up_vector":[0.0,1.0,0.0],
 "random_sampler_type":"none",
 "num_random_samples":1,
-"num_random_sets":1,
+"num_random_sets":1
 
 "type":"spherical_pano",
 "eye_position":[0.0,1.0,0.6],
@@ -56,8 +56,8 @@ Just some examples of cameras you can use in the sceneData.json file.
 "num_rows_pixels":200,
 "view_plane_width":1.0,
 "up_vector":[0.0,1.0,0.0],
-"random_sampler_type":"none",
-"num_random_samples":1,
+"random_sampler_type":"random",
+"num_random_samples":16,
 "num_random_sets":1,
 "lens_radius":0.03,
 "focal_plane_distance":0.1,

@@ -186,6 +186,9 @@ bool Scene::Intersect(const Ray &ray, Color &newColor,
 void Scene::TranslateAndRotate(const Vector3& translation, float rightRotationDegrees,
 						float upRotationDegrees)
 {
+	if (!allowNavigation) {
+		return;
+	}
 	mainCamera->TranslateAndRotate(translation, rightRotationDegrees, upRotationDegrees);
 }
 

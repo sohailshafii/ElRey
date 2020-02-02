@@ -39,6 +39,8 @@ void SceneLoader::DeserializeJSONFileIntoScene(class Scene* scene,
 		jsonFile >> jsonObj;
 		
 		nlohmann::json sceneSettings = jsonObj["scene_settings"];
+		std::string navigationToken = sceneSettings["navigation_type"];
+		scene->SetAllowNavigation(navigationToken == "fps");
 		nlohmann::json cameraSettings = sceneSettings["camera"];
 		Camera* mainCamera = CreateCamera(cameraSettings);
 		scene->SetCamera(mainCamera);
@@ -60,8 +62,10 @@ void SceneLoader::DeserializeJSONFileIntoScene(class Scene* scene,
 		}
 	}
 	catch(const std::exception& e) {
-		std::cout << "Could not deserialize JSON file: " << jsonFilePath
+		std::stringstream exceptionMsg;
+		exceptionMsg << "Could not deserialize JSON file: " << jsonFilePath
 			<< ". Reason: " << e.what() << std::endl;
+		throw exceptionMsg;
 	}
 }
 
