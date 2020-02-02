@@ -15,10 +15,15 @@
 #include "SceneData/PointLight.h"
 #include "Cameras/Camera.h"
 #include "Cameras/PinholeCamera.h"
+#include "Cameras/FisheyeCamera.h"
+#include "Cameras/OrthographicCamera.h"
+#include "Cameras/SphericalPanoramicCamera.h"
+#include "Cameras/ThinLensCamera.h"
 #include "Sampling/GenericSampler.h"
 
+
 static void SetUpRandomSampler(const nlohmann::json& jsonObj,
-							   std::string &randomSamplerType,
+							   RandomSamplerType& randomSamplerType,
 							   int &numRandomSamples, int &numRandomSets);
 static Camera* CreateCamera(const nlohmann::json& jsonObj);
 static Primitive* CreatePrimitive(const nlohmann::json& jsonObj);
@@ -104,27 +109,28 @@ static void SetUpRandomSampler(const nlohmann::json& jsonObj,
 static Camera* CreateCamera(const nlohmann::json& jsonObj) {
 	std::string cameraType = SafeGetToken(jsonObj, "type");
 	std::cout << "Camera type specified: " << cameraType << ".\n";
-	
 	Camera* mainCamera = nullptr;
+
+	auto eyePosition = SafeGetToken(jsonObj, "eye_position");
+	auto lookAtPosition = SafeGetToken(jsonObj, "look_at_position");
+	int numColumnsPixels = SafeGetToken(jsonObj, "num_columns_pixels");
+	int numRowsPixels = SafeGetToken(jsonObj, "num_rows_pixels");
+	float viewPlaneWidth = SafeGetToken(jsonObj, "view_plane_width");
+	RandomSamplerType randomSamplerType;
+	int numRandomSamples, numRandomSets;
+	SetUpRandomSampler(jsonObj, randomSamplerType, numRandomSamples,
+					   numRandomSets);
+	
+	std::cout.precision(5);
+	auto upVector = SafeGetToken(jsonObj, "up_vector");
+	float viewPlaneHeight = viewPlaneWidth * (float)numRowsPixels / (float)numColumnsPixels;
+	float rowHeight = viewPlaneHeight / numRowsPixels;
+	float colWidth = viewPlaneWidth / numColumnsPixels;
+	std::cout << "Image plane dimensions: " << viewPlaneWidth << " x "
+		<< viewPlaneHeight << " Row height: " << rowHeight << ", col width: "
+		<< colWidth << ".\n";
+	
 	if (cameraType == "pinhole") {
-		auto eyePosition = SafeGetToken(jsonObj, "eye_position");
-		auto lookAtPosition = SafeGetToken(jsonObj, "look_at_position");
-		int numColumnsPixels = SafeGetToken(jsonObj, "num_columns_pixels");
-		int numRowsPixels = SafeGetToken(jsonObj, "num_rows_pixels");
-		float viewPlaneWidth = SafeGetToken(jsonObj, "view_plane_width");
-		auto upVector = SafeGetToken(jsonObj, "up_vector");
-		RandomSamplerType randomSamplerType;
-		int numRandomSamples, numRandomSets;
-		SetUpRandomSampler(jsonObj, randomSamplerType, numRandomSamples,
-						   numRandomSets);
-		
-		float viewPlaneHeight = viewPlaneWidth * (float)numRowsPixels / (float)numColumnsPixels;
-		float rowHeight = viewPlaneHeight / numRowsPixels;
-		float colWidth = viewPlaneWidth / numColumnsPixels;
-		std::cout << "Image plane dimensions: " << viewPlaneWidth << " x "
-			<< viewPlaneHeight << " Row height: " << rowHeight << ", col width: "
-			<< colWidth << ".\n";
-		
 		mainCamera = new PinholeCamera(Point3((float)eyePosition[0], (float)eyePosition[1],
 											  (float)eyePosition[2]),
 									   Point3((float)lookAtPosition[0], (float)lookAtPosition[1],
@@ -134,15 +140,50 @@ static Camera* CreateCamera(const nlohmann::json& jsonObj) {
 									   numRandomSamples, numRandomSets);
 	}
 	else if (cameraType == "fish_eye") {
-		
+		float psiMax = SafeGetToken(jsonObj, "psi_max");
+		float exposureTime = SafeGetToken(jsonObj, "exposure_time");
+
+		mainCamera = new FisheyeCamera(Point3((float)eyePosition[0], (float)eyePosition[1],
+											  (float)eyePosition[2]),
+									   Point3((float)lookAtPosition[0], (float)lookAtPosition[1],
+											  (float)lookAtPosition[2]), numColumnsPixels,
+									   numRowsPixels, viewPlaneWidth, viewPlaneHeight, Vector3((float)upVector[0], (float)upVector[1], (float)upVector[2]),
+									   randomSamplerType, numRandomSamples, numRandomSets, psiMax,
+									   exposureTime);
 	}
 	else if (cameraType == "ortho") {
-		
+		mainCamera = new OrthographicCamera(Point3((float)eyePosition[0], (float)eyePosition[1],
+											(float)eyePosition[2]),
+											Point3((float)lookAtPosition[0], (float)lookAtPosition[1],
+											(float)lookAtPosition[2]), numColumnsPixels, numRowsPixels,
+											viewPlaneWidth, viewPlaneHeight,
+											Vector3((float)upVector[0], (float)upVector[1], (float)upVector[2]),
+											randomSamplerType, numRandomSamples, numRandomSets);
 	}
 	else if (cameraType == "spherical_pano") {
-		
+		float psiMax = SafeGetToken(jsonObj, "psi_max");
+		float lambdaMax = SafeGetToken(jsonObj, "lambda_max");
+		float exposureTime = SafeGetToken(jsonObj, "exposure_time");
+		mainCamera = new SphericalPanoramicCamera(Point3((float)eyePosition[0], (float)eyePosition[1],
+														 (float)eyePosition[2]),
+												  Point3((float)lookAtPosition[0], (float)lookAtPosition[1],
+														 (float)lookAtPosition[2]), numColumnsPixels,
+												  numRowsPixels, viewPlaneWidth, viewPlaneHeight,
+												  Vector3((float)upVector[0], (float)upVector[1], (float)upVector[2]),
+												  randomSamplerType, numRandomSamples, numRandomSets, psiMax, lambdaMax, exposureTime);
 	}
 	else if (cameraType == "thin_lens") {
+		float lensRadius = SafeGetToken(jsonObj, "lens_radius");
+		float focalPlaneDistance = SafeGetToken(jsonObj, "focal_plane_distance");
+		float exposureTime = SafeGetToken(jsonObj, "exposure_time");
+		mainCamera = new ThinLensCamera(Point3((float)eyePosition[0], (float)eyePosition[1],
+											   (float)eyePosition[2]),
+										Point3((float)lookAtPosition[0], (float)lookAtPosition[1],
+											   (float)lookAtPosition[2]), numColumnsPixels,
+										numRowsPixels, viewPlaneWidth, viewPlaneHeight,
+										Vector3((float)upVector[0], (float)upVector[1], (float)upVector[2]), randomSamplerType,
+										numRandomSamples, numRandomSets, lensRadius, focalPlaneDistance,
+										exposureTime);
 	}
 	else {
 		std::stringstream exceptionMsg;

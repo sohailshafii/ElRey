@@ -243,51 +243,6 @@ void startRenderLoop(SDL_Renderer *sdlRenderer, SDL_Texture* frameBufferTex,
 		numSamples = 1;
 	}
 
-	std::cout.precision(5);
-	// assume left-handed coordinate system, where z goes into screen
-	Point3 eyePosition(0.0f, 1.0f, 0.6f);
-	float castPlaneWidth = 1.0f;
-	float castPlaneHeight = castPlaneWidth * (float)heightPixels / (float)widthPixels;
-	float rowHeight = castPlaneHeight / heightPixels;
-	float colWidth = castPlaneWidth / widthPixels;
-	std::cout << "Image plane dimensions: " << castPlaneWidth << " x "
-		<< castPlaneHeight << " Row height: " << rowHeight << ", col width: "
-		<< colWidth << ".\n";
-	
-	Point3 lookAtPosition = eyePosition + Vector3(0.0f, 0.0f, 0.2f);
-	Vector3 upVector = Vector3::Up();
-	/*Camera* mainCamera;
-
-	std::cout << "Camera type: " << cameraType << ".\n";
-	switch (cameraType) {
-		case Camera::CameraType::SphericalPanoramicCamera:
-			mainCamera = new SphericalPanoramicCamera(eyePosition, lookAtPosition, widthPixels,
-				heightPixels, castPlaneWidth, castPlaneHeight, upVector, randomSamplerType,
-				numSamples, 1, 60.0f, 120.0f, 1.0f);
-			break;
-		case Camera::CameraType::FishEye:
-			mainCamera = new FisheyeCamera(eyePosition, lookAtPosition, widthPixels,
-				heightPixels, castPlaneWidth, castPlaneHeight, upVector, randomSamplerType,
-				numSamples, 1, 120.0f, 1.0f);
-			break;
-		case Camera::CameraType::ThinLens:
-			mainCamera = new ThinLensCamera(eyePosition, lookAtPosition, widthPixels,
-				heightPixels, castPlaneWidth, castPlaneHeight, upVector, randomSamplerType,
-				numSamples, 1, 0.03f, 0.1f, 1.0f);
-			break;
-		case Camera::CameraType::Orthographic:
-			mainCamera = new OrthographicCamera(eyePosition, lookAtPosition, widthPixels,
-												heightPixels, castPlaneWidth, castPlaneHeight,
-												upVector, randomSamplerType,
-												numSamples, 1);
-			break;
-		default:
-			mainCamera = new PinholeCamera(eyePosition, lookAtPosition, widthPixels,
-				heightPixels, castPlaneWidth, castPlaneHeight, upVector, randomSamplerType,
-				numSamples, 1);
-			break;
-	}*/
-
 	uint32_t lastFpsReportTime = SDL_GetTicks();
 	FPSCounter fpsCounter;
 	
@@ -342,7 +297,5 @@ void startRenderLoop(SDL_Renderer *sdlRenderer, SDL_Texture* frameBufferTex,
 		}
 		lastFrameTicks = currTicks;
 	}
-
-	//delete mainCamera;
 }
 

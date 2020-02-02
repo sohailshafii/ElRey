@@ -11,6 +11,7 @@ class Scene;
 class Point2;
 class Ray;
 
+// assume left-handed coordinate system, where z goes into screen
 class Camera {
 public:
 	enum CameraType {
