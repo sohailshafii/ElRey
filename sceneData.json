@@ -47,8 +47,8 @@
 	[
 		{
 			"type":"ambient",
-			"radiance":[0.01,0.01,0.01],
-			"radiance_scale":1.0
+			"radiance":[1.0,1.0,1.0],
+			"radiance_scale":0.01
 		},
 		{
 			"type":"directional",

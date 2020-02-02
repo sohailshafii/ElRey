@@ -154,7 +154,6 @@ bool Scene::Intersect(const Ray &ray, Color &newColor,
 		std::shared_ptr<Material> primitivePtr = closestPrimitive->GetMaterial();
 		IntersectionResult interRes(ray, Vector3(0.0, 0.0, 0.0), tMax);
 	
-		newColor = primitivePtr->GetAmbientColor(interRes);
 		for (unsigned int i = 0; i < numLights; i++) {
 			auto currentLight = this->lights[i];
 			auto lightRadiance = currentLight->GetRadiance();
@@ -164,13 +163,13 @@ bool Scene::Intersect(const Ray &ray, Color &newColor,
 			Vector3 vectorToLight = -currentLight->GetDirectionFromPosition(
 																		   intersectionPos);
 			// skip ambient lights, or lights with zero magnitude
-			// TODO: remove ambient light type?
 			float vectorMagn = vectorToLight.Norm();
 			if (vectorMagn < EPSILON) {
+				newColor += primitivePtr->GetAmbientColor(interRes)*lightRadColor4;
 				continue;
 			}
 			
-			vectorToLight.Normalize();
+			vectorToLight /= vectorMagn;
 			Vector3 normalVec = closestPrimitive->GetNormalAtPosition(intersectionPos);
 			float projectionTerm = vectorToLight*normalVec;
 			if (projectionTerm > 0.0f) {
