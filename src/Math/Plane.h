@@ -12,7 +12,8 @@ public:
 		this->distance = -origin*normal;
 	}
 
-	bool Intersect(const Ray &ray, float tMin, float& tMax) override;
+	bool Intersect(const Ray &ray, float tMin, float& tMax,
+				   IntersectionResult &intersectionResult) override;
 	
 	virtual Vector3 GetNormalAtPosition(const Point3& position) const override {
 		return normal;

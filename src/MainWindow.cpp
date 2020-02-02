@@ -281,7 +281,7 @@ void startRenderLoop(SDL_Renderer *sdlRenderer, SDL_Texture* frameBufferTex,
 		SDL_LockTexture(frameBufferTex, NULL, (void**) &pixels, &pitch);
 
 		translationVector *= 3.0f*frameTime;
-		//gameWorld->TranslateAndRotate(translationVector, rotationVector[0], rotationVector[1]);
+		gameWorld->TranslateAndRotate(translationVector, rotationVector[0], rotationVector[1]);
 		gameWorld->CastIntoScene(pixels, bytesPerPixel, frameTime);
 
 		SDL_UnlockTexture(frameBufferTex);

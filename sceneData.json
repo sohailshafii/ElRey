@@ -1,7 +1,7 @@
 {
 	"scene_settings":
 	{
-		"navigation_type":"none",
+		"navigation_type":"fps",
 		"camera":
 		{
 			"type":"pinhole",
@@ -39,6 +39,8 @@
 				"type":"phong",
 				"ka":0.001,
 				"kd":0.45,
+				"ks":0.1,
+				"exponent":3,
 				"color":[0.0,1.0,1.0,1.0]
 			}
 		}

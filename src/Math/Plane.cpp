@@ -1,7 +1,8 @@
 #include "Plane.h"
 #include "CommonMath.h"
 
-bool Plane::Intersect(const Ray &ray, float tMin, float& tMax) {
+bool Plane::Intersect(const Ray &ray, float tMin, float& tMax,
+					  IntersectionResult &intersectionResult) {
 	const Point3& rayOrigin = ray.GetOrigin();
 	const Vector3& rayDirection = ray.GetDirection();
 
@@ -18,6 +19,7 @@ bool Plane::Intersect(const Ray &ray, float tMin, float& tMax) {
 	}
 	
 	tMax = t;
-	
+	intersectionResult.SetIntersectionT(tMax);
+	//intersectionResult.SetIntersectionNormal(normal);
 	return true;
 }

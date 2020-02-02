@@ -12,7 +12,8 @@ public:
 		radiusSqr = radius*radius;
 	}
 
-	bool Intersect(const Ray &ray, float tMin, float& tMax) override;
+	bool Intersect(const Ray &ray, float tMin, float& tMax,
+				   IntersectionResult &intersectionResult) override;
 	
 	virtual Vector3 GetNormalAtPosition(const Point3& position) const override {
 		Vector3 normalVec = (position - center);

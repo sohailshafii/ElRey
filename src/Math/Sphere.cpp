@@ -5,7 +5,8 @@
 #include <cmath>
 #include <iostream>
 
-bool Sphere::Intersect(const Ray &ray, float tMin, float& tMax) {
+bool Sphere::Intersect(const Ray &ray, float tMin, float& tMax,
+					   IntersectionResult &intersectionResult) {
 	const Point3& rayOrigin = ray.GetOrigin();
 	const Vector3& rayDirection = ray.GetDirection();
 
@@ -25,6 +26,8 @@ bool Sphere::Intersect(const Ray &ray, float tMin, float& tMax) {
 	// smaller root
 	if (t > EPSILON && t > tMin && t < tMax) {
 		tMax = t;
+		intersectionResult.SetIntersectionT(tMax);
+		//intersectionResult.SetIntersectionNormal(normal);
 		// normal is (temp + t * rayDirection)/radius;
 		// local hit point is rayOrigin + t*rayDirection;
 		return true;
@@ -33,6 +36,8 @@ bool Sphere::Intersect(const Ray &ray, float tMin, float& tMax) {
 	t = (-b+e)/denom;
 	if (t > EPSILON && t > tMin && t < tMax) {
 		tMax = t;
+		intersectionResult.SetIntersectionT(tMax);
+		//intersectionResult.SetIntersectionNormal(normal);
 		// normal is (temp + t * rayDirection)/radius;
 		// local hit point is rayOrigin + t*rayDirection;
 		return true;
