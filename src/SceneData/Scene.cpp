@@ -173,6 +173,7 @@ bool Scene::Intersect(const Ray &ray, Color &newColor,
 			
 			vectorToLight /= vectorMagn;
 			Vector3 normalVec = closestPrimitive->GetNormalAtPosition(intersectionPos);
+			intersectionResult.SetIntersectionNormal(normalVec);
 			float projectionTerm = vectorToLight*normalVec;
 			if (projectionTerm > 0.0f) {
 				intersectionResult.SetVectorToLight(vectorToLight);

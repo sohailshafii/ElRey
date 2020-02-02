@@ -1,6 +1,7 @@
 #include "PhongMaterial.h"
 
-PhongMaterial::PhongMaterial(float ka, float kd, float ks, float exponent, const Color3& color) {
+PhongMaterial::PhongMaterial(float ka, float kd, float ks, float exponent, const Color3& color,
+const Color3& ksColor) {
 	ambientBRDF.setKd(ka);
 	ambientBRDF.setCd(color);
 	diffuseBRDF.setKd(kd);
@@ -8,7 +9,7 @@ PhongMaterial::PhongMaterial(float ka, float kd, float ks, float exponent, const
 	
 	glossySpecularBRDF.setKs(ks);
 	glossySpecularBRDF.setExponent(exponent);
-	glossySpecularBRDF.setCs(color);
+	glossySpecularBRDF.setCs(ksColor);
 }
 
 Color PhongMaterial::GetAmbientColor(const IntersectionResult &intersectionResult) {
@@ -17,7 +18,7 @@ Color PhongMaterial::GetAmbientColor(const IntersectionResult &intersectionResul
 }
 
 Color PhongMaterial::GetDirectColor(const IntersectionResult &intersectionResult) {
-	Color3 directColor =  diffuseBRDF.GetRadiance(intersectionResult);
+	Color3 directColor = diffuseBRDF.GetRadiance(intersectionResult);
 	Color3 specularColor = glossySpecularBRDF.GetRadiance(intersectionResult);
 	return Color(directColor[0]+specularColor[0], directColor[1]+specularColor[1], directColor[2]+specularColor[2], 1.0f);
 }

@@ -48,6 +48,14 @@ public:
 	void TranslateAndRotate(const Vector3& translation, float rightRotationDegrees,
 							float upRotationDegrees);
 	void CastIntoScene(unsigned char* pixels, unsigned int bytesPerPixel, float frameTime);
+	
+	unsigned int GetNumRowsPixels() const {
+		return mainCamera->GetNumRowsPixels();
+	}
+	
+	unsigned int GetNumColumnsPixels() const {
+		return mainCamera->GetNumColumnsPixels();
+	}
 
 private:
 	void cleanUpPrimitives(Primitive **primitivesToClean, unsigned int

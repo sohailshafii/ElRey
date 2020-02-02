@@ -40,6 +40,14 @@ public:
 	void Transform(const Matrix& matrix);
 	void TranslateAndRotate(const Vector3& translation, float rightRotationDegrees,
 							float upRotationDegrees);
+	
+	unsigned int GetNumColumnsPixels() const {
+		return numColumnsPixels;
+	}
+	
+	unsigned int GetNumRowsPixels() const {
+		return numRowsPixels;
+	}
 
 protected:
 	void ComputeForward();

@@ -1,14 +1,14 @@
 {
 	"scene_settings":
 	{
-		"navigation_type":"fps",
+		"navigation_type":"none",
 		"camera":
 		{
 			"type":"pinhole",
 			"eye_position":[0.0,1.0,0.6],
 			"look_at_position":[0.0,1.0,0.8],
-			"num_columns_pixels":300,
-			"num_rows_pixels":200,
+			"num_columns_pixels":600,
+			"num_rows_pixels":400,
 			"view_plane_width":1.0,
 			"up_vector":[0.0,1.0,0.0],
 			"random_sampler_type":"none",
@@ -40,7 +40,8 @@
 				"ka":0.001,
 				"kd":0.45,
 				"ks":0.1,
-				"exponent":3,
+				"exponent":10,
+				"ks_color":[1.0, 1.0, 1.0],
 				"color":[0.0,1.0,1.0,1.0]
 			}
 		}

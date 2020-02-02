@@ -255,10 +255,13 @@ std::shared_ptr<Material> CreateMaterial(const nlohmann::json& jsonObj) {
 		float kS = SafeGetToken(jsonObj, "ks");
 		float exponent = SafeGetToken(jsonObj, "exponent");
 		auto colorObj = SafeGetToken(jsonObj, "color");
+		auto ksColor = SafeGetToken(jsonObj, "ks_color");
 		// TODO: should BRDFs have four-component colors?
 		newMaterial = std::make_shared<PhongMaterial>(kA, kD, kS, exponent,
 												 Color3(colorObj[0], colorObj[1],
-													   colorObj[2]));
+													   colorObj[2]),
+												Color3(ksColor[0], ksColor[1],
+													  ksColor[2]));
 	}
 	return newMaterial;
 }

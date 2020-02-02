@@ -64,59 +64,18 @@ int main(int argc, char* argv[]) {
 			std::string currentToken = argv[argIndex];
 			convertTokenToLowerCase(currentToken);
 
-			if (currentToken == "-w" && argIndex+1 < argc) {
-				width = atoi(argv[++argIndex]);
-			}
-			else if (currentToken == "-h" && argIndex+1 < argc) {
-				height = atoi(argv[++argIndex]);
-			}
-			else if (currentToken == "-scenePath" && argIndex+1 < argc) {
+			if (currentToken == "-scenePath" && argIndex+1 < argc) {
 				scenePath = atoi(argv[++argIndex]);
-			}
-			else if (currentToken == "-ns" && argIndex+1 < argc) {
-				numSamples = atoi(argv[++argIndex]);
-			}
-			else if (currentToken == "-cameratype" && argIndex + 1 < argc) {
-				std::string cameraTypeToken = argv[++argIndex];
-				convertTokenToLowerCase(cameraTypeToken);
-				if (cameraTypeToken == "thinlens") {
-					cameraType = Camera::CameraType::ThinLens;
-				}
-				else if (cameraTypeToken == "fisheye") {
-					cameraType = Camera::CameraType::FishEye;
-				}
-				else if (cameraTypeToken == "spherical") {
-					cameraType = Camera::CameraType::SphericalPanoramicCamera;
-				}
-				else if (cameraTypeToken == "orthographic") {
-					cameraType = Camera::CameraType::Orthographic;
-				}
 			}
 			else if (currentToken == "-offline") {
 				offlineRender = true;
 			}
-			else if (currentToken == "-samplertype" && argIndex + 1 < argc) {
-				std::string samplerTypeToken = argv[++argIndex];
-				convertTokenToLowerCase(samplerTypeToken);
-				if (samplerTypeToken == "random") {
-					randomSamplerType = Random;
-				}
-				else if (samplerTypeToken == "jittered") {
-					randomSamplerType = Jittered;
-				}
-				else if (samplerTypeToken == "nrooks") {
-					randomSamplerType = NRooks;
-				}
-				else if (samplerTypeToken == "multijittered") {
-					randomSamplerType = MultiJittered;
-				}
-				else {
-					std::cerr << "Cannot understand sampler type specified: "
-						<< samplerTypeToken.c_str() << std::endl;
-				}
-			}
 		}
 	}
+	
+	Scene *simpleWorld = createSimpleWorld(scenePath);
+	width = simpleWorld->GetNumColumnsPixels();
+	height = simpleWorld->GetNumRowsPixels();
 
 	std::cout << "Framebuffer dimensions: " <<  width << "x" << height
 		<< ", num samples: " << numSamples << ".\n";
@@ -147,7 +106,6 @@ int main(int argc, char* argv[]) {
 	SDL_SetWindowGrab(window, SDL_TRUE);
 	SDL_ShowCursor(0);
 	
-	Scene *simpleWorld = createSimpleWorld(scenePath);
 	startRenderLoop(sdlRenderer, frameBufferTex, width, height,
 		numSamples, randomSamplerType, cameraType, simpleWorld);
 	delete simpleWorld;
