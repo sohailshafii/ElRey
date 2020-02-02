@@ -4,6 +4,7 @@
 #include <exception>
 #include <iostream>
 #include <sstream>
+#include "Common.h"
 #include "SceneData/Scene.h"
 #include "Math/Sphere.h"
 #include "Math/Plane.h"
@@ -12,7 +13,14 @@
 #include "SceneData/AmbientLight.h"
 #include "SceneData/DirectionalLight.h"
 #include "SceneData/PointLight.h"
+#include "Cameras/Camera.h"
+#include "Cameras/PinholeCamera.h"
+#include "Sampling/GenericSampler.h"
 
+static void SetUpRandomSampler(const nlohmann::json& jsonObj,
+							   std::string &randomSamplerType,
+							   int &numRandomSamples, int &numRandomSets);
+static Camera* CreateCamera(const nlohmann::json& jsonObj);
 static Primitive* CreatePrimitive(const nlohmann::json& jsonObj);
 static std::shared_ptr<Material> CreateMaterial(const nlohmann::json& jsonObj);
 static Light* CreateLight(const nlohmann::json& jsonObj);
@@ -24,6 +32,11 @@ void SceneLoader::DeserializeJSONFileIntoScene(class Scene* scene,
 		nlohmann::json jsonObj;
 	
 		jsonFile >> jsonObj;
+		
+		nlohmann::json sceneSettings = jsonObj["scene_settings"];
+		nlohmann::json cameraSettings = sceneSettings["camera"];
+		Camera* mainCamera = CreateCamera(cameraSettings);
+		scene->SetCamera(mainCamera);
 		
 		nlohmann::json objectsArray = jsonObj["objects"];
 		for(auto& element : objectsArray.items()) {
@@ -56,6 +69,86 @@ static inline nlohmann::json SafeGetToken(const nlohmann::json& jsonObj,
 	exceptionMsg << "Could not find key: " << key
 		<< " in JSON object: " << jsonObj << ".\n";
 	throw exceptionMsg;
+}
+
+static void SetUpRandomSampler(const nlohmann::json& jsonObj,
+							   RandomSamplerType& randomSamplerType,
+							   int &numRandomSamples, int &numRandomSets) {
+	randomSamplerType = None;
+	std::string samplerTypeToken = SafeGetToken(jsonObj, "random_sampler_type");
+	if (samplerTypeToken == "random") {
+		randomSamplerType = Random;
+	}
+	else if (samplerTypeToken == "jittered") {
+		randomSamplerType = Jittered;
+	}
+	else if (samplerTypeToken == "nrooks") {
+		randomSamplerType = NRooks;
+	}
+	else if (samplerTypeToken == "multijittered") {
+		randomSamplerType = MultiJittered;
+	}
+	else if (samplerTypeToken == "none") {
+		// es ok
+	}
+	else {
+		std::stringstream exceptionMsg;
+		exceptionMsg << "Cannot understand sampler type specified: " <<
+			samplerTypeToken.c_str() << ".\n";
+		throw exceptionMsg;
+	}
+	numRandomSamples = SafeGetToken(jsonObj, "num_random_samples");
+	numRandomSets = SafeGetToken(jsonObj, "num_random_sets");
+}
+
+static Camera* CreateCamera(const nlohmann::json& jsonObj) {
+	std::string cameraType = SafeGetToken(jsonObj, "type");
+	Camera* mainCamera = nullptr;
+	if (cameraType == "pinhole") {
+		auto eyePosition = SafeGetToken(jsonObj, "eye_position");
+		auto lookAtPosition = SafeGetToken(jsonObj, "look_at_position");
+		int numColumnsPixels = SafeGetToken(jsonObj, "num_columns_pixels");
+		int numRowsPixels = SafeGetToken(jsonObj, "num_rows_pixels");
+		float viewPlaneWidth = SafeGetToken(jsonObj, "view_plane_width");
+		auto upVector = SafeGetToken(jsonObj, "up_vector");
+		RandomSamplerType randomSamplerType;
+		int numRandomSamples, numRandomSets;
+		SetUpRandomSampler(jsonObj, randomSamplerType, numRandomSamples,
+						   numRandomSets);
+		
+		float viewPlaneHeight = viewPlaneWidth * (float)numRowsPixels / (float)numColumnsPixels;
+		float rowHeight = viewPlaneHeight / numRowsPixels;
+		float colWidth = viewPlaneWidth / numColumnsPixels;
+		std::cout << "Image plane dimensions: " << viewPlaneWidth << " x "
+			<< viewPlaneHeight << " Row height: " << rowHeight << ", col width: "
+			<< colWidth << ".\n";
+		
+		mainCamera = new PinholeCamera(Point3((float)eyePosition[0], (float)eyePosition[1],
+											  (float)eyePosition[2]),
+									   Point3((float)lookAtPosition[0], (float)lookAtPosition[1],
+											  (float)lookAtPosition[2]), numColumnsPixels,
+									   numRowsPixels, viewPlaneWidth, viewPlaneHeight,
+									   Vector3((float)upVector[0], (float)upVector[1], (float)upVector[2]), randomSamplerType,
+									   numRandomSamples, numRandomSets);
+	}
+	else if (cameraType == "fish_eye") {
+		
+	}
+	else if (cameraType == "ortho") {
+		
+	}
+	else if (cameraType == "spherical_pano") {
+		
+	}
+	else if (cameraType == "thin_lens") {
+	}
+	else {
+		std::stringstream exceptionMsg;
+		exceptionMsg << "Could not recognize camera type: " << cameraType
+			<< ".\n";
+		throw exceptionMsg;
+	}
+	return mainCamera;
 }
 
 static Primitive* CreatePrimitive(const nlohmann::json& jsonObj) {
@@ -117,14 +210,14 @@ Light* CreateLight(const nlohmann::json& jsonObj) {
 	std::string primitiveType = SafeGetToken(jsonObj, "type");
 	if (primitiveType == "ambient") {
 		auto radiance = SafeGetToken(jsonObj, "radiance");
-		float radianceScale = SafeGetToken(jsonObj, "radianceScale");
+		float radianceScale = SafeGetToken(jsonObj, "radiance_scale");
 		newLight = new AmbientLight(Color3((float)radiance[0], (float)radiance[1],
 			(float)radiance[2]), radianceScale);
 	}
 	else if (primitiveType == "directional") {
 		auto direction = SafeGetToken(jsonObj, "direction");
 		auto radiance = SafeGetToken(jsonObj, "radiance");
-		float radianceScale = SafeGetToken(jsonObj, "radianceScale");
+		float radianceScale = SafeGetToken(jsonObj, "radiance_scale");
 		newLight = new DirectionalLight(Vector3((float)direction[0], (float)direction[1],
 			(float)direction[2]), Color3((float)radiance[0], (float)radiance[1],
 			(float)radiance[2]), radianceScale);
@@ -132,7 +225,7 @@ Light* CreateLight(const nlohmann::json& jsonObj) {
 	else if (primitiveType == "point") {
 		auto position = SafeGetToken(jsonObj, "position");
 		auto radiance = SafeGetToken(jsonObj, "radiance");
-		float radianceScale = SafeGetToken(jsonObj, "radianceScale");
+		float radianceScale = SafeGetToken(jsonObj, "radiance_scale");
 		newLight = new PointLight(Point3((float)position[0], (float)position[1],
 			(float)position[2]), Color3((float)radiance[0], (float)radiance[1],
 			(float)radiance[2]), radianceScale);

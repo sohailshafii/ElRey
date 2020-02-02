@@ -11,16 +11,21 @@ Scene::Scene() {
 
 	lights = nullptr;
 	numLights = 0;
+	mainCamera = nullptr;
 }
 
 Scene::Scene(Primitive **primitives, unsigned int numPrimitives) {
 	this->primitives = primitives;
 	this->numPrimitives = numPrimitives;
+	mainCamera = nullptr;
 }
 
 Scene::~Scene() {
 	cleanUpPrimitives(this->primitives, this->numPrimitives);
 	cleanUpLights(this->lights, this->numLights);
+	if (mainCamera != nullptr) {
+		delete mainCamera;
+	}
 }
 
 void Scene::cleanUpPrimitives(Primitive **primitivesToClean, unsigned int

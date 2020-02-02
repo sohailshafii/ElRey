@@ -246,8 +246,8 @@ void startRenderLoop(SDL_Renderer *sdlRenderer, SDL_Texture* frameBufferTex,
 	std::cout.precision(5);
 	// assume left-handed coordinate system, where z goes into screen
 	Point3 eyePosition(0.0f, 1.0f, 0.6f);
-	float castPlaneHeight = 0.8f;
-	float castPlaneWidth = castPlaneHeight * (float)widthPixels / (float)heightPixels;
+	float castPlaneWidth = 1.0f;
+	float castPlaneHeight = castPlaneWidth * (float)heightPixels / (float)widthPixels;
 	float rowHeight = castPlaneHeight / heightPixels;
 	float colWidth = castPlaneWidth / widthPixels;
 	std::cout << "Image plane dimensions: " << castPlaneWidth << " x "

@@ -2,6 +2,7 @@
 
 #include "Math/Primitive.h"
 #include "SceneData/Light.h"
+#include "Cameras/Camera.h"
 
 // simple base class for all acceleration structures, or really anything
 // that represents our world.
@@ -29,6 +30,13 @@ public:
 	unsigned int GetNumPrimitives() const {
 		return numPrimitives;
 	}
+	
+	void SetCamera(Camera *newCamera) {
+		if (mainCamera != nullptr) {
+			delete mainCamera;
+		}
+		mainCamera = newCamera;
+	}
 
 private:
 	void cleanUpPrimitives(Primitive **primitivesToClean, unsigned int
@@ -43,4 +51,6 @@ protected:
 
 	Light** lights;
 	unsigned int numLights;
+	
+	Camera* mainCamera;
 };

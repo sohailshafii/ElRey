@@ -1,4 +1,21 @@
 {
+	"scene_settings":
+	{
+		"navigation_type":"fps",
+		"camera":
+		{
+			"type":"pinhole",
+			"eye_position":[0.0,1.0,0.6],
+			"look_at_position":[0.0,1.0,0.8],
+			"num_columns_pixels":300,
+			"num_rows_pixels":200,
+			"view_plane_width":1.0,
+			"up_vector":[0.0,1.0,0.0],
+			"random_sampler_type":"none",
+			"num_random_samples":1,
+			"num_random_sets":1
+		}
+	},
 	"objects":
 	[
 		{
@@ -31,13 +48,13 @@
 		{
 			"type":"ambient",
 			"radiance":[0.01,0.01,0.01],
-			"radianceScale":1.0
+			"radiance_scale":1.0
 		},
 		{
 			"type":"directional",
 			"direction":[-0.5,-0.2,-0.1],
 			"radiance":[0.4,0.4,0.4],
-			"radianceScale":1.0
+			"radiance_scale":1.0
 		}
 	]
 }
