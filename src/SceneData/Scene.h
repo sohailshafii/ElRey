@@ -58,9 +58,11 @@ public:
 	}
 
 private:
-	void cleanUpPrimitives(Primitive **primitivesToClean, unsigned int
+	void CleanUpPrimitives(Primitive **primitivesToClean, unsigned int
 		numToClean);
-	void cleanUpLights(Light** lightsToClean, unsigned int numToClean);
+	void CleanUpLights(Light** lightsToClean, unsigned int numToClean);
+	
+	bool TestShadowFeeler(IntersectionResult& interesectionResult);
 
 protected:
 	// each item is a pointer to a primitive type,

@@ -46,3 +46,8 @@ bool Sphere::Intersect(const Ray &ray, float tMin, float& tMax,
 	// all tests failed so far
 	return false;
 }
+
+bool Sphere::IntersectShadow(const Ray &ray, IntersectionResult
+					 &intersectionResult) {
+	return true; // TODO
+}

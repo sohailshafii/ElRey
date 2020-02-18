@@ -14,6 +14,8 @@ public:
 
 	bool Intersect(const Ray &ray, float tMin, float& tMax,
 				   IntersectionResult &intersectionResult) override;
+	bool IntersectShadow(const Ray &ray, IntersectionResult
+						 &intersectionResult) override;
 	
 	virtual Vector3 GetNormalAtPosition(const Point3& position) const override {
 		return normal;

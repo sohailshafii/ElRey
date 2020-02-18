@@ -21,14 +21,14 @@ Scene::Scene(Primitive **primitives, unsigned int numPrimitives) {
 }
 
 Scene::~Scene() {
-	cleanUpPrimitives(this->primitives, this->numPrimitives);
-	cleanUpLights(this->lights, this->numLights);
+	CleanUpPrimitives(this->primitives, this->numPrimitives);
+	CleanUpLights(this->lights, this->numLights);
 	if (mainCamera != nullptr) {
 		delete mainCamera;
 	}
 }
 
-void Scene::cleanUpPrimitives(Primitive **primitivesToClean, unsigned int
+void Scene::CleanUpPrimitives(Primitive **primitivesToClean, unsigned int
 	numToClean) {
 	if (primitivesToClean != nullptr) {
 		for(unsigned int i = 0; i < numToClean; i++) {
@@ -38,7 +38,7 @@ void Scene::cleanUpPrimitives(Primitive **primitivesToClean, unsigned int
 	}
 }
 
-void Scene::cleanUpLights(Light** lightsToClean, unsigned int numToClean) {
+void Scene::CleanUpLights(Light** lightsToClean, unsigned int numToClean) {
 	if (lightsToClean != nullptr) {
 		for (unsigned int i = 0; i < numToClean; i++) {
 			delete lightsToClean[i];
@@ -150,8 +150,7 @@ bool Scene::Intersect(const Ray &ray, Color &newColor,
 		}
 	}
 	
-	if (closestPrimitive != nullptr)
-	{
+	if (closestPrimitive != nullptr) {
 		std::shared_ptr<Material> primitivePtr = closestPrimitive->GetMaterial();
 		intersectionResult.SetIncomingDirection(ray);
 		intersectionResult.SetIntersectionT(tMax);
@@ -185,16 +184,22 @@ bool Scene::Intersect(const Ray &ray, Color &newColor,
 	return closestPrimitive != nullptr;
 }
 
+bool Scene::TestShadowFeeler(IntersectionResult& interesectionResult) {
+	for (unsigned int i = 0; i < numPrimitives; i++) {
+		auto currentPrimitive = this->primitives[i];
+		// TODO
+	}
+	return false;
+}
+
 void Scene::TranslateAndRotate(const Vector3& translation, float rightRotationDegrees,
-						float upRotationDegrees)
-{
+						float upRotationDegrees) {
 	if (!allowNavigation) {
 		return;
 	}
 	mainCamera->TranslateAndRotate(translation, rightRotationDegrees, upRotationDegrees);
 }
 
-void Scene::CastIntoScene(unsigned char* pixels, unsigned int bytesPerPixel, float frameTime)
-{
+void Scene::CastIntoScene(unsigned char* pixels, unsigned int bytesPerPixel, float frameTime) {
 	mainCamera->CastIntoScene(pixels, bytesPerPixel, this, frameTime);
 }

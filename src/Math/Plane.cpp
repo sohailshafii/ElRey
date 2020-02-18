@@ -20,6 +20,11 @@ bool Plane::Intersect(const Ray &ray, float tMin, float& tMax,
 	
 	tMax = t;
 	intersectionResult.SetIntersectionT(tMax);
-	//intersectionResult.SetIntersectionNormal(normal);
 	return true;
+}
+
+bool Plane::IntersectShadow(const Ray &ray, IntersectionResult
+							&intersectionResult)
+{
+	return true; // TODO
 }
