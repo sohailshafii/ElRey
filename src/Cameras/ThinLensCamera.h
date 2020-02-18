@@ -37,11 +37,6 @@ protected:
 		direction.Normalize();
 		ray.SetDirection(direction);
 	}
-	
-	// 1.0/1.8
-	float GetInvGamma() const override {
-		return 0.5556f;
-	}
 
 private:
 	float lensRadius;
