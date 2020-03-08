@@ -4,35 +4,21 @@
 		"navigation_type":"none",
 		"camera":
 		{
-			"type":"thin_lens",
+			
+"type":"pinhole",
 "eye_position":[0.0,1.0,0.6],
 "look_at_position":[0.0,1.0,0.8],
 "num_columns_pixels":300,
 "num_rows_pixels":200,
 "view_plane_width":1.0,
 "up_vector":[0.0,1.0,0.0],
-"random_sampler_type":"random",
-"num_random_samples":16,
-"num_random_sets":1,
-"lens_radius":0.01,
-"focal_plane_distance":0.2,
-"exposure_time":1.0
+"random_sampler_type":"multijittered",
+"num_random_samples":64,
+"num_random_sets":1
 		}
 	},
 	"objects":
 	[
-		{
-			"type":"plane",
-			"position":[0.0,0.0,0.0],
-			"normal":[0.0,1.0,0.0],
-			"material":
-			{
-				"type":"lambertian",
-				"ka":0.001,
-				"kd":0.45,
-				"color":[1.0,1.0,0.0,1.0]
-			}
-		},
 		{
 			"type":"sphere",
 			"position":[0.0,1.0,1.0],
