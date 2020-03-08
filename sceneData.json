@@ -3,9 +3,8 @@
 	{
 		"navigation_type":"none",
 		"camera":
-		{
-			
-"type":"thin_lens",
+		{		
+"type":"pinhole",
 "eye_position":[0.0,1.0,0.6],
 "look_at_position":[0.0,1.0,0.8],
 "num_columns_pixels":300,
@@ -13,11 +12,8 @@
 "view_plane_width":1.0,
 "up_vector":[0.0,1.0,0.0],
 "random_sampler_type":"multijittered",
-"num_random_samples":36,
-"num_random_sets":1,
-"lens_radius":0.03,
-"focal_plane_distance":0.1,
-"exposure_time":1.0
+"num_random_samples":16,
+"num_random_sets":1
 		}
 	},
 	"objects":
