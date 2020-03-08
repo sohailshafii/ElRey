@@ -12,6 +12,10 @@ public:
 	virtual Vector3 GetDirectionFromPosition(
 		const Point3& worldPosition) override;
 	virtual Color3 GetRadiance() override;
+	
+	virtual bool CastsShadows() override {
+		return true;
+	}
 
 private:
 	Point3 lightPosition;

@@ -16,4 +16,5 @@ public:
 	virtual Vector3 GetDirectionFromPosition(
 		const Point3& worldPosition) = 0;
 	virtual Color3 GetRadiance() = 0;
+	virtual bool CastsShadows() = 0;
 };

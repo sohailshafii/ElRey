@@ -151,22 +151,30 @@ bool Scene::Intersect(const Ray &ray, Color &newColor,
 	}
 	
 	if (closestPrimitive != nullptr) {
-		//newColor = Color::Red();
 		std::shared_ptr<Material> primitivePtr = closestPrimitive->GetMaterial();
 		intersectionResult.SetIncomingDirection(ray);
 		intersectionResult.SetIntersectionT(tMax);
-	
+		auto intersectionPos = ray.GetPositionAtParam(tMax);
+		
 		for (unsigned int i = 0; i < numLights; i++) {
 			auto currentLight = this->lights[i];
+			Vector3 vectorToLight = -currentLight->GetDirectionFromPosition(
+																			intersectionPos);
+			float vectorMagn = vectorToLight.Norm();
+			bool isAmbientLight = vectorMagn < EPSILON;
+			
+			// test shadow feeler if light supports it!
+			if (currentLight->CastsShadows() &&
+				ShadowFeelerIntersectsObject(intersectionResult)) {
+				continue;
+			}
+		
 			auto lightRadiance = currentLight->GetRadiance();
 			Color lightRadColor4 = Color(lightRadiance[0], lightRadiance[1],
 										 lightRadiance[2], 0.0);
-			auto intersectionPos = ray.GetPositionAtParam(tMax);
-			Vector3 vectorToLight = -currentLight->GetDirectionFromPosition(
-																		   intersectionPos);
+			
 			// skip ambient lights, or lights with zero magnitude
-			float vectorMagn = vectorToLight.Norm();
-			if (vectorMagn < EPSILON) {
+			if (isAmbientLight) {
 				newColor += primitivePtr->GetAmbientColor(intersectionResult)*lightRadColor4;
 				continue;
 			}
@@ -185,7 +193,7 @@ bool Scene::Intersect(const Ray &ray, Color &newColor,
 	return closestPrimitive != nullptr;
 }
 
-bool Scene::TestShadowFeeler(IntersectionResult& interesectionResult) {
+bool Scene::ShadowFeelerIntersectsObject(IntersectionResult& interesectionResult) const {
 	for (unsigned int i = 0; i < numPrimitives; i++) {
 		auto currentPrimitive = this->primitives[i];
 		// TODO
