@@ -16,7 +16,7 @@ GenericMultiSampler::GenericMultiSampler(unsigned int numSamples) : GenericSampl
 }
 
 GenericMultiSampler::GenericMultiSampler(unsigned int numSets, unsigned int numSamples) :
-	GenericSampler(numSets, numSamples),count(0), jump(0),
+	GenericSampler(numSets, numSamples), count(0), jump(0),
 	diskSamples(nullptr), shuffledIndices(nullptr) {
 	InitializeMultiSampler();
 }
@@ -79,7 +79,7 @@ void GenericMultiSampler::MapSamplesToUnitDisk() {
 				phi = y / x;
 			}
 			else {
-				r = x;
+				r = y;
 				phi = 2.0f - x / y;
 			}
 		}
