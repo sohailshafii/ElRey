@@ -12,10 +12,10 @@
 "num_rows_pixels":200,
 "view_plane_width":1.0,
 "up_vector":[0.0,1.0,0.0],
-"random_sampler_type":"random",
+"random_sampler_type":"multijittered",
 "num_random_samples":36,
 "num_random_sets":1,
-"lens_radius":0.013,
+"lens_radius":0.03,
 "focal_plane_distance":0.1,
 "exposure_time":1.0
 		}
@@ -29,8 +29,8 @@
 			"material":
 			{
 				"type":"lambertian",
-				"ka":0.001,
-				"kd":0.45,
+				"ka":0.1,
+				"kd":0.7,
 				"color":[1.0,1.0,0.0,1.0]
 			}
 		},
@@ -41,8 +41,8 @@
 			"material":
 			{
 				"type":"phong",
-				"ka":0.001,
-				"kd":0.45,
+				"ka":0.1,
+				"kd":0.95,
 				"ks":0.1,
 				"exponent":10,
 				"ks_color":[1.0, 1.0, 1.0],
@@ -55,13 +55,13 @@
 		{
 			"type":"ambient",
 			"radiance":[1.0,1.0,1.0],
-			"radiance_scale":0.01
+			"radiance_scale":0.1
 		},
 		{
 			"type":"directional",
 			"direction":[-0.5,-0.2,-0.1],
 			"radiance":[0.4,0.4,0.4],
-			"radiance_scale":1.0
+			"radiance_scale":5.0
 		}
 	]
 }

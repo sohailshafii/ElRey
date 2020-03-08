@@ -58,7 +58,7 @@ protected:
 	virtual float GetFinalPixelMultFact() const = 0;
 	virtual void AffectFirstRay(Ray &ray, const Point2 &pixelPoint) const = 0;
 	virtual float GetInvGamma() const {
-		return 0.556f;
+		return 0.556f; // 1.0/1.8f
 	}
 	
 	Point3 eyePosition;

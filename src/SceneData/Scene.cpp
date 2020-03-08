@@ -151,6 +151,7 @@ bool Scene::Intersect(const Ray &ray, Color &newColor,
 	}
 	
 	if (closestPrimitive != nullptr) {
+		//newColor = Color::Red();
 		std::shared_ptr<Material> primitivePtr = closestPrimitive->GetMaterial();
 		intersectionResult.SetIncomingDirection(ray);
 		intersectionResult.SetIntersectionT(tMax);
