@@ -7,6 +7,8 @@
 
 #define EPSILON 0.0000001f
 
+#define SHADOW_FEELER_EPSILON 0.01f
+
 #ifndef M_PI
 # define M_PI 3.14159265358979323846f
 #endif

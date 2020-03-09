@@ -4,10 +4,15 @@ class Color3 {
 public:
 	Color3() {
 	}
+	
 	Color3(float r, float g, float b) {
 		comp[0] = r;
 		comp[1] = g;
 		comp[2] = b;
+	}
+	
+	float GetRelativeLuminance() const {
+		return 0.2126f*comp[0] + 0.7152f*comp[1] + 0.0722f*comp[2];
 	}
 
 	Color3(const Color3 &p2);

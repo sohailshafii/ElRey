@@ -1,7 +1,7 @@
 {
 	"scene_settings":
 	{
-		"navigation_type":"none",
+		"navigation_type":"fps",
 		"camera":
 		{		
 "type":"pinhole",
@@ -11,8 +11,8 @@
 "num_rows_pixels":200,
 "view_plane_width":1.0,
 "up_vector":[0.0,1.0,0.0],
-"random_sampler_type":"multijittered",
-"num_random_samples":16,
+"random_sampler_type":"none",
+"num_random_samples":1,
 "num_random_sets":1
 		}
 	},

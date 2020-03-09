@@ -5,12 +5,17 @@ public:
 	Color() {
 		
 	}
+	
 	Color(float r, float g, float b,
 		float a) {
 		comp[0] = r;
 		comp[1] = g;
 		comp[2] = b;
 		comp[3] = a;
+	}
+	
+	float GetRelativeLuminance() const {
+		return 0.2126f*comp[0] + 0.7152f*comp[1] + 0.0722f*comp[2];
 	}
 
 	Color(const Color &p2);

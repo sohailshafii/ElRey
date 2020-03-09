@@ -163,11 +163,7 @@ bool Scene::Intersect(const Ray &ray, Color &newColor,
 			float vectorMagn = vectorToLight.Norm();
 			bool isAmbientLight = vectorMagn < EPSILON;
 			
-			// test shadow feeler if light supports it!
-			if (currentLight->CastsShadows() &&
-				ShadowFeelerIntersectsObject(intersectionResult)) {
-				continue;
-			}
+			
 		
 			auto lightRadiance = currentLight->GetRadiance();
 			Color lightRadColor4 = Color(lightRadiance[0], lightRadiance[1],
@@ -175,7 +171,8 @@ bool Scene::Intersect(const Ray &ray, Color &newColor,
 			
 			// skip ambient lights, or lights with zero magnitude
 			if (isAmbientLight) {
-				newColor += primitivePtr->GetAmbientColor(intersectionResult)*lightRadColor4;
+				// TODO: handle this outside of loop
+				//newColor += primitivePtr->GetAmbientColor(intersectionResult)*lightRadColor4;
 				continue;
 			}
 			
@@ -184,8 +181,17 @@ bool Scene::Intersect(const Ray &ray, Color &newColor,
 			intersectionResult.SetIntersectionNormal(normalVec);
 			float projectionTerm = vectorToLight*normalVec;
 			if (projectionTerm > 0.0f) {
-				intersectionResult.SetVectorToLight(vectorToLight);
-				newColor += primitivePtr->GetDirectColor(intersectionResult)*lightRadColor4*projectionTerm;
+				bool inShadow = false;
+				// test shadow feeler if light supports it!
+				/*if (currentLight->CastsShadows() &&
+					!ShadowFeelerIntersectsObject(Ray(intersectionPos, vectorToLight), SHADOW_FEELER_EPSILON, std::numeric_limits<float>::max())) {
+					inShadow = true;
+				}*/
+				
+				if (!inShadow) {
+					intersectionResult.SetVectorToLight(vectorToLight);
+					newColor += primitivePtr->GetDirectColor(intersectionResult)*lightRadColor4*projectionTerm;
+				}
 			}
 		}
 	}
@@ -193,10 +199,14 @@ bool Scene::Intersect(const Ray &ray, Color &newColor,
 	return closestPrimitive != nullptr;
 }
 
-bool Scene::ShadowFeelerIntersectsObject(IntersectionResult& interesectionResult) const {
+bool Scene::ShadowFeelerIntersectsObject(const Ray& ray, float tMin,
+float tMax) const {
 	for (unsigned int i = 0; i < numPrimitives; i++) {
 		auto currentPrimitive = this->primitives[i];
-		// TODO
+		if (currentPrimitive->IntersectShadow(ray, tMin, tMax))
+		{
+			return true;
+		}
 	}
 	return false;
 }

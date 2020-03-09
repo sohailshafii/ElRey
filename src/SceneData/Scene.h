@@ -62,7 +62,8 @@ private:
 		numToClean);
 	void CleanUpLights(Light** lightsToClean, unsigned int numToClean);
 	
-	bool ShadowFeelerIntersectsObject(IntersectionResult& interesectionResult) const;
+	bool ShadowFeelerIntersectsObject(const Ray& ray, float tMin,
+									  float tMax) const;
 
 protected:
 	// each item is a pointer to a primitive type,

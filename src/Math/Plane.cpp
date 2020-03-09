@@ -23,8 +23,22 @@ bool Plane::Intersect(const Ray &ray, float tMin, float& tMax,
 	return true;
 }
 
-bool Plane::IntersectShadow(const Ray &ray, IntersectionResult
-							&intersectionResult)
+bool Plane::IntersectShadow(const Ray &ray, float tMin, float tMax)
 {
-	return true; // TODO
+	const Point3& rayOrigin = ray.GetOrigin();
+	const Vector3& rayDirection = ray.GetDirection();
+
+	float vDotNormal = rayDirection*normal;
+	if (vDotNormal > -EPSILON && vDotNormal <
+		EPSILON) {
+		return false;
+	}
+
+	float t = -(rayOrigin*normal + distance)/vDotNormal;
+
+	if (t < tMin || t > tMax) {
+		return false;
+	}
+	
+	return true;
 }

@@ -47,7 +47,32 @@ bool Sphere::Intersect(const Ray &ray, float tMin, float& tMax,
 	return false;
 }
 
-bool Sphere::IntersectShadow(const Ray &ray, IntersectionResult
-					 &intersectionResult) {
-	return true; // TODO
+bool Sphere::IntersectShadow(const Ray &ray, float tMin, float tMax) {
+	const Point3& rayOrigin = ray.GetOrigin();
+	const Vector3& rayDirection = ray.GetDirection();
+
+	Vector3 centerToRayOrigin = rayOrigin - center;
+	float a = rayDirection*rayDirection;
+	float b = 2.0f * (centerToRayOrigin * rayDirection);
+	float c = centerToRayOrigin*centerToRayOrigin - radiusSqr;
+	float discr = b*b - 4.0f*a*c;
+
+	if (discr < 0.0f) {
+		return false;
+	}
+
+	float e = sqrt(discr);
+	float denom = 2.0f*a;
+	float t = (-b-e)/denom;
+	// smaller root
+	if (t > EPSILON && t > tMin && t < tMax) {
+		return true;
+	}
+
+	t = (-b+e)/denom;
+	if (t > EPSILON && t > tMin && t < tMax) {
+		return true;
+	}
+	
+	return false;
 }
