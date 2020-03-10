@@ -194,9 +194,13 @@ bool Scene::Intersect(const Ray &ray, Color &newColor,
 			float projectionTerm = vectorToLight*normalVec;
 			if (projectionTerm > 0.0f) {
 				bool inShadow = false;
+				// if the light has a limited cast range, don't test primitives
+				// that are further from light for shadow test
+				float maxCastDistance = currentLight->IsLightDistanceInfinite() ?
+				std::numeric_limits<float>::max() : vectorMagn;
 				// test shadow feeler if light supports it!
 				if (currentLight->CastsShadows() &&
-					ShadowFeelerIntersectsAnObject(Ray(intersectionPos+vectorToLight*SHADOW_FEELER_EPSILON, vectorToLight), 0.0f, std::numeric_limits<float>::max())) {
+					ShadowFeelerIntersectsAnObject(Ray(intersectionPos+vectorToLight*SHADOW_FEELER_EPSILON, vectorToLight), 0.0f, maxCastDistance)) {
 					inShadow = true;
 					numShadowsCast++;
 				}

@@ -21,4 +21,8 @@ public:
 	virtual bool IsAmbient() const {
 		return false;
 	}
+	
+	virtual bool IsLightDistanceInfinite() const {
+		return false;
+	}
 };

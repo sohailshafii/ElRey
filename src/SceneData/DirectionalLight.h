@@ -16,6 +16,10 @@ public:
 		return true;
 	}
 	
+	virtual bool IsLightDistanceInfinite() const override {
+		return true;
+	}
+	
 private:
 	Vector3 lightDirection;
 	Color3 radiancePreScaled;
