@@ -280,7 +280,8 @@ Light* CreateLight(const nlohmann::json& jsonObj) {
 		auto direction = SafeGetToken(jsonObj, "direction");
 		auto radiance = SafeGetToken(jsonObj, "radiance");
 		float radianceScale = SafeGetToken(jsonObj, "radiance_scale");
-		newLight = new DirectionalLight(Vector3((float)direction[0], (float)direction[1],
+		bool castsShadows = SafeGetToken(jsonObj, "casts_shadows");
+		newLight = new DirectionalLight(castsShadows, Vector3((float)direction[0], (float)direction[1],
 			(float)direction[2]), Color3((float)radiance[0], (float)radiance[1],
 			(float)radiance[2]), radianceScale);
 	}
@@ -288,7 +289,8 @@ Light* CreateLight(const nlohmann::json& jsonObj) {
 		auto position = SafeGetToken(jsonObj, "position");
 		auto radiance = SafeGetToken(jsonObj, "radiance");
 		float radianceScale = SafeGetToken(jsonObj, "radiance_scale");
-		newLight = new PointLight(Point3((float)position[0], (float)position[1],
+		bool castsShadows = SafeGetToken(jsonObj, "casts_shadows");
+		newLight = new PointLight(castsShadows, Point3((float)position[0], (float)position[1],
 			(float)position[2]), Color3((float)radiance[0], (float)radiance[1],
 			(float)radiance[2]), radianceScale);
 	}

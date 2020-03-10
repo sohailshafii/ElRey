@@ -1,7 +1,7 @@
 #include "PointLight.h"
 
-PointLight::PointLight(const Point3 &lightPosition,
-	const Color3& radiance, float radianceScale)
+PointLight::PointLight(bool castsShadows, const Point3 &lightPosition,
+	const Color3& radiance, float radianceScale) : Light(castsShadows)
 {
 	this->lightPosition = lightPosition;
 	this->radiancePreScaled = radiance*radianceScale;
