@@ -16,6 +16,10 @@ public:
 		return false;
 	}
 	
+	virtual bool IsAmbient() const override {
+		return true;
+	}
+	
 private:
 	Color3 radiancePreScaled;
 };

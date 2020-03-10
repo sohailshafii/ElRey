@@ -4,12 +4,14 @@
 #include "Math/CommonMath.h"
 #include "IntersectionResult.h"
 #include "SceneData/DirectionalLight.h"
+#include "SceneData/AmbientLight.h"
 
 Scene::Scene() {
 	primitives = nullptr;
 	numPrimitives = 0;
 
 	lights = nullptr;
+	ambientLight = nullptr;
 	numLights = 0;
 	mainCamera = nullptr;
 }
@@ -17,6 +19,8 @@ Scene::Scene() {
 Scene::Scene(Primitive **primitives, unsigned int numPrimitives) {
 	this->primitives = primitives;
 	this->numPrimitives = numPrimitives;
+	lights = nullptr;
+	ambientLight = nullptr;
 	mainCamera = nullptr;
 }
 
@@ -25,6 +29,9 @@ Scene::~Scene() {
 	CleanUpLights(this->lights, this->numLights);
 	if (mainCamera != nullptr) {
 		delete mainCamera;
+	}
+	if (ambientLight != nullptr) {
+		delete ambientLight;
 	}
 }
 
@@ -95,6 +102,11 @@ void Scene::AddLight(Light* newLight) {
 	if (newLight == nullptr) {
 		throw std::runtime_error("Trying to add invalid light!");
 	}
+	
+	if (newLight->IsAmbient()) {
+		SetAmbientLight(newLight);
+		return;
+	}
 
 	if (lights == nullptr) {
 		this->numLights = 1;
@@ -137,6 +149,13 @@ void Scene::AddLights(Light** newLights, unsigned int numNewLights) {
 	}
 }
 
+void Scene::SetAmbientLight(Light* newAmbientLight) {
+	if (ambientLight != nullptr) {
+		delete ambientLight;
+	}
+	ambientLight = newAmbientLight;
+}
+
 bool Scene::Intersect(const Ray &ray, Color &newColor,
 	float tMin, float& tMax) const {
 	
@@ -156,25 +175,18 @@ bool Scene::Intersect(const Ray &ray, Color &newColor,
 		intersectionResult.SetIntersectionT(tMax);
 		auto intersectionPos = ray.GetPositionAtParam(tMax);
 		
+		// count number of shadows cast -- if all lights
+		// cast shadows, we are in complete shadow
+		unsigned int numShadowsCast = 0;
+		
 		for (unsigned int i = 0; i < numLights; i++) {
 			auto currentLight = this->lights[i];
 			Vector3 vectorToLight = -currentLight->GetDirectionFromPosition(
 																			intersectionPos);
 			float vectorMagn = vectorToLight.Norm();
-			bool isAmbientLight = vectorMagn < EPSILON;
-			
-			
-		
 			auto lightRadiance = currentLight->GetRadiance();
 			Color lightRadColor4 = Color(lightRadiance[0], lightRadiance[1],
 										 lightRadiance[2], 0.0);
-			
-			// skip ambient lights, or lights with zero magnitude
-			if (isAmbientLight) {
-				// TODO: handle this outside of loop
-				//newColor += primitivePtr->GetAmbientColor(intersectionResult)*lightRadColor4;
-				continue;
-			}
 			
 			vectorToLight /= vectorMagn;
 			Vector3 normalVec = closestPrimitive->GetNormalAtPosition(intersectionPos);
@@ -183,10 +195,11 @@ bool Scene::Intersect(const Ray &ray, Color &newColor,
 			if (projectionTerm > 0.0f) {
 				bool inShadow = false;
 				// test shadow feeler if light supports it!
-				/*if (currentLight->CastsShadows() &&
-					!ShadowFeelerIntersectsObject(Ray(intersectionPos, vectorToLight), SHADOW_FEELER_EPSILON, std::numeric_limits<float>::max())) {
+				if (currentLight->CastsShadows() &&
+					ShadowFeelerIntersectsAnObject(Ray(intersectionPos+vectorToLight*SHADOW_FEELER_EPSILON, vectorToLight), 0.0f, std::numeric_limits<float>::max())) {
 					inShadow = true;
-				}*/
+					numShadowsCast++;
+				}
 				
 				if (!inShadow) {
 					intersectionResult.SetVectorToLight(vectorToLight);
@@ -194,12 +207,20 @@ bool Scene::Intersect(const Ray &ray, Color &newColor,
 				}
 			}
 		}
+		
+		// in complete shadow if all lights cast shadows; no
+		// ambient term in that condition
+		if (numShadowsCast < numLights && ambientLight != nullptr) {
+			auto lightRadiance = ambientLight->GetRadiance();
+			Color lightRadColor4 = Color(lightRadiance[0], lightRadiance[1], lightRadiance[2], 0.0);
+			newColor += primitivePtr->GetAmbientColor(intersectionResult)*lightRadColor4;
+		}
 	}
 
 	return closestPrimitive != nullptr;
 }
 
-bool Scene::ShadowFeelerIntersectsObject(const Ray& ray, float tMin,
+bool Scene::ShadowFeelerIntersectsAnObject(const Ray& ray, float tMin,
 float tMax) const {
 	for (unsigned int i = 0; i < numPrimitives; i++) {
 		auto currentPrimitive = this->primitives[i];

@@ -19,6 +19,8 @@ public:
 	virtual void AddLight(Light* newLight);
 	virtual void AddLights(Light** newLights,
 		unsigned int numNewLights);
+	
+	virtual void SetAmbientLight(Light* newAmbientLight);
 
 	virtual bool Intersect(const Ray &ray, Color &newColor,
 		float tMin, float& tMax) const;
@@ -62,7 +64,7 @@ private:
 		numToClean);
 	void CleanUpLights(Light** lightsToClean, unsigned int numToClean);
 	
-	bool ShadowFeelerIntersectsObject(const Ray& ray, float tMin,
+	bool ShadowFeelerIntersectsAnObject(const Ray& ray, float tMin,
 									  float tMax) const;
 
 protected:
@@ -72,6 +74,7 @@ protected:
 	unsigned int numPrimitives;
 
 	Light** lights;
+	Light* ambientLight;
 	unsigned int numLights;
 	
 	Camera* mainCamera;
