@@ -12,10 +12,18 @@ void OneSampleSampler::MapSamplesToUnitDisk() {
 	// nothin to see here
 }
 
+void OneSampleSampler::MapSamplesToHemisphere(float exponent) {
+	
+}
+
 Point2 OneSampleSampler::GetSampleOnUnitSquare() {
 	return samples[0];
 }
 
 Point2 OneSampleSampler::GetSampleOnUnitDisk() {
 	return samples[0];
+}
+
+Point3 OneSampleSampler::GetSampleOnHemisphere() {
+	return Point3();
 }

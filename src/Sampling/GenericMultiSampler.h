@@ -1,7 +1,6 @@
 #pragma once
 
 #include "GenericSampler.h"
-#include "Math/Point2.h"
 #include "CommonMath.h"
 
 class GenericMultiSampler : public GenericSampler {
@@ -12,9 +11,12 @@ public:
 
 	virtual ~GenericMultiSampler();
 
-	void MapSamplesToUnitDisk() override;
-	Point2 GetSampleOnUnitSquare() override;
-	Point2 GetSampleOnUnitDisk() override;
+	virtual void MapSamplesToUnitDisk() override;
+	virtual void MapSamplesToHemisphere(float exponent) override;
+	
+	virtual Point2 GetSampleOnUnitSquare() override;
+	virtual Point2 GetSampleOnUnitDisk() override;
+	virtual Point3 GetSampleOnHemisphere() override;
 
 protected:
 	// count is the number of sample points used
@@ -22,6 +24,7 @@ protected:
 	unsigned int jump;
 
 	Point2* diskSamples;
+	Point3* hemisphereSamples;
 	unsigned int* shuffledIndices;
 
 	void InitializeMultiSampler();

@@ -7,8 +7,11 @@ public:
 	OneSampleSampler();
 	~OneSampleSampler();
 
-	void MapSamplesToUnitDisk() override;
-	Point2 GetSampleOnUnitSquare() override;
-	Point2 GetSampleOnUnitDisk() override;
+	virtual void MapSamplesToUnitDisk() override;
+	virtual void MapSamplesToHemisphere(float exponent) override;
+	
+	virtual Point2 GetSampleOnUnitSquare() override;
+	virtual Point2 GetSampleOnUnitDisk() override;
+	virtual Point3 GetSampleOnHemisphere() override;
 };
 

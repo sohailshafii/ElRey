@@ -214,6 +214,7 @@ bool Scene::Intersect(const Ray &ray, Color &newColor,
 		
 		// in complete shadow if all lights cast shadows; no
 		// ambient term in that condition
+		// TODO: support ambient occlusion light
 		if (numShadowsCast < numLights && ambientLight != nullptr) {
 			auto lightRadiance = ambientLight->GetRadiance();
 			Color lightRadColor4 = Color(lightRadiance[0], lightRadiance[1], lightRadiance[2], 0.0);

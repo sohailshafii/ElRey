@@ -5,11 +5,11 @@
 		"camera":
 		{		
 "type":"pinhole",
-"eye_position":[0.0,1.0,0.6],
-"look_at_position":[0.0,1.0,0.8],
+"eye_position":[0.0,1.0,0.0],
+"look_at_position":[0.0,1.0,-0.2],
 "num_columns_pixels":300,
 "num_rows_pixels":200,
-"view_plane_width":1.0,
+"view_plane_width":0.5,
 "up_vector":[0.0,1.0,0.0],
 "random_sampler_type":"none",
 "num_random_samples":1,
