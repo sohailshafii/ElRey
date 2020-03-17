@@ -120,9 +120,9 @@ void Camera::ComputeCoordinateRightAndUp() {
 	}
 #endif
 
-	right = forward ^ up;// up ^ forward;
+	right = up ^ forward;
 	right.Normalize();
-	up = right ^ forward;//forward ^ right;
+	up = forward ^ right;
 
 	// (no need to normalize as two normal vectors
 	// crossed results in a normal vector)
@@ -174,7 +174,7 @@ void Camera::CastIntoScene(unsigned char* pixels, unsigned int bytesPerPixel,
 	float invGamma = GetInvGamma();
 	float maxCastDistance = std::numeric_limits<float>::max();
 	float finalColorMultFactor = GetFinalPixelMultFact();
-// TODO: why is the stupid camera 90 degrees off?
+
 	for (unsigned int pixelIndex = 0, byteIndex = 0; pixelIndex < numPixels;
 		pixelIndex++, byteIndex += bytesPerPixel) {
 		float tMax = std::numeric_limits<float>::max();
