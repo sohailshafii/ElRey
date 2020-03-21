@@ -280,8 +280,12 @@ Light* CreateLight(const nlohmann::json& jsonObj) {
 		auto radiance = SafeGetToken(jsonObj, "radiance");
 		float radianceScale = SafeGetToken(jsonObj, "radiance_scale");
 		float minAmount = SafeGetToken(jsonObj, "min_amount");
+		RandomSamplerType randomSamplerType;
+		int numRandomSamples, numRandomSets;
+		SetUpRandomSampler(jsonObj, randomSamplerType, numRandomSamples,
+						   numRandomSets);
 		newLight = new AmbientLightOccluder(Color3((float)radiance[0], (float)radiance[1],
-			(float)radiance[2]), radianceScale, minAmount);
+			(float)radiance[2]), radianceScale, minAmount, randomSamplerType, numRandomSamples, numRandomSets);
 	}
 	else if (primitiveType == "directional") {
 		auto direction = SafeGetToken(jsonObj, "direction");

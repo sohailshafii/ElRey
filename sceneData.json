@@ -52,7 +52,10 @@
 			"type":"ambient_occluder",
 			"radiance":[1.0,1.0,1.0],
 			"radiance_scale":0.1,
-			"min_amount":0.01
+			"min_amount":0.01,
+			"random_sampler_type":"multijittered",
+			"num_random_samples":16,
+			"num_random_sets":1
 		},
 		{
 			"type":"directional",
