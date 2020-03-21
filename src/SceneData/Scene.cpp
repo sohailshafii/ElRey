@@ -158,7 +158,6 @@ void Scene::SetAmbientLight(Light* newAmbientLight) {
 
 bool Scene::Intersect(const Ray &ray, Color &newColor,
 	float tMin, float& tMax) const {
-	
 	Primitive* closestPrimitive = nullptr;
 	IntersectionResult intersectionResult;
 	for (unsigned int i = 0; i < numPrimitives; i++) {
@@ -175,9 +174,12 @@ bool Scene::Intersect(const Ray &ray, Color &newColor,
 		intersectionResult.SetIntersectionT(tMax);
 		auto intersectionPos = ray.GetPositionAtParam(tMax);
 		
-		// count number of shadows cast -- if all lights
-		// cast shadows, we are in complete shadow
-		unsigned int numShadowsCast = 0;
+		// ambient light if available
+		if (ambientLight != nullptr) {
+			auto lightRadiance = ambientLight->GetRadiance();
+			Color lightRadColor4 = Color(lightRadiance[0], lightRadiance[1], lightRadiance[2], 0.0);
+			newColor += primitivePtr->GetAmbientColor(intersectionResult)*lightRadColor4;
+		}
 		
 		for (unsigned int i = 0; i < numLights; i++) {
 			auto currentLight = this->lights[i];
@@ -202,7 +204,6 @@ bool Scene::Intersect(const Ray &ray, Color &newColor,
 				if (currentLight->CastsShadows() &&
 					ShadowFeelerIntersectsAnObject(Ray(intersectionPos+vectorToLight*SHADOW_FEELER_EPSILON, vectorToLight), 0.0f, maxCastDistance)) {
 					inShadow = true;
-					numShadowsCast++;
 				}
 				
 				if (!inShadow) {
@@ -210,15 +211,6 @@ bool Scene::Intersect(const Ray &ray, Color &newColor,
 					newColor += primitivePtr->GetDirectColor(intersectionResult)*lightRadColor4*projectionTerm;
 				}
 			}
-		}
-		
-		// in complete shadow if all lights cast shadows; no
-		// ambient term in that condition
-		// TODO: support ambient occlusion light
-		if (numShadowsCast < numLights && ambientLight != nullptr) {
-			auto lightRadiance = ambientLight->GetRadiance();
-			Color lightRadColor4 = Color(lightRadiance[0], lightRadiance[1], lightRadiance[2], 0.0);
-			newColor += primitivePtr->GetAmbientColor(intersectionResult)*lightRadColor4;
 		}
 	}
 

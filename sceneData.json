@@ -49,9 +49,10 @@
 	"lights":
 	[
 		{
-			"type":"ambient",
+			"type":"ambient_occluder",
 			"radiance":[1.0,1.0,1.0],
-			"radiance_scale":0.1
+			"radiance_scale":0.1,
+			"min_amount":0.01
 		},
 		{
 			"type":"directional",

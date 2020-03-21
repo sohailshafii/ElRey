@@ -12,6 +12,7 @@
 #include "Materials/PhongMaterial.h"
 #include "SceneData/Light.h"
 #include "SceneData/AmbientLight.h"
+#include "SceneData/AmbientLightOccluder.h"
 #include "SceneData/DirectionalLight.h"
 #include "SceneData/PointLight.h"
 #include "Cameras/Camera.h"
@@ -21,7 +22,6 @@
 #include "Cameras/SphericalPanoramicCamera.h"
 #include "Cameras/ThinLensCamera.h"
 #include "Sampling/GenericSampler.h"
-
 
 static void SetUpRandomSampler(const nlohmann::json& jsonObj,
 							   RandomSamplerType& randomSamplerType,
@@ -275,6 +275,13 @@ Light* CreateLight(const nlohmann::json& jsonObj) {
 		float radianceScale = SafeGetToken(jsonObj, "radiance_scale");
 		newLight = new AmbientLight(Color3((float)radiance[0], (float)radiance[1],
 			(float)radiance[2]), radianceScale);
+	}
+	else if (primitiveType == "ambient_occluder") {
+		auto radiance = SafeGetToken(jsonObj, "radiance");
+		float radianceScale = SafeGetToken(jsonObj, "radiance_scale");
+		float minAmount = SafeGetToken(jsonObj, "min_amount");
+		newLight = new AmbientLightOccluder(Color3((float)radiance[0], (float)radiance[1],
+			(float)radiance[2]), radianceScale, minAmount);
 	}
 	else if (primitiveType == "directional") {
 		auto direction = SafeGetToken(jsonObj, "direction");
