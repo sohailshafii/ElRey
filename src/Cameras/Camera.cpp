@@ -150,12 +150,12 @@ void Camera::Transform(const Matrix& matrix) {
 
 void Camera::TranslateAndRotate(const Vector3& translation, float rightRotationDegrees,
 	float upRotationDegrees) {
-	float yawRad = upRotationDegrees*DEG_2_RAD;
+	float yawRad = -upRotationDegrees*DEG_2_RAD;
 	float pitchRad = rightRotationDegrees*DEG_2_RAD;
 	float cosPitchRad = cos(pitchRad);
-	forward[0] = cos(yawRad) * cosPitchRad;
+	forward[0] = sin(yawRad) * cosPitchRad;
     forward[1] = sin(pitchRad);
-    forward[2] = sin(yawRad) * cosPitchRad;
+    forward[2] = cos(yawRad) * cosPitchRad;
 	forward.Normalize();
 	right = Vector3::Up() ^ forward;
 	right.Normalize();
