@@ -5,14 +5,14 @@
 		"camera":
 		{		
 "type":"pinhole",
-"eye_position":[0.0,1.0,0.0],
-"look_at_position":[0.0,1.0,-0.2],
+"eye_position":[0.0,1.0,0.4],
+"look_at_position":[0.0,1.0,0.6],
 "num_columns_pixels":300,
 "num_rows_pixels":200,
-"view_plane_width":0.5,
+"view_plane_width":1.0,
 "up_vector":[0.0,1.0,0.0],
-"random_sampler_type":"none",
-"num_random_samples":1,
+"random_sampler_type":"multijittered",
+"num_random_samples":16,
 "num_random_sets":1
 		}
 	},
@@ -20,7 +20,7 @@
 	[
 		{
 			"type":"plane",
-			"position":[0.0,0.0,0.0],
+			"position":[0.0,0.5,0.0],
 			"normal":[0.0,1.0,0.0],
 			"material":
 			{
@@ -32,7 +32,7 @@
 		},
 		{
 			"type":"sphere",
-			"position":[0.0,1.0,-1.0],
+			"position":[0.0,1.0,1.0],
 			"radius":0.3,
 			"material":
 			{
@@ -55,7 +55,7 @@
 		},
 		{
 			"type":"directional",
-			"direction":[-0.5,-0.2,-0.1],
+			"direction":[-0.5,-0.4,-0.05],
 			"radiance":[0.4,0.4,0.4],
 			"radiance_scale":5.0,
 			"casts_shadows":true

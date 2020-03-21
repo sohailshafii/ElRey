@@ -56,9 +56,9 @@ Just some examples of cameras you can use in the sceneData.json file.
 "num_rows_pixels":200,
 "view_plane_width":1.0,
 "up_vector":[0.0,1.0,0.0],
-"random_sampler_type":"random",
-"num_random_samples":16,
+"random_sampler_type":"multijittered",
+"num_random_samples":36,
 "num_random_sets":1,
 "lens_radius":0.03,
-"focal_plane_distance":0.1,
+"focal_plane_distance":0.2,
 "exposure_time":1.0
