@@ -51,7 +51,6 @@ public:
 
 protected:
 	void ComputeForward();
-	void ComputeCoordinateRightAndUp();
 	
 	// some cameras require the final pixel to be multiplied by some value
 	// like exposure time

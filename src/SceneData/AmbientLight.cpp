@@ -10,7 +10,7 @@ AmbientLight::~AmbientLight()
 {
 }
 
-Vector3 AmbientLight::GetDirectionFromPosition(const Point3& worldPosition)
+Vector3 AmbientLight::GetDirectionFromPosition(const IntersectionResult& intersectionRes)
 {
 	return Vector3::Zero();
 }

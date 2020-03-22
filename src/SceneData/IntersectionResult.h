@@ -7,11 +7,13 @@ public:
 	IntersectionResult() {
 		
 	}
-	IntersectionResult(Ray incomingRay, Vector3 lightVector, Vector3 normalVector,
+	
+	IntersectionResult(Ray incomingRay, Vector3 lightVector, Vector3 normalVector, Point3 intersectionPosition,
 					   float rayIntersectT) {
 		this->incomingRay = incomingRay;
 		this->vectorToLight = lightVector;
 		this->normalVector = normalVector;
+		this->intersectionPosition = intersectionPosition;
 		this->incomingDirInverse = -incomingRay.GetDirection();
 		this->rayIntersectT = rayIntersectT;
 	}
@@ -27,6 +29,10 @@ public:
 	
 	void SetIntersectionNormal(const Vector3& normalVector) {
 		this->normalVector = normalVector;
+	}
+	
+	void SetIntersectionPosition(const Point3& intersectionPos) {
+		this->intersectionPosition = intersectionPos;
 	}
 	
 	void SetIntersectionT(float rayIntersectT) {
@@ -49,6 +55,10 @@ public:
 		return normalVector;
 	}
 	
+	const Point3 GetIntersectionPos() const {
+		return intersectionPosition;
+	}
+	
 	void SetVectorToLight(const Vector3 &vectorToLight) {
 		this->vectorToLight = vectorToLight;
 	}
@@ -63,5 +73,6 @@ private:
 	Vector3 vectorToLight;
 	Vector3 incomingDirInverse;
 	Vector3 normalVector;
+	Point3 intersectionPosition;
 	float rayIntersectT;
 };

@@ -9,7 +9,8 @@ public:
 					 float radianceScale);
 	~DirectionalLight();
 	
-	virtual Vector3 GetDirectionFromPosition(const Point3& worldPosition) override;
+	virtual Vector3 GetDirectionFromPosition(
+	const IntersectionResult& intersectionRes) override;
 	virtual Color3 GetRadiance() override;
 	
 	virtual bool IsLightDistanceInfinite() const override {

@@ -171,8 +171,10 @@ bool Scene::Intersect(const Ray &ray, Color &newColor,
 	if (closestPrimitive != nullptr) {
 		std::shared_ptr<Material> primitivePtr = closestPrimitive->GetMaterial();
 		intersectionResult.SetIncomingDirection(ray);
-		intersectionResult.SetIntersectionT(tMax);
+		
 		auto intersectionPos = ray.GetPositionAtParam(tMax);
+		intersectionResult.SetIntersectionT(tMax);
+		intersectionResult.SetIntersectionPosition(intersectionPos);
 		
 		// ambient light if available
 		if (ambientLight != nullptr) {
@@ -184,7 +186,7 @@ bool Scene::Intersect(const Ray &ray, Color &newColor,
 		for (unsigned int i = 0; i < numLights; i++) {
 			auto currentLight = this->lights[i];
 			Vector3 vectorToLight = -currentLight->GetDirectionFromPosition(
-																			intersectionPos);
+																			intersectionResult);
 			float vectorMagn = vectorToLight.Norm();
 			auto lightRadiance = currentLight->GetRadiance();
 			Color lightRadColor4 = Color(lightRadiance[0], lightRadiance[1],

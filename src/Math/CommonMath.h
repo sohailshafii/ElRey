@@ -18,6 +18,8 @@
 #define DEG_2_RAD M_PI/180.0f
 #define RAD_2_DEG 180.0f/M_PI
 
+class Vector3;
+
 class CommonMath {
 public:
 	// returns random value between 0 and 1
@@ -51,6 +53,8 @@ public:
 	static void SetRandSeed(unsigned int seed) {
 		srand(seed);
 	}
+	
+	static void ComputeUVWFromWandU(Vector3 &right, Vector3 &up, Vector3 &forward);
 
 	static const float randMaxInverse;
 

@@ -5,6 +5,7 @@
 #include "Sampling/JitteredSampler.h"
 #include "Sampling/NRooksSampler.h"
 #include "Sampling/MultiJitteredSampler.h"
+#include "CommonMath.h"
 
 AmbientLightOccluder::AmbientLightOccluder(const Color3& radiance, float radianceScale, float minAmount, RandomSamplerType
 randomSamplerType, unsigned int numRandomSamples, unsigned int numRandomSets) :
@@ -37,7 +38,11 @@ AmbientLightOccluder::~AmbientLightOccluder() {
 	}
 }
 
-Vector3 AmbientLightOccluder::GetDirectionFromPosition(const Point3& worldPosition) {
+Vector3 AmbientLightOccluder::GetDirectionFromPosition(
+const IntersectionResult& intersectionRes) {
+	Point3 sp = ambientSampler->GetSampleOnHemisphere();
+	//Vector3 right; Vector3 up; Vector3 forward = 
+	//CommonMath::ComputeUVWFromWandU(<#Vector3 &right#>, <#Vector3 &up#>, <#Vector3 &forward#>)
 	return Vector3::Zero();
 }
 

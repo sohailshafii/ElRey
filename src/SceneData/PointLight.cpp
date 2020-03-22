@@ -11,9 +11,9 @@ PointLight::~PointLight()
 {
 }
 
-Vector3 PointLight::GetDirectionFromPosition(const Point3& worldPosition) 
+Vector3 PointLight::GetDirectionFromPosition(const IntersectionResult& intersectionRes)
 {
-	Vector3 directionFromPos = (worldPosition - lightPosition);
+	Vector3 directionFromPos = (intersectionRes.GetIntersectionPos() - lightPosition);
 	directionFromPos.Normalize();
 	return directionFromPos;
 }

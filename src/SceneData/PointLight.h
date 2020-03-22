@@ -10,7 +10,7 @@ public:
 	~PointLight();
 
 	virtual Vector3 GetDirectionFromPosition(
-		const Point3& worldPosition) override;
+	const IntersectionResult& intersectionRes) override;
 	virtual Color3 GetRadiance() override;
 
 private:
