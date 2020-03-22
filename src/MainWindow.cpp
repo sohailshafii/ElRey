@@ -213,6 +213,8 @@ void startRenderLoop(SDL_Renderer *sdlRenderer, SDL_Texture* frameBufferTex,
 	
 	if (offlineMode) {
 		gameWorld->CastIntoScene(pixels, bytesPerPixel, 0.0f, false);
+		std::cout << "Render time: " <<
+		(float)(SDL_GetTicks() - lastFrameTicks) * TICKS_TO_SECONDS << " seconds.\n";
 		stbi_write_png("./renderOutput.png", widthPixels, heightPixels, bytesPerPixel, pixels, pitch);
 		return;
 	}
