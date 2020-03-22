@@ -11,7 +11,7 @@ public:
 	
 	virtual Vector3 GetDirectionFromPosition(
 	const IntersectionResult& intersectionRes) override;
-	virtual Color3 GetRadiance() override;
+	virtual Color3 GetRadiance(const IntersectionResult& intersectionRes, const Scene& scene) override;
 	
 	virtual bool IsLightDistanceInfinite() const override {
 		return true;

@@ -5,10 +5,10 @@
 		"camera":
 		{		
 "type":"pinhole",
-"eye_position":[0.0,1.0,0.4],
-"look_at_position":[0.0,1.0,0.6],
-"num_columns_pixels":300,
-"num_rows_pixels":200,
+"eye_position":[0.0,1.0,0.5],
+"look_at_position":[0.0,1.0,0.7],
+"num_columns_pixels":600,
+"num_rows_pixels":400,
 "view_plane_width":1.0,
 "up_vector":[0.0,1.0,0.0],
 "random_sampler_type":"multijittered",
@@ -51,10 +51,10 @@
 		{
 			"type":"ambient_occluder",
 			"radiance":[1.0,1.0,1.0],
-			"radiance_scale":0.1,
+			"radiance_scale":0.7,
 			"min_amount":0.01,
 			"random_sampler_type":"multijittered",
-			"num_random_samples":16,
+			"num_random_samples":36,
 			"num_random_sets":1
 		},
 		{

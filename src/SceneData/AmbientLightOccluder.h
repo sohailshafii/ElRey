@@ -15,7 +15,7 @@ public:
 	
 	virtual Vector3 GetDirectionFromPosition(
 											 const IntersectionResult& intersectionRes) override;
-	virtual Color3 GetRadiance() override;
+	virtual Color3 GetRadiance(const IntersectionResult& intersectionRes, const Scene& scene) override;
 	
 	virtual bool IsAmbient() const override {
 		return true;
@@ -23,6 +23,6 @@ public:
 	
 private:
 	Color3 radiancePreScaled;
-	float minAmount;
+	Color3 minRadiancePreScaled;
 	GenericSampler* ambientSampler;
 };

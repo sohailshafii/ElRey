@@ -5,6 +5,8 @@
 #include "Materials/Color3.h"
 #include "IntersectionResult.h"
 
+class Scene;
+
 class Light {
 public:
 	Light(bool castsShadows) : castsShadows(castsShadows) {
@@ -16,7 +18,7 @@ public:
 	
 	virtual Vector3 GetDirectionFromPosition(
 		const IntersectionResult& intersectionRes) = 0;
-	virtual Color3 GetRadiance() = 0;
+	virtual Color3 GetRadiance(const IntersectionResult& intersectionRes, const Scene& scene) = 0;
 	bool CastsShadows() {
 		return castsShadows;
 	}

@@ -58,14 +58,14 @@ public:
 	unsigned int GetNumColumnsPixels() const {
 		return mainCamera->GetNumColumnsPixels();
 	}
+	
+	bool ShadowFeelerIntersectsAnObject(const Ray& ray, float tMin,
+										float tMax) const;
 
 private:
 	void CleanUpPrimitives(Primitive **primitivesToClean, unsigned int
 		numToClean);
 	void CleanUpLights(Light** lightsToClean, unsigned int numToClean);
-	
-	bool ShadowFeelerIntersectsAnObject(const Ray& ray, float tMin,
-									  float tMax) const;
 
 protected:
 	// each item is a pointer to a primitive type,

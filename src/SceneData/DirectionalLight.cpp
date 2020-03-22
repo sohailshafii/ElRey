@@ -12,7 +12,7 @@ Vector3 DirectionalLight::GetDirectionFromPosition(const IntersectionResult& int
 	return lightDirection;
 }
 
-Color3 DirectionalLight::GetRadiance() {
+Color3 DirectionalLight::GetRadiance(const IntersectionResult& intersectionRes, const Scene& scene) {
 	return radiancePreScaled;
 }
 

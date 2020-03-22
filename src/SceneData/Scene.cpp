@@ -175,10 +175,13 @@ bool Scene::Intersect(const Ray &ray, Color &newColor,
 		auto intersectionPos = ray.GetPositionAtParam(tMax);
 		intersectionResult.SetIntersectionT(tMax);
 		intersectionResult.SetIntersectionPosition(intersectionPos);
+		// TODO: don't always need to calculate normal
+		Vector3 normalVec = closestPrimitive->GetNormalAtPosition(intersectionPos);
+		intersectionResult.SetIntersectionNormal(normalVec);
 		
 		// ambient light if available
 		if (ambientLight != nullptr) {
-			auto lightRadiance = ambientLight->GetRadiance();
+			auto lightRadiance = ambientLight->GetRadiance(intersectionResult, *this);
 			Color lightRadColor4 = Color(lightRadiance[0], lightRadiance[1], lightRadiance[2], 0.0);
 			newColor += primitivePtr->GetAmbientColor(intersectionResult)*lightRadColor4;
 		}
@@ -188,13 +191,11 @@ bool Scene::Intersect(const Ray &ray, Color &newColor,
 			Vector3 vectorToLight = -currentLight->GetDirectionFromPosition(
 																			intersectionResult);
 			float vectorMagn = vectorToLight.Norm();
-			auto lightRadiance = currentLight->GetRadiance();
+			auto lightRadiance = currentLight->GetRadiance(intersectionResult, *this);
 			Color lightRadColor4 = Color(lightRadiance[0], lightRadiance[1],
 										 lightRadiance[2], 0.0);
 			
 			vectorToLight /= vectorMagn;
-			Vector3 normalVec = closestPrimitive->GetNormalAtPosition(intersectionPos);
-			intersectionResult.SetIntersectionNormal(normalVec);
 			float projectionTerm = vectorToLight*normalVec;
 			if (projectionTerm > 0.0f) {
 				bool inShadow = false;

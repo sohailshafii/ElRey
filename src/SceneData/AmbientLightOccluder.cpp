@@ -5,13 +5,16 @@
 #include "Sampling/JitteredSampler.h"
 #include "Sampling/NRooksSampler.h"
 #include "Sampling/MultiJitteredSampler.h"
+#include "Math/Point3.h"
+#include "Scene.h"
 #include "CommonMath.h"
+#include <limits>
 
 AmbientLightOccluder::AmbientLightOccluder(const Color3& radiance, float radianceScale, float minAmount, RandomSamplerType
 randomSamplerType, unsigned int numRandomSamples, unsigned int numRandomSets) :
  Light(false) {
-	 radiancePreScaled = radiance*radianceScale;
-	 this->minAmount = minAmount;
+	 this->radiancePreScaled = radiance*radianceScale;
+	 this->minRadiancePreScaled = radiancePreScaled*minAmount;
 	 switch (randomSamplerType) {
 		 case Jittered:
 			 ambientSampler = new JitteredSampler(numRandomSets, numRandomSamples);
@@ -48,7 +51,12 @@ const IntersectionResult& intersectionRes) {
 	return right*sp[0] + up*sp[1] + forward*sp[2];
 }
 
-Color3 AmbientLightOccluder::GetRadiance() {
-	return radiancePreScaled;
+Color3 AmbientLightOccluder::GetRadiance(const IntersectionResult& intersectionRes, const Scene& scene) {
+	Vector3 castVec = GetDirectionFromPosition(intersectionRes);
+	Point3 castPoint = intersectionRes.GetIntersectionPos()+
+		castVec*SHADOW_FEELER_EPSILON;
+	bool shadowFeelerIntersects = scene.ShadowFeelerIntersectsAnObject(Ray(castPoint, castVec), 0.0f, std::numeric_limits<float>::max());
+	
+	return shadowFeelerIntersects ? minRadiancePreScaled : radiancePreScaled;
 }
 
