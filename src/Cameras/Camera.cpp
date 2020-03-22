@@ -124,7 +124,7 @@ void Camera::TranslateAndRotate(const Vector3& translation, float rightRotationD
 }
 
 void Camera::CastIntoScene(unsigned char* pixels, unsigned int bytesPerPixel,
-						   const Scene* scene, float frameTime) const {
+						   const Scene* scene, float frameTime, bool BGRMode) const {
 	unsigned int numSamples = viewPlaneSampler->GetNumSamples();
 	Ray rayToCast;
 	rayToCast.SetOrigin(eyePosition);
@@ -154,9 +154,9 @@ void Camera::CastIntoScene(unsigned char* pixels, unsigned int bytesPerPixel,
 		// gamma-correct
 		accumColor ^= invGamma;
 		// RGB->BGR (related to SDL)
-		pixels[byteIndex] = (unsigned char)(accumColor[2] * 255.0f); // B
+		pixels[byteIndex] = (unsigned char)(accumColor[BGRMode? 2 : 0] * 255.0f); // B
 		pixels[byteIndex + 1] = (unsigned char)(accumColor[1] * 255.0f); // G
-		pixels[byteIndex + 2] = (unsigned char)(accumColor[0] * 255.0f); // R
+		pixels[byteIndex + 2] = (unsigned char)(accumColor[BGRMode ? 0 : 2] * 255.0f); // R
 		if (bytesPerPixel == 4) {
 			pixels[byteIndex + 3] = 255;
 		}

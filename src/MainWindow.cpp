@@ -25,7 +25,9 @@
 #include "SceneData/SceneLoader.h"
 
 #define STB_IMAGE_IMPLEMENTATION
-#include "stb_image.h"
+#include "ThirdParty/stb/stb_image.h"
+#define STB_IMAGE_WRITE_IMPLEMENTATION
+#include "ThirdParty/stb/stb_image_write.h"
 
 #define TICKS_TO_SECONDS 1.0f/1000.0f
 
@@ -34,7 +36,7 @@ SDL_Window* createWindow(int screenWidth, int screenHeight);
 Scene* createSimpleWorld(const std::string& sceneFilePath); 
 void startRenderLoop(SDL_Renderer *sdlRenderer, SDL_Texture* frameBufferTex,
 	int width, int height, int numSamples, RandomSamplerType randomSamplerType,
-	Camera::CameraType cameraType, Scene* gameWorld);
+	Camera::CameraType cameraType, Scene* gameWorld, bool offlineMode);
 
 Uint32 lastFPSTickTime = 0; 
 
@@ -107,7 +109,8 @@ int main(int argc, char* argv[]) {
 	SDL_ShowCursor(0);
 	
 	startRenderLoop(sdlRenderer, frameBufferTex, width, height,
-		numSamples, randomSamplerType, cameraType, simpleWorld);
+		numSamples, randomSamplerType, cameraType, simpleWorld,
+		offlineRender);
 	delete simpleWorld;
 
 	SDL_DestroyTexture(frameBufferTex);
@@ -181,7 +184,7 @@ Vector3 getMouseMovementVector(const SDL_Event &event) {
 void startRenderLoop(SDL_Renderer *sdlRenderer, SDL_Texture* frameBufferTex,
 	int widthPixels, int heightPixels, int numSamples,
 	RandomSamplerType randomSamplerType, Camera::CameraType cameraType,
-	Scene* gameWorld) {
+	Scene* gameWorld, bool offlineMode) {
 
 	unsigned char* pixels;
 	int pitch;
@@ -207,6 +210,13 @@ void startRenderLoop(SDL_Renderer *sdlRenderer, SDL_Texture* frameBufferTex,
 	SDL_Event event;
 	uint32_t lastFrameTicks = SDL_GetTicks();
 	Vector3 rotationVector(0.0f, 0.0f, 0.0f);
+	
+	if (offlineMode) {
+		gameWorld->CastIntoScene(pixels, bytesPerPixel, 0.0f, false);
+		stbi_write_png("./renderOutput.png", widthPixels, heightPixels, bytesPerPixel, pixels, pitch);
+		return;
+	}
+	
 	while(true) {
 		uint32_t currTicks = SDL_GetTicks();
 		bool quitPressed = false;
@@ -240,7 +250,7 @@ void startRenderLoop(SDL_Renderer *sdlRenderer, SDL_Texture* frameBufferTex,
 
 		translationVector *= 3.0f*frameTime;
 		gameWorld->TranslateAndRotate(translationVector, rotationVector[0], rotationVector[1]);
-		gameWorld->CastIntoScene(pixels, bytesPerPixel, frameTime);
+		gameWorld->CastIntoScene(pixels, bytesPerPixel, frameTime, true);
 
 		SDL_UnlockTexture(frameBufferTex);
 		SDL_RenderClear(sdlRenderer);

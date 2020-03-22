@@ -49,7 +49,7 @@ public:
 	
 	void TranslateAndRotate(const Vector3& translation, float rightRotationDegrees,
 							float upRotationDegrees);
-	void CastIntoScene(unsigned char* pixels, unsigned int bytesPerPixel, float frameTime);
+	void CastIntoScene(unsigned char* pixels, unsigned int bytesPerPixel, float frameTime, bool BGRMode);
 	
 	unsigned int GetNumRowsPixels() const {
 		return mainCamera->GetNumRowsPixels();

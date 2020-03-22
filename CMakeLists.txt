@@ -42,7 +42,8 @@ target_include_directories(ElRey
 		"${PROJECT_SOURCE_DIR}/src/Sampling"
 		"${PROJECT_SOURCE_DIR}/src/Cameras"
 		"${PROJECT_SOURCE_DIR}/src/SceneData"
-		"${PROJECT_SOURCE_DIR}/src/ThirdParty/nlohmann")
+		"${PROJECT_SOURCE_DIR}/src/ThirdParty/nlohmann"
+		"${PROJECT_SOURCE_DIR}/src/ThirdParty/stb")
 
 target_link_libraries(ElRey ${SDL2_LIBRARY})
 

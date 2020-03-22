@@ -240,6 +240,6 @@ void Scene::TranslateAndRotate(const Vector3& translation, float rightRotationDe
 	mainCamera->TranslateAndRotate(translation, rightRotationDegrees, upRotationDegrees);
 }
 
-void Scene::CastIntoScene(unsigned char* pixels, unsigned int bytesPerPixel, float frameTime) {
-	mainCamera->CastIntoScene(pixels, bytesPerPixel, this, frameTime);
+void Scene::CastIntoScene(unsigned char* pixels, unsigned int bytesPerPixel, float frameTime, bool BGRMode) {
+	mainCamera->CastIntoScene(pixels, bytesPerPixel, this, frameTime, BGRMode);
 }

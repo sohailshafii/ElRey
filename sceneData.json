@@ -54,7 +54,7 @@
 			"radiance_scale":0.7,
 			"min_amount":0.01,
 			"random_sampler_type":"multijittered",
-			"num_random_samples":36,
+			"num_random_samples":256,
 			"num_random_sets":1
 		},
 		{

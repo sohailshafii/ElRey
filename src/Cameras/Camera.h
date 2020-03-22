@@ -32,7 +32,7 @@ public:
 	virtual ~Camera();
 
 	virtual void CastIntoScene(unsigned char* pixels, unsigned int bytesPerPixel, const Scene* scene,
-							   float frameTime) const;
+							   float frameTime, bool BGRMode) const;
 	
 	void Displace(const Vector3& displacementVector);
 	void Rotate(const Matrix& matrix);
