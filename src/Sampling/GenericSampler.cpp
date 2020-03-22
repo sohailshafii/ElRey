@@ -2,12 +2,12 @@
 
 
 GenericSampler::GenericSampler() : numSets(0), numSamples(0), samples(nullptr) {
-	AllocateGenericSamples(1, 83);
+	AllocateGenericSamples(83, 1);
 }
 
-GenericSampler::GenericSampler(unsigned int numSamples) : numSets(0), numSamples(0),
+GenericSampler::GenericSampler(unsigned int numSamples) : numSets(83), numSamples(numSamples),
   samples(nullptr) {
-	AllocateGenericSamples(1, numSamples);
+	AllocateGenericSamples(83, numSamples);
 }
 
 GenericSampler::GenericSampler(unsigned int numSets, unsigned int numSamples) :

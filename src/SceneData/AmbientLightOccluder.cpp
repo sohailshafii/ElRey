@@ -55,8 +55,7 @@ Color3 AmbientLightOccluder::GetRadiance(const IntersectionResult& intersectionR
 	Vector3 castVec = GetDirectionFromPosition(intersectionRes);
 	castVec.Normalize();
 	Point3 castPoint = intersectionRes.GetIntersectionPos()+
-		castVec*SHADOW_FEELER_EPSILON*2.0f;
-	// TODO: too many sample points causes odd artifacts. debug
+		castVec*SHADOW_FEELER_EPSILON;
 	bool shadowFeelerIntersects = scene.ShadowFeelerIntersectsAnObject(Ray(castPoint, castVec), 0.0f, std::numeric_limits<float>::max());
 	
 	return shadowFeelerIntersects ? minRadiancePreScaled : radiancePreScaled;

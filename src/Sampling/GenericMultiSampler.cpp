@@ -117,11 +117,13 @@ void GenericMultiSampler::MapSamplesToHemisphere(float exponent) {
 		auto& sample = samples[sampleIndex];
 		float sampleX = sample[0];
 		float sampleY = sample[1];
-		float cosPhi = cos(2.0f * M_PI * sampleX);
-		float sinPhi = sin(2.0f * M_PI * sampleX);
+		float phiSample = 2.0f * M_PI * sampleX;
+		float cosPhi = cos(phiSample);
+		float sinPhi = sin(phiSample);
 		float cosTheta = pow((1.0f - sampleY),
 							 1.0f/(exponent + 1.0f));
 		float sinTheta = sqrt(1.0f - cosTheta*cosTheta);
+		// TODO: fix?
 		hemisphereSamples[sampleIndex] = Point3(sinTheta*cosPhi, sinTheta*sinPhi, cosTheta);
 	}
 }
