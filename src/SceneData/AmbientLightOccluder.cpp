@@ -41,9 +41,11 @@ AmbientLightOccluder::~AmbientLightOccluder() {
 Vector3 AmbientLightOccluder::GetDirectionFromPosition(
 const IntersectionResult& intersectionRes) {
 	Point3 sp = ambientSampler->GetSampleOnHemisphere();
-	//Vector3 right; Vector3 up; Vector3 forward = 
-	//CommonMath::ComputeUVWFromWandU(<#Vector3 &right#>, <#Vector3 &up#>, <#Vector3 &forward#>)
-	return Vector3::Zero();
+	Vector3 right;
+	Vector3 up = Vector3::Up();
+	Vector3 forward = intersectionRes.GetNormalVector();
+	CommonMath::ComputeUVWFromWandU(right, up, forward);
+	return right*sp[0] + up*sp[1] + forward*sp[2];
 }
 
 Color3 AmbientLightOccluder::GetRadiance() {

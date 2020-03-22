@@ -8,7 +8,7 @@ public:
 		
 	}
 	
-	IntersectionResult(Ray incomingRay, Vector3 lightVector, Vector3 normalVector, Point3 intersectionPosition,
+	IntersectionResult(const Ray& incomingRay, const Vector3& lightVector, const Vector3& normalVector, const Point3& intersectionPosition,
 					   float rayIntersectT) {
 		this->incomingRay = incomingRay;
 		this->vectorToLight = lightVector;
