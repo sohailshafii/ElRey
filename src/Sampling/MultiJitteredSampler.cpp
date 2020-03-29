@@ -33,10 +33,10 @@ void MultiJitteredSampler::GenerateSamples() {
 			for (unsigned int gridJ = 0; gridJ < gridDim; gridJ++,
 				oneDimIndex++) {
 				samples[oneDimIndex + setOffset][0] =
-					(gridI * gridDim + gridJ) * subCellWidth +
+					(float)(gridI * gridDim + gridJ) * subCellWidth +
 					CommonMath::RandomUnitValue() * subCellWidth;
 				samples[oneDimIndex + setOffset][1] =
-					(gridJ * gridDim + gridI) * subCellWidth +
+					(float)(gridJ * gridDim + gridI) * subCellWidth +
 					CommonMath::RandomUnitValue() * subCellWidth;
 			}
 		}

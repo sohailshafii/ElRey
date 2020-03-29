@@ -89,6 +89,9 @@ static void SetUpRandomSampler(const nlohmann::json& jsonObj,
 	if (samplerTypeToken == "random") {
 		randomSamplerType = Random;
 	}
+	else if (samplerTypeToken == "regular") {
+		randomSamplerType = Regular;
+	}
 	else if (samplerTypeToken == "jittered") {
 		randomSamplerType = Jittered;
 	}

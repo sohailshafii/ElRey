@@ -2,6 +2,7 @@
 #include "ThinLensCamera.h"
 #include "SceneData/Scene.h"
 #include "Sampling/RandomSampler.h"
+#include "Sampling/RegularSampler.h"
 #include "Sampling/OneSampleSampler.h"
 #include "Sampling/JitteredSampler.h"
 #include "Sampling/NRooksSampler.h"
@@ -22,6 +23,10 @@ ThinLensCamera::ThinLensCamera(const Point3& eyePosition, const Point3& lookAtPo
 	this->finalMultFactor = (float)exposureTime / (float)viewPlaneSampler->GetNumSamples();
 
 	switch (randomSamplerType) {
+		case Regular:
+			diskSampler = new RegularSampler(numRandomSets,
+												  numRandomSamples);
+			break;
 		case Jittered:
 			diskSampler = new JitteredSampler(numRandomSets, numRandomSamples);
 			break;

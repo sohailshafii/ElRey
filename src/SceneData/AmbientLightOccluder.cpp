@@ -1,5 +1,6 @@
 #include "AmbientLightOccluder.h"
 #include "Sampling/GenericSampler.h"
+#include "Sampling/RegularSampler.h"
 #include "Sampling/RandomSampler.h"
 #include "Sampling/OneSampleSampler.h"
 #include "Sampling/JitteredSampler.h"
@@ -16,6 +17,10 @@ randomSamplerType, unsigned int numRandomSamples, unsigned int numRandomSets) :
 	 this->radiancePreScaled = radiance*radianceScale;
 	 this->minRadiancePreScaled = radiancePreScaled*minAmount;
 	 switch (randomSamplerType) {
+		 case Regular:
+			 ambientSampler = new RegularSampler(numRandomSets,
+												  numRandomSamples);
+			 break;
 		 case Jittered:
 			 ambientSampler = new JitteredSampler(numRandomSets, numRandomSamples);
 			 break;

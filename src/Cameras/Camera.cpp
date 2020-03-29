@@ -2,6 +2,7 @@
 #include "CommonMath.h"
 #include <cmath>
 
+#include "Sampling/RegularSampler.h"
 #include "Sampling/RandomSampler.h"
 #include "Sampling/OneSampleSampler.h"
 #include "Sampling/JitteredSampler.h"
@@ -51,6 +52,10 @@ Camera::Camera(const Point3& eyePosition, const Point3& lookAtPosition,
 	switch (randomSamplerType) {
 		case Jittered:
 			viewPlaneSampler = new JitteredSampler(numRandomSets, numRandomSamples);
+			break;
+		case Regular:
+			viewPlaneSampler = new RegularSampler(numRandomSets,
+												  numRandomSamples);
 			break;
 		case Random:
 			viewPlaneSampler = new RandomSampler(numRandomSets, numRandomSamples);

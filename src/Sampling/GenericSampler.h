@@ -32,5 +32,5 @@ protected:
 	Point2* samples;
 
 private:
-	void AllocateGenericSamples(unsigned int numSets, unsigned int numSamples);
+	void AllocateGenericSamples();
 };
