@@ -1,7 +1,7 @@
 
 #pragma once
 
-#include "Common.h"
+#include "Sampling/SamplerCreator.h"
 #include "SceneData/Light.h"
 
 class GenericSampler;

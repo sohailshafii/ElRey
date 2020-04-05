@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Common.h"
+#include "Sampling/SamplerCreator.h"
 #include "Math/Point3.h"
 #include "Math/Vector3.h"
 #include "Math/Matrix.h"

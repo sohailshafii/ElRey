@@ -2,13 +2,6 @@
 #include "CommonMath.h"
 #include <cmath>
 
-#include "Sampling/RegularSampler.h"
-#include "Sampling/RandomSampler.h"
-#include "Sampling/OneSampleSampler.h"
-#include "Sampling/JitteredSampler.h"
-#include "Sampling/NRooksSampler.h"
-#include "Sampling/MultiJitteredSampler.h"
-
 #include "Math/Point2.h"
 #include "Math/Ray.h"
 #include "SceneData/Scene.h"
@@ -49,27 +42,9 @@ Camera::Camera(const Point3& eyePosition, const Point3& lookAtPosition,
 	this->viewPlaneHeight = viewPlaneHeight;
 	viewPlaneDistance = (this->lookAtPosition - this->eyePosition).Norm();
 	
-	switch (randomSamplerType) {
-		case Jittered:
-			viewPlaneSampler = new JitteredSampler(numRandomSets, numRandomSamples);
-			break;
-		case Regular:
-			viewPlaneSampler = new RegularSampler(numRandomSets,
-												  numRandomSamples);
-			break;
-		case Random:
-			viewPlaneSampler = new RandomSampler(numRandomSets, numRandomSamples);
-			break;
-		case NRooks:
-			viewPlaneSampler = new NRooksSampler(numRandomSets, numRandomSamples);
-			break;
-		case MultiJittered:
-			viewPlaneSampler = new MultiJitteredSampler(numRandomSets, numRandomSamples);
-			break;
-		default:
-			viewPlaneSampler = new OneSampleSampler();
-			break;
-	}
+	viewPlaneSampler = SamplerCreator::CreatorSampler(randomSamplerType,
+													  numRandomSamples,
+													  numRandomSets);
 	
 	unsigned int numPixels = numColumnsPixels*numRowsPixels;
 	gridPositions = new Point2[numPixels];

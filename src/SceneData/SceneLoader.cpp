@@ -4,7 +4,7 @@
 #include <exception>
 #include <iostream>
 #include <sstream>
-#include "Common.h"
+#include "Sampling/SamplerCreator.h"
 #include "SceneData/Scene.h"
 #include "Math/Sphere.h"
 #include "Math/Plane.h"
@@ -21,7 +21,6 @@
 #include "Cameras/OrthographicCamera.h"
 #include "Cameras/SphericalPanoramicCamera.h"
 #include "Cameras/ThinLensCamera.h"
-#include "Sampling/GenericSampler.h"
 
 static void SetUpRandomSampler(const nlohmann::json& jsonObj,
 							   RandomSamplerType& randomSamplerType,

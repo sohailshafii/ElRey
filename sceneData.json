@@ -12,7 +12,7 @@
 "view_plane_width":1.0,
 "up_vector":[0.0,1.0,0.0],
 "random_sampler_type":"multijittered",
-"num_random_samples":16,
+"num_random_samples":4,
 "num_random_sets":83
 		}
 	},
@@ -54,7 +54,7 @@
 			"radiance_scale":0.7,
 			"min_amount":0.0,
 			"random_sampler_type":"multijittered",
-			"num_random_samples":16,
+			"num_random_samples":4,
 			"num_random_sets":83
 		},
 		{

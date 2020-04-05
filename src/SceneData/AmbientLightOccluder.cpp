@@ -1,11 +1,5 @@
 #include "AmbientLightOccluder.h"
-#include "Sampling/GenericSampler.h"
-#include "Sampling/RegularSampler.h"
-#include "Sampling/RandomSampler.h"
-#include "Sampling/OneSampleSampler.h"
-#include "Sampling/JitteredSampler.h"
-#include "Sampling/NRooksSampler.h"
-#include "Sampling/MultiJitteredSampler.h"
+#include "Sampling/SamplerCreator.h"
 #include "Math/Point3.h"
 #include "Scene.h"
 #include "CommonMath.h"
@@ -16,27 +10,7 @@ randomSamplerType, unsigned int numRandomSamples, unsigned int numRandomSets) :
  Light(false) {
 	 this->radiancePreScaled = radiance*radianceScale;
 	 this->minRadiancePreScaled = radiancePreScaled*minAmount;
-	 switch (randomSamplerType) {
-		 case Regular:
-			 ambientSampler = new RegularSampler(numRandomSets,
-												  numRandomSamples);
-			 break;
-		 case Jittered:
-			 ambientSampler = new JitteredSampler(numRandomSets, numRandomSamples);
-			 break;
-		 case Random:
-			 ambientSampler = new RandomSampler(numRandomSets, numRandomSamples);
-			 break;
-		 case NRooks:
-			 ambientSampler = new NRooksSampler(numRandomSets, numRandomSamples);
-			 break;
-		 case MultiJittered:
-			 ambientSampler = new MultiJitteredSampler(numRandomSets, numRandomSamples);
-			 break;
-		 default:
-			 ambientSampler = new OneSampleSampler();
-			 break;
-	 }
+	 ambientSampler = SamplerCreator::CreatorSampler(randomSamplerType, numRandomSamples, numRandomSets);
 	 ambientSampler->MapSamplesToHemisphere(1.0f);
 }
 
