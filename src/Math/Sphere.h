@@ -21,6 +21,10 @@ public:
 		normalVec.Normalize();
 		return normalVec;
 	}
+	
+	virtual void SamplePrimitive(Point3& resultingSample) override;
+	
+	virtual float PDF(IntersectionResult& intersectionResult) const override;
 
 private:
 	Point3 center;

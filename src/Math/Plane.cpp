@@ -42,3 +42,11 @@ bool Plane::IntersectShadow(const Ray &ray, float tMin, float tMax)
 	
 	return true;
 }
+
+void Plane::SamplePrimitive(Point3& resultingSample) {
+	// TODO
+}
+
+float Plane::PDF(IntersectionResult& intersectionResult) const {
+	return 1.0f; // TODO
+}

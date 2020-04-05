@@ -5,6 +5,7 @@
 #include "Math/Ray.h"
 #include "Materials/Material.h"
 #include "SceneData/IntersectionResult.h"
+#include "Sampling/GenericSampler.h"
 
 class Primitive {
 public:
@@ -22,7 +23,24 @@ public:
 	std::shared_ptr<Material> GetMaterial() {
 		return material;
 	}
+	
+	void SetSampler(std::shared_ptr<GenericSampler> sampler) {
+		this->sampler = sampler;
+	}
+	
+	// TODO: make sure you need to return a shared_ptr like this;
+	// review rules regarding shared_ptrs
+	std::shared_ptr<GenericSampler> GetSampler() {
+		return sampler;
+	}
+	
+	virtual void SamplePrimitive(Point3& resultingSample) = 0;
+	
+	virtual float PDF(IntersectionResult& intersectionResult) const {
+		return 1.0f;
+	}
 
 protected:
 	std::shared_ptr<Material> material;
+	std::shared_ptr<GenericSampler> sampler;
 };

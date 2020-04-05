@@ -76,3 +76,11 @@ bool Sphere::IntersectShadow(const Ray &ray, float tMin, float tMax) {
 	
 	return false;
 }
+
+void Sphere::SamplePrimitive(Point3& resultingSample) {
+	// TODO
+}
+
+float Sphere::PDF(IntersectionResult& intersectionResult) const {
+	return 1.0f; // TODO
+}
