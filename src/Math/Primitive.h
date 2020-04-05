@@ -13,6 +13,10 @@ public:
 	Primitive(std::shared_ptr<Material> material)
 		: material(material)
 	{ }
+	Primitive(std::shared_ptr<Material> material,
+			  std::shared_ptr<GenericSampler> sampler)
+		: material(material), sampler(sampler)
+	{ }
 	virtual ~Primitive() { }
 
 	virtual bool Intersect(const Ray &ray, float tMin, float& tMax,
