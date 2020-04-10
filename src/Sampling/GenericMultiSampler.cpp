@@ -70,7 +70,7 @@ void GenericMultiSampler::CreateShuffledIndices() {
 void GenericMultiSampler::MapSamplesToUnitDisk() {
 	float r, phi;
 	Point2 samplePnt;
-	int numItems = numSamples*numSets;
+	unsigned int numItems = numSamples*numSets;
 	for (unsigned int sampleIndex = 0; sampleIndex < numItems; sampleIndex++) {
 		// go from quadrant to quarter
 		auto& sample = samples[sampleIndex];
@@ -112,7 +112,7 @@ void GenericMultiSampler::MapSamplesToUnitDisk() {
 }
 
 void GenericMultiSampler::MapSamplesToHemisphere(float exponent) {
-	int numItems = numSamples*numSets;
+	unsigned int numItems = numSamples*numSets;
 	for (unsigned int sampleIndex = 0; sampleIndex < numItems; sampleIndex++) {
 		auto& sample = samples[sampleIndex];
 		float sampleX = sample[0];
