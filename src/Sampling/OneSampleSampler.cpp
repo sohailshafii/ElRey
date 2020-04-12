@@ -16,14 +16,14 @@ void OneSampleSampler::MapSamplesToHemisphere(float exponent) {
 	
 }
 
-Point2 OneSampleSampler::GetSampleOnUnitSquare() {
+const Point2& OneSampleSampler::GetSampleOnUnitSquare() {
 	return samples[0];
 }
 
-Point2 OneSampleSampler::GetSampleOnUnitDisk() {
+const Point2& OneSampleSampler::GetSampleOnUnitDisk() {
 	return samples[0];
 }
 
-Point3 OneSampleSampler::GetSampleOnHemisphere() {
-	return Point3();
+const Point3& OneSampleSampler::GetSampleOnHemisphere() {
+	return dummyPoint;
 }

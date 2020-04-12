@@ -129,17 +129,17 @@ void GenericMultiSampler::MapSamplesToHemisphere(float exponent) {
 	}
 }
 
-Point2 GenericMultiSampler::GetSampleOnUnitSquare() {
+const Point2& GenericMultiSampler::GetSampleOnUnitSquare() {
 	CheckForNewJumpValue();
 	return samples[GetNewSampleIndex()];
 }
 
-Point2 GenericMultiSampler::GetSampleOnUnitDisk() {
+const Point2& GenericMultiSampler::GetSampleOnUnitDisk() {
 	CheckForNewJumpValue();
 	return diskSamples[GetNewSampleIndex()];
 }
 
-Point3 GenericMultiSampler::GetSampleOnHemisphere() {
+const Point3& GenericMultiSampler::GetSampleOnHemisphere() {
 	CheckForNewJumpValue();
 	return hemisphereSamples[GetNewSampleIndex()];
 }

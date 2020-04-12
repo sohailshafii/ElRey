@@ -116,3 +116,4 @@ inline Point4 Point4::operator*(float t) const {
 		t * comp[3]);
 	return multPoint;
 }
+

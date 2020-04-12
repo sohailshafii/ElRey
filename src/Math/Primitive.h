@@ -32,10 +32,8 @@ public:
 		this->sampler = sampler;
 	}
 	
-	// TODO: make sure you need to return a shared_ptr like this;
-	// review rules regarding shared_ptrs
-	std::shared_ptr<GenericSampler> GetSampler() {
-		return sampler;
+	const GenericSampler* GetSampler() {
+		return sampler.get();
 	}
 	
 	virtual void SamplePrimitive(Point3& resultingSample) = 0;

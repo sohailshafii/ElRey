@@ -14,9 +14,9 @@ public:
 	virtual void MapSamplesToUnitDisk() = 0;
 	virtual void MapSamplesToHemisphere(float exponent) = 0;
 	
-	virtual Point2 GetSampleOnUnitSquare() = 0;
-	virtual Point2 GetSampleOnUnitDisk() = 0;
-	virtual Point3 GetSampleOnHemisphere() = 0;
+	virtual const Point2& GetSampleOnUnitSquare() = 0;
+	virtual const Point2& GetSampleOnUnitDisk() = 0;
+	virtual const Point3& GetSampleOnHemisphere() = 0;
 	
 	unsigned int GetNumSets() const {
 		return numSets;

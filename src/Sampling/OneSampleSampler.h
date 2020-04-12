@@ -10,8 +10,11 @@ public:
 	virtual void MapSamplesToUnitDisk() override;
 	virtual void MapSamplesToHemisphere(float exponent) override;
 	
-	virtual Point2 GetSampleOnUnitSquare() override;
-	virtual Point2 GetSampleOnUnitDisk() override;
-	virtual Point3 GetSampleOnHemisphere() override;
+	virtual const Point2& GetSampleOnUnitSquare() override;
+	virtual const Point2& GetSampleOnUnitDisk() override;
+	virtual const Point3& GetSampleOnHemisphere() override;
+
+private:
+	Point3 dummyPoint;
 };
 
