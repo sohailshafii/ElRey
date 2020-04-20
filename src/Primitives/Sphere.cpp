@@ -81,6 +81,6 @@ void Sphere::SamplePrimitive(Point3& resultingSample) {
 	// TODO
 }
 
-float Sphere::PDF(IntersectionResult& intersectionResult) const {
+float Sphere::PDF(const IntersectionResult& intersectionResult) const {
 	return 1.0f; // TODO
 }

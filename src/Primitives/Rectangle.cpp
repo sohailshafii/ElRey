@@ -77,7 +77,7 @@ void Rectangle::SamplePrimitive(Point3& resultingSample) {
 }
 
 // each sample's probability is 1.0/inverseArea
-float Rectangle::PDF(IntersectionResult& intersectionResult) const {
+float Rectangle::PDF(const IntersectionResult& intersectionResult) const {
 	return inverseArea;
 }
 

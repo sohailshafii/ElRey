@@ -31,6 +31,8 @@ public:
 
 	inline Point3 operator*(float t) const;
 
+	float GetDistanceSquared(const Point3& otherPoint) const;
+
 	static Point3 Zero() {
 		return Point3(0.0f, 0.0f, 0.0f);
 	}

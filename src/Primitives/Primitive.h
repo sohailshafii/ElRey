@@ -38,7 +38,7 @@ public:
 	
 	virtual void SamplePrimitive(Point3& resultingSample) = 0;
 	
-	virtual float PDF(IntersectionResult& intersectionResult) const {
+	virtual float PDF(const IntersectionResult& intersectionResult) const {
 		return 1.0f;
 	}
 

@@ -49,7 +49,7 @@ public:
 		return nullptr;
 	}
 
-	virtual void StoreNormalAndLightVector(
+	virtual void StoreAreaLightInformation(
 		IntersectionResult& intersectionRes) const
 	{
 		// for area lights

@@ -47,6 +47,6 @@ void Plane::SamplePrimitive(Point3& resultingSample) {
 	// TODO
 }
 
-float Plane::PDF(IntersectionResult& intersectionResult) const {
+float Plane::PDF(const IntersectionResult& intersectionResult) const {
 	return 1.0f; // TODO
 }

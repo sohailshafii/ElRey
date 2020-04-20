@@ -26,3 +26,11 @@ Point4& Point4::operator=(const Point4& other) {
 	}
 	return *this;
 }
+
+float Point4::GetDistanceSquared(
+	const Point4& otherPoint) const {
+	float diffX = otherPoint[0] - comp[0];
+	float diffY = otherPoint[1] - comp[1];
+	float diffZ = otherPoint[2] - comp[2];
+	return diffX * diffX + diffY * diffY + diffZ * diffZ;
+}

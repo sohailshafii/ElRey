@@ -17,3 +17,11 @@ Point3& Point3::operator=(const Point3& other) {
 	}
 	return *this;
 }
+
+float Point3::GetDistanceSquared(
+	const Point3& otherPoint) const {
+	float diffX = otherPoint[0] - comp[0];
+	float diffY = otherPoint[1] - comp[1];
+	float diffZ = otherPoint[2] - comp[2];
+	return diffX * diffX + diffY * diffY + diffZ*diffZ;
+}

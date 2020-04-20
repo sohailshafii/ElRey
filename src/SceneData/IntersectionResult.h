@@ -39,6 +39,14 @@ public:
 		this->rayIntersectT = rayIntersectT;
 	}
 
+	void SetVectorToLight(const Vector3& vectorToLight) {
+		this->vectorToLight = vectorToLight;
+	}
+
+	void SetSamplePointOnLight(const Point3& samplePoint) {
+		samplePointOnLight = samplePoint;
+	}
+
 	const Ray GetIncomingRayInverse() const {
 		return incomingRay;
 	}
@@ -59,12 +67,12 @@ public:
 		return intersectionPosition;
 	}
 	
-	void SetVectorToLight(const Vector3 &vectorToLight) {
-		this->vectorToLight = vectorToLight;
-	}
-
 	float GetRayIntersectT() const {
 		return rayIntersectT;
+	}
+
+	Point3 GetSamplePointOnLight() const {
+		return samplePointOnLight;
 	}
 
 private:
@@ -75,4 +83,7 @@ private:
 	Vector3 normalVector;
 	Point3 intersectionPosition;
 	float rayIntersectT;
+
+	// special stuff
+	Point3 samplePointOnLight;
 };

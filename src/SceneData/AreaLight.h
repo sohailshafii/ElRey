@@ -30,8 +30,18 @@ public:
 		return false;
 	}
 
-	virtual void StoreNormalAndLightVector(
+	virtual void StoreAreaLightInformation(
 		IntersectionResult& intersectionRes) const override;
+
+	virtual float GeometricTerm(
+		const IntersectionResult& intersectionRes)
+		const override;
+
+	virtual float PDF(
+		const IntersectionResult& intersectionRes) const override {
+		return primitive->PDF(intersectionRes);
+	}
+
 private:
 	std::shared_ptr<Primitive> primitive;
 };
