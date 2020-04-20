@@ -26,16 +26,16 @@
 
 #define TICKS_TO_SECONDS 1.0f/1000.0f
 
-bool initializeSDL();
+bool InitializeSDL();
 SDL_Window* createWindow(int screenWidth, int screenHeight);
-Scene* createSimpleWorld(const std::string& sceneFilePath); 
-void startRenderLoop(SDL_Renderer *sdlRenderer, SDL_Texture* frameBufferTex,
+Scene* CreateSimpleWorld(const std::string& sceneFilePath); 
+void StartRenderLoop(SDL_Renderer *sdlRenderer, SDL_Texture* frameBufferTex,
 	int width, int height, int numSamples, RandomSamplerType randomSamplerType,
 	Camera::CameraType cameraType, Scene* gameWorld, bool offlineMode);
 
 Uint32 lastFPSTickTime = 0; 
 
-void convertTokenToLowerCase(std::string &token) {
+void ConvertTokenToLowerCase(std::string &token) {
 	std::transform(token.begin(),
 		token.end(), token.begin(),
 		[](unsigned char c) { return std::tolower(c); });
@@ -59,7 +59,7 @@ int main(int argc, char* argv[]) {
 	if (argc > 1) {
 		for (int argIndex = 1; argIndex < argc; argIndex++) {
 			std::string currentToken = argv[argIndex];
-			convertTokenToLowerCase(currentToken);
+			ConvertTokenToLowerCase(currentToken);
 
 			if (currentToken == "-scenePath" && argIndex+1 < argc) {
 				scenePath = atoi(argv[++argIndex]);
@@ -70,14 +70,14 @@ int main(int argc, char* argv[]) {
 		}
 	}
 	
-	Scene *simpleWorld = createSimpleWorld(scenePath);
+	Scene *simpleWorld = CreateSimpleWorld(scenePath);
 	width = simpleWorld->GetNumColumnsPixels();
 	height = simpleWorld->GetNumRowsPixels();
 
 	std::cout << "Framebuffer dimensions: " <<  width << "x" << height
 		<< ", num samples: " << numSamples << ".\n";
 
-	if (!initializeSDL()) {
+	if (!InitializeSDL()) {
 		return 2;
 	}
 
@@ -103,7 +103,7 @@ int main(int argc, char* argv[]) {
 	SDL_SetWindowGrab(window, SDL_TRUE);
 	SDL_ShowCursor(0);
 	
-	startRenderLoop(sdlRenderer, frameBufferTex, width, height,
+	StartRenderLoop(sdlRenderer, frameBufferTex, width, height,
 		numSamples, randomSamplerType, cameraType, simpleWorld,
 		offlineRender);
 	delete simpleWorld;
@@ -116,7 +116,7 @@ int main(int argc, char* argv[]) {
 	return 0;
 }
 
-bool initializeSDL() {
+bool InitializeSDL() {
 	if (SDL_Init(SDL_INIT_VIDEO) < 0) {
 		std::cerr << "Could not initialize SDL, error: " << SDL_GetError() << std::endl;
 		return false;
@@ -134,14 +134,14 @@ SDL_Window* createWindow(int screenWidth, int screenHeight) {
 	return window;
 }
 
-Scene* createSimpleWorld(const std::string& sceneFilePath) {
+Scene* CreateSimpleWorld(const std::string& sceneFilePath) {
 	Scene *simpleWorld = new Scene();
 	SceneLoader::DeserializeJSONFileIntoScene(simpleWorld,
 											  sceneFilePath);
 	return simpleWorld;
 }
 
-Vector3 getMovementVectorFromKeyPresses(const SDL_Event &event) {
+Vector3 GetMovementVectorFromKeyPresses(const SDL_Event &event) {
 	Vector3 movementVector(0.0f, 0.0f, 0.0f);
 	if (event.type == SDL_KEYDOWN) {
 		switch(event.key.keysym.sym) {
@@ -166,7 +166,7 @@ Vector3 getMovementVectorFromKeyPresses(const SDL_Event &event) {
 	return movementVector;
 }
 
-Vector3 getMouseMovementVector(const SDL_Event &event) {
+Vector3 GetMouseMovementVector(const SDL_Event &event) {
 	Vector3 mouseMoveVector(0.0f, 0.0f, 0.0f);
 	if(event.type == SDL_MOUSEMOTION)
 	{
@@ -176,7 +176,7 @@ Vector3 getMouseMovementVector(const SDL_Event &event) {
 	return mouseMoveVector;
 }
 
-void startRenderLoop(SDL_Renderer *sdlRenderer, SDL_Texture* frameBufferTex,
+void StartRenderLoop(SDL_Renderer *sdlRenderer, SDL_Texture* frameBufferTex,
 	int widthPixels, int heightPixels, int numSamples,
 	RandomSamplerType randomSamplerType, Camera::CameraType cameraType,
 	Scene* gameWorld, bool offlineMode) {
@@ -223,10 +223,10 @@ void startRenderLoop(SDL_Renderer *sdlRenderer, SDL_Texture* frameBufferTex,
 		while(SDL_PollEvent(&event) != 0) {
 			quitPressed = (event.type == SDL_QUIT);
 			if (!quitPressed) {
-				Vector3 currentMovement = getMovementVectorFromKeyPresses(event);
+				Vector3 currentMovement = GetMovementVectorFromKeyPresses(event);
 				translationVector += currentMovement;
 				
-				Vector3 currentRotation = getMouseMovementVector(event);
+				Vector3 currentRotation = GetMouseMovementVector(event);
 				// affect by speed
 				currentRotation[0] *= 10.0f*frameTime;
 				currentRotation[1] *= 10.0f*frameTime;
