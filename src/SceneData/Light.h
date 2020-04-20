@@ -4,6 +4,7 @@
 #include "Math/Point3.h"
 #include "Materials/Color3.h"
 #include "IntersectionResult.h"
+#include "Primitives/Primitive.h"
 
 class Scene;
 
@@ -16,9 +17,8 @@ public:
 		
 	}
 	
-	virtual Vector3 GetDirectionFromPosition(
-		const IntersectionResult& intersectionRes) = 0;
 	virtual Color3 GetRadiance(const IntersectionResult& intersectionRes, const Scene& scene) = 0;
+	
 	bool CastsShadows() {
 		return castsShadows;
 	}
@@ -30,6 +30,33 @@ public:
 	virtual bool IsLightDistanceInfinite() const {
 		return false;
 	}
+
+	virtual float GeometricTerm(
+		const IntersectionResult& intersectionRes) const {
+		return 1.0f;
+	}
+
+	virtual float PDF(
+		const IntersectionResult& intersectionRes) const {
+		return 1.0f;
+	}
+
+	virtual const bool NeedsToBeSampled() const {
+		return false;
+	}
+
+	virtual const Primitive* GetPrimitive() const {
+		return nullptr;
+	}
+
+	virtual void StoreNormalAndLightVector(
+		IntersectionResult& intersectionRes) const
+	{
+		// for area lights
+	}
+
+	virtual Vector3 GetDirectionFromPosition(
+		const IntersectionResult& intersectionRes) const = 0;
 	
 private:
 	bool castsShadows;

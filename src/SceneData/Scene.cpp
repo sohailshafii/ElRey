@@ -170,7 +170,7 @@ bool Scene::Intersect(const Ray &ray, Color &newColor,
 	
 	if (closestPrimitive != nullptr) {
 		std::shared_ptr<Material> primitivePtr = closestPrimitive->GetMaterial();
-		intersectionResult.SetIncomingDirection(ray);
+		intersectionResult.SetIncomingRay(ray);
 		
 		auto intersectionPos = ray.GetPositionAtParam(tMax);
 		intersectionResult.SetIntersectionT(tMax);

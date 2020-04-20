@@ -21,7 +21,7 @@ AmbientLightOccluder::~AmbientLightOccluder() {
 }
 
 Vector3 AmbientLightOccluder::GetDirectionFromPosition(
-const IntersectionResult& intersectionRes) {
+const IntersectionResult& intersectionRes) const {
 	Point3 sp = ambientSampler->GetSampleOnHemisphere();
 	Vector3 right;
 	Vector3 up = Vector3::Up();

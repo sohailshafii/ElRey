@@ -9,9 +9,9 @@ public:
 	~AmbientLight();
 	
 	virtual Vector3 GetDirectionFromPosition(
-											 const IntersectionResult& intersectionRes) override;
+		const IntersectionResult& intersectionRes) const override;
 	virtual Color3 GetRadiance(const IntersectionResult& intersectionRes, const Scene& scene) override;
-	
+
 	virtual bool IsAmbient() const override {
 		return true;
 	}

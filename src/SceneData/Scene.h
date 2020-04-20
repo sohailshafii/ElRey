@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Math/Primitive.h"
+#include "Primitives/Primitive.h"
 #include "SceneData/Light.h"
 #include "Cameras/Camera.h"
 

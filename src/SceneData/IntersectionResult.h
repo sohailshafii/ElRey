@@ -18,12 +18,12 @@ public:
 		this->rayIntersectT = rayIntersectT;
 	}
 	
-	void SetIncomingDirection(const Ray& incomingRay) {
+	void SetIncomingRay(const Ray& incomingRay) {
 		this->incomingRay = incomingRay;
 		this->incomingDirInverse = -incomingRay.GetDirection();
 	}
 	
-	void SetLightRay(const Vector3& lightVector) {
+	void SetLightVector(const Vector3& lightVector) {
 		this->vectorToLight = lightVector;
 	}
 	

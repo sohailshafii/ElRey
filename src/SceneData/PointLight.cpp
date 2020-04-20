@@ -9,7 +9,8 @@ PointLight::PointLight(bool castsShadows, const Point3 &lightPosition,
 PointLight::~PointLight() {
 }
 
-Vector3 PointLight::GetDirectionFromPosition(const IntersectionResult& intersectionRes) {
+Vector3 PointLight::GetDirectionFromPosition(const IntersectionResult& intersectionRes)
+ const {
 	Vector3 directionFromPos = (intersectionRes.GetIntersectionPos() - lightPosition);
 	directionFromPos.Normalize();
 	return directionFromPos;

@@ -2,7 +2,7 @@
 #include "CommonMath.h"
 
 bool Rectangle::Intersect(const Ray &ray, float tMin, float& tMax,
-					  IntersectionResult &intersectionResult) {
+					IntersectionResult &intersectionResult) {
 	const Point3& rayOrigin = ray.GetOrigin();
 	const Vector3& rayDirection = ray.GetDirection();
 	float t = (origin - rayOrigin) * normal / (rayDirection * normal);
@@ -71,9 +71,9 @@ bool Rectangle::IntersectShadow(const Ray &ray, float tMin, float tMax)
 }
 
 void Rectangle::SamplePrimitive(Point3& resultingSample) {
-	Point2 sampleOnDisk = sampler->GetSampleOnUnitDisk();
-	resultingSample = origin + side1Vec * sampleOnDisk[0] +
-		side2Vec * sampleOnDisk[1];
+	Point2 sampleOnSquare = sampler->GetSampleOnUnitSquare();
+	resultingSample = origin + side1Vec * sampleOnSquare[0] +
+		side2Vec * sampleOnSquare[1];
 }
 
 // each sample's probability is 1.0/inverseArea

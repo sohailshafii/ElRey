@@ -6,8 +6,8 @@
 #include <sstream>
 #include "Sampling/SamplerCreator.h"
 #include "SceneData/Scene.h"
-#include "Math/Sphere.h"
-#include "Math/Plane.h"
+#include "Primitives/Sphere.h"
+#include "Primitives/Plane.h"
 #include "Materials/LambertianMaterial.h"
 #include "Materials/PhongMaterial.h"
 #include "SceneData/Light.h"

@@ -9,7 +9,7 @@ public:
 	// Side vectors should NOT be normalized
 	Rectangle(const Point3& iOrigin, const Vector3& iSide1Vec,
 		const Vector3& iSide2Vec, std::shared_ptr<Material> material,
-			  std::shared_ptr<GenericSampler> sampler) :
+			std::shared_ptr<GenericSampler> sampler) :
 		Primitive(material, sampler), origin(iOrigin) {
 			side1Vec = iSide1Vec;
 			side2Vec = iSide2Vec;
@@ -19,8 +19,6 @@ public:
 			inverseArea = 1.0f / area;
 			normal = side1Vec ^ side2Vec;
 			normal.Normalize();
-
-			sampler->MapSamplesToUnitDisk();
 	}
 
 	bool Intersect(const Ray &ray, float tMin, float& tMax,
