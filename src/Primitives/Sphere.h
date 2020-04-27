@@ -7,9 +7,17 @@
 class Sphere : public Primitive {
 public:
 	Sphere(const Point3& iCenter, float iRadius,
-		   std::shared_ptr<Material> material) : Primitive(material),
+			std::shared_ptr<Material> const& iMaterial,
+			const std::string& iName) : Primitive(iMaterial, iName),
 		center(iCenter), radius(iRadius) {
 		radiusSqr = radius*radius;
+	}
+
+	Sphere(const Point3& iCenter, float iRadius,
+		std::shared_ptr<Material> && iMaterial,
+		const std::string& iName) : Primitive(iMaterial, iName),
+		center(iCenter), radius(iRadius) {
+		radiusSqr = radius * radius;
 	}
 
 	bool Intersect(const Ray &ray, float tMin, float& tMax,

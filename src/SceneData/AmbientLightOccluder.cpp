@@ -5,9 +5,11 @@
 #include "CommonMath.h"
 #include <limits>
 
-AmbientLightOccluder::AmbientLightOccluder(const Color3& radiance, float radianceScale, float minAmount, RandomSamplerType
-randomSamplerType, unsigned int numRandomSamples, unsigned int numRandomSets) :
- Light(false) {
+AmbientLightOccluder::AmbientLightOccluder(const Color3& radiance,
+	float radianceScale, float minAmount,
+	RandomSamplerType randomSamplerType,
+	unsigned int numRandomSamples, unsigned int numRandomSets) :
+	Light(false) {
 	 this->radiancePreScaled = radiance*radianceScale;
 	 this->minRadiancePreScaled = radiancePreScaled*minAmount;
 	 ambientSampler = SamplerCreator::CreatorSampler(randomSamplerType, numRandomSamples, numRandomSets);

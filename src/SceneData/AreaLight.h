@@ -11,7 +11,10 @@
 class AreaLight : public Light
 {
 public:
-	AreaLight(std::shared_ptr<Primitive> primitive);
+	AreaLight(bool castsShadows,
+		std::shared_ptr<Primitive> const & primitive);
+	AreaLight(bool castsShadows, 
+		std::shared_ptr<Primitive> && primitive);
 	~AreaLight();
 	
 	virtual Vector3 GetDirectionFromPosition(
@@ -19,7 +22,7 @@ public:
 	virtual Color3 GetRadiance(const IntersectionResult& intersectionRes, const Scene& scene) override;
 	
 	virtual bool IsAmbient() const override {
-		return true;
+		return false;
 	}
 
 	virtual const Primitive* GetPrimitive() const override {

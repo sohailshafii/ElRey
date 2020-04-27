@@ -5,12 +5,14 @@
 #include "Materials/Color3.h"
 #include "IntersectionResult.h"
 #include "Primitives/Primitive.h"
+#include <string>
 
 class Scene;
 
 class Light {
 public:
-	Light(bool castsShadows) : castsShadows(castsShadows) {
+	Light(bool castsShadows)
+		: castsShadows(castsShadows) {
 		
 	}
 	virtual ~Light() {

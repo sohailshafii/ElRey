@@ -12,6 +12,10 @@ bool Rectangle::Intersect(const Ray &ray, float tMin, float& tMax,
 		return false;
 	}
 
+	if (t < tMin || t > tMax) {
+		return false;
+	}
+
 	Point3 intersectionPoint = ray.GetPositionAtParam(t);
 	Vector3 vectorAlongPlane = intersectionPoint - rayOrigin;
 
@@ -24,10 +28,6 @@ bool Rectangle::Intersect(const Ray &ray, float tMin, float& tMax,
 	float projectionSide2 = vectorAlongPlane * side2Vec;
 	if (projectionSide2 < 0.0 || projectionSide2 > side2LengthSqr)
 	{
-		return false;
-	}
-
-	if (t < tMin || t > tMax) {
 		return false;
 	}
 
@@ -48,6 +48,10 @@ bool Rectangle::IntersectShadow(const Ray &ray, float tMin, float tMax)
 		return false;
 	}
 
+	if (t < tMin || t > tMax) {
+		return false;
+	}
+
 	Point3 intersectionPoint = ray.GetPositionAtParam(t);
 	Vector3 vectorAlongPlane = intersectionPoint - rayOrigin;
 
@@ -60,10 +64,6 @@ bool Rectangle::IntersectShadow(const Ray &ray, float tMin, float tMax)
 	float projectionSide2 = vectorAlongPlane * side2Vec;
 	if (projectionSide2 < 0.0 || projectionSide2 > side2LengthSqr)
 	{
-		return false;
-	}
-
-	if (t < tMin || t > tMax) {
 		return false;
 	}
 

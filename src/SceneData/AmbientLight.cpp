@@ -1,7 +1,7 @@
 #include "AmbientLight.h"
 
 AmbientLight::AmbientLight(const Color3& radiance, float radianceScale) :
- Light(false) {
+	Light(false) {
 	radiancePreScaled = radiance*radianceScale;
 }
 

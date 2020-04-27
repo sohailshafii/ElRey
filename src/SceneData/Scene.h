@@ -3,6 +3,7 @@
 #include "Primitives/Primitive.h"
 #include "SceneData/Light.h"
 #include "Cameras/Camera.h"
+#include <string>
 
 // simple base class for all acceleration structures, or really anything
 // that represents our world.
@@ -28,6 +29,8 @@ public:
 	Primitive* GetPrimitive(unsigned int index) {
 		return primitives[index];	
 	}
+
+	Primitive* FindPrimitiveByName(const std::string& name);
 
 	unsigned int GetNumPrimitives() const {
 		return numPrimitives;

@@ -1,7 +1,14 @@
 #include "AreaLight.h"
 
-AreaLight::AreaLight(std::shared_ptr<Primitive> primitive) :
- Light(true), primitive(primitive) {
+AreaLight::AreaLight(bool castsShadows,
+	std::shared_ptr<Primitive> const& iPrimitive) :
+	Light(castsShadows), primitive(iPrimitive) {
+}
+
+AreaLight::AreaLight(bool castsShadows,
+	std::shared_ptr<Primitive>&& iPrimitive) :
+	Light(castsShadows), primitive(std::move(iPrimitive))
+{
 }
 
 AreaLight::~AreaLight() {
@@ -29,13 +36,13 @@ void AreaLight::StoreAreaLightInformation(
 	(primitiveSample);
 	Vector3 vectorToLight = primitiveSample -
 		intersectionRes.GetIntersectionPos();
-	intersectionRes.SetIntersectionNormal(vectorToLight);
+	intersectionRes.SetIntersectionNormal(primitiveNormal);
 	intersectionRes.SetVectorToLight(vectorToLight);
 	intersectionRes.SetSamplePointOnLight(primitiveSample);
 }
 
 Color3 AreaLight::GetRadiance(const IntersectionResult& intersectionRes, const Scene& scene) {
-	float nDotVectorToLight = -intersectionRes.GetNormalVector()
+	float nDotVectorToLight = intersectionRes.GetNormalVector()
 		* intersectionRes.GetVectorToLight();
 	if (nDotVectorToLight > 0.0f) {
 		Color primitiveColor = primitive->GetMaterial()
@@ -49,7 +56,7 @@ Color3 AreaLight::GetRadiance(const IntersectionResult& intersectionRes, const S
 float AreaLight::GeometricTerm(
 	const IntersectionResult& intersectionRes)
 	const {
-	float nDotVectorToLight = -intersectionRes.GetNormalVector()
+	float nDotVectorToLight = intersectionRes.GetNormalVector()
 		* intersectionRes.GetVectorToLight();
 	float d2 = intersectionRes.GetIntersectionPos().
 		GetDistanceSquared(intersectionRes.GetSamplePointOnLight());

@@ -9,8 +9,10 @@ class GenericSampler;
 class AmbientLightOccluder : public Light
 {
 public:
-	AmbientLightOccluder(const Color3& radiance, float radianceScale, float minAmount, RandomSamplerType
-	randomSamplerType, unsigned int numRandomSamples, unsigned int numRandomSets);
+	AmbientLightOccluder(const Color3& radiance,
+		float radianceScale, float minAmount,
+		RandomSamplerType randomSamplerType,
+		unsigned int numRandomSamples, unsigned int numRandomSets);
 	~AmbientLightOccluder();
 	
 	virtual Vector3 GetDirectionFromPosition(

@@ -6,17 +6,31 @@
 #include "Materials/Material.h"
 #include "SceneData/IntersectionResult.h"
 #include "Sampling/GenericSampler.h"
+#include <string>
 
 class Primitive {
 public:
-	// TODO: by ref or not?
-	Primitive(std::shared_ptr<Material> material)
-		: material(material)
+	Primitive(std::shared_ptr<Material> const& iMaterial,
+		const std::string& iName)
+		: material(iMaterial), name(iName)
 	{ }
-	Primitive(std::shared_ptr<Material> material,
-			  std::shared_ptr<GenericSampler> sampler)
-		: material(material), sampler(sampler)
+	Primitive(std::shared_ptr<Material> const& iMaterial,
+			std::shared_ptr<GenericSampler> const& iSampler,
+			const std::string& iName)
+		: material(iMaterial), sampler(iSampler), name(iName)
 	{ }
+
+	Primitive(std::shared_ptr<Material> && material,
+		const std::string& iName)
+		: material(std::move(material)), name(iName)
+	{ }
+	Primitive(std::shared_ptr<Material> && material,
+		std::shared_ptr<GenericSampler> && sampler,
+		const std::string& iName)
+		: material(std::move(material)),
+			sampler(std::move(sampler)), name(iName)
+	{ }
+
 	virtual ~Primitive() { }
 
 	virtual bool Intersect(const Ray &ray, float tMin, float& tMax,
@@ -42,7 +56,13 @@ public:
 		return 1.0f;
 	}
 
+	const std::string& GetName() const {
+		return name;
+	}
+
 protected:
 	std::shared_ptr<Material> material;
 	std::shared_ptr<GenericSampler> sampler;
+
+	std::string name;
 };

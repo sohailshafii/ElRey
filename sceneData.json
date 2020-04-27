@@ -4,16 +4,16 @@
 		"navigation_type":"none",
 		"camera":
 		{		
-"type":"pinhole",
-"eye_position":[0.0,1.0,0.5],
-"look_at_position":[0.0,1.0,0.7],
-"num_columns_pixels":600,
-"num_rows_pixels":400,
-"view_plane_width":1.0,
-"up_vector":[0.0,1.0,0.0],
-"random_sampler_type":"multijittered",
-"num_random_samples":4,
-"num_random_sets":83
+			"type":"pinhole",
+			"eye_position":[0.0,1.0,0.5],
+			"look_at_position":[0.0,1.0,0.7],
+			"num_columns_pixels":600,
+			"num_rows_pixels":400,
+			"view_plane_width":1.0,
+			"up_vector":[0.0,1.0,0.0],
+			"random_sampler_type":"multijittered",
+			"num_random_samples":4,
+			"num_random_sets":83
 		}
 	},
 	"objects":
@@ -22,6 +22,7 @@
 			"type":"plane",
 			"position":[0.0,0.5,0.0],
 			"normal":[0.0,1.0,0.0],
+			"name":"ground_plane",
 			"material":
 			{
 				"type":"lambertian",
@@ -34,6 +35,7 @@
 			"type":"sphere",
 			"position":[0.0,1.0,1.0],
 			"radius":0.3,
+			"name":"main_sphere",
 			"material":
 			{
 				"type":"phong",
@@ -44,6 +46,26 @@
 				"ks_color":[1.0, 1.0, 1.0],
 				"color":[0.0,1.0,1.0,1.0]
 			}
+		},
+		{
+			"type":"rectangle",
+			"name":"area_light_rectangle",
+			"side_vec_1":[5.0, 0.0, 0.0],
+			"side_vec_2":[0.0, 5.0, 0.0],
+			"origin":[8, 8, 4.0],
+			"material":
+			{
+				"type":"simple_emissive",
+				"ka":0.1,
+				"kd":0.95,
+				"color":[1.0, 1.0, 1.0, 1.0]
+			},
+			"sampler":
+			{
+				"random_sampler_type":"multijittered",
+				"num_random_samples":4,
+				"num_random_sets":83
+			}
 		}
 	],
 	"lights":
@@ -51,8 +73,8 @@
 		{
 			"type":"ambient_occluder",
 			"radiance":[1.0,1.0,1.0],
-			"radiance_scale":0.7,
-			"min_amount":0.0,
+			"radiance_scale":0.1,
+			"min_amount":0.6,
 			"random_sampler_type":"multijittered",
 			"num_random_samples":4,
 			"num_random_sets":83
@@ -62,6 +84,11 @@
 			"direction":[-0.5,-0.4,-0.05],
 			"radiance":[0.4,0.4,0.4],
 			"radiance_scale":5.0,
+			"casts_shadows":true
+		},
+		{
+			"type":"area_light",
+			"primitive_name":"area_light_rectangle",
 			"casts_shadows":true
 		}
 	]

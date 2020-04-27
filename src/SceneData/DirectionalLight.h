@@ -5,8 +5,8 @@
 class DirectionalLight : public Light
 {
 public:
-	DirectionalLight(bool castsShadows, const Vector3& direction, const Color3& radiance,
-					 float radianceScale);
+	DirectionalLight(bool castsShadows, const Vector3& direction,
+		const Color3& radiance, float radianceScale);
 	~DirectionalLight();
 	
 	virtual Vector3 GetDirectionFromPosition(

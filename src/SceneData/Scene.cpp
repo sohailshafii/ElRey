@@ -149,6 +149,20 @@ void Scene::AddLights(Light** newLights, unsigned int numNewLights) {
 	}
 }
 
+Primitive* Scene::FindPrimitiveByName(const std::string& name) {
+	Primitive* foundPrimitive = nullptr;
+
+	for (unsigned int primIndex = 0; primIndex < numPrimitives;
+		primIndex++) {
+		Primitive* currentPrimitive = primitives[primIndex];
+		if (currentPrimitive->GetName() == name) {
+			foundPrimitive = currentPrimitive;
+		}
+	}
+
+	return foundPrimitive;
+}
+
 void Scene::SetAmbientLight(Light* newAmbientLight) {
 	if (ambientLight != nullptr) {
 		delete ambientLight;
@@ -169,7 +183,7 @@ bool Scene::Intersect(const Ray &ray, Color &newColor,
 	}
 	
 	if (closestPrimitive != nullptr) {
-		std::shared_ptr<Material> primitivePtr = closestPrimitive->GetMaterial();
+		std::shared_ptr<Material> primitiveMaterial = closestPrimitive->GetMaterial();
 		intersectionResult.SetIncomingRay(ray);
 		
 		auto intersectionPos = ray.GetPositionAtParam(tMax);
@@ -183,7 +197,7 @@ bool Scene::Intersect(const Ray &ray, Color &newColor,
 		if (ambientLight != nullptr) {
 			auto lightRadiance = ambientLight->GetRadiance(intersectionResult, *this);
 			Color lightRadColor4 = Color(lightRadiance[0], lightRadiance[1], lightRadiance[2], 0.0);
-			newColor += primitivePtr->GetAmbientColor(intersectionResult)*lightRadColor4;
+			newColor += primitiveMaterial->GetAmbientColor(intersectionResult)*lightRadColor4;
 		}
 		
 		for (unsigned int i = 0; i < numLights; i++) {
@@ -211,7 +225,7 @@ bool Scene::Intersect(const Ray &ray, Color &newColor,
 				
 				if (!inShadow) {
 					intersectionResult.SetVectorToLight(vectorToLight);
-					newColor += primitivePtr->GetDirectColor(intersectionResult)*lightRadColor4*projectionTerm;
+					newColor += primitiveMaterial->GetDirectColor(intersectionResult)*lightRadColor4*projectionTerm;
 				}
 			}
 		}

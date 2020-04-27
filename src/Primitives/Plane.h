@@ -7,13 +7,21 @@
 class Plane : public Primitive {
 public:
 	Plane(const Point3& iOrigin, const Vector3& iNormal,
-		std::shared_ptr<Material> material) : Primitive(material),
+		std::shared_ptr<Material> const & iMaterial,
+		const std::string& iName) : Primitive(iMaterial, iName),
 		origin(iOrigin), normal(iNormal) {
 		this->distance = -origin*normal;
 	}
 
+	Plane(const Point3& iOrigin, const Vector3& iNormal,
+		std::shared_ptr<Material> && iMaterial,
+		const std::string& iName) : Primitive(iMaterial, iName),
+		origin(iOrigin), normal(iNormal) {
+		this->distance = -origin * normal;
+	}
+
 	bool Intersect(const Ray &ray, float tMin, float& tMax,
-				   IntersectionResult &intersectionResult) override;
+				IntersectionResult &intersectionResult) override;
 	bool IntersectShadow(const Ray &ray, float tMin, float tMax) override;
 	
 	virtual Vector3 GetNormalAtPosition(const Point3& position) const override {

@@ -1,6 +1,8 @@
 #include "DirectionalLight.h"
 
-DirectionalLight::DirectionalLight(bool castsShadows, const Vector3& direction, const Color3& radiance, float radianceScale) : Light(castsShadows) {
+DirectionalLight::DirectionalLight(bool castsShadows,
+	const Vector3& direction, const Color3& radiance,
+	float radianceScale) : Light(castsShadows) {
 	this->lightDirection = direction;
 	this->radiancePreScaled = radiance*radianceScale;
 }

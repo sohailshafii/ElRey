@@ -6,7 +6,7 @@
 #include <iostream>
 
 bool Sphere::Intersect(const Ray &ray, float tMin, float& tMax,
-					   IntersectionResult &intersectionResult) {
+	IntersectionResult &intersectionResult) {
 	const Point3& rayOrigin = ray.GetOrigin();
 	const Vector3& rayDirection = ray.GetDirection();
 
