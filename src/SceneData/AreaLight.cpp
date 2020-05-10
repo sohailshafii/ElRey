@@ -2,6 +2,7 @@
 
 AreaLight::AreaLight(bool castsShadows, std::string primitiveName) :
 	Light(castsShadows), primitiveName(primitiveName) {
+		primitive = nullptr;
 }
 
 AreaLight::AreaLight(bool castsShadows,

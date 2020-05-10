@@ -363,7 +363,7 @@ Light* CreateLight(const nlohmann::json& jsonObj) {
 	else if (primitiveType == "area_light") {
 		std::string primitiveName = SafeGetToken(jsonObj, "primitive_name");
 		bool castsShadows = SafeGetToken(jsonObj, "casts_shadows");
-		//newLight = new AreaLight(castsShadows, primitiveName);
+		newLight = new AreaLight(castsShadows, primitiveName);
 	}
 	return newLight;
 }
