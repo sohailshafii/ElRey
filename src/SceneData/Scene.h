@@ -36,6 +36,14 @@ public:
 		return numPrimitives;
 	}
 	
+	unsigned int GetNumLights() const {
+		return numLights;
+	}
+	
+	Light* GetLight(unsigned int index) {
+		return lights[index];
+	}
+	
 	void SetCamera(Camera *newCamera) {
 		if (mainCamera != nullptr) {
 			delete mainCamera;

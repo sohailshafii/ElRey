@@ -1,14 +1,12 @@
 #include "AreaLight.h"
 
-AreaLight::AreaLight(bool castsShadows,
-	std::shared_ptr<Primitive> const& iPrimitive) :
-	Light(castsShadows), primitive(iPrimitive) {
+AreaLight::AreaLight(bool castsShadows, std::string primitiveName) :
+	Light(castsShadows), primitiveName(primitiveName) {
 }
 
 AreaLight::AreaLight(bool castsShadows,
-	std::shared_ptr<Primitive>&& iPrimitive) :
-	Light(castsShadows), primitive(std::move(iPrimitive))
-{
+	Primitive* iPrimitive) :
+	Light(castsShadows), primitive(iPrimitive) {
 }
 
 AreaLight::~AreaLight() {

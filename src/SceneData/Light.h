@@ -19,6 +19,14 @@ public:
 		
 	}
 	
+	virtual void SetPrimitive(Primitive* newPrimitive) {
+		// must override
+	}
+	
+	virtual std::string GetPrimitiveName() const {
+		return " ";
+	}
+	
 	virtual Color3 GetRadiance(const IntersectionResult& intersectionRes, const Scene& scene) = 0;
 	
 	bool CastsShadows() {

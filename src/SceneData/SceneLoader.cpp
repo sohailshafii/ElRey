@@ -71,7 +71,22 @@ void SceneLoader::DeserializeJSONFileIntoScene(class Scene* scene,
 		throw exceptionMsg;
 	}
 
-	// TODO: find primitive
+	unsigned int numLights = scene->GetNumLights();
+	for (unsigned int lightIndex = 0; lightIndex <
+		 numLights; lightIndex++)
+	{
+		Light* currentLight = scene->GetLight(lightIndex);
+		// find primitive if current light needs to be sampled
+		if (currentLight->NeedsToBeSampled())
+		{
+			std::string const & primName = currentLight->GetPrimitiveName();
+			Primitive* foundPrimitive = scene->FindPrimitiveByName(primName);
+			if (foundPrimitive != nullptr)
+			{
+				currentLight->SetPrimitive(foundPrimitive);
+			}
+		}
+	}
 }
 
 static inline nlohmann::json SafeGetToken(const nlohmann::json& jsonObj,
@@ -319,6 +334,7 @@ Light* CreateLight(const nlohmann::json& jsonObj) {
 		auto radiance = SafeGetToken(jsonObj, "radiance");
 		float radianceScale = SafeGetToken(jsonObj, "radiance_scale");
 		float minAmount = SafeGetToken(jsonObj, "min_amount");
+		
 		RandomSamplerType randomSamplerType;
 		int numRandomSamples, numRandomSets;
 		SetUpRandomSampler(jsonObj, randomSamplerType, numRandomSamples,
@@ -347,9 +363,7 @@ Light* CreateLight(const nlohmann::json& jsonObj) {
 	else if (primitiveType == "area_light") {
 		std::string primitiveName = SafeGetToken(jsonObj, "primitive_name");
 		bool castsShadows = SafeGetToken(jsonObj, "casts_shadows");
-		// TODO: look up rectangle
-		std::shared_ptr<Primitive> areaLightPrimitive;
-		//newLight = new AreaLight(castsShadows, areaLightPrimitive);
+		//newLight = new AreaLight(castsShadows, primitiveName);
 	}
 	return newLight;
 }

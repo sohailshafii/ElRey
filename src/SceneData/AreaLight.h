@@ -1,6 +1,7 @@
 #pragma once
 
 #include <memory>
+#include <string>
 #include "Materials/Material.h"
 #include "SceneData/Light.h"
 #include "Primitives/Primitive.h"
@@ -11,11 +12,21 @@
 class AreaLight : public Light
 {
 public:
+	AreaLight(bool castsShadows, std::string primitiveName);
 	AreaLight(bool castsShadows,
-		std::shared_ptr<Primitive> const & primitive);
-	AreaLight(bool castsShadows, 
-		std::shared_ptr<Primitive> && primitive);
+		Primitive* primitive);
 	~AreaLight();
+	
+	virtual void SetPrimitive(Primitive* newPrimitive) override {
+		primitive = newPrimitive;
+	}
+	
+	virtual std::string GetPrimitiveName() const override {
+		if (primitive != nullptr) {
+			return primitive->GetName();
+		}
+		return primitiveName;
+	}
 	
 	virtual Vector3 GetDirectionFromPosition(
 		const IntersectionResult& intersectionRes) const override;
@@ -26,11 +37,11 @@ public:
 	}
 
 	virtual const Primitive* GetPrimitive() const override {
-		return primitive.get();
+		return primitive;
 	}
 
-	virtual const bool NeedsToBeSampled() const {
-		return false;
+	virtual const bool NeedsToBeSampled() const override {
+		return true;
 	}
 
 	virtual void StoreAreaLightInformation(
@@ -46,5 +57,8 @@ public:
 	}
 
 private:
-	std::shared_ptr<Primitive> primitive;
+	// this is nasty -- should not have a pointer
+	// this is NOT a pointer that we own!
+	Primitive* primitive;
+	std::string primitiveName;
 };
