@@ -1,5 +1,6 @@
 #include "AreaLight.h"
 
+// TODO: need to hook to tracer somehow
 AreaLight::AreaLight(bool castsShadows, std::string primitiveName) :
 	Light(castsShadows), primitiveName(primitiveName) {
 		primitive = nullptr;
