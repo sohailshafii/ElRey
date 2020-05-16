@@ -200,15 +200,16 @@ bool Scene::Intersect(const Ray &ray, Color &newColor,
 			newColor += primitiveMaterial->GetAmbientColor(intersectionResult)*lightRadColor4;
 		}
 		
-		// TODO: area light primitive should not test against itself
 		for (unsigned int i = 0; i < numLights; i++) {
 			auto currentLight = this->lights[i];
 			Vector3 vectorToLight;
+			auto isAreaLight = currentLight->IsAreaLight();
+			const Primitive* primitiveToExclude = nullptr;
 			
-			if (currentLight->IsAreaLight()) {
+			if (isAreaLight) {
 				currentLight->ComputeAndStoreAreaLightInformation(intersectionResult);
 				vectorToLight = intersectionResult.GetVectorToLight();
-				continue;
+				primitiveToExclude = currentLight->GetPrimitive();
 			}
 			else {
 				vectorToLight = -currentLight->GetDirectionFromPosition(
@@ -223,10 +224,12 @@ bool Scene::Intersect(const Ray &ray, Color &newColor,
 				// if the light has a limited cast range, don't test primitives
 				// that are further from light for shadow test
 				float maxCastDistance = currentLight->IsLightDistanceInfinite() ?
-				std::numeric_limits<float>::max() : vectorMagn;
+					std::numeric_limits<float>::max() : vectorMagn;
 				// test shadow feeler if light supports it!
 				if (currentLight->CastsShadows() &&
-					ShadowFeelerIntersectsAnObject(Ray(intersectionPos+vectorToLight*SHADOW_FEELER_EPSILON, vectorToLight), 0.0f, maxCastDistance)) {
+					ShadowFeelerIntersectsAnObject(Ray(intersectionPos+
+						vectorToLight*SHADOW_FEELER_EPSILON, vectorToLight), 0.0f, maxCastDistance,
+						primitiveToExclude)) {
 					inShadow = true;
 				}
 				
@@ -234,9 +237,17 @@ bool Scene::Intersect(const Ray &ray, Color &newColor,
 					intersectionResult.SetVectorToLight(vectorToLight);
 					intersectionResult.SetIsVectorToLightNormalized(true);
 					auto lightRadiance = currentLight->GetRadiance(intersectionResult, *this);
+
 					Color lightRadColor4 = Color(lightRadiance[0], lightRadiance[1],
 						lightRadiance[2], 0.0);
-					newColor += primitiveMaterial->GetDirectColor(intersectionResult)*lightRadColor4*projectionTerm;
+					newColor += isAreaLight?
+						primitiveMaterial->GetDirectColor(intersectionResult)*
+						lightRadColor4*projectionTerm*
+						currentLight->GeometricTerm(intersectionResult)/
+						currentLight->PDF(intersectionResult)
+						:
+						primitiveMaterial->GetDirectColor(intersectionResult)*
+						lightRadColor4*projectionTerm;
 				}
 			}
 		}
@@ -246,9 +257,13 @@ bool Scene::Intersect(const Ray &ray, Color &newColor,
 }
 
 bool Scene::ShadowFeelerIntersectsAnObject(const Ray& ray, float tMin,
-float tMax) const {
+	float tMax, const Primitive* primitiveToExclude) const {
 	for (unsigned int i = 0; i < numPrimitives; i++) {
 		auto currentPrimitive = this->primitives[i];
+		if (currentPrimitive == primitiveToExclude) {
+			continue;
+		}
+
 		if (currentPrimitive->IntersectShadow(ray, tMin, tMax))
 		{
 			return true;

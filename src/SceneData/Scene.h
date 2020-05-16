@@ -70,8 +70,11 @@ public:
 		return mainCamera->GetNumColumnsPixels();
 	}
 	
+	// exclude a primitive if we are checking area light and want
+	// to exclude their related primitive
 	bool ShadowFeelerIntersectsAnObject(const Ray& ray, float tMin,
-										float tMax) const;
+										float tMax,
+										const Primitive* primitiveToExclude = nullptr) const;
 
 private:
 	void CleanUpPrimitives(Primitive **primitivesToClean, unsigned int
