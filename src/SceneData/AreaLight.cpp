@@ -27,22 +27,23 @@ Vector3 AreaLight::GetDirectionFromPosition(
 	return vectorToLight;
 }
 
-void AreaLight::StoreAreaLightInformation(
+void AreaLight::ComputeAndStoreAreaLightInformation(
 	IntersectionResult& intersectionRes) const
 {
-	Point3 primitiveSample;
-	primitive->SamplePrimitive(primitiveSample);
-	Vector3 primitiveNormal = primitive->GetNormalAtPosition
-	(primitiveSample);
-	Vector3 vectorToLight = primitiveSample -
+	Point3 lightPrimitiveSample;
+	primitive->SamplePrimitive(lightPrimitiveSample);
+	Vector3 lightPrimitiveNormal = primitive->GetNormalAtPosition
+		(lightPrimitiveSample);
+	Vector3 vectorToLight = lightPrimitiveSample -
 		intersectionRes.GetIntersectionPos();
-	intersectionRes.SetIntersectionNormal(primitiveNormal);
+	intersectionRes.SetAreaLightNormal(lightPrimitiveNormal);
 	intersectionRes.SetVectorToLight(vectorToLight);
-	intersectionRes.SetSamplePointOnLight(primitiveSample);
+	intersectionRes.SetSamplePointOnLight(lightPrimitiveSample);
+	intersectionRes.SetIsVectorToLightNormalized(false);
 }
 
 Color3 AreaLight::GetRadiance(const IntersectionResult& intersectionRes, const Scene& scene) {
-	float nDotVectorToLight = intersectionRes.GetNormalVector()
+	float nDotVectorToLight = -intersectionRes.GetAreaLightNormal()
 		* intersectionRes.GetVectorToLight();
 	if (nDotVectorToLight > 0.0f) {
 		Color primitiveColor = primitive->GetMaterial()
@@ -56,7 +57,7 @@ Color3 AreaLight::GetRadiance(const IntersectionResult& intersectionRes, const S
 float AreaLight::GeometricTerm(
 	const IntersectionResult& intersectionRes)
 	const {
-	float nDotVectorToLight = intersectionRes.GetNormalVector()
+	float nDotVectorToLight = intersectionRes.GetAreaLightNormal()
 		* intersectionRes.GetVectorToLight();
 	float d2 = intersectionRes.GetIntersectionPos().
 		GetDistanceSquared(intersectionRes.GetSamplePointOnLight());

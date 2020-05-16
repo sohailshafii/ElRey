@@ -51,7 +51,7 @@ public:
 		return 1.0f;
 	}
 
-	virtual const bool NeedsToBeSampled() const {
+	virtual const bool IsAreaLight() const {
 		return false;
 	}
 
@@ -59,7 +59,7 @@ public:
 		return nullptr;
 	}
 
-	virtual void StoreAreaLightInformation(
+	virtual void ComputeAndStoreAreaLightInformation(
 		IntersectionResult& intersectionRes) const
 	{
 		// for area lights

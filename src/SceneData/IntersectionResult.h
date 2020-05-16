@@ -30,6 +30,10 @@ public:
 	void SetIntersectionNormal(const Vector3& normalVector) {
 		this->normalVector = normalVector;
 	}
+
+	void SetAreaLightNormal(const Vector3& areaLightNormal) {
+		this->areaLightNormalVector = areaLightNormal;
+	}
 	
 	void SetIntersectionPosition(const Point3& intersectionPos) {
 		this->intersectionPosition = intersectionPos;
@@ -47,23 +51,35 @@ public:
 		samplePointOnLight = samplePoint;
 	}
 
-	const Ray GetIncomingRayInverse() const {
+	void SetIsVectorToLightNormalized(bool vectorToLightNormalized) {
+		isVectorToLightNormalized = false;
+	}
+
+	Ray GetIncomingRayInverse() const {
 		return incomingRay;
 	}
 
-	const Vector3 GetIncomingDirInverse() const {
+	Vector3 GetIncomingDirInverse() const {
 		return incomingDirInverse;
 	}
 	
-	const Vector3 GetVectorToLight() const {
+	Vector3 GetVectorToLight() const {
 		return vectorToLight;
 	}
-	
-	const Vector3 GetNormalVector() const {
-		return normalVector;
+
+	bool IsVectorToLightNormalized() const {
+		return isVectorToLightNormalized;
 	}
 	
-	const Point3 GetIntersectionPos() const {
+	Vector3 GetNormalVector() const {
+		return normalVector;
+	}
+
+	Vector3 GetAreaLightNormal() const {
+		return areaLightNormalVector;
+	}
+	
+	Point3 GetIntersectionPos() const {
 		return intersectionPosition;
 	}
 	
@@ -79,6 +95,9 @@ private:
 	// usually lighting deals with incoming ray facing away from surface
 	Ray incomingRay;
 	Vector3 vectorToLight;
+	bool isVectorToLightNormalized;
+
+	Vector3 areaLightNormalVector;
 	Vector3 incomingDirInverse;
 	Vector3 normalVector;
 	Point3 intersectionPosition;

@@ -40,11 +40,11 @@ public:
 		return primitive;
 	}
 
-	virtual const bool NeedsToBeSampled() const override {
+	virtual const bool IsAreaLight() const override {
 		return true;
 	}
 
-	virtual void StoreAreaLightInformation(
+	virtual void ComputeAndStoreAreaLightInformation(
 		IntersectionResult& intersectionRes) const override;
 
 	virtual float GeometricTerm(

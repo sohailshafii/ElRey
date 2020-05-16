@@ -200,15 +200,22 @@ bool Scene::Intersect(const Ray &ray, Color &newColor,
 			newColor += primitiveMaterial->GetAmbientColor(intersectionResult)*lightRadColor4;
 		}
 		
+		// TODO: area light primitive should not test against itself
 		for (unsigned int i = 0; i < numLights; i++) {
 			auto currentLight = this->lights[i];
-			Vector3 vectorToLight = -currentLight->GetDirectionFromPosition(
-																			intersectionResult);
-			float vectorMagn = vectorToLight.Norm();
-			auto lightRadiance = currentLight->GetRadiance(intersectionResult, *this);
-			Color lightRadColor4 = Color(lightRadiance[0], lightRadiance[1],
-										 lightRadiance[2], 0.0);
+			Vector3 vectorToLight;
 			
+			if (currentLight->IsAreaLight()) {
+				currentLight->ComputeAndStoreAreaLightInformation(intersectionResult);
+				vectorToLight = intersectionResult.GetVectorToLight();
+				continue;
+			}
+			else {
+				vectorToLight = -currentLight->GetDirectionFromPosition(
+					intersectionResult);
+			}
+			
+			float vectorMagn = vectorToLight.Norm();
 			vectorToLight /= vectorMagn;
 			float projectionTerm = vectorToLight*normalVec;
 			if (projectionTerm > 0.0f) {
@@ -225,6 +232,10 @@ bool Scene::Intersect(const Ray &ray, Color &newColor,
 				
 				if (!inShadow) {
 					intersectionResult.SetVectorToLight(vectorToLight);
+					intersectionResult.SetIsVectorToLightNormalized(true);
+					auto lightRadiance = currentLight->GetRadiance(intersectionResult, *this);
+					Color lightRadColor4 = Color(lightRadiance[0], lightRadiance[1],
+						lightRadiance[2], 0.0);
 					newColor += primitiveMaterial->GetDirectColor(intersectionResult)*lightRadColor4*projectionTerm;
 				}
 			}
