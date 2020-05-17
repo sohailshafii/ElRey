@@ -202,6 +202,7 @@ bool Scene::Intersect(const Ray &ray, Color &newColor,
 		
 		for (unsigned int i = 0; i < numLights; i++) {
 			auto currentLight = this->lights[i];
+
 			Vector3 vectorToLight;
 			auto isAreaLight = currentLight->IsAreaLight();
 			const Primitive* primitiveToExclude = nullptr;
@@ -210,11 +211,19 @@ bool Scene::Intersect(const Ray &ray, Color &newColor,
 			float vectorMagn = 0.0f;
 
 			if (isAreaLight) {
+				primitiveToExclude = currentLight->GetPrimitive();
 				currentLight->ComputeAndStoreAreaLightInformation(intersectionResult);
 				vectorToLight = intersectionResult.GetVectorToLight();
-				primitiveToExclude = currentLight->GetPrimitive();
 				vectorMagn = intersectionResult.GetVectorToLightScaled().Norm();
 				projectionTerm = vectorToLight * normalVec;
+
+				// if primitive we struck is area light itself, no need to test light visibility
+				if (primitiveToExclude == closestPrimitive)
+				{
+					newColor +=
+						primitiveMaterial->GetColorForAreaLight(intersectionResult);
+					continue;
+				}
 			}
 			else {
 				vectorToLight = -currentLight->GetDirectionFromPositionScaled(

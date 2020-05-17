@@ -91,8 +91,8 @@ void Camera::TranslateAndRotate(const Vector3& translation, float rightRotationD
 	float pitchRad = rightRotationDegrees*DEG_2_RAD;
 	float cosPitchRad = cos(pitchRad);
 	forward[0] = sin(yawRad) * cosPitchRad;
-    forward[1] = sin(pitchRad);
-    forward[2] = cos(yawRad) * cosPitchRad;
+	forward[1] = sin(pitchRad);
+	forward[2] = cos(yawRad) * cosPitchRad;
 	forward.Normalize();
 	right = Vector3::Up() ^ forward;
 	right.Normalize();

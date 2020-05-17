@@ -44,7 +44,8 @@ private:
 		side2LengthSqr = side2Vec.NormSqr();
 		area = sqrt(side1LengthSqr) * sqrt(side2LengthSqr);
 		inverseArea = 1.0f / area;
-		normal = side1Vec ^ side2Vec;
+		// assume left-handed
+		normal = side2Vec ^ side1Vec;
 		normal.Normalize();
 	}
 
