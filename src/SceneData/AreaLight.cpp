@@ -55,7 +55,7 @@ Color3 AreaLight::GetRadiance(const IntersectionResult& intersectionRes, const S
 float AreaLight::GeometricTerm(
 	const IntersectionResult& intersectionRes)
 	const {
-	float nDotVectorToLight = intersectionRes.GetAreaLightNormal()
+	float nDotVectorToLight = -intersectionRes.GetAreaLightNormal()
 		* intersectionRes.GetVectorToLight();
 	float d2 = intersectionRes.GetIntersectionPos().
 		GetDistanceSquared(intersectionRes.GetSamplePointOnLight());

@@ -211,10 +211,10 @@ bool Scene::Intersect(const Ray &ray, Color &newColor,
 
 			if (isAreaLight) {
 				currentLight->ComputeAndStoreAreaLightInformation(intersectionResult);
-				vectorToLight = intersectionResult.GetVectorToLightScaled();
+				vectorToLight = intersectionResult.GetVectorToLight();
 				primitiveToExclude = currentLight->GetPrimitive();
-				vectorMagn = vectorToLight.Norm();
-				projectionTerm = intersectionResult.GetVectorToLight() * normalVec;
+				vectorMagn = intersectionResult.GetVectorToLightScaled().Norm();
+				projectionTerm = vectorToLight * normalVec;
 			}
 			else {
 				vectorToLight = -currentLight->GetDirectionFromPositionScaled(
