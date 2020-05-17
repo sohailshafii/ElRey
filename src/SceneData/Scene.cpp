@@ -240,7 +240,7 @@ bool Scene::Intersect(const Ray &ray, Color &newColor,
 
 					Color lightRadColor4 = Color(lightRadiance[0], lightRadiance[1],
 						lightRadiance[2], 0.0);
-					newColor += isAreaLight?
+					newColor += isAreaLight ?
 						primitiveMaterial->GetColorForAreaLight(intersectionResult)*
 						lightRadColor4*projectionTerm*
 						currentLight->GeometricTerm(intersectionResult)/
