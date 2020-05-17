@@ -10,6 +10,8 @@ const Color3& ksColor) {
 	glossySpecularBRDF.setKs(ks);
 	glossySpecularBRDF.setExponent(exponent);
 	glossySpecularBRDF.setCs(ksColor);
+
+	deadColor = Color::Black();
 }
 
 Color PhongMaterial::GetAmbientColor(const IntersectionResult &intersectionResult) {
@@ -21,4 +23,16 @@ Color PhongMaterial::GetDirectColor(const IntersectionResult &intersectionResult
 	Color3 directColor = diffuseBRDF.GetRadiance(intersectionResult);
 	Color3 specularColor = glossySpecularBRDF.GetRadiance(intersectionResult);
 	return Color(directColor[0]+specularColor[0], directColor[1]+specularColor[1], directColor[2]+specularColor[2], 1.0f);
+}
+
+Color PhongMaterial::GetColorForAreaLight(const IntersectionResult& intersectionResult) {
+	if (intersectionResult.GetNormalVector() * intersectionResult.GetIncomingDirInverse()
+		> 0.0) {
+		Color3 directColor = diffuseBRDF.GetRadiance(intersectionResult);
+		Color3 specularColor = glossySpecularBRDF.GetRadiance(intersectionResult);
+		return Color(directColor[0] + specularColor[0], directColor[1] + specularColor[1],
+			directColor[2] + specularColor[2], 1.0f);
+	}
+
+	return deadColor;
 }

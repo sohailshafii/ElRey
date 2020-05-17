@@ -15,9 +15,14 @@ public:
 		override;
 	virtual Color GetDirectColor(const IntersectionResult &intersectionResult)
 		override;
+
+	virtual Color GetColorForAreaLight(const IntersectionResult& intersectionResult)
+		override;
 private:
 	LambertianBRDF ambientBRDF;
 	LambertianBRDF diffuseBRDF;
 	GlossySpecularBRDF glossySpecularBRDF;
+
+	Color deadColor;
 };
 

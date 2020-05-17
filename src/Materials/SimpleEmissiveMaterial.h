@@ -11,7 +11,12 @@ public:
 		override;
 	virtual Color GetDirectColor(const IntersectionResult &intersectionResult)
 		override;
+
+	virtual Color GetColorForAreaLight(const IntersectionResult& intersectionResult)
+		override;
 private:
 	Color ambientColor;
 	Color directColor;
+
+	Color deadColor;
 };
