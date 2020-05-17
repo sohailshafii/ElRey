@@ -10,7 +10,7 @@ DirectionalLight::DirectionalLight(bool castsShadows,
 DirectionalLight::~DirectionalLight() {
 }
 
-Vector3 DirectionalLight::GetDirectionFromPosition(
+Vector3 DirectionalLight::GetDirectionFromPositionScaled(
 	const IntersectionResult& intersectionRes) const {
 	return lightDirection;
 }

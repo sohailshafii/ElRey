@@ -206,19 +206,27 @@ bool Scene::Intersect(const Ray &ray, Color &newColor,
 			auto isAreaLight = currentLight->IsAreaLight();
 			const Primitive* primitiveToExclude = nullptr;
 			
+			float projectionTerm = 0.0f;
+			float vectorMagn = 0.0f;
+
 			if (isAreaLight) {
 				currentLight->ComputeAndStoreAreaLightInformation(intersectionResult);
-				vectorToLight = intersectionResult.GetVectorToLight();
+				vectorToLight = intersectionResult.GetVectorToLightScaled();
 				primitiveToExclude = currentLight->GetPrimitive();
+				vectorMagn = vectorToLight.Norm();
+				projectionTerm = intersectionResult.GetVectorToLight() * normalVec;
 			}
 			else {
-				vectorToLight = -currentLight->GetDirectionFromPosition(
+				vectorToLight = -currentLight->GetDirectionFromPositionScaled(
 					intersectionResult);
+				vectorMagn = vectorToLight.Norm();
+				intersectionResult.SetLightVectorScaled(vectorToLight);
+				vectorToLight /= vectorMagn;
+
+				projectionTerm = vectorToLight * normalVec;
+				intersectionResult.SetLightVector(vectorToLight);
 			}
 			
-			float vectorMagn = vectorToLight.Norm();
-			vectorToLight /= vectorMagn;
-			float projectionTerm = vectorToLight*normalVec;
 			if (projectionTerm > 0.0f) {
 				bool inShadow = false;
 				// if the light has a limited cast range, don't test primitives
@@ -228,14 +236,13 @@ bool Scene::Intersect(const Ray &ray, Color &newColor,
 				// test shadow feeler if light supports it!
 				if (currentLight->CastsShadows() &&
 					ShadowFeelerIntersectsAnObject(Ray(intersectionPos+
-						vectorToLight*SHADOW_FEELER_EPSILON, vectorToLight), 0.0f, maxCastDistance,
+						vectorToLight *SHADOW_FEELER_EPSILON, vectorToLight),
+						0.0f, maxCastDistance,
 						primitiveToExclude)) {
 					inShadow = true;
 				}
 				
 				if (!inShadow) {
-					intersectionResult.SetVectorToLight(vectorToLight);
-					intersectionResult.SetIsVectorToLightNormalized(true);
 					auto lightRadiance = currentLight->GetRadiance(intersectionResult, *this);
 
 					Color lightRadColor4 = Color(lightRadiance[0], lightRadiance[1],

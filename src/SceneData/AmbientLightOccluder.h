@@ -15,7 +15,7 @@ public:
 		unsigned int numRandomSamples, unsigned int numRandomSets);
 	~AmbientLightOccluder();
 	
-	virtual Vector3 GetDirectionFromPosition(
+	virtual Vector3 GetDirectionFromPositionScaled(
 		const IntersectionResult& intersectionRes) const override;
 	virtual Color3 GetRadiance(const IntersectionResult& intersectionRes, const Scene& scene) override;
 	

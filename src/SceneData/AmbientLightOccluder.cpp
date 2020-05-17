@@ -22,7 +22,7 @@ AmbientLightOccluder::~AmbientLightOccluder() {
 	}
 }
 
-Vector3 AmbientLightOccluder::GetDirectionFromPosition(
+Vector3 AmbientLightOccluder::GetDirectionFromPositionScaled(
 const IntersectionResult& intersectionRes) const {
 	Point3 sp = ambientSampler->GetSampleOnHemisphere();
 	Vector3 right;
@@ -33,7 +33,7 @@ const IntersectionResult& intersectionRes) const {
 }
 
 Color3 AmbientLightOccluder::GetRadiance(const IntersectionResult& intersectionRes, const Scene& scene) {
-	Vector3 castVec = GetDirectionFromPosition(intersectionRes);
+	Vector3 castVec = GetDirectionFromPositionScaled(intersectionRes);
 	castVec.Normalize();
 	Point3 castPoint = intersectionRes.GetIntersectionPos()+
 		castVec*SHADOW_FEELER_EPSILON;

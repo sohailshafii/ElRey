@@ -65,7 +65,7 @@ public:
 		// for area lights
 	}
 
-	virtual Vector3 GetDirectionFromPosition(
+	virtual Vector3 GetDirectionFromPositionScaled(
 		const IntersectionResult& intersectionRes) const = 0;
 	
 private:

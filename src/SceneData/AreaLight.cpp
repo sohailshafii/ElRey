@@ -15,15 +15,13 @@ AreaLight::~AreaLight() {
 
 // when tracing to area light, need to get position
 // via sampling. same goes with normal values
-Vector3 AreaLight::GetDirectionFromPosition(
+Vector3 AreaLight::GetDirectionFromPositionScaled(
 	const IntersectionResult& intersectionRes) const {
 	Point3 primitiveSample;
 	primitive->SamplePrimitive(primitiveSample);
-	Vector3 primitiveNormal = primitive->GetNormalAtPosition
-		(primitiveSample);
-	Vector3 vectorToLight = primitiveSample -
-		intersectionRes.GetIntersectionPos();
-	return vectorToLight;
+	Vector3 lightDirection = intersectionRes.GetIntersectionPos() -
+		primitiveSample;
+	return lightDirection;
 }
 
 void AreaLight::ComputeAndStoreAreaLightInformation(
@@ -36,9 +34,10 @@ void AreaLight::ComputeAndStoreAreaLightInformation(
 	Vector3 vectorToLight = lightPrimitiveSample -
 		intersectionRes.GetIntersectionPos();
 	intersectionRes.SetAreaLightNormal(lightPrimitiveNormal);
-	intersectionRes.SetVectorToLight(vectorToLight);
+	intersectionRes.SetLightVectorScaled(vectorToLight);
+	vectorToLight.Normalize();
+	intersectionRes.SetLightVector(vectorToLight);
 	intersectionRes.SetSamplePointOnLight(lightPrimitiveSample);
-	intersectionRes.SetIsVectorToLightNormalized(false);
 }
 
 Color3 AreaLight::GetRadiance(const IntersectionResult& intersectionRes, const Scene& scene) {
