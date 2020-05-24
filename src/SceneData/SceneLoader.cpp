@@ -18,6 +18,7 @@
 #include "SceneData/DirectionalLight.h"
 #include "SceneData/PointLight.h"
 #include "SceneData/AreaLight.h"
+#include "SceneData/EnvironmentLight.h"
 #include "Cameras/Camera.h"
 #include "Cameras/PinholeCamera.h"
 #include "Cameras/FisheyeCamera.h"
@@ -323,14 +324,14 @@ std::shared_ptr<Material> CreateMaterial(const nlohmann::json& jsonObj) {
 Light* CreateLight(const nlohmann::json& jsonObj) {
 	std::string lightType = SafeGetToken(jsonObj, "type");
 	Light* newLight = nullptr;
-	std::string primitiveType = SafeGetToken(jsonObj, "type");
-	if (primitiveType == "ambient") {
+	
+	if (lightType == "ambient") {
 		auto radiance = SafeGetToken(jsonObj, "radiance");
 		float radianceScale = SafeGetToken(jsonObj, "radiance_scale");
 		newLight = new AmbientLight(Color3((float)radiance[0], (float)radiance[1],
 			(float)radiance[2]), radianceScale);
 	}
-	else if (primitiveType == "ambient_occluder") {
+	else if (lightType == "ambient_occluder") {
 		auto radiance = SafeGetToken(jsonObj, "radiance");
 		float radianceScale = SafeGetToken(jsonObj, "radiance_scale");
 		float minAmount = SafeGetToken(jsonObj, "min_amount");
@@ -342,7 +343,7 @@ Light* CreateLight(const nlohmann::json& jsonObj) {
 		newLight = new AmbientLightOccluder(Color3((float)radiance[0], (float)radiance[1],
 			(float)radiance[2]), radianceScale, minAmount, randomSamplerType, numRandomSamples, numRandomSets);
 	}
-	else if (primitiveType == "directional") {
+	else if (lightType == "directional") {
 		auto direction = SafeGetToken(jsonObj, "direction");
 		auto radiance = SafeGetToken(jsonObj, "radiance");
 		float radianceScale = SafeGetToken(jsonObj, "radiance_scale");
@@ -351,7 +352,7 @@ Light* CreateLight(const nlohmann::json& jsonObj) {
 			(float)direction[2]), Color3((float)radiance[0], (float)radiance[1],
 			(float)radiance[2]), radianceScale);
 	}
-	else if (primitiveType == "point") {
+	else if (lightType == "point") {
 		auto position = SafeGetToken(jsonObj, "position");
 		auto radiance = SafeGetToken(jsonObj, "radiance");
 		float radianceScale = SafeGetToken(jsonObj, "radiance_scale");
@@ -360,10 +361,23 @@ Light* CreateLight(const nlohmann::json& jsonObj) {
 			(float)position[2]), Color3((float)radiance[0], (float)radiance[1],
 			(float)radiance[2]), radianceScale);
 	}
-	else if (primitiveType == "area_light") {
+	else if (lightType == "area_light") {
 		std::string primitiveName = SafeGetToken(jsonObj, "primitive_name");
 		bool castsShadows = SafeGetToken(jsonObj, "casts_shadows");
 		newLight = new AreaLight(castsShadows, primitiveName);
+	}
+	else if (lightType == "environment") {
+		RandomSamplerType randomSamplerType;
+		int numRandomSamples, numRandomSets;
+		SetUpRandomSampler(jsonObj, randomSamplerType, numRandomSamples,
+						   numRandomSets);
+		auto materialNode = SafeGetToken(jsonObj, "material");
+		bool castsShadows = SafeGetToken(jsonObj, "casts_shadows");
+		std::shared_ptr<Material> objMaterial = CreateMaterial(materialNode);
+		/*newLight = new EnvironmentLight(castsShadows, randomSamplerType,
+										numRandomSamples,
+										numRandomSets,
+										objMaterial);*/
 	}
 	return newLight;
 }
