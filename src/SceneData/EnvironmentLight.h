@@ -26,22 +26,6 @@ public:
 		return false;
 	}
 
-	virtual const bool IsAreaLight() const override {
-		return true;
-	}
-
-	virtual void ComputeAndStoreAreaLightInformation(
-		IntersectionResult& intersectionRes) const override;
-
-	virtual float GeometricTerm(
-		const IntersectionResult& intersectionRes)
-		const override;
-
-	virtual float PDF(
-		const IntersectionResult& intersectionRes) const override {
-		return 1.0f;//primitive->PDF(intersectionRes);
-	}
-
 private:
 	GenericSampler* sampler;
 	std::shared_ptr<Material> material;

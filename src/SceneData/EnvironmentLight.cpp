@@ -1,4 +1,5 @@
 #include "EnvironmentLight.h"
+#include "Math/CommonMath.h"
 
 EnvironmentLight::EnvironmentLight(bool castsShadows,
 								   RandomSamplerType randomSamplerType,
@@ -21,20 +22,16 @@ EnvironmentLight::~EnvironmentLight() {
 // via sampling. same goes with normal values
 Vector3 EnvironmentLight::GetDirectionFromPositionScaled(
 	const IntersectionResult& intersectionRes) const {
-	return Vector3();
-}
-
-void EnvironmentLight::ComputeAndStoreAreaLightInformation(
-	IntersectionResult& intersectionRes) const
-{
+	Point3 sp = sampler->GetSampleOnHemisphere();
+	Vector3 right;
+	Vector3 up(0.0034f, 1.0f, 0.0071f);
+	Vector3 forward = intersectionRes.GetNormalVector();
+	CommonMath::ComputeUVWFromWandU(right, up, forward);
+	return right*sp[0] + up*sp[1] + forward*sp[2];
 }
 
 Color3 EnvironmentLight::GetRadiance(const IntersectionResult& intersectionRes, const Scene& scene) {
-	return Color3::Black();
-}
-
-float EnvironmentLight::GeometricTerm(
-	const IntersectionResult& intersectionRes)
-	const {
-	return 1.0f;
+	Color areaLightColor = material->GetColorForAreaLight(intersectionRes);
+	return Color3(areaLightColor[0], areaLightColor[1],
+				  areaLightColor[2]);
 }
