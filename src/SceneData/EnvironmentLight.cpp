@@ -27,7 +27,8 @@ Vector3 EnvironmentLight::GetDirectionFromPositionScaled(
 	Vector3 up(0.0034f, 1.0f, 0.0071f);
 	Vector3 forward = intersectionRes.GetNormalVector();
 	CommonMath::ComputeUVWFromWandU(right, up, forward);
-	return right*sp[0] + up*sp[1] + forward*sp[2];
+	// negate because this is light coming inwards, not out
+	return -right*sp[0] - up*sp[1] - forward*sp[2];
 }
 
 Color3 EnvironmentLight::GetRadiance(const IntersectionResult& intersectionRes, const Scene& scene) {

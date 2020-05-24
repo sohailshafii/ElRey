@@ -25,6 +25,10 @@ public:
 	virtual bool IsAmbient() const override {
 		return false;
 	}
+	
+	virtual bool IsLightDistanceInfinite() const override {
+		return true;
+	}
 
 private:
 	GenericSampler* sampler;

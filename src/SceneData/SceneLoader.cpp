@@ -374,10 +374,10 @@ Light* CreateLight(const nlohmann::json& jsonObj) {
 		auto materialNode = SafeGetToken(jsonObj, "material");
 		bool castsShadows = SafeGetToken(jsonObj, "casts_shadows");
 		std::shared_ptr<Material> objMaterial = CreateMaterial(materialNode);
-		/*newLight = new EnvironmentLight(castsShadows, randomSamplerType,
+		newLight = new EnvironmentLight(castsShadows, randomSamplerType,
 										numRandomSamples,
 										numRandomSets,
-										objMaterial);*/
+										objMaterial);
 	}
 	return newLight;
 }
