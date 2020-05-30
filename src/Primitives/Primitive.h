@@ -4,6 +4,7 @@
 #include "Materials/Color.h"
 #include "Math/Ray.h"
 #include "Materials/Material.h"
+#include "Math/AABBox.h"
 #include "SceneData/IntersectionResult.h"
 #include "Sampling/GenericSampler.h"
 #include <string>

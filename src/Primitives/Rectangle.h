@@ -54,5 +54,4 @@ private:
 	float side1LengthSqr, side2LengthSqr;
 	float area, inverseArea;
 	Vector3 normal;
-	float distance;
 };
