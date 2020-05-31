@@ -8,15 +8,6 @@ class Ray;
 
 class AABBoxPrim : public Primitive  {
 public:
-	enum AABoxFace {
-		MinX = 0,
-		MaxX,
-		MinY,
-		MaxY,
-		MinZ,
-		MaxZ
-	};
-	
 	AABBoxPrim(std::shared_ptr<Material> const & iMaterial,
 			   std::shared_ptr<GenericSampler> const & iSampler,
 			   const std::string& iName);

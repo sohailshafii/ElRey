@@ -11,6 +11,7 @@ AABBoxPrim::AABBoxPrim(std::shared_ptr<Material> const & iMaterial,
 						x0(-1.0f), y0(-1.0f), z0(-1.0f),
 						x1(1.0f), y1(1.0f), z1(1.0f) {
 	CalculateInvVolume();
+	CalculateCenter();
 }
 
 AABBoxPrim::AABBoxPrim(const float x0, const float y0, const float z0,
@@ -21,6 +22,7 @@ AABBoxPrim::AABBoxPrim(const float x0, const float y0, const float z0,
 						Primitive(iMaterial, iSampler, iName), x0(x0),
 	y0(y0), z0(z0), x1(x1), y1(y1), z1(z1) {
 	CalculateInvVolume();
+	CalculateCenter();
 }
 
 AABBoxPrim::AABBoxPrim(Point3 const & min, Point3 const & max,
@@ -31,6 +33,7 @@ AABBoxPrim::AABBoxPrim(Point3 const & min, Point3 const & max,
 						x0(min[0]), y0(min[1]), z0(min[2]),
 						x1(max[0]), y1(max[1]), z1(max[2]) {
 	CalculateInvVolume();
+	CalculateCenter();
 }
 
 AABBoxPrim::AABBoxPrim(Point4 const & min, Point4 const & max,
@@ -41,6 +44,7 @@ AABBoxPrim::AABBoxPrim(Point4 const & min, Point4 const & max,
 					   x0(min[0]), y0(min[1]), z0(min[2]),
 					   x1(max[0]), y1(max[1]), z1(max[2]) {
 	CalculateInvVolume();
+	CalculateCenter();
 }
 
 bool AABBoxPrim::Intersect(const Ray &ray, float tMin, float& tMax,
@@ -89,33 +93,26 @@ bool AABBoxPrim::Intersect(const Ray &ray, float tMin, float& tMax,
 	}
 	
 	float t0, t1;
-	AABoxFace EnteringFace, ExitingFace;
 	// find entering t (biggest)
 	if (tMinX > tMinY) {
 		t0 = tMinX;
-		EnteringFace = invDirX >= 0.0f ? MinX : MaxX;
 	}
 	else {
 		t0 = tMinY;
-		EnteringFace = invDirY >= 0.0f ? MinY : MaxY;
 	}
 	if (tMinZ > t0) {
 		t0 = tMinZ;
-		EnteringFace = invDirZ >= 0.0f ? MinZ : MaxZ;
 	}
 	
 	// exit t (smallest)
 	if (tMaxX < tMaxY) {
 		t1 = tMaxX;
-		ExitingFace = invDirX >= 0.0f ? MaxX : MinX;
 	}
 	else {
 		t1 = tMaxY;
-		ExitingFace = invDirY >= 0.0f ? MaxY : MinY;
 	}
 	if (tMaxZ < t1) {
 		t1 = tMaxZ;
-		ExitingFace = invDirZ >= 0.0f ? MaxZ : MinZ;
 	}
 	
 	// passes if (biggest) entering t is smaller than (smallest) exit t
@@ -222,8 +219,8 @@ bool AABBoxPrim::PointInside(Point4 const& point) const {
 Vector3 AABBoxPrim::GetNormalAtPosition(const Point3& position) const {
 	Vector3 vectorToPoint = position - center;
 	Vector3 xUp(1.0f, 0.0f, 0.0f), xDown(-1.0f, 0.0f, 0.0f);
-	Vector3 yUp(1.0f, 0.0f, 0.0f), yDown(-1.0f, 0.0f, 0.0f);
-	Vector3 zUp(1.0f, 0.0f, 0.0f), zDown(-1.0f, 0.0f, 0.0f);
+	Vector3 yUp(0.0f, 1.0f, 0.0f), yDown(0.0f,-1.0f, 0.0f);
+	Vector3 zUp(0.0f, 0.0f, 1.0f), zDown(0.0f, 0.0f,-1.0f);
 	
 	// normalize vector to point, then find max value
 	vectorToPoint.Normalize();
@@ -232,10 +229,10 @@ Vector3 AABBoxPrim::GetNormalAtPosition(const Point3& position) const {
 	float yAbs = fabs(vectorToPoint[1]);
 	float zAbs = fabs(vectorToPoint[2]);
 	
-	if (xAbs >= yAbs && xAbs > zAbs) {
+	if (xAbs >= yAbs && xAbs >= zAbs) {
 		return vectorToPoint[0] > 0.0f ? xUp : xDown;
 	}
-	if (yAbs >= xAbs && yAbs > zAbs) {
+	if (yAbs >= xAbs && yAbs >= zAbs) {
 		return vectorToPoint[1] > 0.0f ? yUp : yDown;
 	}
 	
