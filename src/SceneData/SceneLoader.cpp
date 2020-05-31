@@ -9,6 +9,7 @@
 #include "Primitives/Sphere.h"
 #include "Primitives/Plane.h"
 #include "Primitives/Rectangle.h"
+#include "Primitives/AABBoxPrim.h"
 #include "Materials/LambertianMaterial.h"
 #include "Materials/PhongMaterial.h"
 #include "Materials/SimpleEmissiveMaterial.h"
@@ -232,7 +233,6 @@ static Primitive* CreatePrimitive(const nlohmann::json& jsonObj) {
 		std::string objectName = SafeGetToken(jsonObj, "name");
 
 		std::shared_ptr<Material> objMaterial = CreateMaterial(materialNode);
-		// TODO: fix error here
 		newPrimitive = new Plane(
 			Point3((float)planeOrigin[0],(float)planeOrigin[1],
 				(float)planeOrigin[2]),
@@ -247,11 +247,33 @@ static Primitive* CreatePrimitive(const nlohmann::json& jsonObj) {
 		std::string objectName = SafeGetToken(jsonObj, "name");
 		
 		std::shared_ptr<Material> objMaterial = CreateMaterial(materialNode);
-		// TODO: fix error here
 		newPrimitive = new Sphere(
 			Point3((float)sphereOrigin[0],(float)sphereOrigin[1],
 					(float)sphereOrigin[2]),
 			sphereRadius, objMaterial, objectName);
+	}
+	else if (primitiveType == "aabox") {
+		auto minPoint = SafeGetToken(jsonObj, "min_point");
+		auto maxPoint = SafeGetToken(jsonObj, "max_point");
+		auto materialNode = SafeGetToken(jsonObj, "material");
+		std::string objectName = SafeGetToken(jsonObj, "name");
+		auto samplerNode = SafeGetToken(jsonObj, "sampler");
+		
+		std::shared_ptr<Material> objMaterial = CreateMaterial(materialNode);
+		RandomSamplerType randomSamplerType;
+		int numRandomSamples, numRandomSets;
+		SetUpRandomSampler(samplerNode, randomSamplerType, numRandomSamples,
+			numRandomSets);
+		std::shared_ptr<GenericSampler> newSampler;
+		newSampler.reset(SamplerCreator::CreatorSampler(randomSamplerType,
+				numRandomSamples, numRandomSets));
+		
+		newPrimitive = new AABBoxPrim(
+			Point3((float)minPoint[0],(float)minPoint[1],
+					(float)minPoint[2]),
+			Point3((float)maxPoint[0],(float)maxPoint[1],
+					(float)maxPoint[2]),
+			objMaterial, newSampler, objectName);
 	}
 	else if (primitiveType == "rectangle") {
 		std::string objectName = SafeGetToken(jsonObj, "name");
