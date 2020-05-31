@@ -44,9 +44,9 @@ bool Plane::IntersectShadow(const Ray &ray, float tMin, float tMax)
 }
 
 void Plane::SamplePrimitive(Point3& resultingSample) {
-	// TODO
+	// not valid for area lighting
 }
 
 float Plane::PDF(const IntersectionResult& intersectionResult) const {
-	return 1.0f; // TODO
+	return 1.0f; // not valid for area lighting
 }
