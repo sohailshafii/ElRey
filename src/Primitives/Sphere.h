@@ -33,6 +33,12 @@ public:
 	virtual void SamplePrimitive(Point3& resultingSample) override;
 	
 	virtual float PDF(const IntersectionResult& intersectionResult) const override;
+	
+	virtual bool HasBoundingBox() const override {
+		return true;
+	}
+	
+	virtual AABBox GetBoundingBox() const override;
 
 private:
 	Point3 center;

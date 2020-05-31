@@ -31,6 +31,14 @@ public:
 	virtual void SamplePrimitive(Point3& resultingSample) override;
 	
 	virtual float PDF(const IntersectionResult& intersectionResult) const override;
+	
+	virtual bool HasBoundingBox() const override {
+		return false;
+	}
+	
+	virtual AABBox GetBoundingBox() const override {
+		return AABBox(); // not valid for planes
+	}
 
 private:
 	Point3 origin;

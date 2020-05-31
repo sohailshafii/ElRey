@@ -84,3 +84,10 @@ void Sphere::SamplePrimitive(Point3& resultingSample) {
 float Sphere::PDF(const IntersectionResult& intersectionResult) const {
 	return 1.0f; // TODO
 }
+
+AABBox Sphere::GetBoundingBox() const {
+	Point3 minPoint = center - Vector3(radius, radius, radius);
+	Point3 maxPoint = center + Vector3(radius, radius, radius);
+	
+	return AABBox(minPoint, maxPoint);
+}

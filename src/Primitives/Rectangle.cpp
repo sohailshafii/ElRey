@@ -1,5 +1,6 @@
 #include "Rectangle.h"
 #include "CommonMath.h"
+#include <algorithm>
 
 bool Rectangle::Intersect(const Ray &ray, float tMin, float& tMax,
 					IntersectionResult &intersectionResult) {
@@ -80,5 +81,23 @@ void Rectangle::SamplePrimitive(Point3& resultingSample) {
 // each sample's probability is 1.0/inverseArea
 float Rectangle::PDF(const IntersectionResult& intersectionResult) const {
 	return inverseArea;
+}
+
+AABBox Rectangle::GetBoundingBox() const {
+	Point3 minPoint;
+	Point3 maxPoint;
+	
+	Point3 side1Point = origin + side1Vec;
+	Point3 side2Point = origin + side2Vec;
+	
+	minPoint[0] = std::min(side1Point[0], side2Point[0]);
+	minPoint[1] = std::min(side1Point[1], side2Point[1]);
+	minPoint[2] = std::min(side1Point[2], side2Point[2]);
+	
+	maxPoint[0] = std::max(side1Point[0], side2Point[0]);
+	maxPoint[1] = std::max(side1Point[1], side2Point[1]);
+	maxPoint[2] = std::max(side1Point[2], side2Point[2]);
+	
+	return AABBox(minPoint, maxPoint);
 }
 

@@ -60,6 +60,10 @@ public:
 	const std::string& GetName() const {
 		return name;
 	}
+	
+	virtual bool HasBoundingBox() const = 0;
+	
+	virtual AABBox GetBoundingBox() const = 0;
 
 protected:
 	std::shared_ptr<Material> material;

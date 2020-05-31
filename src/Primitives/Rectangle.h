@@ -34,6 +34,12 @@ public:
 	virtual void SamplePrimitive(Point3& resultingSample) override;
 	
 	virtual float PDF(const IntersectionResult& intersectionResult) const override;
+	
+	virtual bool HasBoundingBox() const override {
+		return true;
+	}
+	
+	virtual AABBox GetBoundingBox() const override;
 
 private:
 	void Initialize(const Vector3& iSide1Vec, const Vector3& iSide2Vec)
