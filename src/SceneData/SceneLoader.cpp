@@ -10,6 +10,7 @@
 #include "Primitives/Plane.h"
 #include "Primitives/Rectangle.h"
 #include "Primitives/AABBoxPrim.h"
+#include "Primitives/Triangle.h"
 #include "Materials/LambertianMaterial.h"
 #include "Materials/PhongMaterial.h"
 #include "Materials/SimpleEmissiveMaterial.h"

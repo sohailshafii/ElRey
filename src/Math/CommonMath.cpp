@@ -41,6 +41,7 @@ void CommonMath::ComputeUVWFromWandU(Vector3 &right, Vector3 &up, Vector3 &forwa
 	}
 #endif
 
+	// left-handed coordinate system
 	right = up ^ forward;
 	right.Normalize();
 	up = forward ^ right;
