@@ -170,6 +170,7 @@ void Scene::SetAmbientLight(Light* newAmbientLight) {
 	ambientLight = newAmbientLight;
 }
 
+// TODO: use bounding boxes
 bool Scene::Intersect(const Ray &ray, Color &newColor,
 	float tMin, float& tMax) const {
 	Primitive* closestPrimitive = nullptr;
