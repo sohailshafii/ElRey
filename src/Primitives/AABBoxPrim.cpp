@@ -93,26 +93,33 @@ bool AABBoxPrim::Intersect(const Ray &ray, float tMin, float& tMax,
 	}
 	
 	float t0, t1;
+	FaceHit faceIn, faceOut;
 	// find entering t (biggest)
 	if (tMinX > tMinY) {
 		t0 = tMinX;
+		faceIn = invDirX >= 0.0f ? NegativeX : PositiveX;
 	}
 	else {
 		t0 = tMinY;
+		faceIn = invDirY >= 0.0f ? NegativeY : PositiveY;
 	}
 	if (tMinZ > t0) {
 		t0 = tMinZ;
+		faceIn = invDirZ >= 0.0f ? NegativeZ : PositiveZ;
 	}
 	
 	// exit t (smallest)
 	if (tMaxX < tMaxY) {
 		t1 = tMaxX;
+		faceOut = invDirX >= 0.0f ? PositiveX : NegativeX;
 	}
 	else {
 		t1 = tMaxY;
+		faceOut = invDirY >= 0.0f ? PositiveY : NegativeY;
 	}
 	if (tMaxZ < t1) {
 		t1 = tMaxZ;
+		faceOut = invDirZ >= 0.0f ? PositiveZ : NegativeZ;
 	}
 	
 	// passes if (biggest) entering t is smaller than (smallest) exit t
@@ -125,6 +132,8 @@ bool AABBoxPrim::Intersect(const Ray &ray, float tMin, float& tMax,
 			tMax = t1;
 		}
 		intersectionResult.SetIntersectionT(tMax);
+		intersectionResult.SetGenericMetadata((uint8_t)faceIn,
+											  (uint8_t)faceOut);
 		return true;
 	}
 	else {
@@ -216,27 +225,22 @@ bool AABBoxPrim::PointInside(Point4 const& point) const {
 			(point[2] > z0 && point[2] < z1));
 }
 
-Vector3 AABBoxPrim::GetNormalAtPosition(const Point3& position) const {
-	Vector3 vectorToPoint = position - center;
-	Vector3 xUp(1.0f, 0.0f, 0.0f), xDown(-1.0f, 0.0f, 0.0f);
-	Vector3 yUp(0.0f, 1.0f, 0.0f), yDown(0.0f,-1.0f, 0.0f);
-	Vector3 zUp(0.0f, 0.0f, 1.0f), zDown(0.0f, 0.0f,-1.0f);
-	
-	// normalize vector to point, then find max value
-	vectorToPoint.Normalize();
-	
-	float xAbs = fabs(vectorToPoint[0]);
-	float yAbs = fabs(vectorToPoint[1]);
-	float zAbs = fabs(vectorToPoint[2]);
-	
-	if (xAbs >= yAbs && xAbs >= zAbs) {
-		return vectorToPoint[0] > 0.0f ? xUp : xDown;
+Vector3 AABBoxPrim::GetNormalAtPosition(IntersectionResult const &intersectionResult) const {
+	FaceHit faceHit = (FaceHit)intersectionResult.GetGenericMetadata1();
+	switch (faceHit) {
+		case NegativeX:
+			return Vector3(-1.0f, 0.0f, 0.0f);
+		case NegativeY:
+			return Vector3(0.0f,-1.0f, 0.0f);
+		case NegativeZ:
+			return Vector3(0.0f, 0.0f,-1.0f);
+		case PositiveX:
+			return Vector3(1.0f, 0.0f, 0.0f);
+		case PositiveY:
+			return Vector3(0.0f, 1.0f, 0.0f);
+		default:
+			return Vector3(0.0f, 0.0f, 1.0f);
 	}
-	if (yAbs >= xAbs && yAbs >= zAbs) {
-		return vectorToPoint[1] > 0.0f ? yUp : yDown;
-	}
-	
-	return vectorToPoint[2] > 0.0f ? zUp : zDown;
 }
 
 void AABBoxPrim::SamplePrimitive(Point3& resultingSample) {

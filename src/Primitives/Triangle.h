@@ -29,7 +29,7 @@ public:
 				   IntersectionResult &intersectionResult) override;
 	bool IntersectShadow(const Ray &ray, float tMin, float tMax) override;
 	
-	virtual Vector3 GetNormalAtPosition(const Point3& position) const override {
+	virtual Vector3 GetNormalAtPosition(IntersectionResult const &intersectionResult) const override {
 		return normalVec;
 	}
 	

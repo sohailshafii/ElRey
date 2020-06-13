@@ -29,8 +29,13 @@ void AreaLight::ComputeAndStoreAreaLightInformation(
 {
 	Point3 lightPrimitiveSample;
 	primitive->SamplePrimitive(lightPrimitiveSample);
+	
+	auto oldIntersection = intersectionRes.GetIntersectionPos();
+	intersectionRes.SetIntersectionPosition(lightPrimitiveSample);
 	Vector3 lightPrimitiveNormal = primitive->GetNormalAtPosition
-		(lightPrimitiveSample);
+		(intersectionRes);
+	intersectionRes.SetIntersectionPosition(oldIntersection);
+	
 	Vector3 vectorToLight = lightPrimitiveSample -
 		intersectionRes.GetIntersectionPos();
 	intersectionRes.SetAreaLightNormal(lightPrimitiveNormal);

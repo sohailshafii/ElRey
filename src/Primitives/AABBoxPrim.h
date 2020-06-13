@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Primitive.h"
+#include <cstdint>
 
 class Point3;
 class Point4;
@@ -37,7 +38,7 @@ public:
 	
 	bool PointInside(Point4 const& point) const;
 	
-	virtual Vector3 GetNormalAtPosition(const Point3& position) const override;
+	virtual Vector3 GetNormalAtPosition(IntersectionResult const &intersectionResult) const override;
 	
 	virtual void SamplePrimitive(Point3& resultingSample) override;
 	
@@ -52,6 +53,15 @@ public:
 	}
 	
 private:
+	enum FaceHit {
+		NegativeX = 0,
+		NegativeY,
+		NegativeZ,
+		PositiveX,
+		PositiveY,
+		PositiveZ
+	};
+	
 	// min point
 	float x0, y0, z0;
 	// max point

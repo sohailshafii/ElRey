@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Math/Ray.h"
+#include <cstdint>
 
 class IntersectionResult {
 public:
@@ -50,6 +51,11 @@ public:
 	void SetSamplePointOnLight(const Point3& samplePoint) {
 		samplePointOnLight = samplePoint;
 	}
+	
+	void SetGenericMetadata(uint8_t metadata, uint8_t metadata2) {
+		genericMetadata1 = metadata;
+		genericMetadata2 = metadata2;
+	}
 
 	Ray GetIncomingRayInverse() const {
 		return incomingRay;
@@ -86,6 +92,14 @@ public:
 	Point3 GetSamplePointOnLight() const {
 		return samplePointOnLight;
 	}
+	
+	uint8_t GetGenericMetadata1() const {
+		return genericMetadata1;
+	}
+	
+	uint8_t GetGenericMetadata2() const {
+		return genericMetadata2;
+	}
 
 private:
 	// usually lighting deals with incoming ray facing away from surface
@@ -100,4 +114,7 @@ private:
 
 	// special stuff
 	Point3 samplePointOnLight;
+	// this is a hack but sometimes intersection functions rely on metadata
+	// generated that might be used later by the same primitive
+	uint8_t genericMetadata1, genericMetadata2;
 };

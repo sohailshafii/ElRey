@@ -191,7 +191,7 @@ bool Scene::Intersect(const Ray &ray, Color &newColor,
 		intersectionResult.SetIntersectionT(tMax);
 		intersectionResult.SetIntersectionPosition(intersectionPos);
 		// TODO: don't always need to calculate normal
-		Vector3 normalVec = closestPrimitive->GetNormalAtPosition(intersectionPos);
+		Vector3 normalVec = closestPrimitive->GetNormalAtPosition(intersectionResult);
 		intersectionResult.SetIntersectionNormal(normalVec);
 		
 		// ambient light if available
