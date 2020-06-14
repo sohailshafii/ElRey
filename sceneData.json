@@ -5,8 +5,8 @@
 		"camera":
 		{		
 			"type":"pinhole",
-			"eye_position":[0.0,1.1,0.5],
-			"look_at_position":[0.0,1.1,0.7],
+			"eye_position":[0.0,0.9,0.5],
+			"look_at_position":[0.0,0.9,0.7],
 			"num_columns_pixels":600,
 			"num_rows_pixels":400,
 			"view_plane_width":1.0,
@@ -70,8 +70,8 @@
 		{
 			"type":"aabox",
 			"name":"axis_aligned_bbox_primitive",
-			"min_point":[-1.1, 0.8, 1.0],
-			"max_point":[-0.8, 1.0, 1.3],
+			"min_point":[-1.1, 1.0, 1.0],
+			"max_point":[-0.8, 1.3, 1.3],
 			"material":
 			{
 				"type":"simple_emissive",
@@ -89,6 +89,28 @@
 	],
 	"lights":
 	[
+		
+		{
+			"type":"directional",
+			"direction":[-0.5,-0.4,-0.05],
+			"radiance":[0.4,0.4,0.4],
+			"radiance_scale":3.0,
+			"casts_shadows":true
+		},
+		{
+			"type":"environment",
+			"random_sampler_type":"multijittered",
+			"num_random_samples":4,
+			"num_random_sets":83,
+			"casts_shadows":true,
+			"material":
+			{
+				"type":"simple_emissive",
+				"ka":0.1,
+				"kd":0.2,
+				"color":[1.0, 1.0, 1.0, 1.0]
+			}
+		},
 		{
 			"type":"ambient_occluder",
 			"radiance":[1.0,1.0,1.0],
@@ -99,10 +121,8 @@
 			"num_random_sets":83
 		},
 		{
-			"type":"directional",
-			"direction":[-0.5,-0.4,-0.05],
-			"radiance":[0.4,0.4,0.4],
-			"radiance_scale":3.0,
+			"type":"area_light",
+			"primitive_name":"area_light_rectangle",
 			"casts_shadows":true
 		}
 	]

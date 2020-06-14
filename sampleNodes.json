@@ -19,3 +19,12 @@
 			"primitive_name":"area_light_rectangle",
 			"casts_shadows":true
 		}
+		{
+			"type":"ambient_occluder",
+			"radiance":[1.0,1.0,1.0],
+			"radiance_scale":0.1,
+			"min_amount":0.6,
+			"random_sampler_type":"multijittered",
+			"num_random_samples":4,
+			"num_random_sets":83
+		},

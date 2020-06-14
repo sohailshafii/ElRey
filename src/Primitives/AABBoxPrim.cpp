@@ -122,18 +122,47 @@ bool AABBoxPrim::Intersect(const Ray &ray, float tMin, float& tMax,
 		faceOut = invDirZ >= 0.0f ? PositiveZ : NegativeZ;
 	}
 	
+	Vector3 tempNorm;
 	// passes if (biggest) entering t is smaller than (smallest) exit t
 	// and that exit point is greater than ray's start
 	if (t0 < t1 && t1 > tMin) {
 		if (t0 > tMin) {
 			tMax = t0;
+			switch (faceIn) {
+				case NegativeX:
+					tempNorm = Vector3(-1.0f, 0.0f, 0.0f);
+				case NegativeY:
+					tempNorm = Vector3(0.0f,-1.0f, 0.0f);
+				case NegativeZ:
+					tempNorm = Vector3(0.0f, 0.0f,-1.0f);
+				case PositiveX:
+					tempNorm = Vector3(1.0f, 0.0f, 0.0f);
+				case PositiveY:
+					tempNorm = Vector3(0.0f, 1.0f, 0.0f);
+				default:
+					tempNorm = Vector3(0.0f, 0.0f, 1.0f);
+			}
 		}
 		else {
 			tMax = t1;
+			switch (faceOut) {
+				case NegativeX:
+					tempNorm = Vector3(-1.0f, 0.0f, 0.0f);
+				case NegativeY:
+					tempNorm = Vector3(0.0f,-1.0f, 0.0f);
+				case NegativeZ:
+					tempNorm = Vector3(0.0f, 0.0f,-1.0f);
+				case PositiveX:
+					tempNorm = Vector3(1.0f, 0.0f, 0.0f);
+				case PositiveY:
+					tempNorm = Vector3(0.0f, 1.0f, 0.0f);
+				default:
+					tempNorm = Vector3(0.0f, 0.0f, 1.0f);
+			}
 		}
 		intersectionResult.SetIntersectionT(tMax);
-		intersectionResult.SetGenericMetadata((uint8_t)faceIn,
-											  (uint8_t)faceOut);
+		intersectionResult.SetGenericMetadata(tempNorm[0], tempNorm[1],
+											  tempNorm[2]);
 		return true;
 	}
 	else {
@@ -208,9 +237,8 @@ bool AABBoxPrim::IntersectShadow(const Ray &ray, float tMin, float tMax) {
 		t1 = tMaxZ;
 	}
 	
-	// passes if (biggest) entering t is smaller than (smallest) exit t
-	// and that exit point is greater than ray's start
-	return (t0 < t1 && t1 > tMin);
+	// cannot hit from inside
+	return ((t0 < t1) && t1 > tMin && (t0 - tMin) > -0.01f);
 }
 
 bool AABBoxPrim::PointInside(Point3 const& point) const {
@@ -226,21 +254,10 @@ bool AABBoxPrim::PointInside(Point4 const& point) const {
 }
 
 Vector3 AABBoxPrim::GetNormalAtPosition(IntersectionResult const &intersectionResult) const {
-	FaceHit faceHit = (FaceHit)intersectionResult.GetGenericMetadata1();
-	switch (faceHit) {
-		case NegativeX:
-			return Vector3(-1.0f, 0.0f, 0.0f);
-		case NegativeY:
-			return Vector3(0.0f,-1.0f, 0.0f);
-		case NegativeZ:
-			return Vector3(0.0f, 0.0f,-1.0f);
-		case PositiveX:
-			return Vector3(1.0f, 0.0f, 0.0f);
-		case PositiveY:
-			return Vector3(0.0f, 1.0f, 0.0f);
-		default:
-			return Vector3(0.0f, 0.0f, 1.0f);
-	}
+	float meta1 = (FaceHit)intersectionResult.GetGenericMetadata1();
+	float meta2 = (FaceHit)intersectionResult.GetGenericMetadata2();
+	float meta3 = (FaceHit)intersectionResult.GetGenericMetadata3();
+	return Vector3(meta1, meta2, meta3);
 }
 
 void AABBoxPrim::SamplePrimitive(Point3& resultingSample) {

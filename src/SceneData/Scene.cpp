@@ -249,7 +249,7 @@ bool Scene::Intersect(const Ray &ray, Color &newColor,
 				// test shadow feeler if light supports it!
 				if (currentLight->CastsShadows() &&
 					ShadowFeelerIntersectsAnObject(Ray(intersectionPos+
-						vectorToLight *SHADOW_FEELER_EPSILON, vectorToLight),
+													   vectorToLight *SHADOW_FEELER_EPSILON, vectorToLight),
 						0.0f, vectorMagn,
 						primitiveToExclude)) {
 					inShadow = true;

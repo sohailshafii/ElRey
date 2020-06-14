@@ -52,9 +52,11 @@ public:
 		samplePointOnLight = samplePoint;
 	}
 	
-	void SetGenericMetadata(uint8_t metadata, uint8_t metadata2) {
+	void SetGenericMetadata(float metadata, float metadata2,
+							float metadata3) {
 		genericMetadata1 = metadata;
 		genericMetadata2 = metadata2;
+		genericMetadata3 = metadata3;
 	}
 
 	Ray GetIncomingRayInverse() const {
@@ -93,12 +95,16 @@ public:
 		return samplePointOnLight;
 	}
 	
-	uint8_t GetGenericMetadata1() const {
+	float GetGenericMetadata1() const {
 		return genericMetadata1;
 	}
 	
-	uint8_t GetGenericMetadata2() const {
+	float GetGenericMetadata2() const {
 		return genericMetadata2;
+	}
+	
+	float GetGenericMetadata3() const {
+		return genericMetadata3;
 	}
 
 private:
@@ -114,7 +120,6 @@ private:
 
 	// special stuff
 	Point3 samplePointOnLight;
-	// this is a hack but sometimes intersection functions rely on metadata
-	// generated that might be used later by the same primitive
-	uint8_t genericMetadata1, genericMetadata2;
+	float genericMetadata1, genericMetadata2,
+		genericMetadata3;
 };
