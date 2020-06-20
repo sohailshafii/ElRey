@@ -131,14 +131,19 @@ bool AABBoxPrim::Intersect(const Ray &ray, float tMin, float& tMax,
 			switch (faceIn) {
 				case NegativeX:
 					tempNorm = Vector3(-1.0f, 0.0f, 0.0f);
+					break;
 				case NegativeY:
 					tempNorm = Vector3(0.0f,-1.0f, 0.0f);
+					break;
 				case NegativeZ:
 					tempNorm = Vector3(0.0f, 0.0f,-1.0f);
+					break;
 				case PositiveX:
 					tempNorm = Vector3(1.0f, 0.0f, 0.0f);
+					break;
 				case PositiveY:
 					tempNorm = Vector3(0.0f, 1.0f, 0.0f);
+					break;
 				default:
 					tempNorm = Vector3(0.0f, 0.0f, 1.0f);
 			}
@@ -148,14 +153,19 @@ bool AABBoxPrim::Intersect(const Ray &ray, float tMin, float& tMax,
 			switch (faceOut) {
 				case NegativeX:
 					tempNorm = Vector3(-1.0f, 0.0f, 0.0f);
+					break;
 				case NegativeY:
 					tempNorm = Vector3(0.0f,-1.0f, 0.0f);
+					break;
 				case NegativeZ:
 					tempNorm = Vector3(0.0f, 0.0f,-1.0f);
+					break;
 				case PositiveX:
 					tempNorm = Vector3(1.0f, 0.0f, 0.0f);
+					break;
 				case PositiveY:
 					tempNorm = Vector3(0.0f, 1.0f, 0.0f);
+					break;
 				default:
 					tempNorm = Vector3(0.0f, 0.0f, 1.0f);
 			}
@@ -254,9 +264,9 @@ bool AABBoxPrim::PointInside(Point4 const& point) const {
 }
 
 Vector3 AABBoxPrim::GetNormalAtPosition(IntersectionResult const &intersectionResult) const {
-	float meta1 = (FaceHit)intersectionResult.GetGenericMetadata1();
-	float meta2 = (FaceHit)intersectionResult.GetGenericMetadata2();
-	float meta3 = (FaceHit)intersectionResult.GetGenericMetadata3();
+	float meta1 = intersectionResult.GetGenericMetadata1();
+	float meta2 = intersectionResult.GetGenericMetadata2();
+	float meta3 = intersectionResult.GetGenericMetadata3();
 	return Vector3(meta1, meta2, meta3);
 }
 
