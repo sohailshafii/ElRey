@@ -45,7 +45,7 @@ public:
 		auto intersectionPos = intersectionResult.GetIntersectionPos();
 		Vector3 normalVec(intersectionPos[0], intersectionPos[1],
 						  intersectionPos[2]);
-		return normalVec;
+		return normalVec; // TODO: fix
 	}
 	
 	virtual void SamplePrimitive(Point3& resultingSample) override;

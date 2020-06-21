@@ -55,6 +55,10 @@ public:
 	}
 	
 	static void ComputeUVWFromWandU(Vector3 &right, Vector3 &up, Vector3 &forward);
+	
+	static int SolveQuadric(float c[3], float s[2]);
+	static int SolveCubic(float c[4], float s[3]);
+	static int SolveQuartic(float c[5], float s[4]);
 
 	static const float randMaxInverse;
 

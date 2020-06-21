@@ -45,7 +45,7 @@ bool Disk::Intersect(const Ray &ray, float tMin, float& tMax,
 	
 	float t = (center - rayOrigin) * normalVec / rayDotNormal;
 	
-	if (t < tMin) {
+	if (t < tMin || t > tMax) {
 		return false;
 	}
 	
@@ -72,7 +72,7 @@ bool Disk::IntersectShadow(const Ray &ray, float tMin, float tMax) {
 	
 	float t = (center - rayOrigin) * normalVec / rayDotNormal;
 	
-	if (t < tMin) {
+	if (t < tMin || t > tMax) {
 		return false;
 	}
 	

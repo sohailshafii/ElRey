@@ -44,7 +44,7 @@ bool Triangle::Intersect(const Ray &ray, float tMin, float& tMax,
 	float e3 = a * p - b * r + d * s;
 	float t = e3 * invDenom;
 	
-	if (t < tMin) {
+	if (t < tMin || t > tMax) {
 		return false;
 	}
 	
@@ -93,7 +93,7 @@ bool Triangle::IntersectShadow(const Ray &ray, float tMin, float tMax) {
 	float e3 = a * p - b * r + d * s;
 	float t = e3 * invDenom;
 	
-	if (t < tMin) {
+	if (t < tMin || t > tMax) {
 		return false;
 	}
 	

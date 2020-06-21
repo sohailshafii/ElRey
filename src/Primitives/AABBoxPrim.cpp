@@ -127,6 +127,9 @@ bool AABBoxPrim::Intersect(const Ray &ray, float tMin, float& tMax,
 	// and that exit point is greater than ray's start
 	if (t0 < t1 && t1 > tMin) {
 		if (t0 > tMin) {
+			if (t0 > tMax) {
+				return false;
+			}
 			tMax = t0;
 			switch (faceIn) {
 				case NegativeX:
@@ -149,6 +152,9 @@ bool AABBoxPrim::Intersect(const Ray &ray, float tMin, float& tMax,
 			}
 		}
 		else {
+			if (t1 > tMax) {
+				return false;
+			}
 			tMax = t1;
 			switch (faceOut) {
 				case NegativeX:
@@ -247,8 +253,17 @@ bool AABBoxPrim::IntersectShadow(const Ray &ray, float tMin, float tMax) {
 		t1 = tMaxZ;
 	}
 	
-	// cannot hit from inside
-	return ((t0 < t1) && t1 > tMin && (t0 - tMin) > -0.01f);
+	if (t0 < t1 && t1 > tMin) {
+		bool faceIn = t0 > tMin;
+		if (faceIn) {
+			return t0 < tMax;
+		}
+		else {
+			return t1 < tMax;
+		}
+	}
+	
+	return false;
 }
 
 bool AABBoxPrim::PointInside(Point3 const& point) const {
