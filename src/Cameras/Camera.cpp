@@ -133,6 +133,11 @@ void Camera::CastIntoScene(unsigned char* pixels, unsigned int bytesPerPixel,
 		accumColor *= finalColorMultFactor;
 		// gamma-correct
 		accumColor ^= invGamma;
+		// cap colors
+		accumColor[0] = ClampColor(accumColor[0]);
+		accumColor[1] = ClampColor(accumColor[1]);
+		accumColor[2] = ClampColor(accumColor[2]);
+		
 		// RGB->BGR (related to SDL)
 		pixels[byteIndex] = (unsigned char)(accumColor[BGRMode? 2 : 0] * 255.0f); // B
 		pixels[byteIndex + 1] = (unsigned char)(accumColor[1] * 255.0f); // G

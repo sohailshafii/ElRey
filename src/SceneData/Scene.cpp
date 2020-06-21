@@ -266,7 +266,7 @@ bool Scene::Intersect(const Ray &ray, Color &newColor,
 						currentLight->GeometricTerm(intersectionResult)/
 						currentLight->PDF(intersectionResult)
 						:
-						primitiveMaterial->GetDirectColor(intersectionResult)*
+					primitiveMaterial->GetDirectColor(intersectionResult)*
 						lightRadColor4*projectionTerm;
 				}
 			}
