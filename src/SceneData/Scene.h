@@ -4,6 +4,7 @@
 #include "SceneData/Light.h"
 #include "Cameras/Camera.h"
 #include <string>
+#include <vector>
 
 // simple base class for all acceleration structures, or really anything
 // that represents our world.
@@ -18,8 +19,7 @@ public:
 		unsigned int numNewPrimitives);
 
 	virtual void AddLight(Light* newLight);
-	virtual void AddLights(Light** newLights,
-		unsigned int numNewLights);
+	virtual void AddLights(Light** newLights, unsigned int numNewLights);
 	
 	virtual void SetAmbientLight(Light* newAmbientLight);
 
@@ -33,11 +33,11 @@ public:
 	Primitive* FindPrimitiveByName(const std::string& name);
 
 	unsigned int GetNumPrimitives() const {
-		return numPrimitives;
+		return primitives.size();
 	}
 	
 	unsigned int GetNumLights() const {
-		return numLights;
+		return lights.size();
 	}
 	
 	Light* GetLight(unsigned int index) {
@@ -77,19 +77,16 @@ public:
 										const Primitive* primitiveToExclude = nullptr) const;
 
 private:
-	void CleanUpPrimitives(Primitive **primitivesToClean, unsigned int
-		numToClean);
-	void CleanUpLights(Light** lightsToClean, unsigned int numToClean);
+	void CleanUpPrimitives();
+	void CleanUpLights();
 
 protected:
 	// each item is a pointer to a primitive type,
 	// whatever that might be
-	Primitive** primitives;
-	unsigned int numPrimitives;
+	std::vector<Primitive*> primitives;
 
-	Light** lights;
+	std::vector<Light*> lights;
 	Light* ambientLight;
-	unsigned int numLights;
 	
 	Camera* mainCamera;
 	bool allowNavigation;

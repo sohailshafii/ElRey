@@ -7,26 +7,21 @@
 #include "SceneData/AmbientLight.h"
 
 Scene::Scene() {
-	primitives = nullptr;
-	numPrimitives = 0;
-
-	lights = nullptr;
 	ambientLight = nullptr;
-	numLights = 0;
 	mainCamera = nullptr;
 }
 
 Scene::Scene(Primitive **primitives, unsigned int numPrimitives) {
-	this->primitives = primitives;
-	this->numPrimitives = numPrimitives;
-	lights = nullptr;
+	for (unsigned int i = 0; i < numPrimitives; i++) {
+		this->primitives.push_back(primitives[i]);
+	}
 	ambientLight = nullptr;
 	mainCamera = nullptr;
 }
 
 Scene::~Scene() {
-	CleanUpPrimitives(this->primitives, this->numPrimitives);
-	CleanUpLights(this->lights, this->numLights);
+	CleanUpPrimitives();
+	CleanUpLights();
 	if (mainCamera != nullptr) {
 		delete mainCamera;
 	}
@@ -35,23 +30,18 @@ Scene::~Scene() {
 	}
 }
 
-void Scene::CleanUpPrimitives(Primitive **primitivesToClean, unsigned int
-	numToClean) {
-	if (primitivesToClean != nullptr) {
-		for(unsigned int i = 0; i < numToClean; i++) {
-			delete primitivesToClean[i];
-		}
-		delete [] primitivesToClean;
+void Scene::CleanUpPrimitives() {
+	for(auto primitive : primitives) {
+		delete primitive;
 	}
+	primitives.clear();
 }
 
-void Scene::CleanUpLights(Light** lightsToClean, unsigned int numToClean) {
-	if (lightsToClean != nullptr) {
-		for (unsigned int i = 0; i < numToClean; i++) {
-			delete lightsToClean[i];
-		}
+void Scene::CleanUpLights() {
+	for(auto light : lights) {
+		delete light;
 	}
-	delete [] lightsToClean;
+	lights.clear();
 }
 
 void Scene::AddPrimitive(Primitive *newPrimitive) {
@@ -59,21 +49,7 @@ void Scene::AddPrimitive(Primitive *newPrimitive) {
 		throw std::runtime_error("Trying to add invalid primitive!");
 	}
 
-	if (primitives == nullptr) {
-		this->numPrimitives = 1;
-		this->primitives = new Primitive*[numPrimitives];
-		this->primitives[0] = newPrimitive;
-	}
-	else {
-		auto oldPrimitives = this->primitives;
-		auto numOldPrimitives = this->numPrimitives;
-		this->numPrimitives = 1 + numOldPrimitives;
-		this->primitives = new Primitive*[this->numPrimitives];
-		memcpy(this->primitives, oldPrimitives, numOldPrimitives*
-			sizeof(Primitive*));
-		this->primitives[this->numPrimitives-1] = newPrimitive;
-		delete[] oldPrimitives;
-	}
+	primitives.push_back(newPrimitive);
 }
 
 void Scene::AddPrimitives(Primitive **newPrimitives, unsigned int numNewPrimitives) {
@@ -81,20 +57,8 @@ void Scene::AddPrimitives(Primitive **newPrimitives, unsigned int numNewPrimitiv
 		throw std::runtime_error("Trying to add invalid primitives!");
 	}
 
-	if (this->primitives == nullptr) {
-		this->primitives = newPrimitives;
-		this->numPrimitives = numNewPrimitives;
-	}
-	else {
-		auto oldPrimitives = this->primitives;
-		auto numOldPrimitives = this->numPrimitives;
-		this->numPrimitives = numNewPrimitives + numOldPrimitives;
-		this->primitives = new Primitive*[this->numPrimitives];
-		memcpy(this->primitives, oldPrimitives, numOldPrimitives*
-			sizeof(Primitive*));
-		memcpy(&this->primitives[numOldPrimitives], newPrimitives,
-			numNewPrimitives*sizeof(Primitive*));
-		delete[] oldPrimitives;
+	for (unsigned int i = 0; i < numNewPrimitives; i++) {
+		this->primitives.push_back(newPrimitives[i]);
 	}
 }
 
@@ -107,54 +71,24 @@ void Scene::AddLight(Light* newLight) {
 		SetAmbientLight(newLight);
 		return;
 	}
-
-	if (lights == nullptr) {
-		this->numLights = 1;
-		this->lights = new Light * [numLights];
-		this->lights[0] = newLight;
-	}
-	else {
-		// TODO: vectorize
-		auto oldLights = this->lights;
-		auto numOldLights = this->numLights;
-		this->numLights = 1 + numOldLights;
-		this->lights = new Light * [this->numLights];
-		memcpy(this->lights, oldLights, numOldLights *
-			sizeof(Light*));
-		this->lights[this->numLights - 1] = newLight;
-		delete[] oldLights;
-	}
+	
+	lights.push_back(newLight);
 }
 
 void Scene::AddLights(Light** newLights, unsigned int numNewLights) {
 	if (newLights == nullptr || numNewLights == 0) {
 		throw std::runtime_error("Trying to add invalid lights!");
 	}
-
-	if (lights == nullptr) {
-		this->lights = newLights;
-		this->numLights = numNewLights;
-	}
-	else {
-		// TODO: vectorize
-		auto oldLights = this->lights;
-		auto numOldLights = this->numLights;
-		this->numLights = numNewLights + numOldLights;
-		this->lights = new Light * [this->numLights];
-		memcpy(this->lights, oldLights, numOldLights *
-			sizeof(Light*));
-		memcpy(&this->lights[numOldLights], newLights,
-			numNewLights * sizeof(Light*));
-		delete[] oldLights;
+	
+	for(unsigned int i = 0; i < numNewLights; i++) {
+		this->lights.push_back(newLights[i]);
 	}
 }
 
 Primitive* Scene::FindPrimitiveByName(const std::string& name) {
 	Primitive* foundPrimitive = nullptr;
 
-	for (unsigned int primIndex = 0; primIndex < numPrimitives;
-		primIndex++) {
-		Primitive* currentPrimitive = primitives[primIndex];
+	for (auto currentPrimitive : primitives) {
 		if (currentPrimitive->GetName() == name) {
 			foundPrimitive = currentPrimitive;
 		}
@@ -174,9 +108,9 @@ bool Scene::Intersect(const Ray &ray, Color &newColor,
 	float tMin, float& tMax) const {
 	Primitive* closestPrimitive = nullptr;
 	IntersectionResult intersectionResult;
-	for (unsigned int i = 0; i < numPrimitives; i++) {
-		auto currentPrimitive = this->primitives[i];
-		auto hitPrimitive = this->primitives[i]->Intersect(ray, tMin, tMax, intersectionResult);
+	for (auto currentPrimitive : primitives) {
+		auto hitPrimitive = currentPrimitive->Intersect(ray,
+			tMin, tMax, intersectionResult);
 		if (hitPrimitive) {
 			closestPrimitive = currentPrimitive;
 		}
@@ -199,9 +133,7 @@ bool Scene::Intersect(const Ray &ray, Color &newColor,
 			newColor += primitiveMaterial->GetAmbientColor(intersectionResult)*lightRadColor4;
 		}
 		
-		for (unsigned int i = 0; i < numLights; i++) {
-			auto currentLight = this->lights[i];
-
+		for (auto currentLight : lights) {
 			Vector3 vectorToLight;
 			auto isAreaLight = currentLight->IsAreaLight();
 			const Primitive* primitiveToExclude = nullptr;
@@ -276,8 +208,7 @@ bool Scene::Intersect(const Ray &ray, Color &newColor,
 
 bool Scene::ShadowFeelerIntersectsAnObject(const Ray& ray, float tMin,
 	float tMax, const Primitive* primitiveToExclude) const {
-	for (unsigned int i = 0; i < numPrimitives; i++) {
-		auto currentPrimitive = this->primitives[i];
+	for (auto currentPrimitive : primitives) {
 		if (currentPrimitive == primitiveToExclude) {
 			continue;
 		}
