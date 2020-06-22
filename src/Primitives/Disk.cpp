@@ -86,11 +86,11 @@ bool Disk::IntersectShadow(const Ray &ray, float tMin, float tMax) {
 }
 
 void Disk::SamplePrimitive(Point3& resultingSample) {
-	// TODO
+	// Leave out for now
 }
 
 float Disk::PDF(const IntersectionResult& intersectionResult) const {
-	return 1.0f; // TODO
+	return 1.0f; // Doesn't return a valid value because we don't use it for sampling
 }
 
 AABBox Disk::GetBoundingBox() const {

@@ -286,8 +286,7 @@ Vector3 AABBoxPrim::GetNormalAtPosition(IntersectionResult const &intersectionRe
 }
 
 void AABBoxPrim::SamplePrimitive(Point3& resultingSample) {
-	// TODO if needed for area lights
-	// we have to sample to unit cube
+	// we have to sample to unit cube; leave out unless we need it
 }
 
 float AABBoxPrim::PDF(const IntersectionResult& intersectionResult) const {

@@ -5,6 +5,10 @@
 
 bool Torus::Intersect(const Ray &ray, float tMin, float& tMax,
 					IntersectionResult &intersectionResult) {
+	if (!boundingBox.RayHit(ray)) {
+		return false;
+	}
+	
 	const Point3& rayOrigin = ray.GetOrigin();
 	const Vector3& rayDirection = ray.GetDirection();
 	
@@ -61,6 +65,10 @@ bool Torus::Intersect(const Ray &ray, float tMin, float& tMax,
 
 bool Torus::IntersectShadow(const Ray &ray, float tMin, float tMax)
 {
+	if (!boundingBox.RayHit(ray)) {
+		return false;
+	}
+	
 	const Point3& rayOrigin = ray.GetOrigin();
 	const Vector3& rayDirection = ray.GetDirection();
 	

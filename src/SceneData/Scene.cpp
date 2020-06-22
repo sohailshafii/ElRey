@@ -170,7 +170,6 @@ void Scene::SetAmbientLight(Light* newAmbientLight) {
 	ambientLight = newAmbientLight;
 }
 
-// TODO: use bounding boxes
 bool Scene::Intersect(const Ray &ray, Color &newColor,
 	float tMin, float& tMax) const {
 	Primitive* closestPrimitive = nullptr;
@@ -190,7 +189,6 @@ bool Scene::Intersect(const Ray &ray, Color &newColor,
 		auto intersectionPos = ray.GetPositionAtParam(tMax);
 		intersectionResult.SetIntersectionT(tMax);
 		intersectionResult.SetIntersectionPosition(intersectionPos);
-		// TODO: don't always need to calculate normal
 		Vector3 normalVec = closestPrimitive->GetNormalAtPosition(intersectionResult);
 		intersectionResult.SetIntersectionNormal(normalVec);
 		

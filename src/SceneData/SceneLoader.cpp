@@ -310,12 +310,14 @@ static Primitive* CreatePrimitive(const nlohmann::json& jsonObj) {
 
 std::shared_ptr<Material> CreateMaterial(const nlohmann::json& jsonObj) {
 	std::shared_ptr<Material> newMaterial;
+
+	// TODO: should BRDFs have four-component colors?
+	// think about transparency
 	std::string primitiveType = SafeGetToken(jsonObj, "type");
 	if (primitiveType == "lambertian") {
 		float kA = SafeGetToken(jsonObj, "ka");
 		float kD = SafeGetToken(jsonObj, "kd");
 		auto colorObj = SafeGetToken(jsonObj, "color");
-		// TODO: should BRDFs have four-component colors?
 		newMaterial = std::make_shared<LambertianMaterial>(kA, kD,
 			Color3(colorObj[0], colorObj[1],
 				colorObj[2]));
@@ -327,7 +329,6 @@ std::shared_ptr<Material> CreateMaterial(const nlohmann::json& jsonObj) {
 		float exponent = SafeGetToken(jsonObj, "exponent");
 		auto colorObj = SafeGetToken(jsonObj, "color");
 		auto ksColor = SafeGetToken(jsonObj, "ks_color");
-		// TODO: should BRDFs have four-component colors?
 		newMaterial = std::make_shared<PhongMaterial>(kA, kD, kS, exponent,
 			Color3(colorObj[0], colorObj[1],
 				colorObj[2]),

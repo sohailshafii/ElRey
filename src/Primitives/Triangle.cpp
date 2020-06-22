@@ -101,11 +101,11 @@ bool Triangle::IntersectShadow(const Ray &ray, float tMin, float tMax) {
 }
 
 void Triangle::SamplePrimitive(Point3& resultingSample) {
-	// TODO
+	// Not valid; necessary for sampling if we want area lights that are spheres
 }
 
 float Triangle::PDF(const IntersectionResult& intersectionResult) const {
-	return 1.0f; // TODO
+	return 1.0f; // invalid until we need to use it
 }
 
 AABBox Triangle::GetBoundingBox() const {
