@@ -12,46 +12,53 @@ bool Torus::Intersect(const Ray &ray, float tMin, float& tMax,
 	const Point3& rayOrigin = ray.GetOrigin();
 	const Vector3& rayDirection = ray.GetDirection();
 	
-	float x1 = rayOrigin[0];
-	float y1 = rayOrigin[1];
-	float z1 = rayOrigin[2];
-	float d1 = rayDirection[0];
-	float d2 = rayDirection[1];
-	float d3 = rayDirection[2];
+	float rayOriginX = rayOrigin[0];
+	float rayOriginY = rayOrigin[1];
+	float rayOriginZ = rayOrigin[2];
+	float rayDirX = rayDirection[0];
+	float rayDirY = rayDirection[1];
+	float rayDirZ = rayDirection[2];
 	
-	float coeffs[5];	// coefficient array for the quartic equation
-	float roots[4];	// solution array for the quartic equation
+	// coefficient array for the quartic equation
+	float coeffs[5];
+	// solution array for the quartic equation
+	float roots[4];
 	
 	// define the coefficients of the quartic equation
-	float sum_d_sqrd 	= d1 * d1 + d2 * d2 + d3 * d3;
-	float e			= x1 * x1 + y1 * y1 +
-		z1 * z1 - sweptRadiusSquared - tubeRadiusSquared;
-	float f			= x1 * d1 + y1 * d2 + z1 * d3;
-	float four_a_sqrd	= 4.0 * sweptRadiusSquared;
+	float sumDirSqrd 	= rayDirX * rayDirX + rayDirY * rayDirY + rayDirZ * rayDirZ;
+	float e				= rayOriginX * rayOriginX + rayOriginY * rayOriginY +
+						rayOriginZ * rayOriginZ - sweptRadiusSquared - tubeRadiusSquared;
+	float f			= rayOriginX * rayDirX + rayOriginY * rayDirY + rayOriginZ * rayDirZ;
+	float fourASqrd	= 4.0 * sweptRadiusSquared;
 	
-	coeffs[0] = e * e - four_a_sqrd * (tubeRadiusSquared - y1 * y1); 	// constant term
-	coeffs[1] = 4.0 * f * e + 2.0 * four_a_sqrd * y1 * d2;
-	coeffs[2] = 2.0 * sum_d_sqrd * e + 4.0 * f * f + four_a_sqrd * d2 * d2;
-	coeffs[3] = 4.0 * sum_d_sqrd * f;
-	coeffs[4] = sum_d_sqrd * sum_d_sqrd;  					// coefficient of t^4
+	// coeffs[0] is constant term
+	coeffs[0] = e * e - fourASqrd * (tubeRadiusSquared - rayOriginY * rayOriginY);
+	coeffs[1] = 4.0 * f * e + 2.0 * fourASqrd * rayOriginY * rayDirY;
+	coeffs[2] = 2.0 * sumDirSqrd * e + 4.0 * f * f + fourASqrd * rayDirY * rayDirY;
+	coeffs[3] = 4.0 * sumDirSqrd * f;
+	// coeffs[4] is coefficient of t^4
+	coeffs[4] = sumDirSqrd * sumDirSqrd;
 	
 	// find roots of the quartic equation
-	int num_real_roots = CommonMath::SolveQuartic(coeffs, roots);
+	int numRealRoots 	= CommonMath::SolveQuartic(coeffs, roots);
 	bool	intersected = false;
 	float 	t 		 	= std::numeric_limits<float>::max();
 	
-	if (num_real_roots == 0)  // ray misses the torus
-		return(false);
+	// ray misses the torus
+	if (numRealRoots == 0) {
+		return false;
+	}
 	
 	// find the smallest root greater than kEpsilon, if any
 	// the roots array is not sorted
-	for (int j = 0; j < num_real_roots; j++)
+	for (int j = 0; j < numRealRoots; j++) {
 		if (roots[j] > EPSILON) {
-			intersected = true;
 			if (roots[j] < tMax && roots[j] > tMin) {
+				intersected = true;
 				t = roots[j];
 			}
 		}
+	}
 		
 	if(!intersected) {
 		return false;
@@ -72,46 +79,52 @@ bool Torus::IntersectShadow(const Ray &ray, float tMin, float tMax)
 	const Point3& rayOrigin = ray.GetOrigin();
 	const Vector3& rayDirection = ray.GetDirection();
 	
-	float x1 = rayOrigin[0];
-	float y1 = rayOrigin[1];
-	float z1 = rayOrigin[2];
-	float d1 = rayDirection[0];
-	float d2 = rayDirection[1];
-	float d3 = rayDirection[2];
+	float rayOriginX = rayOrigin[0];
+	float rayOriginY = rayOrigin[1];
+	float rayOriginZ = rayOrigin[2];
+	float rayDirX = rayDirection[0];
+	float rayDirY = rayDirection[1];
+	float rayDirZ = rayDirection[2];
 	
-	float coeffs[5];	// coefficient array for the quartic equation
-	float roots[4];	// solution array for the quartic equation
+	// coefficient array for the quartic equation
+	float coeffs[5];
+	// solution array for the quartic equation
+	float roots[4];
 	
 	// define the coefficients of the quartic equation
-	float sum_d_sqrd 	= d1 * d1 + d2 * d2 + d3 * d3;
-	float e			= x1 * x1 + y1 * y1 +
-		z1 * z1 - sweptRadiusSquared - tubeRadiusSquared;
-	float f			= x1 * d1 + y1 * d2 + z1 * d3;
-	float four_a_sqrd	= 4.0 * sweptRadiusSquared;
+	float sumDirSqrd 	= rayDirX * rayDirX + rayDirY * rayDirY + rayDirZ * rayDirZ;
+	float e			= rayOriginX * rayOriginX + rayOriginY * rayOriginY +
+		rayOriginZ * rayOriginZ - sweptRadiusSquared - tubeRadiusSquared;
+	float f			= rayOriginX * rayDirX + rayOriginY * rayDirY + rayOriginZ * rayDirZ;
+	float fourASqrd	= 4.0 * sweptRadiusSquared;
 	
-	coeffs[0] = e * e - four_a_sqrd * (tubeRadiusSquared - y1 * y1); 	// constant term
-	coeffs[1] = 4.0 * f * e + 2.0 * four_a_sqrd * y1 * d2;
-	coeffs[2] = 2.0 * sum_d_sqrd * e + 4.0 * f * f + four_a_sqrd * d2 * d2;
-	coeffs[3] = 4.0 * sum_d_sqrd * f;
-	coeffs[4] = sum_d_sqrd * sum_d_sqrd;  					// coefficient of t^4
+	// coeffs[0] is constant term
+	coeffs[0] = e * e - fourASqrd * (tubeRadiusSquared - rayOriginY * rayOriginY);
+	coeffs[1] = 4.0 * f * e + 2.0 * fourASqrd * rayOriginY * rayDirY;
+	coeffs[2] = 2.0 * sumDirSqrd * e + 4.0 * f * f + fourASqrd * rayDirY * rayDirY;
+	coeffs[3] = 4.0 * sumDirSqrd * f;
+	// coeffs[4] is coefficient of t^4
+	coeffs[4] = sumDirSqrd * sumDirSqrd;
 	
 	// find roots of the quartic equation
-	int num_real_roots = CommonMath::SolveQuartic(coeffs, roots);
+	int numRealRoots = CommonMath::SolveQuartic(coeffs, roots);
 	bool	intersected = false;
 	float 	t 		 	= std::numeric_limits<float>::max();
-	
-	if (num_real_roots == 0)  // ray misses the torus
-		return(false);
+	// ray misses the torus
+	if (numRealRoots == 0) {
+		return false;
+	}
 	
 	// find the smallest root greater than kEpsilon, if any
 	// the roots array is not sorted
-	for (int j = 0; j < num_real_roots; j++)
+	for (int j = 0; j < numRealRoots; j++) {
 		if (roots[j] > EPSILON) {
-			intersected = true;
 			if (roots[j] < tMax && roots[j] > tMin) {
 				t = roots[j];
+				intersected = true;
 			}
 		}
+	}
 		
 	if (!intersected) {
 		return false;
