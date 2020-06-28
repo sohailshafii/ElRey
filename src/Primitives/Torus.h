@@ -7,8 +7,7 @@
 class Torus : public Primitive {
 public:
 	Torus(std::shared_ptr<Material> const & iMaterial,
-		  std::shared_ptr<GenericSampler> const & iSampler,
-		  const std::string& iName) : Primitive(iMaterial, iSampler, iName),
+		  const std::string& iName) : Primitive(iMaterial, iName),
 			sweptRadius(2.0f), tubeRadius(0.5f)
 	{
 		Initialize();
@@ -17,9 +16,8 @@ public:
 	// Side vectors should NOT be normalized
 	Torus(float sweptRadius, float tubeRadius,
 		  std::shared_ptr<Material> const & iMaterial,
-		  std::shared_ptr<GenericSampler> const & iSampler,
 		  const std::string& iName) :
-		Primitive(iMaterial, iSampler, iName), sweptRadius(sweptRadius),
+		Primitive(iMaterial, iName), sweptRadius(sweptRadius),
 		tubeRadius(tubeRadius) {
 		Initialize();
 	}

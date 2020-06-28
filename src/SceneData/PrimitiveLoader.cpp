@@ -5,6 +5,7 @@
 #include "Primitives/Rectangle.h"
 #include "Primitives/AABBoxPrim.h"
 #include "Primitives/Triangle.h"
+#include "Primitives/Torus.h"
 #include "SceneData/CommonLoaderFunctions.h"
 #include <sstream>
 
@@ -36,6 +37,16 @@ Primitive* PrimitiveLoader::CreatePrimitive(const nlohmann::json& jsonObj) {
 			Point3((float)sphereOrigin[0],(float)sphereOrigin[1],
 					(float)sphereOrigin[2]),
 			sphereRadius, objMaterial, objectName);
+	}
+	else if (primitiveType == "torus") {
+		auto materialNode = CommonLoaderFunctions::SafeGetToken(jsonObj, "material");
+		std::string objectName = CommonLoaderFunctions::SafeGetToken(jsonObj, "name");
+		float sweptRadius = CommonLoaderFunctions::SafeGetToken(jsonObj, "swept_radius");
+		float tubeRadius = CommonLoaderFunctions::SafeGetToken(jsonObj, "tube_radius");
+		
+		std::shared_ptr<Material> objMaterial = CommonLoaderFunctions::CreateMaterial(materialNode);
+		newPrimitive = new Torus(sweptRadius, tubeRadius,
+								 objMaterial, objectName);
 	}
 	else if (primitiveType == "aabox") {
 		auto minPoint = CommonLoaderFunctions::SafeGetToken(jsonObj, "min_point");
