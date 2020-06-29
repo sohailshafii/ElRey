@@ -52,11 +52,9 @@ bool Torus::Intersect(const Ray &ray, float tMin, float& tMax,
 	// find the smallest root greater than kEpsilon, if any
 	// the roots array is not sorted
 	for (int j = 0; j < numRealRoots; j++) {
-		if (roots[j] > EPSILON) {
-			if (roots[j] < tMax && roots[j] > tMin) {
-				intersected = true;
-				t = roots[j];
-			}
+		if (roots[j] < tMax && roots[j] > tMin) {
+			intersected = true;
+			t = roots[j];
 		}
 	}
 		
@@ -118,11 +116,9 @@ bool Torus::IntersectShadow(const Ray &ray, float tMin, float tMax)
 	// find the smallest root greater than kEpsilon, if any
 	// the roots array is not sorted
 	for (int j = 0; j < numRealRoots; j++) {
-		if (roots[j] > EPSILON) {
-			if (roots[j] < tMax && roots[j] > tMin) {
-				t = roots[j];
-				intersected = true;
-			}
+		if (roots[j] < tMax && roots[j] > tMin) {
+			t = roots[j];
+			intersected = true;
 		}
 	}
 		

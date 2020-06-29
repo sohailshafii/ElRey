@@ -75,9 +75,10 @@ private:
 		sweptRadiusSquared = sweptRadius*sweptRadius;
 		tubeRadiusSquared = tubeRadius*tubeRadius;
 		boundingBox = AABBox(-sweptRadius - tubeRadius,
-							sweptRadius + tubeRadius,
-							-tubeRadius, tubeRadius,
-							-sweptRadius - tubeRadius,
-							sweptRadius + tubeRadius);
+							 -tubeRadius,
+							 -sweptRadius - tubeRadius,
+							 sweptRadius + tubeRadius,
+							 tubeRadius,
+							 sweptRadius + tubeRadius);
 	}
 };
