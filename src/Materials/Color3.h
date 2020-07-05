@@ -3,6 +3,9 @@
 class Color3 {
 public:
 	Color3() {
+		comp[0] = 0.0f;
+		comp[1] = 0.0f;
+		comp[2] = 0.0f;
 	}
 	
 	Color3(float r, float g, float b) {

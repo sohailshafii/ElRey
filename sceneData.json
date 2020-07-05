@@ -33,7 +33,7 @@
 		},
 		{
 			"type":"sphere",
-			"position":[-1.2,0.5,0.2],
+			"position":[-1.5,0.5,0.5],
 			"radius":0.4,
 			"name":"main_sphere",
 			"material":
@@ -70,14 +70,14 @@
 		{
 			"type":"torus",
 			"name":"donut",
-			"swept_radius":0.5,
-			"tube_radius":0.2,
+			"swept_radius":0.7,
+			"tube_radius":0.3,
 			"material":
 			{
 				"type":"phong",
-				"ka":0.1,
+				"ka":0.8,
 				"kd":0.95,
-				"ks":0.1,
+				"ks":0.7,
 				"exponent":15,
 				"ks_color":[1.0, 1.0, 1.0],
 				"color":[1.0,0.0,1.0,1.0]

@@ -3,7 +3,10 @@
 class Color {
 public:
 	Color() {
-		
+		comp[0] = 0.0f;
+		comp[1] = 0.0f;
+		comp[2] = 0.0f;
+		comp[3] = 0.0f;
 	}
 	
 	Color(float r, float g, float b,

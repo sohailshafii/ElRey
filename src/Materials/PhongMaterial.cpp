@@ -22,7 +22,9 @@ Color PhongMaterial::GetAmbientColor(const IntersectionResult &intersectionResul
 Color PhongMaterial::GetDirectColor(const IntersectionResult &intersectionResult) {
 	Color3 directColor = diffuseBRDF.GetRadiance(intersectionResult);
 	Color3 specularColor = glossySpecularBRDF.GetRadiance(intersectionResult);
-	return Color(directColor[0]+specularColor[0], directColor[1]+specularColor[1], directColor[2]+specularColor[2], 1.0f);
+	Color resultColor = Color(directColor[0]+specularColor[0], directColor[1]+specularColor[1], directColor[2]+specularColor[2], 1.0f);
+
+	return resultColor;
 }
 
 Color PhongMaterial::GetColorForAreaLight(const IntersectionResult& intersectionResult) {
