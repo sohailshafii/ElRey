@@ -3,6 +3,7 @@
 #include <algorithm>
 #include <limits>
 
+// use doubles for accuracy
 bool Torus::Intersect(const Ray &ray, float tMin, float& tMax,
 					IntersectionResult &intersectionResult) {
 	if (!boundingBox.RayHit(ray)) {
@@ -12,24 +13,24 @@ bool Torus::Intersect(const Ray &ray, float tMin, float& tMax,
 	const Point3& rayOrigin = ray.GetOrigin();
 	const Vector3& rayDirection = ray.GetDirection();
 	
-	float rayOriginX = rayOrigin[0];
-	float rayOriginY = rayOrigin[1];
-	float rayOriginZ = rayOrigin[2];
-	float rayDirX = rayDirection[0];
-	float rayDirY = rayDirection[1];
-	float rayDirZ = rayDirection[2];
+	double rayOriginX = rayOrigin[0];
+	double rayOriginY = rayOrigin[1];
+	double rayOriginZ = rayOrigin[2];
+	double rayDirX = rayDirection[0];
+	double rayDirY = rayDirection[1];
+	double rayDirZ = rayDirection[2];
 	
 	// coefficient array for the quartic equation
-	float coeffs[5];
+	double coeffs[5];
 	// solution array for the quartic equation
-	float roots[4];
+	double roots[4];
 	
 	// define the coefficients of the quartic equation
-	float sumDirSqrd 	= rayDirX * rayDirX + rayDirY * rayDirY + rayDirZ * rayDirZ;
-	float e				= rayOriginX * rayOriginX + rayOriginY * rayOriginY +
+	double sumDirSqrd 	= rayDirX * rayDirX + rayDirY * rayDirY + rayDirZ * rayDirZ;
+	double e				= rayOriginX * rayOriginX + rayOriginY * rayOriginY +
 						rayOriginZ * rayOriginZ - sweptRadiusSquared - tubeRadiusSquared;
-	float f			= rayOriginX * rayDirX + rayOriginY * rayDirY + rayOriginZ * rayDirZ;
-	float fourASqrd	= 4.0 * sweptRadiusSquared;
+	double f			= rayOriginX * rayDirX + rayOriginY * rayDirY + rayOriginZ * rayDirZ;
+	double fourASqrd	= 4.0 * sweptRadiusSquared;
 	
 	// coeffs[0] is constant term
 	coeffs[0] = e * e - fourASqrd * (tubeRadiusSquared - rayOriginY * rayOriginY);
@@ -77,24 +78,24 @@ bool Torus::IntersectShadow(const Ray &ray, float tMin, float tMax)
 	const Point3& rayOrigin = ray.GetOrigin();
 	const Vector3& rayDirection = ray.GetDirection();
 	
-	float rayOriginX = rayOrigin[0];
-	float rayOriginY = rayOrigin[1];
-	float rayOriginZ = rayOrigin[2];
-	float rayDirX = rayDirection[0];
-	float rayDirY = rayDirection[1];
-	float rayDirZ = rayDirection[2];
+	double rayOriginX = rayOrigin[0];
+	double rayOriginY = rayOrigin[1];
+	double rayOriginZ = rayOrigin[2];
+	double rayDirX = rayDirection[0];
+	double rayDirY = rayDirection[1];
+	double rayDirZ = rayDirection[2];
 	
 	// coefficient array for the quartic equation
-	float coeffs[5];
+	double coeffs[5];
 	// solution array for the quartic equation
-	float roots[4];
+	double roots[4];
 	
 	// define the coefficients of the quartic equation
-	float sumDirSqrd 	= rayDirX * rayDirX + rayDirY * rayDirY + rayDirZ * rayDirZ;
-	float e			= rayOriginX * rayOriginX + rayOriginY * rayOriginY +
+	double sumDirSqrd 	= rayDirX * rayDirX + rayDirY * rayDirY + rayDirZ * rayDirZ;
+	double e			= rayOriginX * rayOriginX + rayOriginY * rayOriginY +
 		rayOriginZ * rayOriginZ - sweptRadiusSquared - tubeRadiusSquared;
-	float f			= rayOriginX * rayDirX + rayOriginY * rayDirY + rayOriginZ * rayDirZ;
-	float fourASqrd	= 4.0 * sweptRadiusSquared;
+	double f			= rayOriginX * rayDirX + rayOriginY * rayDirY + rayOriginZ * rayDirZ;
+	double fourASqrd	= 4.0 * sweptRadiusSquared;
 	
 	// coeffs[0] is constant term
 	coeffs[0] = e * e - fourASqrd * (tubeRadiusSquared - rayOriginY * rayOriginY);

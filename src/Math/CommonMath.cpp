@@ -8,9 +8,17 @@
 
 const float CommonMath::randMaxInverse = 1.0f/(float)RAND_MAX;
 
+#ifndef M_PI
+#define M_PI          3.14159265358979323846
+#endif
+
 // graphics gems code
-#define     EQN_EPS     1e-9
+#define     EQN_EPS     1e-13
 #define	    IsZero(x)	((x) > -EQN_EPS && (x) < EQN_EPS)
+//#ifdef NOCBRT
+#define     cbrt_custom(x)     ((x) > 0.0 ? pow((double)(x), 1.0/3.0) : \
+                          ((x) < 0.0 ? -pow((double)-(x), 1.0/3.0) : 0.0))
+//#endif
 
 void CommonMath::ComputeUVWFromWandU(Vector3 &right, Vector3 &up, Vector3 &forward) {
 	// turn on sanity check in case we need it but leave it off to
@@ -55,41 +63,40 @@ void CommonMath::ComputeUVWFromWandU(Vector3 &right, Vector3 &up, Vector3 &forwa
 
 // originally from graphics gems, volume 1
 // http://www.realtimerendering.com/resources/GraphicsGems/gems/Roots3And4.c
-int CommonMath::SolveQuadric(float c[3], float s[2])
-{
-	float p, q, D;
+int CommonMath::SolveQuadric(double c[3], double s[2]) {
+	double p, q, D;
 		
 	// normal form: x^2 + px + q = 0
-	p = c[1] / (2.0f * c[2]);
+	p = c[1] / (2 * c[2]);
 	q = c[0] / c[2];
 
 	D = p * p - q;
 
 	if (IsZero(D)) {
-		s[0] = - p;
+		s[0] = -p;
 		return 1;
 	}
-	else if (D > 0) {
-		double sqrtD = sqrt(D);
-
-		s[0] =   sqrtD - p;
-		s[1] = - sqrtD - p;
-		return 2;
+	else if (D < 0) {
+		return 0;
 	}
 	else {
-		return 0;
+		double sqrtD = sqrt(D);
+
+		s[0] =  sqrtD - p;
+		s[1] = -sqrtD - p;
+		return 2;
 	}
 }
 
 // originally from graphics gems, volume 1
 // http://www.realtimerendering.com/resources/GraphicsGems/gems/Roots3And4.c
-int CommonMath::SolveCubic(float c[4], float s[3])
+int CommonMath::SolveCubic(double c[4], double s[3])
 {
 	int    i, num;
-	float  sub;
-	float  A, B, C;
-	float  sqA, p, q;
-	float  cbP, D;
+	double  sub;
+	double  A, B, C;
+	double  sqA, p, q;
+	double  cbP, D;
 
 	// normal form: x^3 + Ax^2 + Bx + C = 0
 	A = c[2] / c[3];
@@ -99,9 +106,9 @@ int CommonMath::SolveCubic(float c[4], float s[3])
 	//  substitute x = y - A/3 to eliminate quadric term:
 	// x^3 +px + q = 0
 	sqA = A * A;
-	p = 0.333f * (-0.333f * sqA + B);
+	p = 1.0/3 * (-1.0/3 * sqA + B);
 	// second term is 2/27
-	q = 0.5f * (0.07407 * A * sqA - 0.333f * A * B + C);
+	q = 1.0/2 * (2.0/27 * A * sqA - 1.0/3 * A * B + C);
 
 	// Cardano's formula
 	cbP = p * p * p;
@@ -113,32 +120,32 @@ int CommonMath::SolveCubic(float c[4], float s[3])
 			num = 1;
 		}
 		else { // one single and one double solution
-			double u = cbrt(-q);
+			double u = cbrt_custom(-q);
 			s[0] = 2 * u;
 			s[1] = - u;
 			num = 2;
 		}
 	}
 	else if (D < 0) { // Casus irreducibilis: three real solutions
-		float phi = 0.333f * acos(-q / sqrt(-cbP));
-		float t = 2.0f * sqrt(-p);
+		double phi = 1.0/3 * acos(-q / sqrt(-cbP));
+		double t = 2 * sqrt(-p);
 
 		s[0] =  t * cos(phi);
-		s[1] = -t * cos(phi + M_PI * 0.333f);
-		s[2] = -t * cos(phi - M_PI * 0.333f);
+		s[1] = -t * cos(phi + M_PI / 3.0);
+		s[2] = -t * cos(phi - M_PI / 3.0);
 		num = 3;
 	}
 	else { // one real solution
-		float sqrtD = sqrt(D);
-		float u = cbrt(sqrtD - q);
-		float v = - cbrt(sqrtD + q);
+		double sqrtD = sqrt(D);
+		double u = cbrt_custom(sqrtD - q);
+		double v = - cbrt_custom(sqrtD + q);
 
 		s[0] = u + v;
 		num = 1;
 	}
 
 	// resubstitute
-	sub = 0.3333f * A;
+	sub = 1.0/3 * A;
 
 	for (i = 0; i < num; ++i) {
 		s[i] -= sub;
@@ -149,11 +156,11 @@ int CommonMath::SolveCubic(float c[4], float s[3])
 
 // originally from graphics gems, volume 1
 // http://www.realtimerendering.com/resources/GraphicsGems/gems/Roots3And4.c
-int CommonMath::SolveQuartic(float c[5], float s[4]) {
-	float  coeffs[4];
-	float  z, u, v, sub;
-	float  A, B, C, D;
-	float  sqA, p, q, r;
+int CommonMath::SolveQuartic(double c[5], double s[4]) {
+	double  coeffs[4];
+	double  z, u, v, sub;
+	double  A, B, C, D;
+	double  sqA, p, q, r;
 	int    i, num;
 
 	// normal form: x^4 + Ax^3 + Bx^2 + Cx + D = 0
@@ -165,10 +172,10 @@ int CommonMath::SolveQuartic(float c[5], float s[4]) {
 	//  substitute x = y - A/4 to eliminate cubic term:
 	// x^4 + px^2 + qx + r = 0
 	sqA = A * A;
-	p = -0.375f * sqA + B;
-	q = 0.125f * sqA * A - 0.5f * A * B + C;
+	p = -3.0/8 * sqA + B;
+	q = 1.0/8 * sqA * A - 1.0/2 * A * B + C;
 	// first coeff is 3/256
-	r = -0.01171875f*sqA*sqA + 0.0625f*sqA*B - 0.25f*A*C + D;
+	r = -3.0/256*sqA*sqA + 1.0/16*sqA*B - 1.0/4*A*C + D;
 
 	if (IsZero(r)) {
 		// no absolute term: y(y^3 + py + q) = 0
@@ -182,9 +189,9 @@ int CommonMath::SolveQuartic(float c[5], float s[4]) {
 	}
 	else {
 		// solve the resolvent cubic
-		coeffs[0] = 0.5f * r * p - 0.125f * q * q;
+		coeffs[0] = 1.0/2 * r * p - 1.0/8 * q * q;
 		coeffs[1] = -r;
-		coeffs[2] = -0.5f * p;
+		coeffs[2] = -1.0/2 * p;
 		coeffs[3] = 1;
 		
 		SolveCubic(coeffs, s);
@@ -194,7 +201,7 @@ int CommonMath::SolveQuartic(float c[5], float s[4]) {
 
 		// to build two quadric equations
 		u = z * z - r;
-		v = 2.0f * z - p;
+		v = 2 * z - p;
 
 		if (IsZero(u)) {
 			u = 0;
@@ -230,7 +237,7 @@ int CommonMath::SolveQuartic(float c[5], float s[4]) {
 	}
 
 	// resubstitute
-	sub = 0.25f * A;
+	sub = 1.0/4 * A;
 
 	for (i = 0; i < num; ++i) {
 		s[i] -= sub;
