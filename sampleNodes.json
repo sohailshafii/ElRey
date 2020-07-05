@@ -46,4 +46,20 @@
 				"num_random_samples":4,
 				"num_random_sets":83
 			}
+		},
+		{
+			"type":"torus",
+			"name":"donut",
+			"swept_radius":1.0,
+			"tube_radius":0.3,
+			"material":
+			{
+				"type":"phong",
+				"ka":0.8,
+				"kd":0.95,
+				"ks":0.7,
+				"exponent":15,
+				"ks_color":[1.0, 1.0, 1.0],
+				"color":[1.0,0.0,1.0,1.0]
+			}
 		}
