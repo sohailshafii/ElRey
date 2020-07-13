@@ -1,6 +1,8 @@
 #pragma once
 
 #include "Primitive.h"
+#include <vector>
+#include <string>
 
 class CompoundObject : public Primitive {
 public:
@@ -33,8 +35,13 @@ public:
 	virtual AABBox GetBoundingBox() const override {
 		return boundingBox;
 	}
+	
+	void AddPrimitive(Primitive * primitive);
+	void RemovePrimitiveAtIndex(unsigned int index);
+	void RemovePrimitiveWithName(std::string const & name);
 
 private:
 	AABBox boundingBox;
+	std::vector<Primitive*> primitives;
 };
 
