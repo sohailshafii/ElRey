@@ -2,6 +2,7 @@
 
 #include "Math/Ray.h"
 #include <cstdint>
+#include <string>
 
 class IntersectionResult {
 public:
@@ -58,6 +59,10 @@ public:
 		genericMetadata2 = metadata2;
 		genericMetadata3 = metadata3;
 	}
+	
+	void SetPrimitiveName(std::string const & primitiveName) {
+		this->primitiveName = primitiveName;
+	}
 
 	Ray GetIncomingRayInverse() const {
 		return incomingRay;
@@ -106,6 +111,18 @@ public:
 	float GetGenericMetadata3() const {
 		return genericMetadata3;
 	}
+	
+	std::string GetPrimitiveName() const {
+		return primitiveName;
+	}
+	
+	bool operator< (const IntersectionResult& other) const {
+		float intersectSum1 = intersectionPosition[0] +
+			intersectionPosition[1] + intersectionPosition[2];
+		auto& otherPos = other.intersectionPosition;
+		float intersectSum2 = otherPos[0] + otherPos[1] + otherPos[2];
+		return intersectSum1 < intersectSum2;
+	}
 
 private:
 	// usually lighting deals with incoming ray facing away from surface
@@ -122,4 +139,7 @@ private:
 	Point3 samplePointOnLight;
 	float genericMetadata1, genericMetadata2,
 		genericMetadata3;
+	// TODO: enforce uniqueness in scene when it comes to names
+	// useful for compound objects
+	std::string primitiveName;
 };
