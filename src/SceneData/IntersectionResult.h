@@ -139,7 +139,6 @@ private:
 	Point3 samplePointOnLight;
 	float genericMetadata1, genericMetadata2,
 		genericMetadata3;
-	// TODO: enforce uniqueness in scene when it comes to names
 	// useful for compound objects
 	std::string primitiveName;
 };

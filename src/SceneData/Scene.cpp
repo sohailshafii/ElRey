@@ -1,6 +1,7 @@
 #include "Scene.h"
-#include <stdexcept>
 #include <cstring>
+#include <stdexcept>
+#include <sstream>
 #include "Math/CommonMath.h"
 #include "IntersectionResult.h"
 #include "SceneData/DirectionalLight.h"
@@ -47,6 +48,18 @@ void Scene::CleanUpLights() {
 void Scene::AddPrimitive(Primitive *newPrimitive) {
 	if (newPrimitive == nullptr) {
 		throw std::runtime_error("Trying to add invalid primitive!");
+	}
+	std::string const & primitiveName = newPrimitive->GetName();
+	for(Primitive* prim : primitives)
+	{
+		if (prim->GetName() == primitiveName) {
+			std::stringstream exceptionMsg;
+			exceptionMsg << "Trying to add primitive with duplicate name: " <<
+				primitiveName << ". Primitive should have unique names otherwise " <<
+				"compound objects cannot distinguish between children for normal " <<
+				"vector calculation.\n";
+			throw exceptionMsg;
+		}
 	}
 
 	primitives.push_back(newPrimitive);
