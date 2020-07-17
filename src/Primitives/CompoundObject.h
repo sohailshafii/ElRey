@@ -41,5 +41,8 @@ public:
 private:
 	AABBox boundingBox;
 	std::vector<Primitive*> primitives;
+	Primitive *closestPrimSoFar;
+	
+	Primitive* GetPrimitiveByIntersectionResult(IntersectionResult const &intersectionResult) const;
 };
 

@@ -4,19 +4,19 @@ bool CompoundObject::Intersect(const Ray &ray, float tMin, float& tMax,
 			   IntersectionResult &intersectionResult) {
 	unsigned int numElements = primitives.size();
 	bool hitSomething = false;
-	Primitive* closestPrimitive = nullptr;
+	closestPrimSoFar = nullptr;
 	for (unsigned int index = 0; index < numElements; index++) {
 		auto currPrimitive = primitives[index];
 		hitSomething =
 			currPrimitive->Intersect(ray, tMin, tMax, intersectionResult);
 		
 		if (hitSomething) {
-			closestPrimitive = currPrimitive;
+			closestPrimSoFar = currPrimitive;
 		}
 	}
 	
-	if (closestPrimitive != nullptr) {
-		intersectionResult.SetPrimitiveName(closestPrimitive->GetName());
+	if (closestPrimSoFar != nullptr) {
+		intersectionResult.SetPrimitiveName(closestPrimSoFar->GetName());
 	}
 	
 	return hitSomething;
@@ -38,23 +38,29 @@ bool CompoundObject::IntersectShadow(const Ray &ray, float tMin,
 
 Vector3 CompoundObject::GetNormalAtPosition(
 	IntersectionResult const &intersectionResult) const {
-	std::string primName = intersectionResult.GetPrimitiveName();
+	Primitive* foundPrim = GetPrimitiveByIntersectionResult(intersectionResult);
+	return foundPrim != nullptr ? foundPrim->GetNormalAtPosition(intersectionResult)
+		: Vector3();
+}
+
+Primitive* CompoundObject::GetPrimitiveByIntersectionResult(IntersectionResult const &intersectionResult) const {
 	for(Primitive* currPrim : primitives) {
 		if (currPrim->GetName() == intersectionResult.GetPrimitiveName()) {
-			return currPrim->GetNormalAtPosition(intersectionResult);
+			return currPrim;
 		}
 	}
-	
-	return Vector3();
+	return nullptr;
 }
 
 void CompoundObject::SamplePrimitive(Point3& resultingSample) {
-	// nothing to see here
+	if (closestPrimSoFar != nullptr) {
+		closestPrimSoFar->SamplePrimitive(resultingSample);
+	}
 }
 
 float CompoundObject::PDF(const IntersectionResult& intersectionResult) const {
-	return 0.0f;
-	// nothing to see here
+	Primitive* foundPrim = GetPrimitiveByIntersectionResult(intersectionResult);
+	return foundPrim != nullptr ? foundPrim->PDF(intersectionResult) : 0.0f;
 }
 
 void CompoundObject::AddPrimitive(Primitive * primitive) {
