@@ -64,7 +64,7 @@ public:
 		this->primitiveName = primitiveName;
 	}
 
-	Ray GetIncomingRayInverse() const {
+	Ray const & GetIncomingRay() const {
 		return incomingRay;
 	}
 

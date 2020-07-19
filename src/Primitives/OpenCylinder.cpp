@@ -12,6 +12,18 @@ void OpenCylinder::GenerateBoundingBox() {
 
 bool OpenCylinder::Intersect(const Ray &ray, float tMin, float& tMax,
 	IntersectionResult &intersectionResult) {
+	if (TestRayAndSetTMax(ray, tMin, tMax)) {
+		intersectionResult.SetIntersectionT(tMax);
+	}
+	
+	return false;
+}
+
+bool OpenCylinder::IntersectShadow(const Ray &ray, float tMin, float tMax) {
+	return TestRayAndSetTMax(ray, tMin, tMax);
+}
+
+bool OpenCylinder::TestRayAndSetTMax(const Ray &ray, float tMin, float& tMax) {
 	const Point3& rayOrigin = ray.GetOrigin();
 	const Vector3& rayDirection = ray.GetDirection();
 	
@@ -33,29 +45,18 @@ bool OpenCylinder::Intersect(const Ray &ray, float tMin, float& tMax,
 	}
 	
 	float discSqrt = sqrt(discriminant);
+	float denominator = 2.0f * a;
+	float t0 = (-b - discSqrt)/denominator;
 	
-	return false;
-}
-
-bool OpenCylinder::IntersectShadow(const Ray &ray, float tMin, float tMax) {
-	const Point3& rayOrigin = ray.GetOrigin();
-	const Vector3& rayDirection = ray.GetDirection();
-
-	float originX = rayOrigin[0];
-	float originY = rayOrigin[1];
-	float originZ = rayOrigin[2];
-	float dirX = rayDirection[0];
-	float dirY = rayDirection[1];
-	float dirZ = rayDirection[2];
-
-	float a = dirX*dirX + dirZ*dirZ;
-	float b = 2.0f * (originX*originX + originZ*originZ);
-	float c = originX*originX + originZ*originZ
-		- radius*radius;
-	float discriminant = b * b - 4.0 * a * c;
+	if (TestIfTMaxPasses(originY, dirY, t0, tMin, tMax)) {
+		tMax = t0;
+		return true;
+	}
 	
-	if (discriminant < 0.0f) {
-		return false;
+	float t1 = (-b + discSqrt)/denominator;
+	if (TestIfTMaxPasses(originY, dirY, t1, tMin, tMax)) {
+		tMax = t1;
+		return true;
 	}
 	
 	return false;

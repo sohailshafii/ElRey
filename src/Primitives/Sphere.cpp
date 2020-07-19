@@ -27,9 +27,6 @@ bool Sphere::Intersect(const Ray &ray, float tMin, float& tMax,
 	if (t > EPSILON && t > tMin && t < tMax) {
 		tMax = t;
 		intersectionResult.SetIntersectionT(tMax);
-		//intersectionResult.SetIntersectionNormal(normal);
-		// normal is (temp + t * rayDirection)/radius;
-		// local hit point is rayOrigin + t*rayDirection;
 		return true;
 	}
 
@@ -37,9 +34,6 @@ bool Sphere::Intersect(const Ray &ray, float tMin, float& tMax,
 	if (t > EPSILON && t > tMin && t < tMax) {
 		tMax = t;
 		intersectionResult.SetIntersectionT(tMax);
-		//intersectionResult.SetIntersectionNormal(normal);
-		// normal is (temp + t * rayDirection)/radius;
-		// local hit point is rayOrigin + t*rayDirection;
 		return true;
 	}
 

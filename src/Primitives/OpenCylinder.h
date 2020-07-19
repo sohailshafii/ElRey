@@ -26,7 +26,19 @@ public:
 	bool IntersectShadow(const Ray &ray, float tMin, float tMax) override;
 	
 	virtual Vector3 GetNormalAtPosition(IntersectionResult const &intersectionResult) const override {
-		return Vector3();
+		Ray const & incomingRay = intersectionResult.GetIncomingRay();
+		Point3 const & rayOrigin = incomingRay.GetOrigin();
+		Vector3 const & rayDir = incomingRay.GetDirection();
+		float tIntersec = intersectionResult.GetRayIntersectT();
+		
+		Vector3 normalVec = Vector3((rayOrigin[0] + tIntersec*rayDir[0])*invRadius, 0.0f,
+									(rayOrigin[2] + tIntersec*rayDir[2])*invRadius);
+		// inside surface?
+		if (-rayDir*normalVec < 0.0f) {
+			normalVec = -normalVec;
+		}
+		normalVec.Normalize();
+		return normalVec;
 	}
 	
 	virtual void SamplePrimitive(Point3& resultingSample) override;
@@ -47,4 +59,15 @@ private:
 	float radius;
 	float invRadius;
 	AABBox boundingBox;
+	
+	bool TestIfTMaxPasses(float originY, float dirY,
+								 float tVal, float tMin, float tMax) {
+		if (tVal > tMin && tVal < tMax) {
+			float yIntersec = originY + tVal * dirY;
+			return (yIntersec > y0 && yIntersec < y1);
+		}
+		return false;
+	}
+	
+	bool TestRayAndSetTMax(const Ray &ray, float tMin, float& tMax);
 };
