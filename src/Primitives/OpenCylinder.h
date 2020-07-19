@@ -9,19 +9,15 @@
 class OpenCylinder : public Primitive {
 public:
 	OpenCylinder(float y0, float y1, float radius,
-				 std::vector<std::string> const & childrenNames,
 				 std::shared_ptr<Material> const& iMaterial,
 				 const std::string& iName) : Primitive(iMaterial, iName),
-		y0(y0), y1(y1), radius(radius), invRadius(1.0f/radius),
-		childrenNames(childrenNames) {
+		y0(y0), y1(y1), radius(radius), invRadius(1.0f/radius) {
 	}
 
 	OpenCylinder(float y0, float y1, float radius,
-				 std::vector<std::string> const & childrenNames,
 				 std::shared_ptr<Material> && iMaterial,
 				 const std::string& iName) : Primitive(iMaterial, iName),
-		y0(y0), y1(y1), radius(radius), invRadius(1.0f/radius),
-		childrenNames(childrenNames) {
+		y0(y0), y1(y1), radius(radius), invRadius(1.0f/radius) {
 	}
 	
 	void GenerateBoundingBox();
@@ -55,10 +51,6 @@ public:
 	}
 	
 	virtual AABBox GetBoundingBox() const override;
-	
-	std::vector<std::string> const & GetChildrenNames() const {
-		return childrenNames;
-	}
 
 private:
 	// bottom y value
@@ -67,7 +59,6 @@ private:
 	float y1;
 	float radius;
 	float invRadius;
-	std::vector<std::string> childrenNames;
 	AABBox boundingBox;
 	
 	bool TestIfTMaxPasses(float originY, float dirY,

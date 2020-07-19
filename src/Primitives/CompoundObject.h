@@ -7,13 +7,15 @@
 class CompoundObject : public Primitive {
 public:
 	CompoundObject(std::shared_ptr<Material> & iMaterial,
-			const std::string& iName) :
-		Primitive(iMaterial, iName) {
+			const std::string& iName,
+			std::vector<std::string> const & childrenNames) :
+		Primitive(iMaterial, iName), childrenNames(childrenNames) {
 	}
 
 	CompoundObject(std::shared_ptr<Material> && iMaterial,
-		const std::string& iName) :
-		Primitive(iMaterial, iName) {
+		const std::string& iName,
+		std::vector<std::string> const & childrenNames) :
+		Primitive(iMaterial, iName), childrenNames(childrenNames) {
 	}
 
 	bool Intersect(const Ray &ray, float tMin, float& tMax,
@@ -34,6 +36,10 @@ public:
 		return boundingBox;
 	}
 	
+	std::vector<std::string> const & GetChildrenNames() const {
+		return childrenNames;
+	}
+	
 	void AddPrimitive(Primitive * primitive);
 	void RemovePrimitiveAtIndex(unsigned int index);
 	void RemovePrimitiveWithName(std::string const & name);
@@ -42,6 +48,7 @@ private:
 	AABBox boundingBox;
 	std::vector<Primitive*> primitives;
 	Primitive *closestPrimSoFar;
+	std::vector<std::string> childrenNames;
 	
 	Primitive* GetPrimitiveByIntersectionResult(IntersectionResult const &intersectionResult) const;
 };

@@ -8,6 +8,7 @@
 #include "Primitives/Torus.h"
 #include "Primitives/OpenCylinder.h"
 #include "Primitives/Disk.h"
+#include "Primitives/CompoundObject.h"
 #include "SceneData/CommonLoaderFunctions.h"
 #include <sstream>
 
@@ -111,22 +112,30 @@ Primitive* PrimitiveLoader::CreatePrimitive(const nlohmann::json& jsonObj) {
 										(float)normalVec[2]), radius, objMaterial,
 								objectName);
 	}
-	else if (primitiveType == "compound"){
+	else if (primitiveType == "compound_object") {
 		std::string objectName = CommonLoaderFunctions::SafeGetToken(jsonObj, "name");
 		auto materialNode = CommonLoaderFunctions::SafeGetToken(jsonObj, "material");
-		float y0 = CommonLoaderFunctions::SafeGetToken(jsonObj, "y0");
-		float y1 = CommonLoaderFunctions::SafeGetToken(jsonObj, "y1");
-		float radius = CommonLoaderFunctions::SafeGetToken(jsonObj, "radius");
 		std::vector<std::string> childrenNames;
-
-		std::shared_ptr<Material> objMaterial = CommonLoaderFunctions::CreateMaterial(materialNode);
+		
 		nlohmann::json childrenArray = jsonObj["children"];
 		for (auto& childrenInfo : childrenArray.items()) {
 			std::string childName = CommonLoaderFunctions::SafeGetToken(childrenInfo, "name");
 			childrenNames.push_back(childName);
 		}
-		newPrimitive = new OpenCylinder(y0, y1, radius, childrenNames,
-										objMaterial, objectName);
+		std::shared_ptr<Material> objMaterial = CommonLoaderFunctions::CreateMaterial(materialNode);
+		
+		newPrimitive = new CompoundObject(objMaterial, objectName, childrenNames);
+	}
+	else if (primitiveType == "open_cylinder"){
+		std::string objectName = CommonLoaderFunctions::SafeGetToken(jsonObj, "name");
+		auto materialNode = CommonLoaderFunctions::SafeGetToken(jsonObj, "material");
+		float y0 = CommonLoaderFunctions::SafeGetToken(jsonObj, "y0");
+		float y1 = CommonLoaderFunctions::SafeGetToken(jsonObj, "y1");
+		float radius = CommonLoaderFunctions::SafeGetToken(jsonObj, "radius");
+
+		std::shared_ptr<Material> objMaterial = CommonLoaderFunctions::CreateMaterial(materialNode);
+		
+		newPrimitive = new OpenCylinder(y0, y1, radius, objMaterial, objectName);
 	}
 	else {
 		std::stringstream exceptionMsg;
