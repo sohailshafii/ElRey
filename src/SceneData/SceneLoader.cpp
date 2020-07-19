@@ -21,6 +21,7 @@
 #include "Cameras/OrthographicCamera.h"
 #include "Cameras/SphericalPanoramicCamera.h"
 #include "Cameras/ThinLensCamera.h"
+#include "Primitives/CompoundObject.h"
 
 static Camera* CreateCamera(const nlohmann::json& jsonObj);
 static Light* CreateLight(const nlohmann::json& jsonObj);
@@ -65,17 +66,34 @@ void SceneLoader::DeserializeJSONFileIntoScene(class Scene* scene,
 
 	unsigned int numLights = scene->GetNumLights();
 	for (unsigned int lightIndex = 0; lightIndex <
-		 numLights; lightIndex++)
-	{
+		 numLights; lightIndex++) {
 		Light* currentLight = scene->GetLight(lightIndex);
 		// find primitive if current light needs to be sampled
-		if (currentLight->IsAreaLight())
-		{
+		if (currentLight->IsAreaLight()) {
 			std::string const & primName = currentLight->GetPrimitiveName();
 			Primitive* foundPrimitive = scene->FindPrimitiveByName(primName);
-			if (foundPrimitive != nullptr)
-			{
+			if (foundPrimitive != nullptr) {
 				currentLight->SetPrimitive(foundPrimitive);
+			}
+		}
+	}
+	
+	// set up compound objects
+	unsigned int numPrimitives = scene->GetNumPrimitives();
+	for (unsigned int primIndex = 0; primIndex < numPrimitives;
+		 primIndex++) {
+		Primitive* currentPrimitive = scene->GetPrimitive(primIndex);
+		CompoundObject* compoundObject = dynamic_cast<CompoundObject*>(currentPrimitive);
+		if (compoundObject != nullptr) {
+			std::vector<std::string> const & childrenNames =
+			compoundObject->GetChildrenNames();
+			for(auto & childName : childrenNames)
+			{
+				Primitive* foundChild = scene->FindPrimitiveByName(childName);
+				if (foundChild != nullptr)
+				{
+					compoundObject->AddPrimitive(foundChild);
+				}
 			}
 		}
 	}
