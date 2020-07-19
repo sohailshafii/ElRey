@@ -27,19 +27,21 @@ public:
 	virtual float PDF(const IntersectionResult& intersectionResult) const override;
 	
 	virtual bool HasBoundingBox() const override {
-		return true;
+		return false;
 	}
 	
 	virtual AABBox GetBoundingBox() const override {
-		return boundingBox;
+		return AABBox();
 	}
+	
+	virtual std::shared_ptr<Material> GetMaterial() override;
+	virtual const GenericSampler* GetSampler() override;
 	
 	void AddPrimitive(Primitive * primitive);
 	void RemovePrimitiveAtIndex(unsigned int index);
 	void RemovePrimitiveWithName(std::string const & name);
 
 private:
-	AABBox boundingBox;
 	std::vector<Primitive*> primitives;
 	Primitive *closestPrimSoFar;
 	

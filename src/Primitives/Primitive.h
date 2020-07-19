@@ -39,7 +39,8 @@ public:
 	virtual bool IntersectShadow(const Ray &ray, float tMin, float tMax) = 0;
 	virtual Vector3 GetNormalAtPosition(IntersectionResult const &intersectionResult) const = 0;
 	
-	std::shared_ptr<Material> GetMaterial() {
+	// a compound object might have a different material per sub-object
+	virtual std::shared_ptr<Material> GetMaterial() {
 		return material;
 	}
 	
@@ -47,7 +48,8 @@ public:
 		this->sampler = sampler;
 	}
 	
-	const GenericSampler* GetSampler() {
+	// a compound object might have a different sampler per-subbject
+	virtual const GenericSampler* GetSampler() {
 		return sampler.get();
 	}
 	

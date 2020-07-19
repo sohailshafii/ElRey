@@ -44,7 +44,7 @@ Vector3 CompoundObject::GetNormalAtPosition(
 }
 
 Primitive* CompoundObject::GetPrimitiveByIntersectionResult(IntersectionResult const &intersectionResult) const {
-	for(Primitive* currPrim : primitives) {
+	for (Primitive* currPrim : primitives) {
 		if (currPrim->GetName() == intersectionResult.GetPrimitiveName()) {
 			return currPrim;
 		}
@@ -85,4 +85,14 @@ void CompoundObject::RemovePrimitiveWithName(std::string const & name) {
 	if (foundObject) {
 		RemovePrimitiveAtIndex(indexToRemove);
 	}
+}
+
+std::shared_ptr<Material> CompoundObject::GetMaterial() {
+	return closestPrimSoFar != nullptr ?
+	 closestPrimSoFar->GetMaterial() : nullptr;
+}
+
+const GenericSampler* CompoundObject::GetSampler() {
+	return closestPrimSoFar != nullptr ?
+	 closestPrimSoFar->GetSampler() : nullptr;
 }
