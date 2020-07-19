@@ -118,13 +118,9 @@ Primitive* PrimitiveLoader::CreatePrimitive(const nlohmann::json& jsonObj) {
 		std::vector<std::string> childrenNames;
 		
 		nlohmann::json childrenArray = jsonObj["children"];
-		for (auto& childrenInfo : childrenArray.items()) {
-			std::string childName = CommonLoaderFunctions::SafeGetToken(childrenInfo, "name");
-			childrenNames.push_back(childName);
-		}
 		std::shared_ptr<Material> objMaterial = CommonLoaderFunctions::CreateMaterial(materialNode);
 		
-		newPrimitive = new CompoundObject(objMaterial, objectName, childrenNames);
+		newPrimitive = new CompoundObject(objMaterial, objectName);
 	}
 	else if (primitiveType == "open_cylinder"){
 		std::string objectName = CommonLoaderFunctions::SafeGetToken(jsonObj, "name");

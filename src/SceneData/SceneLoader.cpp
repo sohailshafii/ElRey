@@ -77,26 +77,6 @@ void SceneLoader::DeserializeJSONFileIntoScene(class Scene* scene,
 			}
 		}
 	}
-	
-	// set up compound objects
-	unsigned int numPrimitives = scene->GetNumPrimitives();
-	for (unsigned int primIndex = 0; primIndex < numPrimitives;
-		 primIndex++) {
-		Primitive* currentPrimitive = scene->GetPrimitive(primIndex);
-		CompoundObject* compoundObject = dynamic_cast<CompoundObject*>(currentPrimitive);
-		if (compoundObject != nullptr) {
-			std::vector<std::string> const & childrenNames =
-			compoundObject->GetChildrenNames();
-			for(auto & childName : childrenNames)
-			{
-				Primitive* foundChild = scene->FindPrimitiveByName(childName);
-				if (foundChild != nullptr)
-				{
-					compoundObject->AddPrimitive(foundChild);
-				}
-			}
-		}
-	}
 }
 
 static Camera* CreateCamera(const nlohmann::json& jsonObj) {
