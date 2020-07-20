@@ -12,15 +12,20 @@ void OpenCylinder::GenerateBoundingBox() {
 
 bool OpenCylinder::Intersect(const Ray &ray, float tMin, float& tMax,
 	IntersectionResult &intersectionResult) {
+	if (!boundingBox.RayHit(ray)) {
+		return false;
+	}
+	
 	if (TestRayAndSetTMax(ray, tMin, tMax)) {
 		intersectionResult.SetIntersectionT(tMax);
+		return true;
 	}
 	
 	return false;
 }
 
 bool OpenCylinder::IntersectShadow(const Ray &ray, float tMin, float tMax) {
-	return TestRayAndSetTMax(ray, tMin, tMax);
+	return boundingBox.RayHit(ray) && TestRayAndSetTMax(ray, tMin, tMax);
 }
 
 bool OpenCylinder::TestRayAndSetTMax(const Ray &ray, float tMin, float& tMax) {
@@ -37,7 +42,7 @@ bool OpenCylinder::TestRayAndSetTMax(const Ray &ray, float tMin, float& tMax) {
 	float a = dirX*dirX + dirZ*dirZ;
 	float b = 2.0f * (originX*originX + originZ*originZ);
 	float c = originX*originX + originZ*originZ
-		- radius*radius;
+		- radiusSqr;
 	float discriminant = b * b - 4.0 * a * c;
 	
 	if (discriminant < 0.0f) {

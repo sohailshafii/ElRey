@@ -69,8 +69,7 @@ bool Torus::Intersect(const Ray &ray, float tMin, float& tMax,
 	return true;
 }
 
-bool Torus::IntersectShadow(const Ray &ray, float tMin, float tMax)
-{
+bool Torus::IntersectShadow(const Ray &ray, float tMin, float tMax) {
 	if (!boundingBox.RayHit(ray)) {
 		return false;
 	}

@@ -11,13 +11,13 @@ public:
 	OpenCylinder(float y0, float y1, float radius,
 				 std::shared_ptr<Material> const& iMaterial,
 				 const std::string& iName) : Primitive(iMaterial, iName),
-		y0(y0), y1(y1), radius(radius), invRadius(1.0f/radius) {
+		y0(y0), y1(y1), radius(radius), radiusSqr(radius*radius), invRadius(1.0f/radius) {
 	}
 
 	OpenCylinder(float y0, float y1, float radius,
 				 std::shared_ptr<Material> && iMaterial,
 				 const std::string& iName) : Primitive(iMaterial, iName),
-		y0(y0), y1(y1), radius(radius), invRadius(1.0f/radius) {
+		y0(y0), y1(y1), radius(radius), radiusSqr(radius*radius), invRadius(1.0f/radius) {
 	}
 	
 	void GenerateBoundingBox();
@@ -57,12 +57,12 @@ private:
 	float y0;
 	// top y value
 	float y1;
-	float radius;
+	float radius, radiusSqr;
 	float invRadius;
 	AABBox boundingBox;
 	
 	bool TestIfTMaxPasses(float originY, float dirY,
-								 float tVal, float tMin, float tMax) {
+						float tVal, float tMin, float tMax) {
 		if (tVal > tMin && tVal < tMax) {
 			float yIntersec = originY + tVal * dirY;
 			return (yIntersec > y0 && yIntersec < y1);
