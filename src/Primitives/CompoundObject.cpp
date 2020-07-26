@@ -3,23 +3,21 @@
 bool CompoundObject::Intersect(const Ray &ray, float tMin, float& tMax,
 			   IntersectionResult &intersectionResult) {
 	unsigned int numElements = primitives.size();
-	bool hitSomething = false;
 	closestPrimSoFar = nullptr;
 	for (unsigned int index = 0; index < numElements; index++) {
 		auto currPrimitive = primitives[index];
-		hitSomething =
-			currPrimitive->Intersect(ray, tMin, tMax, intersectionResult);
 		
-		if (hitSomething) {
+		if (currPrimitive->Intersect(ray, tMin, tMax, intersectionResult)) {
 			closestPrimSoFar = currPrimitive;
 		}
 	}
 	
 	if (closestPrimSoFar != nullptr) {
 		intersectionResult.SetPrimitiveName(closestPrimSoFar->GetName());
+		return true;
 	}
 	
-	return hitSomething;
+	return false;
 }
 
 bool CompoundObject::IntersectShadow(const Ray &ray, float tMin,
@@ -44,8 +42,9 @@ Vector3 CompoundObject::GetNormalAtPosition(
 }
 
 Primitive* CompoundObject::GetPrimitiveByIntersectionResult(IntersectionResult const &intersectionResult) const {
+	auto intersecPrimName = intersectionResult.GetPrimitiveName();
 	for (Primitive* currPrim : primitives) {
-		if (currPrim->GetName() == intersectionResult.GetPrimitiveName()) {
+		if (currPrim->GetName() == intersecPrimName) {
 			return currPrim;
 		}
 	}

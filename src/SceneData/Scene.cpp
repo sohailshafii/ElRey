@@ -6,6 +6,7 @@
 #include "IntersectionResult.h"
 #include "SceneData/DirectionalLight.h"
 #include "SceneData/AmbientLight.h"
+#include "Primitives/CompoundObject.h"
 
 Scene::Scene() {
 	ambientLight = nullptr;
