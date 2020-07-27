@@ -3,6 +3,7 @@
 #include <memory>
 #include "Materials/Color.h"
 #include "Math/Ray.h"
+#include "Math/Matrix4x4.h"
 #include "Materials/Material.h"
 #include "Math/AABBox.h"
 #include "SceneData/IntersectionResult.h"
@@ -66,10 +67,14 @@ public:
 	virtual bool HasBoundingBox() const = 0;
 	
 	virtual AABBox GetBoundingBox() const = 0;
+	
+	void SetInverseTransformation(Matrix4x4 const & worldToLocal);
 
 protected:
 	std::shared_ptr<Material> material;
 	std::shared_ptr<GenericSampler> sampler;
+	
+	Matrix4x4 worldToLocal;
 
 	std::string name;
 };

@@ -37,7 +37,7 @@ Matrix::~Matrix() {
 	}
 }
 
-Matrix::Matrix(const Matrix &rhs) {
+Matrix::Matrix(Matrix const & rhs) {
 	AllocateAndCopyFrom(rhs);
 }
 
@@ -46,7 +46,7 @@ Matrix::Matrix(Matrix &&rhs): m(rhs.m),
 	numElements(rhs.numElements) {
 }
 
-Matrix& Matrix::operator=(const Matrix& rhs) {
+Matrix& Matrix::operator=(Matrix const & rhs) {
 	if (&rhs != this) {
 		AllocateAndCopyFrom(rhs);
 	}
