@@ -68,13 +68,16 @@ public:
 	
 	virtual AABBox GetBoundingBox() const = 0;
 	
+	void SetTransformation(Matrix4x4 const & localToWorld);
 	void SetInverseTransformation(Matrix4x4 const & worldToLocal);
+	void SetTransformAndInverse(Matrix4x4 const & localToWorld,
+								Matrix4x4 const & worldToLocal);
 
 protected:
 	std::shared_ptr<Material> material;
 	std::shared_ptr<GenericSampler> sampler;
 	
-	Matrix4x4 worldToLocal;
+	Matrix4x4 worldToLocal, localToWorld;
 
 	std::string name;
 };

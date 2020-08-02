@@ -315,6 +315,14 @@ Matrix Matrix::TranslationMatrix(const Vector3& translationVec) {
 		0.0f, 0.0f, 0.0f, 1.0f);
 }
 
+Matrix Matrix::InvTranslationMatrix(const Vector3& translationVec) {
+	return Matrix(
+		1.0f, 0.0f, 0.0f,-translationVec[0],
+		0.0f, 1.0f, 0.0f,-translationVec[1],
+		0.0f, 0.0f, 1.0f,-translationVec[2],
+		0.0f, 0.0f, 0.0f, 1.0f);
+}
+
 Matrix Matrix::ScaleMatrix(const Vector3& scaleVec) {
 	return Matrix(
 		scaleVec[0], 0.0f, 0.0f, 0.0f,
@@ -323,9 +331,43 @@ Matrix Matrix::ScaleMatrix(const Vector3& scaleVec) {
 		0.0f, 0.0f, 0.0f, 1.0f);
 }
 
+Matrix Matrix::InvScaleMatrix(const Vector3& scaleVec) {
+	return Matrix(
+		1.0f/scaleVec[0], 0.0f, 0.0f, 0.0f,
+		0.0f,1.0f/scaleVec[1], 0.0f, 0.0f,
+		0.0f, 0.0f,1.0f/scaleVec[2], 0.0f,
+		0.0f, 0.0f, 0.0f, 1.0f);
+}
+
 Matrix Matrix::RotationMatrix(const Vector3& axis, float angleDegrees) {
 	float cosAngle = cos(angleDegrees*DEG_2_RAD);
 	float sinAngle = sin(angleDegrees*DEG_2_RAD);
+	float oneMinusCos = 1.0f - cosAngle;
+	float uxUy = axis[0] * axis[1];
+	float uzUy = axis[2] * axis[1];
+	float uzUx = axis[2] * axis[0];
+	return Matrix(
+		cosAngle + axis[0] * axis[0] * oneMinusCos,
+		uxUy * oneMinusCos - axis[2] * sinAngle,
+		uzUx * oneMinusCos + axis[1] * sinAngle,
+		0.0f,
+
+		uxUy * oneMinusCos + axis[2] * sinAngle,
+		cosAngle + axis[1]*axis[1]*oneMinusCos,
+		uzUy*oneMinusCos - axis[0]*sinAngle,
+		0.0f,
+		
+		uzUx*oneMinusCos - axis[1]*sinAngle,
+		uzUy*oneMinusCos + axis[0]*sinAngle,
+		cosAngle + axis[2]*axis[2]*oneMinusCos,
+		0.0f,
+		
+		0.0f, 0.0f, 0.0f, 1.0f);
+}
+
+Matrix Matrix::InvRotationMatrix(const Vector3& axis, float angleDegrees) {
+	float cosAngle = cos(-angleDegrees*DEG_2_RAD);
+	float sinAngle = sin(-angleDegrees*DEG_2_RAD);
 	float oneMinusCos = 1.0f - cosAngle;
 	float uxUy = axis[0] * axis[1];
 	float uzUy = axis[2] * axis[1];
@@ -359,6 +401,16 @@ Matrix Matrix::RotationMatrixX(float angleDegrees) {
 		0.0f, 0.0f, 0.0f, 1.0f);
 }
 
+Matrix Matrix::InvRotationMatrixX(float angleDegrees) {
+	float cosAngle = cos(-angleDegrees*DEG_2_RAD);
+	float sinAngle = sin(-angleDegrees*DEG_2_RAD);
+	return Matrix(
+		1.0f, 0.0f, 0.0f, 0.0f,
+		0.0f, cosAngle, -sinAngle, 0.0f,
+		0.0f, sinAngle, cosAngle, 0.0f,
+		0.0f, 0.0f, 0.0f, 1.0f);
+}
+
 Matrix Matrix::RotationMatrixY(float angleDegrees) {
 	float cosAngle = cos(angleDegrees*DEG_2_RAD);
 	float sinAngle = sin(angleDegrees*DEG_2_RAD);
@@ -369,9 +421,29 @@ Matrix Matrix::RotationMatrixY(float angleDegrees) {
 		0.0f, 0.0f, 0.0f, 1.0f);
 }
 
+Matrix Matrix::InvRotationMatrixY(float angleDegrees) {
+	float cosAngle = cos(-angleDegrees*DEG_2_RAD);
+	float sinAngle = sin(-angleDegrees*DEG_2_RAD);
+	return Matrix(
+		cosAngle, 0.0f, sinAngle, 0.0f,
+		0.0f, 1.0f, 0.0f, 0.0f,
+		-sinAngle, 0.0f, cosAngle, 0.0f,
+		0.0f, 0.0f, 0.0f, 1.0f);
+}
+
 Matrix Matrix::RotationMatrixZ(float angleDegrees) {
 	float cosAngle = cos(angleDegrees*DEG_2_RAD);
 	float sinAngle = sin(angleDegrees*DEG_2_RAD);
+	return Matrix(
+		cosAngle, -sinAngle, 0.0f, 0.0f,
+		sinAngle, cosAngle, 0.0f, 0.0f,
+		0.0f, 0.0f, 1.0f, 0.0f,
+		0.0f, 0.0f, 0.0f, 1.0f);
+}
+
+Matrix Matrix::InvRotationMatrixZ(float angleDegrees) {
+	float cosAngle = cos(-angleDegrees*DEG_2_RAD);
+	float sinAngle = sin(-angleDegrees*DEG_2_RAD);
 	return Matrix(
 		cosAngle, -sinAngle, 0.0f, 0.0f,
 		sinAngle, cosAngle, 0.0f, 0.0f,

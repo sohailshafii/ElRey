@@ -10,6 +10,21 @@ public:
 			  float m20, float m21, float m22, float m23,
 			  float m30, float m31, float m32, float m33);
 	
-	Matrix4x4 TranslationMatrix(const Vector3& translationVec);
-	Matrix4x4 InvTranslationMatrix(const Vector3& translationVec);
+	static Matrix4x4 TranslationMatrix(const Vector3& translationVec);
+	static Matrix4x4 InvTranslationMatrix(const Vector3& translationVec);
+	
+	static Matrix4x4 ScaleMatrix(const Vector3& scaleVec);
+	static Matrix4x4 InvScaleMatrix(const Vector3& scaleVec);
+	
+	static Matrix4x4 RotationMatrix(const Vector3& axis, float angleDegrees);
+	static Matrix4x4 InvRotationMatrix(const Vector3& axis, float angleDegrees);
+	
+	static Matrix4x4 RotationMatrixX(float angleDegrees);
+	static Matrix4x4 InvRotationMatrixX(float angleDegrees);
+	
+	static Matrix4x4 RotationMatrixY(float angleDegrees);
+	static Matrix4x4 InvRotationMatrixY(float angleDegrees);
+	
+	static Matrix4x4 RotationMatrixZ(float angleDegrees);
+	static Matrix4x4 InvRotationMatrixZ(float angleDegrees);
 };

@@ -51,12 +51,19 @@ public:
 	Matrix& operator/=(float scalar);
 
 	static Matrix TranslationMatrix(const Vector3& translationVec);
+	static Matrix InvTranslationMatrix(const Vector3& translationVec);
 	static Matrix ScaleMatrix(const Vector3& scaleVec);
+	static Matrix InvScaleMatrix(const Vector3& scaleVec);
 	// axis must be normalized!
 	static Matrix RotationMatrix(const Vector3& axis, float angleDegrees);
+	static Matrix InvRotationMatrix(const Vector3& axis, float angleDegrees);
+	
 	static Matrix RotationMatrixX(float angleDegrees);
+	static Matrix InvRotationMatrixX(float angleDegrees);
 	static Matrix RotationMatrixY(float angleDegrees);
+	static Matrix InvRotationMatrixY(float angleDegrees);
 	static Matrix RotationMatrixZ(float angleDegrees);
+	static Matrix InvRotationMatrixZ(float angleDegrees);
 	
 	int GetNumRows() const { return numRows; }
 	int GetNumColumns() const { return numColumns; }
