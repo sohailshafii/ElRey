@@ -4,6 +4,7 @@
 #include "Materials/SimpleEmissiveMaterial.h"
 #include <sstream>
 #include <vector>
+#include <iostream>
 
 nlohmann::json CommonLoaderFunctions::SafeGetToken(nlohmann::json const & jsonObj,
 												   std::string const & key) {
@@ -179,10 +180,7 @@ void CommonLoaderFunctions::SetUpTransformFromJsonNode(nlohmann::json const & tr
 	}
 	
 	for(size_t i = 0; i < localToWorldArray.size(); i++) {
-		localToWorldArray[i].Print();
 		localToWorld *= localToWorldArray[i];
 		worldToLocal *= worldToLocalArray[i];
 	}
-	localToWorld.Print();
-	worldToLocal.Print();
 }
