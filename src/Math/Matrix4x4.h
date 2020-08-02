@@ -10,6 +10,11 @@ public:
 			  float m20, float m21, float m22, float m23,
 			  float m30, float m31, float m32, float m33);
 	
+	Matrix4x4(const Matrix4x4 &rhs);
+	Matrix4x4& operator=(const Matrix4x4& rhs);
+	
+	Matrix4x4 Transpose() const;
+	
 	static Matrix4x4 TranslationMatrix(const Vector3& translationVec);
 	static Matrix4x4 InvTranslationMatrix(const Vector3& translationVec);
 	

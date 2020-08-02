@@ -6,6 +6,9 @@
 #include <cstring>
 #include <iostream>
 
+Matrix::Matrix() : m(nullptr), numRows(0), numColumns(0) {
+}
+
 Matrix::Matrix(unsigned int numRows, unsigned int numColumns) {
 	this->numRows = numRows;
 	this->numColumns = numColumns;

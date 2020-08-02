@@ -14,23 +14,23 @@ class Primitive {
 public:
 	Primitive(std::shared_ptr<Material> const& iMaterial,
 		const std::string& iName)
-		: material(iMaterial), name(iName)
+		: material(iMaterial), name(iName), isTransformed(false)
 	{ }
 	Primitive(std::shared_ptr<Material> const& iMaterial,
 			std::shared_ptr<GenericSampler> const& iSampler,
 			const std::string& iName)
-		: material(iMaterial), sampler(iSampler), name(iName)
+		: material(iMaterial), sampler(iSampler), name(iName), isTransformed(false)
 	{ }
 
 	Primitive(std::shared_ptr<Material> && material,
 		const std::string& iName)
-		: material(std::move(material)), name(iName)
+		: material(std::move(material)), name(iName), isTransformed(false)
 	{ }
 	Primitive(std::shared_ptr<Material> && material,
 		std::shared_ptr<GenericSampler> && sampler,
 		const std::string& iName)
 		: material(std::move(material)),
-			sampler(std::move(sampler)), name(iName)
+			sampler(std::move(sampler)), name(iName), isTransformed(false)
 	{ }
 
 	virtual ~Primitive() { }
@@ -68,16 +68,29 @@ public:
 	
 	virtual AABBox GetBoundingBox() const = 0;
 	
+	bool GetIsTransformed() const {
+		return isTransformed;
+	}
+	
 	void SetLocalToWorld(Matrix4x4 const & localToWorld);
 	void SetWorldToLocal(Matrix4x4 const & worldToLocal);
 	void SetTransformAndInverse(Matrix4x4 const & localToWorld,
 								Matrix4x4 const & worldToLocal);
+	
+	Vector3 GetLocalToWorldDir(Vector3 const & inDir) const;
+	Vector3 GetWorldToLocalDir(Vector3 const & inDir) const;
+	Vector3 GetWorldToLocalTransposeDir(Vector3 const & inDir) const;
+	
+	Point3 GetLocalToWorldPos(Point3 const & inPos) const;
+	Point3 GetWorldToLocalPos(Point3 const & inPos) const;
+	Point3 GetWorldToLocalTransposePos(Point3 const & inPos) const;
 
 protected:
 	std::shared_ptr<Material> material;
 	std::shared_ptr<GenericSampler> sampler;
 	
-	Matrix4x4 worldToLocal, localToWorld;
+	Matrix4x4 worldToLocal, localToWorld, worldToLocalTranspose;
+	bool isTransformed;
 
 	std::string name;
 };

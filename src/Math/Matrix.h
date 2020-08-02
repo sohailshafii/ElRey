@@ -8,6 +8,7 @@
 // row-order matrix
 class Matrix {
 public:
+	Matrix();
 	Matrix(unsigned int numRows, unsigned int numColumns);
 	// 4x4
 	Matrix(float m00, float m01, float m02, float m03,
@@ -74,7 +75,7 @@ public:
 	inline float& operator()(unsigned int row, unsigned int col);
 	inline float operator()(unsigned int row, unsigned int col) const;
 
-private:
+protected:
 	float *m;
 	unsigned int numRows, numColumns, numElements;
 

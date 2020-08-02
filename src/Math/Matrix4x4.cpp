@@ -3,7 +3,29 @@
 #include "CommonMath.h"
 
 Matrix4x4::Matrix4x4() : Matrix(4, 4) {
-	
+}
+
+Matrix4x4::Matrix4x4(Matrix4x4 const & rhs) : Matrix(4, 4) {
+	AllocateAndCopyFrom(rhs);
+}
+
+Matrix4x4& Matrix4x4::operator=(Matrix4x4 const & rhs) {
+	if (&rhs != this) {
+		AllocateAndCopyFrom(rhs);
+	}
+
+	return *this;
+}
+
+Matrix4x4 Matrix4x4::Transpose() const {
+	Matrix4x4 transposed;
+
+	for (unsigned int row = 0; row < 4; row++) {
+		for (unsigned int column = 0; column < 4; column++) {
+			transposed[row][column] = (*this)(column, row);
+		}
+	}
+	return transposed;
 }
 
 Matrix4x4::Matrix4x4(float m00, float m01, float m02, float m03,
