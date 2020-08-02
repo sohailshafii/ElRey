@@ -1,10 +1,11 @@
 #include "Primitive.h"
 
 
-void Primitive::SetTransformation(Matrix4x4 const & localToWorld) {
+void Primitive::SetLocalToWorld(Matrix4x4 const & localToWorld) {
 	this->localToWorld = localToWorld;
 }
-void Primitive::SetInverseTransformation(Matrix4x4 const & worldToLocal) {
+
+void Primitive::SetWorldToLocal(Matrix4x4 const & worldToLocal) {
 	this->worldToLocal = worldToLocal;
 }
 

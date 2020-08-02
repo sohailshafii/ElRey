@@ -144,38 +144,19 @@ Primitive* PrimitiveLoader::CreatePrimitive(const nlohmann::json& jsonObj) {
 			<< ".\n";
 		throw exceptionMsg;
 	}
+	
+	if (newPrimitive != nullptr) {
+		if (CommonLoaderFunctions::HasKey(jsonObj, "local_to_world_matrix")) {
+			Matrix4x4 localToWorld =
+				CommonLoaderFunctions::ConstructMatrixFromJsonNode(jsonObj["local_to_world_matrix"]);
+			newPrimitive->SetLocalToWorld(localToWorld);
+		}
+		if (CommonLoaderFunctions::HasKey(jsonObj, "world_to_local_matrix")) {
+			Matrix4x4 worldToLocal =
+				CommonLoaderFunctions::ConstructMatrixFromJsonNode(jsonObj["world_to_local_matrix"]);
+			newPrimitive->SetWorldToLocal(worldToLocal);
+		}
+	}
+	
 	return newPrimitive;
-}
-
-void CommonLoaderFunctions::SetUpRandomSampler(const nlohmann::json& jsonObj,
-						RandomSamplerType& randomSamplerType,
-						int &numRandomSamples, int &numRandomSets) {
-	randomSamplerType = None;
-	std::string samplerTypeToken = CommonLoaderFunctions::SafeGetToken(jsonObj, "random_sampler_type");
-	if (samplerTypeToken == "random") {
-		randomSamplerType = Random;
-	}
-	else if (samplerTypeToken == "regular") {
-		randomSamplerType = Regular;
-	}
-	else if (samplerTypeToken == "jittered") {
-		randomSamplerType = Jittered;
-	}
-	else if (samplerTypeToken == "nrooks") {
-		randomSamplerType = NRooks;
-	}
-	else if (samplerTypeToken == "multijittered") {
-		randomSamplerType = MultiJittered;
-	}
-	else if (samplerTypeToken == "none") {
-		// es ok
-	}
-	else {
-		std::stringstream exceptionMsg;
-		exceptionMsg << "Cannot understand sampler type specified: " <<
-			samplerTypeToken.c_str() << ".\n";
-		throw exceptionMsg;
-	}
-	numRandomSamples = CommonLoaderFunctions::SafeGetToken(jsonObj, "num_random_samples");
-	numRandomSets = CommonLoaderFunctions::SafeGetToken(jsonObj, "num_random_sets");
 }

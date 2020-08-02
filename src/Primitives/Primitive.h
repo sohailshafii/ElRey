@@ -68,8 +68,8 @@ public:
 	
 	virtual AABBox GetBoundingBox() const = 0;
 	
-	void SetTransformation(Matrix4x4 const & localToWorld);
-	void SetInverseTransformation(Matrix4x4 const & worldToLocal);
+	void SetLocalToWorld(Matrix4x4 const & localToWorld);
+	void SetWorldToLocal(Matrix4x4 const & worldToLocal);
 	void SetTransformAndInverse(Matrix4x4 const & localToWorld,
 								Matrix4x4 const & worldToLocal);
 
