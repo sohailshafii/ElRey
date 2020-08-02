@@ -156,6 +156,14 @@ Primitive* PrimitiveLoader::CreatePrimitive(const nlohmann::json& jsonObj) {
 				CommonLoaderFunctions::ConstructMatrixFromJsonNode(jsonObj["world_to_local_matrix"]);
 			newPrimitive->SetWorldToLocal(worldToLocal);
 		}
+		if (CommonLoaderFunctions::HasKey(jsonObj, "local_to_world_transform")) {
+			Matrix4x4 worldToLocal;
+			Matrix4x4 localToWorld;
+			CommonLoaderFunctions::SetUpTransformFromJsonNode(
+			CommonLoaderFunctions::SafeGetToken(jsonObj, "local_to_world_transform"),
+															  worldToLocal, localToWorld);
+			newPrimitive->SetTransformAndInverse(worldToLocal, localToWorld);
+		}
 	}
 	
 	return newPrimitive;
