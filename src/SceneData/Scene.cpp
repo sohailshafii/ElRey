@@ -146,11 +146,14 @@ bool Scene::Intersect(const Ray &ray, Color &newColor,
 		std::shared_ptr<Material> primitiveMaterial = closestPrimitive->GetMaterial();
 		// TODO: how is ray used here?
 		intersectionResult.SetIncomingRay(ray);
-		
 		auto intersectionPos = ray.GetPositionAtParam(tMax);
 		intersectionResult.SetIntersectionT(tMax);
 		intersectionResult.SetIntersectionPosition(intersectionPos);
 		Vector3 normalVec = closestPrimitive->GetNormalAtPosition(intersectionResult);
+		/*if (closestPrimitive->GetIsTransformed()) {
+			normalVec = closestPrimitive->GetWorldToLocalTransposeDir(normalVec);
+		}*/
+		
 		intersectionResult.SetIntersectionNormal(normalVec);
 		
 		// ambient light if available
@@ -203,12 +206,16 @@ bool Scene::Intersect(const Ray &ray, Color &newColor,
 			
 			if (projectionTerm > 0.0f) {
 				bool inShadow = false;
+				Ray shadowFeelerRay(intersectionPos+vectorToLight *SHADOW_FEELER_EPSILON, vectorToLight);
+				/*if (closestPrimitive->GetIsTransformed()) {
+					shadowFeelerRay.SetOrigin(closestPrimitive->GetWorldToLocalPos(
+						shadowFeelerRay.GetOrigin()));
+					shadowFeelerRay.SetDirection(closestPrimitive->GetWorldToLocalDir(
+						shadowFeelerRay.GetDirection()));
+				}*/
 				// test shadow feeler if light supports it!
 				if (currentLight->CastsShadows() &&
-					// TODO: transform for for shadows
-					ShadowFeelerIntersectsAnObject(Ray(intersectionPos+
-													   vectorToLight *SHADOW_FEELER_EPSILON, vectorToLight),
-						0.0f, vectorMagn,
+					ShadowFeelerIntersectsAnObject(shadowFeelerRay, 0.0f, vectorMagn,
 						primitiveToExclude)) {
 					inShadow = true;
 				}

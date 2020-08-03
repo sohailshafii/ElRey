@@ -25,8 +25,7 @@ Vector3 AreaLight::GetDirectionFromPositionScaled(
 }
 
 void AreaLight::ComputeAndStoreAreaLightInformation(
-	IntersectionResult& intersectionRes) const
-{
+	IntersectionResult& intersectionRes) const {
 	Point3 lightPrimitiveSample;
 	primitive->SamplePrimitive(lightPrimitiveSample);
 	
@@ -37,6 +36,11 @@ void AreaLight::ComputeAndStoreAreaLightInformation(
 	Vector3 lightPrimitiveNormal = primitive->GetNormalAtPosition
 		(intersectionRes);
 	intersectionRes.SetIntersectionPosition(oldIntersection);
+	
+	/*if (primitive->GetIsTransformed()) {
+		lightPrimitiveSample = primitive->GetWorldToLocalPos(lightPrimitiveSample);
+		lightPrimitiveNormal = primitive->GetWorldToLocalTransposeDir(lightPrimitiveNormal);
+	}*/
 	
 	Vector3 vectorToLight = lightPrimitiveSample -
 		intersectionRes.GetIntersectionPos();
