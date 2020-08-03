@@ -126,7 +126,6 @@ bool Scene::Intersect(const Ray &ray, Color &newColor,
 	Vector3 originalDir = ray.GetDirection();
 	Point3 originalOrigin = ray.GetOrigin();
 	for (auto currentPrimitive : primitives) {
-		// TODO: enable when ready
 		/*if (currentPrimitive->GetIsTransformed()) {
 			rayToCast.SetOrigin(currentPrimitive->GetWorldToLocalPos(originalOrigin));
 			rayToCast.SetDirection(currentPrimitive->GetWorldToLocalDir(originalDir));
@@ -134,6 +133,8 @@ bool Scene::Intersect(const Ray &ray, Color &newColor,
 		else {
 			rayToCast = ray;
 		}*/
+		// TODO: intersection result stores a lot of data, it's hard to manage what is set
+		// maybe the function should make that clear
 		auto hitPrimitive = currentPrimitive->Intersect(rayToCast,
 			tMin, tMax, intersectionResult);
 		if (hitPrimitive) {
@@ -204,7 +205,7 @@ bool Scene::Intersect(const Ray &ray, Color &newColor,
 				bool inShadow = false;
 				// test shadow feeler if light supports it!
 				if (currentLight->CastsShadows() &&
-					// TODO: fix for shadows
+					// TODO: transform for for shadows
 					ShadowFeelerIntersectsAnObject(Ray(intersectionPos+
 													   vectorToLight *SHADOW_FEELER_EPSILON, vectorToLight),
 						0.0f, vectorMagn,

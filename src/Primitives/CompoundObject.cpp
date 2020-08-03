@@ -64,10 +64,12 @@ float CompoundObject::PDF(const IntersectionResult& intersectionResult) const {
 
 void CompoundObject::AddPrimitive(Primitive * primitive) {
 	primitives.push_back(primitive);
+	RecomputeTransformsForChildren();
 }
 
 void CompoundObject::RemovePrimitiveAtIndex(unsigned int index) {
 	primitives.erase(primitives.begin() + index);
+	RecomputeTransformsForChildren();
 }
 
 void CompoundObject::RemovePrimitiveWithName(std::string const & name) {
@@ -83,6 +85,19 @@ void CompoundObject::RemovePrimitiveWithName(std::string const & name) {
 	
 	if (foundObject) {
 		RemovePrimitiveAtIndex(indexToRemove);
+		RecomputeTransformsForChildren();
+	}
+}
+
+void CompoundObject::RecomputeTransformsForChildren() {
+	worldToLocalChildren.MakeIdentity();
+	localToWorldChildren.MakeIdentity();
+	worldToLocalTransposeChildren.MakeIdentity();
+	
+	for(auto const primitive : primitives) {
+		worldToLocalChildren *= primitive->GetWorldToLocal();
+		localToWorldChildren *= primitive->GetLocalToWorld();
+		worldToLocalTransposeChildren *= primitive->GetLocalToWorldTranspose();
 	}
 }
 
@@ -94,4 +109,29 @@ std::shared_ptr<Material> CompoundObject::GetMaterial() {
 const GenericSampler* CompoundObject::GetSampler() {
 	return closestPrimSoFar != nullptr ?
 	 closestPrimSoFar->GetSampler() : nullptr;
+}
+
+
+Vector3 CompoundObject::GetLocalToWorldDir(Vector3 const & inDir) const {
+	return localToWorld*localToWorldChildren*inDir;
+}
+
+Vector3 CompoundObject::GetWorldToLocalDir(Vector3 const & inDir) const {
+	return worldToLocal*worldToLocalChildren*inDir;
+}
+
+Vector3 CompoundObject::GetWorldToLocalTransposeDir(Vector3 const & inDir) const {
+	return worldToLocalTranspose*worldToLocalTransposeChildren*inDir;
+}
+
+Point3 CompoundObject::GetLocalToWorldPos(Point3 const & inPos) const {
+	return localToWorld*localToWorldChildren*inPos;
+}
+
+Point3 CompoundObject::GetWorldToLocalPos(Point3 const & inPos) const {
+	return worldToLocal*worldToLocalChildren*inPos;
+}
+
+Point3 CompoundObject::GetWorldToLocalTransposePos(Point3 const & inPos) const {
+	return worldToLocalTranspose*worldToLocalTransposeChildren*inPos;
 }

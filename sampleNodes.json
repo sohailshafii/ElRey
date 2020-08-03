@@ -62,4 +62,91 @@
 				"ks_color":[1.0, 1.0, 1.0],
 				"color":[1.0,0.0,1.0,1.0]
 			}
+		},
+		{
+			"type":"compound_object",
+			"name":"closed_cylinder",
+			"local_to_world_matrix":
+			{
+				"matrix_row_0":[0.0,0.0,0.0,4.0],
+				"matrix_row_1":[0.0,0.0,0.0,0.0],
+				"matrix_row_2":[0.0,0.0,0.0,0.0],
+				"matrix_row_3":[0.0,0.0,0.0,1.0]
+			},
+			"world_to_local_matrix":
+			{
+				"matrix_row_0":[0.0,0.0,0.0,-4.0],
+				"matrix_row_1":[0.0,0.0,0.0,0.0],
+				"matrix_row_2":[0.0,0.0,0.0,0.0],
+				"matrix_row_3":[0.0,0.0,0.0,1.0]
+			},
+			"material":
+			{
+				"type":"phong",
+				"ka":0.1,
+				"kd":0.85,
+				"ks":0.1,
+				"exponent":10,
+				"ks_color":[1.0, 1.0, 1.0],
+				"color":[0.5,0.0,1.0,1.0]
+			},
+			"children":
+			[
+				{
+					"type":"open_cylinder",
+					"name":"closed_cylinder_body",
+					"y0":0.1,
+					"y1":0.8,
+					"radius":0.45,
+					"local_to_world_transform":
+					[
+						{"scale":[2.0, 2.0, 2.0]},
+						{"translate":[4.0, 4.0, 4.0]}
+					],
+					"material":
+					{
+						"type":"phong",
+						"ka":0.1,
+						"kd":0.85,
+						"ks":0.1,
+						"exponent":10,
+						"ks_color":[1.0, 1.0, 1.0],
+						"color":[0.5,0.0,1.0,1.0]
+					}
+				},
+				{
+					"type":"disk",
+					"name":"closed_cylinder_top",
+					"center":[0.0,0.8,0.0],
+					"normal":[0.0,1.0,0.0],
+					"radius":0.45,
+					"material":
+					{
+						"type":"phong",
+						"ka":0.1,
+						"kd":0.85,
+						"ks":0.1,
+						"exponent":10,
+						"ks_color":[1.0, 1.0, 1.0],
+						"color":[0.5,0.0,1.0,1.0]
+					}
+				},
+				{
+					"type":"disk",
+					"name":"closed_cylinder_bottom",
+					"center":[0.0,0.1,0.0],
+					"normal":[0.0,1.0,0.0],
+					"radius":0.45,
+					"material":
+					{
+						"type":"phong",
+						"ka":0.1,
+						"kd":0.85,
+						"ks":0.1,
+						"exponent":10,
+						"ks_color":[1.0, 1.0, 1.0],
+						"color":[0.5,0.0,1.0,1.0]
+					}
+				}
+			]
 		}
