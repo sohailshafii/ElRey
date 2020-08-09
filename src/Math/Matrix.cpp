@@ -280,22 +280,22 @@ Matrix& Matrix::operator*=(float scalar) {
 // yeah, ignores dimensions of matrix and doesn't check them
 // assumes 3d point as a w-coordinate of 1
 Point3 Matrix::operator*(const Point3& rhs) const {
-	return Point3(m[0]*rhs[0] + m[1]*rhs[2] + m[2]*rhs[2] + m[3],
-				  m[4]*rhs[0] + m[5]*rhs[2] + m[6]*rhs[3] + m[7],
-				  m[8]*rhs[0] + m[9]*rhs[2] + m[10]*rhs[3] + m[11]);
+	return Point3(m[0]*rhs[0] + m[1]*rhs[1] + m[2]*rhs[2] + m[3],
+				  m[4]*rhs[0] + m[5]*rhs[1] + m[6]*rhs[2] + m[7],
+				  m[8]*rhs[0] + m[9]*rhs[1] + m[10]*rhs[2] + m[11]);
 }
 
 Point4 Matrix::operator*(const Point4& rhs) const {
-	return Point4(m[0]*rhs[0] + m[1]*rhs[2] + m[2]*rhs[2] + m[3]*rhs[3],
-				  m[4]*rhs[0] + m[5]*rhs[2] + m[6]*rhs[3] + m[7]*rhs[3],
-				  m[8]*rhs[0] + m[9]*rhs[2] + m[10]*rhs[3] + m[11]*rhs[3]);
+	return Point4(m[0]*rhs[0] + m[1]*rhs[1] + m[2]*rhs[2] + m[3]*rhs[3],
+				  m[4]*rhs[0] + m[5]*rhs[1] + m[6]*rhs[2] + m[7]*rhs[3],
+				  m[8]*rhs[0] + m[9]*rhs[1] + m[10]*rhs[2] + m[11]*rhs[3]);
 }
 
 // assumes vector has w-coordinate of 0 for no translation
 Vector3 Matrix::operator*(const Vector3& rhs) const {
-	return Vector3(m[0]*rhs[0] + m[1]*rhs[2] + m[2]*rhs[2],
-				  m[4]*rhs[0] + m[5]*rhs[2] + m[6]*rhs[3],
-				  m[8]*rhs[0] + m[9]*rhs[2] + m[10]*rhs[3]);
+	return Vector3(m[0]*rhs[0] + m[1]*rhs[1] + m[2]*rhs[2],
+				   m[4]*rhs[0] + m[5]*rhs[1] + m[6]*rhs[2],
+				   m[8]*rhs[0] + m[9]*rhs[1] + m[10]*rhs[2]);
 }
 
 Matrix& Matrix::operator/=(float scalar) {
