@@ -43,7 +43,6 @@ void AreaLight::ComputeAndStoreAreaLightInformation(
 	intersectionRes.SetLightVectorScaled(vectorToLight);
 	vectorToLight.Normalize();
 	intersectionRes.SetLightVector(vectorToLight);
-	// TODO indicate that this is local space!
 	intersectionRes.SetSamplePointOnLight(lightPrimitiveSample);
 }
 

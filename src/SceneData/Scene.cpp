@@ -171,7 +171,7 @@ bool Scene::Intersect(const Ray &ray, Color &newColor,
 			float projectionTerm = 0.0f;
 			float vectorMagn = 0.0f;
 
-			/*if (isAreaLight) {
+			if (isAreaLight) {
 				primitiveToExclude = currentLight->GetPrimitive();
 				currentLight->ComputeAndStoreAreaLightInformation(intersectionResult);
 				vectorToLight = intersectionResult.GetVectorToLight();
@@ -186,7 +186,7 @@ bool Scene::Intersect(const Ray &ray, Color &newColor,
 					continue;
 				}
 			}
-			else*/ {
+			else {
 				// infinite lights don't rely on normalization
 				auto lightDistanceInfinite = currentLight->IsLightDistanceInfinite();
 				// TODO: it should be clear that the scaled vector to light will be normalized
@@ -203,37 +203,31 @@ bool Scene::Intersect(const Ray &ray, Color &newColor,
 				}
 
 				projectionTerm = vectorToLight * normalVec;
-				/*if (projectionTerm < 0.6f) {
-					int breakVar;
-					breakVar = 1;
-				}*/
 				intersectionResult.SetLightVector(vectorToLight);
 			}
 			
 			if (projectionTerm > 0.0f) {
 				bool inShadow = false;
-				/*Ray shadowFeelerRay(intersectionPos+vectorToLight *SHADOW_FEELER_EPSILON, vectorToLight);
+				Ray shadowFeelerRay(intersectionPos+vectorToLight *SHADOW_FEELER_EPSILON, vectorToLight);
 				// test shadow feeler if light supports it!
 				if (currentLight->CastsShadows() &&
 					ShadowFeelerIntersectsAnObject(shadowFeelerRay, 0.0f, vectorMagn,
 						primitiveToExclude)) {
 					inShadow = true;
-				}*/
+				}
 				
 				if (!inShadow) {
 					auto lightRadiance = currentLight->GetRadiance(intersectionResult, *this);
 
 					Color lightRadColor4 = Color(lightRadiance[0], lightRadiance[1],
 						lightRadiance[2], 0.0);
-					// TODO: for non-directional lights, the normal vector will be in local space
-					// but everything else is not
 					newColor += isAreaLight ?
 						primitiveMaterial->GetColorForAreaLight(intersectionResult)*
 						lightRadColor4*projectionTerm*
 						currentLight->GeometricTerm(intersectionResult)/
 						currentLight->PDF(intersectionResult)
 						:
-					//primitiveMaterial->GetDirectColor(intersectionResult)*
+						primitiveMaterial->GetDirectColor(intersectionResult)*
 						lightRadColor4*projectionTerm;
 				}
 			}
@@ -245,12 +239,22 @@ bool Scene::Intersect(const Ray &ray, Color &newColor,
 
 bool Scene::ShadowFeelerIntersectsAnObject(const Ray& ray, float tMin,
 	float tMax, const Primitive* primitiveToExclude) const {
+	Ray rayToCast = ray;
+	Vector3 originalDir = ray.GetDirection();
+	Point3 originalOrigin = ray.GetOrigin();
 	for (auto currentPrimitive : primitives) {
 		if (currentPrimitive == primitiveToExclude) {
 			continue;
 		}
-		// TODO: transform to local space here
-		if (currentPrimitive->IntersectShadowLocal(ray, tMin, tMax))
+		if (currentPrimitive->GetIsTransformed()) {
+			rayToCast.SetOrigin(currentPrimitive->GetWorldToLocalPos(originalOrigin));
+			rayToCast.SetDirection(currentPrimitive->GetWorldToLocalDir(originalDir));
+		}
+		else {
+			rayToCast = ray;
+		}
+		
+		if (currentPrimitive->IntersectShadowLocal(rayToCast, tMin, tMax))
 		{
 			return true;
 		}
