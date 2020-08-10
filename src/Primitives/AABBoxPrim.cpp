@@ -47,10 +47,10 @@ AABBoxPrim::AABBoxPrim(Point4 const & min, Point4 const & max,
 	CalculateCenter();
 }
 
-bool AABBoxPrim::Intersect(const Ray &ray, float tMin, float& tMax,
-						   IntersectionResult &intersectionResult) {
-	auto const & rayOrigin = ray.GetOrigin();
-	auto const & rayDirection = ray.GetDirection();
+bool AABBoxPrim::IntersectLocal(const Ray &rayLocal, float tMin, float& tMax,
+								IntersectionResult &intersectionResult) {
+	auto const & rayOrigin = rayLocal.GetOrigin();
+	auto const & rayDirection = rayLocal.GetDirection();
 	
 	float rayOriginX = rayOrigin[0];
 	float rayOriginY = rayOrigin[1];
@@ -175,6 +175,7 @@ bool AABBoxPrim::Intersect(const Ray &ray, float tMin, float& tMax,
 				default:
 					tempNorm = Vector3(0.0f, 0.0f, 1.0f);
 			}
+			tempNorm = GetWorldToLocalTransposeDir(tempNorm);
 		}
 		intersectionResult.SetIntersectionT(tMax);
 		intersectionResult.SetGenericMetadata(tempNorm[0], tempNorm[1],
@@ -186,9 +187,10 @@ bool AABBoxPrim::Intersect(const Ray &ray, float tMin, float& tMax,
 	}
 }
 
-bool AABBoxPrim::IntersectShadow(const Ray &ray, float tMin, float tMax) {
-	auto const & rayOrigin = ray.GetOrigin();
-	auto const & rayDirection = ray.GetDirection();
+bool AABBoxPrim::IntersectShadowLocal(const Ray &rayLocal, float tMin,
+									  float tMax) {
+	auto const & rayOrigin = rayLocal.GetOrigin();
+	auto const & rayDirection = rayLocal.GetDirection();
 	
 	float rayOriginX = rayOrigin[0];
 	float rayOriginY = rayOrigin[1];
@@ -266,26 +268,30 @@ bool AABBoxPrim::IntersectShadow(const Ray &ray, float tMin, float tMax) {
 	return false;
 }
 
-bool AABBoxPrim::PointInside(Point3 const& point) const {
+bool AABBoxPrim::PointInsideLocal(Point3 const& point) const {
 	return ((point[0] > x0 && point[0] < x1) &&
 			(point[1] > y0 && point[1] < y1) &&
 			(point[2] > z0 && point[2] < z1));
 }
 
-bool AABBoxPrim::PointInside(Point4 const& point) const {
+bool AABBoxPrim::PointInsideLocal(Point4 const& point) const {
 	return ((point[0] > x0 && point[0] < x1) &&
 			(point[1] > y0 && point[1] < y1) &&
 			(point[2] > z0 && point[2] < z1));
 }
 
-Vector3 AABBoxPrim::GetNormalAtPosition(IntersectionResult const &intersectionResult) const {
+Vector3 AABBoxPrim::GetNormalWorld(IntersectionResult const &intersectionResult) const {
 	float meta1 = intersectionResult.GetGenericMetadata1();
 	float meta2 = intersectionResult.GetGenericMetadata2();
 	float meta3 = intersectionResult.GetGenericMetadata3();
 	return Vector3(meta1, meta2, meta3);
 }
 
-void AABBoxPrim::SamplePrimitive(Point3& resultingSample) {
+void AABBoxPrim::SamplePrimitiveLocal(Point3& resultingSample) {
+	// we have to sample to unit cube; leave out unless we need it
+}
+
+void AABBoxPrim::SamplePrimitiveWorld(Point3& resultingSample) {
 	// we have to sample to unit cube; leave out unless we need it
 }
 
@@ -293,3 +299,17 @@ float AABBoxPrim::PDF(const IntersectionResult& intersectionResult) const {
 	return invVolume;
 }
 
+
+AABBox AABBoxPrim::GetBoundingBoxLocal() const {
+	return AABBox(x0, y0, z0, x1, y1, z1);
+}
+
+AABBox AABBoxPrim::GetBoundingBoxWorld() const {
+	Point3 worldSpaceMin(x0, y0, z0);
+	Point3 worldSpaceMax(x1, y1, z1);
+	GetLocalToWorldPos(worldSpaceMin);
+	GetLocalToWorldPos(worldSpaceMax);
+	return AABBox(worldSpaceMin[0], worldSpaceMin[1],
+				  worldSpaceMin[2], worldSpaceMax[0],
+				  worldSpaceMax[1], worldSpaceMax[2]);
+}

@@ -10,7 +10,8 @@ public:
 		
 	}
 	
-	IntersectionResult(const Ray& incomingRay, const Vector3& lightVector, const Vector3& normalVector, const Point3& intersectionPosition,
+	IntersectionResult(const Ray& incomingRay, const Vector3& lightVector,
+					   const Vector3& normalVector, const Point3& intersectionPosition,
 					   float rayIntersectT) {
 		this->incomingRay = incomingRay;
 		this->vectorToLight = lightVector;
@@ -43,6 +44,10 @@ public:
 	
 	void SetIntersectionPosition(const Point3& intersectionPos) {
 		this->intersectionPosition = intersectionPos;
+	}
+	
+	void SetIntersectionPositionLocal(const Point3& intersectionPosLocal) {
+		this->intersectionPosLocal = intersectionPosLocal;
 	}
 	
 	void SetIntersectionT(float rayIntersectT) {
@@ -92,6 +97,10 @@ public:
 		return intersectionPosition;
 	}
 	
+	Point3 GetIntersectionPosLocal() const {
+		return intersectionPosLocal;
+	}
+	
 	float GetRayIntersectT() const {
 		return rayIntersectT;
 	}
@@ -125,6 +134,7 @@ public:
 	}
 
 private:
+	// All items are in world space unless specified otherwise
 	// usually lighting deals with incoming ray facing away from surface
 	Ray incomingRay;
 	Vector3 vectorToLight, vectorToLightScaled;
@@ -132,7 +142,7 @@ private:
 	Vector3 areaLightNormalVector;
 	Vector3 incomingDirInverse;
 	Vector3 normalVector;
-	Point3 intersectionPosition;
+	Point3 intersectionPosition, intersectionPosLocal;
 	float rayIntersectT;
 
 	// special stuff

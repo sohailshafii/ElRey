@@ -6,17 +6,17 @@
 #include <cstdlib>
 
 void OpenCylinder::GenerateBoundingBox() {
-	boundingBox = AABBox(-radius, y0, -radius,
-						 radius, y1, radius);
+	boundingBoxLocal = AABBox(-radius, y0, -radius,
+							  radius, y1, radius);
 }
 
-bool OpenCylinder::Intersect(const Ray &ray, float tMin, float& tMax,
+bool OpenCylinder::IntersectLocal(const Ray &rayLocal, float tMin, float& tMax,
 	IntersectionResult &intersectionResult) {
-	if (!boundingBox.RayHit(ray)) {
+	if (!boundingBoxLocal.RayHit(rayLocal)) {
 		return false;
 	}
 	
-	if (TestRayAndSetTMax(ray, tMin, tMax)) {
+	if (TestRayAndSetTMax(rayLocal, tMin, tMax)) {
 		intersectionResult.SetIntersectionT(tMax);
 		return true;
 	}
@@ -24,13 +24,33 @@ bool OpenCylinder::Intersect(const Ray &ray, float tMin, float& tMax,
 	return false;
 }
 
-bool OpenCylinder::IntersectShadow(const Ray &ray, float tMin, float tMax) {
-	return boundingBox.RayHit(ray) && TestRayAndSetTMax(ray, tMin, tMax);
+bool OpenCylinder::IntersectShadowLocal(const Ray &rayLocal, float tMin, float tMax) {
+	return boundingBoxLocal.RayHit(rayLocal) && TestRayAndSetTMax(rayLocal, tMin, tMax);
 }
 
-bool OpenCylinder::TestRayAndSetTMax(const Ray &ray, float tMin, float& tMax) {
-	const Point3& rayOrigin = ray.GetOrigin();
-	const Vector3& rayDirection = ray.GetDirection();
+Vector3 OpenCylinder::GetNormalWorld(IntersectionResult const &intersectionResult) const {
+	Ray const & incomingRay = intersectionResult.GetIncomingRay();
+	Point3 rayOrigin = incomingRay.GetOrigin();
+	Vector3 rayDir = incomingRay.GetDirection();
+	if (isTransformed) {
+		rayOrigin = GetWorldToLocalPos(rayOrigin);
+		rayDir = GetWorldToLocalDir(rayDir);
+	}
+	float tIntersec = intersectionResult.GetRayIntersectT();
+	
+	Vector3 normalVec = Vector3((rayOrigin[0] + tIntersec*rayDir[0])*invRadius, 0.0f,
+								(rayOrigin[2] + tIntersec*rayDir[2])*invRadius);
+	// inside surface?
+	if (-rayDir*normalVec < 0.0f) {
+		normalVec = -normalVec;
+	}
+	normalVec.Normalize();
+	return isTransformed ? GetWorldToLocalTransposeDir(normalVec) : normalVec;
+}
+
+bool OpenCylinder::TestRayAndSetTMax(const Ray &rayLocal, float tMin, float& tMax) {
+	const Point3& rayOrigin = rayLocal.GetOrigin();
+	const Vector3& rayDirection = rayLocal.GetDirection();
 	
 	float originX = rayOrigin[0];
 	float originY = rayOrigin[1];
@@ -67,7 +87,11 @@ bool OpenCylinder::TestRayAndSetTMax(const Ray &ray, float tMin, float& tMax) {
 	return false;
 }
 
-void OpenCylinder::SamplePrimitive(Point3& resultingSample) {
+void OpenCylinder::SamplePrimitiveLocal(Point3& resultingSample) {
+	// Leave out for now
+}
+
+void OpenCylinder::SamplePrimitiveWorld(Point3& resultingSample) {
 	// Leave out for now
 }
 
@@ -75,7 +99,16 @@ float OpenCylinder::PDF(const IntersectionResult& intersectionResult) const {
 	return 1.0f; // Doesn't return a valid value because we don't use it for sampling
 }
 
-AABBox OpenCylinder::GetBoundingBox() const {
-	return boundingBox;
+AABBox OpenCylinder::GetBoundingBoxLocal() const {
+	return boundingBoxLocal;
 }
 
+AABBox OpenCylinder::GetBoundingBoxWorld() const {
+	if (!isTransformed) {
+		return boundingBoxLocal;
+	}
+	auto boundingBoxMin = boundingBoxLocal.GetMin();
+	auto boundingBoxMax = boundingBoxLocal.GetMax();
+	return AABBox(GetLocalToWorldPos(boundingBoxMin),
+				  GetLocalToWorldPos(boundingBoxMax));
+}

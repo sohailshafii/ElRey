@@ -20,15 +20,18 @@ public:
 		this->distance = -origin * normal;
 	}
 
-	bool Intersect(const Ray &ray, float tMin, float& tMax,
+	bool IntersectLocal(const Ray &rayLocal, float tMin, float& tMax,
 				IntersectionResult &intersectionResult) override;
-	bool IntersectShadow(const Ray &ray, float tMin, float tMax) override;
+	bool IntersectShadowLocal(const Ray &rayLocal, float tMin, float tMax) override;
 	
-	virtual Vector3 GetNormalAtPosition(IntersectionResult const &intersectionResult) const override {
-		return normal;
+	virtual Vector3 GetNormalWorld(IntersectionResult const &intersectionResult)
+		const override {
+		return isTransformed ? GetWorldToLocalTransposeDir(normal) : normal;
 	}
 	
-	virtual void SamplePrimitive(Point3& resultingSample) override;
+	virtual void SamplePrimitiveLocal(Point3& resultingSample) override;
+	
+	virtual void SamplePrimitiveWorld(Point3& resultingSample) override;
 	
 	virtual float PDF(const IntersectionResult& intersectionResult) const override;
 	
@@ -36,7 +39,11 @@ public:
 		return false;
 	}
 	
-	virtual AABBox GetBoundingBox() const override {
+	virtual AABBox GetBoundingBoxLocal() const override {
+		return AABBox(); // not valid for planes
+	}
+	
+	virtual AABBox GetBoundingBoxWorld() const override {
 		return AABBox(); // not valid for planes
 	}
 

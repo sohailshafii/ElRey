@@ -24,27 +24,15 @@ public:
 	
 	void GenerateBoundingBox();
 
-	bool Intersect(const Ray &ray, float tMin, float& tMax,
+	bool IntersectLocal(const Ray &rayLocal, float tMin, float& tMax,
 				   IntersectionResult &intersectionResult) override;
-	bool IntersectShadow(const Ray &ray, float tMin, float tMax) override;
+	bool IntersectShadowLocal(const Ray &rayLocal, float tMin, float tMax) override;
 	
-	virtual Vector3 GetNormalAtPosition(IntersectionResult const &intersectionResult) const override {
-		Ray const & incomingRay = intersectionResult.GetIncomingRay();
-		Point3 const & rayOrigin = incomingRay.GetOrigin();
-		Vector3 const & rayDir = incomingRay.GetDirection();
-		float tIntersec = intersectionResult.GetRayIntersectT();
-		
-		Vector3 normalVec = Vector3((rayOrigin[0] + tIntersec*rayDir[0])*invRadius, 0.0f,
-									(rayOrigin[2] + tIntersec*rayDir[2])*invRadius);
-		// inside surface?
-		if (-rayDir*normalVec < 0.0f) {
-			normalVec = -normalVec;
-		}
-		normalVec.Normalize();
-		return normalVec;
-	}
+	virtual Vector3 GetNormalWorld(IntersectionResult const &intersectionResult) const override;
 	
-	virtual void SamplePrimitive(Point3& resultingSample) override;
+	virtual void SamplePrimitiveLocal(Point3& resultingSample) override;
+	
+	virtual void SamplePrimitiveWorld(Point3& resultingSample) override;
 	
 	virtual float PDF(const IntersectionResult& intersectionResult) const override;
 	
@@ -52,8 +40,10 @@ public:
 		return true;
 	}
 	
-	virtual AABBox GetBoundingBox() const override;
+	virtual AABBox GetBoundingBoxLocal() const override;
 
+	virtual AABBox GetBoundingBoxWorld() const override;
+	
 private:
 	// bottom y value
 	float y0;
@@ -61,7 +51,7 @@ private:
 	float y1;
 	float radius, radiusSqr;
 	float invRadius;
-	AABBox boundingBox;
+	AABBox boundingBoxLocal;
 	
 	bool TestIfTMaxPasses(float originY, float dirY,
 						float tVal, float tMin, float tMax) {
@@ -72,5 +62,5 @@ private:
 		return false;
 	}
 	
-	bool TestRayAndSetTMax(const Ray &ray, float tMin, float& tMax);
+	bool TestRayAndSetTMax(const Ray &rayLocal, float tMin, float& tMax);
 };

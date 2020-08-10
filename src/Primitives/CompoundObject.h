@@ -16,13 +16,15 @@ public:
 		Primitive(iMaterial, iName) {
 	}
 
-	bool Intersect(const Ray &ray, float tMin, float& tMax,
+	bool IntersectLocal(const Ray &rayLocal, float tMin, float& tMax,
 					IntersectionResult &intersectionResult) override;
-	bool IntersectShadow(const Ray &ray, float tMin, float tMax) override;
+	bool IntersectShadowLocal(const Ray &rayLocal, float tMin, float tMax) override;
 	
-	virtual Vector3 GetNormalAtPosition(IntersectionResult const &intersectionResult) const override;
+	virtual Vector3 GetNormalWorld(IntersectionResult const &intersectionResult) const override;
 	
-	virtual void SamplePrimitive(Point3& resultingSample) override;
+	virtual void SamplePrimitiveLocal(Point3& resultingSample) override;
+	
+	virtual void SamplePrimitiveWorld(Point3& resultingSample) override;
 	
 	virtual float PDF(const IntersectionResult& intersectionResult) const override;
 	
@@ -30,7 +32,11 @@ public:
 		return false;
 	}
 	
-	virtual AABBox GetBoundingBox() const override {
+	virtual AABBox GetBoundingBoxLocal() const override {
+		return AABBox();
+	}
+	
+	virtual AABBox GetBoundingBoxWorld() const override {
 		return AABBox();
 	}
 	
@@ -42,10 +48,12 @@ public:
 	void RemovePrimitiveWithName(std::string const & name);
 	
 	void RecomputeTransformsForChildren();
-	
+
 	virtual Vector3 GetLocalToWorldDir(Vector3 const & inDir)
 		const override;
 	virtual Vector3 GetWorldToLocalDir(Vector3 const & inDir)
+		const override;
+	virtual Vector3 GetLocalToWorldTransposeDir(Vector3 const & inDir)
 		const override;
 	virtual Vector3 GetWorldToLocalTransposeDir(Vector3 const & inDir)
 		const override;
@@ -54,14 +62,13 @@ public:
 		const override;
 	virtual Point3 GetWorldToLocalPos(Point3 const & inPos)
 		const override;
-	virtual Point3 GetWorldToLocalTransposePos(Point3 const & inPos)
-		const override;
 
 private:
 	std::vector<Primitive*> primitives;
 	Primitive *closestPrimSoFar;
 	
 	Matrix4x4 worldToLocalChildren, localToWorldChildren;
+	Matrix4x4 localToWorldTransposeChildren;
 	Matrix4x4 worldToLocalTransposeChildren;
 	
 	Primitive* GetPrimitiveByIntersectionResult(IntersectionResult const &intersectionResult) const;

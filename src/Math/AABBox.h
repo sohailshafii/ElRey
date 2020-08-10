@@ -21,6 +21,10 @@ public:
 	
 	bool PointInside(Point4 const& point) const;
 	
+	Point3 GetMin() const;
+	
+	Point3 GetMax() const;
+	
 	void Superset(AABBox const & other) {
 		x0 = x0 < other.x0 ? x0 : other.x0;
 		y0 = y0 < other.y0 ? y0 : other.y0;

@@ -2,10 +2,10 @@
 #include "CommonMath.h"
 #include <algorithm>
 
-bool Rectangle::Intersect(const Ray &ray, float tMin, float& tMax,
+bool Rectangle::IntersectLocal(const Ray &rayLocal, float tMin, float& tMax,
 					IntersectionResult &intersectionResult) {
-	const Point3& rayOrigin = ray.GetOrigin();
-	const Vector3& rayDirection = ray.GetDirection();
+	const Point3& rayOrigin = rayLocal.GetOrigin();
+	const Vector3& rayDirection = rayLocal.GetDirection();
 	float t = (origin - rayOrigin) * normal / (rayDirection * normal);
 
 	if (t < EPSILON)
@@ -17,7 +17,7 @@ bool Rectangle::Intersect(const Ray &ray, float tMin, float& tMax,
 		return false;
 	}
 
-	Point3 intersectionPoint = ray.GetPositionAtParam(t);
+	Point3 intersectionPoint = rayLocal.GetPositionAtParam(t);
 	Vector3 vectorAlongPlane = intersectionPoint - origin;
 
 	float projectionSide1 = vectorAlongPlane * side1Vec;
@@ -38,10 +38,10 @@ bool Rectangle::Intersect(const Ray &ray, float tMin, float& tMax,
 	return true;
 }
 
-bool Rectangle::IntersectShadow(const Ray &ray, float tMin, float tMax)
+bool Rectangle::IntersectShadowLocal(const Ray &rayLocal, float tMin, float tMax)
 {
-	const Point3& rayOrigin = ray.GetOrigin();
-	const Vector3& rayDirection = ray.GetDirection();
+	const Point3& rayOrigin = rayLocal.GetOrigin();
+	const Vector3& rayDirection = rayLocal.GetDirection();
 	float t = (origin - rayOrigin) * normal / (rayDirection * normal);
 
 	if (t < EPSILON)
@@ -53,7 +53,7 @@ bool Rectangle::IntersectShadow(const Ray &ray, float tMin, float tMax)
 		return false;
 	}
 
-	Point3 intersectionPoint = ray.GetPositionAtParam(t);
+	Point3 intersectionPoint = rayLocal.GetPositionAtParam(t);
 	Vector3 vectorAlongPlane = intersectionPoint - origin;
 
 	float projectionSide1 = vectorAlongPlane * side1Vec;
@@ -71,10 +71,17 @@ bool Rectangle::IntersectShadow(const Ray &ray, float tMin, float tMax)
 	return true;
 }
 
-void Rectangle::SamplePrimitive(Point3& resultingSample) {
+void Rectangle::SamplePrimitiveLocal(Point3& resultingSample) {
 	Point2 sampleOnSquare = sampler->GetSampleOnUnitSquare();
 	resultingSample = origin + side1Vec * sampleOnSquare[0] +
 		side2Vec * sampleOnSquare[1];
+}
+
+void Rectangle::SamplePrimitiveWorld(Point3& resultingSample) {
+	Point2 sampleOnSquare = sampler->GetSampleOnUnitSquare();
+	resultingSample = origin + side1Vec * sampleOnSquare[0] +
+		side2Vec * sampleOnSquare[1];
+	resultingSample = GetLocalToWorldPos(resultingSample);
 }
 
 // each sample's probability is 1.0/inverseArea
@@ -82,7 +89,36 @@ float Rectangle::PDF(const IntersectionResult& intersectionResult) const {
 	return inverseArea;
 }
 
-AABBox Rectangle::GetBoundingBox() const {
+AABBox Rectangle::GetBoundingBoxLocal() const {
+	return boundingBoxLocal;
+}
+
+AABBox Rectangle::GetBoundingBoxWorld() const {
+	Point3 worldSpaceMin =
+		GetLocalToWorldPos(boundingBoxLocal.GetMin());
+	Point3 worldSpaceMax =
+		GetLocalToWorldPos(boundingBoxLocal.GetMax());
+	return AABBox(worldSpaceMin[0], worldSpaceMin[1],
+				  worldSpaceMin[2], worldSpaceMax[0],
+				  worldSpaceMax[1], worldSpaceMax[2]);
+}
+
+void Rectangle::Initialize(const Vector3& iSide1Vec, const Vector3& iSide2Vec)
+{
+	side1Vec = iSide1Vec;
+	side2Vec = iSide2Vec;
+	side1LengthSqr = side1Vec.NormSqr();
+	side2LengthSqr = side2Vec.NormSqr();
+	area = sqrt(side1LengthSqr) * sqrt(side2LengthSqr);
+	inverseArea = 1.0f / area;
+	// assume left-handed
+	normal = side2Vec ^ side1Vec;
+	normal.Normalize();
+	
+	boundingBoxLocal = ComputeBoundingBoxLocal();
+}
+
+AABBox Rectangle::ComputeBoundingBoxLocal() const {
 	Point3 minPoint;
 	Point3 maxPoint;
 	
@@ -103,7 +139,7 @@ AABBox Rectangle::GetBoundingBox() const {
 	}
 	if (fabs(maxPoint[1] - minPoint[1]) < EPSILON) {
 		maxPoint[1] += 0.1f;
-	}	
+	}
 	if (fabs(maxPoint[0] - minPoint[0]) < EPSILON) {
 		maxPoint[0] += 0.1f;
 	}

@@ -1,13 +1,13 @@
 #include "CompoundObject.h"
 
-bool CompoundObject::Intersect(const Ray &ray, float tMin, float& tMax,
-			   IntersectionResult &intersectionResult) {
+bool CompoundObject::IntersectLocal(const Ray &rayLocal, float tMin, float& tMax,
+									IntersectionResult &intersectionResult) {
 	unsigned int numElements = primitives.size();
 	closestPrimSoFar = nullptr;
 	for (unsigned int index = 0; index < numElements; index++) {
 		auto currPrimitive = primitives[index];
 		
-		if (currPrimitive->Intersect(ray, tMin, tMax, intersectionResult)) {
+		if (currPrimitive->IntersectLocal(rayLocal, tMin, tMax, intersectionResult)) {
 			closestPrimSoFar = currPrimitive;
 		}
 	}
@@ -20,25 +20,26 @@ bool CompoundObject::Intersect(const Ray &ray, float tMin, float& tMax,
 	return false;
 }
 
-bool CompoundObject::IntersectShadow(const Ray &ray, float tMin,
-									 float tMax) {
+bool CompoundObject::IntersectShadowLocal(const Ray &rayLocal, float tMin,
+										  float tMax) {
 	unsigned int numElements = primitives.size();
 	bool hitSomething = false;
 	
 	for (unsigned int index = 0; index < numElements; index++) {
 		auto currPrimitive = primitives[index];
 		hitSomething =
-			currPrimitive->IntersectShadow(ray, tMin, tMax);
+			currPrimitive->IntersectShadowLocal(rayLocal, tMin, tMax);
 	}
 	
 	return hitSomething;
 }
 
-Vector3 CompoundObject::GetNormalAtPosition(
+Vector3 CompoundObject::GetNormalWorld(
 	IntersectionResult const &intersectionResult) const {
 	Primitive* foundPrim = GetPrimitiveByIntersectionResult(intersectionResult);
-	return foundPrim != nullptr ? foundPrim->GetNormalAtPosition(intersectionResult)
+	Vector3 normalWorld = foundPrim != nullptr ? foundPrim->GetNormalWorld(intersectionResult)
 		: Vector3();
+	return worldToLocalTranspose * normalWorld;
 }
 
 Primitive* CompoundObject::GetPrimitiveByIntersectionResult(IntersectionResult const &intersectionResult) const {
@@ -51,9 +52,15 @@ Primitive* CompoundObject::GetPrimitiveByIntersectionResult(IntersectionResult c
 	return nullptr;
 }
 
-void CompoundObject::SamplePrimitive(Point3& resultingSample) {
+void CompoundObject::SamplePrimitiveLocal(Point3& resultingSample) {
 	if (closestPrimSoFar != nullptr) {
-		closestPrimSoFar->SamplePrimitive(resultingSample);
+		closestPrimSoFar->SamplePrimitiveLocal(resultingSample);
+	}
+}
+
+void CompoundObject::SamplePrimitiveWorld(Point3& resultingSample) {
+	if (closestPrimSoFar != nullptr) {
+		closestPrimSoFar->SamplePrimitiveWorld(resultingSample);
 	}
 }
 
@@ -92,12 +99,14 @@ void CompoundObject::RemovePrimitiveWithName(std::string const & name) {
 void CompoundObject::RecomputeTransformsForChildren() {
 	worldToLocalChildren.MakeIdentity();
 	localToWorldChildren.MakeIdentity();
+	localToWorldTransposeChildren.MakeIdentity();
 	worldToLocalTransposeChildren.MakeIdentity();
 	
 	for(auto const primitive : primitives) {
 		worldToLocalChildren *= primitive->GetWorldToLocal();
 		localToWorldChildren *= primitive->GetLocalToWorld();
-		worldToLocalTransposeChildren *= primitive->GetLocalToWorldTranspose();
+		localToWorldTransposeChildren *= primitive->GetLocalToWorldTranspose();
+		worldToLocalTransposeChildren *= primitive->GetWorldToLocalTranspose();
 	}
 }
 
@@ -111,13 +120,16 @@ const GenericSampler* CompoundObject::GetSampler() {
 	 closestPrimSoFar->GetSampler() : nullptr;
 }
 
-
 Vector3 CompoundObject::GetLocalToWorldDir(Vector3 const & inDir) const {
 	return localToWorld*localToWorldChildren*inDir;
 }
 
 Vector3 CompoundObject::GetWorldToLocalDir(Vector3 const & inDir) const {
 	return worldToLocal*worldToLocalChildren*inDir;
+}
+
+Vector3 CompoundObject::GetLocalToWorldTransposeDir(Vector3 const & inDir) const {
+	return localToWorldTranspose*localToWorldTransposeChildren*inDir;
 }
 
 Vector3 CompoundObject::GetWorldToLocalTransposeDir(Vector3 const & inDir) const {
@@ -130,8 +142,4 @@ Point3 CompoundObject::GetLocalToWorldPos(Point3 const & inPos) const {
 
 Point3 CompoundObject::GetWorldToLocalPos(Point3 const & inPos) const {
 	return worldToLocal*worldToLocalChildren*inPos;
-}
-
-Point3 CompoundObject::GetWorldToLocalTransposePos(Point3 const & inPos) const {
-	return worldToLocalTranspose*worldToLocalTransposeChildren*inPos;
 }

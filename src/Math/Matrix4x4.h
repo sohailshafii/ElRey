@@ -21,9 +21,6 @@ public:
 	static Matrix4x4 ScaleMatrix(const Vector3& scaleVec);
 	static Matrix4x4 InvScaleMatrix(const Vector3& scaleVec);
 	
-	static Matrix4x4 RotationMatrix(const Vector3& axis, float angleDegrees);
-	static Matrix4x4 InvRotationMatrix(const Vector3& axis, float angleDegrees);
-	
 	static Matrix4x4 RotationMatrixX(float angleDegrees);
 	static Matrix4x4 InvRotationMatrixX(float angleDegrees);
 	

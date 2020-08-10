@@ -4,14 +4,14 @@
 #include <limits>
 
 // use doubles for accuracy
-bool Torus::Intersect(const Ray &ray, float tMin, float& tMax,
+bool Torus::IntersectLocal(const Ray &rayLocal, float tMin, float& tMax,
 					IntersectionResult &intersectionResult) {
-	if (!boundingBox.RayHit(ray)) {
+	if (!boundingBox.RayHit(rayLocal)) {
 		return false;
 	}
 	
-	const Point3& rayOrigin = ray.GetOrigin();
-	const Vector3& rayDirection = ray.GetDirection();
+	const Point3& rayOrigin = rayLocal.GetOrigin();
+	const Vector3& rayDirection = rayLocal.GetDirection();
 	
 	double rayOriginX = rayOrigin[0];
 	double rayOriginY = rayOrigin[1];
@@ -69,13 +69,13 @@ bool Torus::Intersect(const Ray &ray, float tMin, float& tMax,
 	return true;
 }
 
-bool Torus::IntersectShadow(const Ray &ray, float tMin, float tMax) {
-	if (!boundingBox.RayHit(ray)) {
+bool Torus::IntersectShadowLocal(const Ray &rayLocal, float tMin, float tMax) {
+	if (!boundingBox.RayHit(rayLocal)) {
 		return false;
 	}
 	
-	const Point3& rayOrigin = ray.GetOrigin();
-	const Vector3& rayDirection = ray.GetDirection();
+	const Point3& rayOrigin = rayLocal.GetOrigin();
+	const Vector3& rayDirection = rayLocal.GetDirection();
 	
 	double rayOriginX = rayOrigin[0];
 	double rayOriginY = rayOrigin[1];
@@ -129,7 +129,29 @@ bool Torus::IntersectShadow(const Ray &ray, float tMin, float tMax) {
 	return true;
 }
 
-void Torus::SamplePrimitive(Point3& resultingSample) {
+Vector3 Torus::GetNormalWorld(IntersectionResult const &intersectionResult) const {
+	Vector3 normal;
+	float paramSquared = sweptRadiusSquared + tubeRadiusSquared;
+
+	auto intersecPos = intersectionResult.GetIntersectionPosLocal();
+	float x = intersecPos[0];
+	float y = intersecPos[1];
+	float z = intersecPos[2];
+	float sumSquared = x * x + y * y + z * z;
+	
+	normal[0] = 4.0f * x * (sumSquared - paramSquared);
+	normal[1] = 4.0f * y * (sumSquared - paramSquared + 2.0 * sweptRadiusSquared);
+	normal[2] = 4.0f * z * (sumSquared - paramSquared);
+	normal.Normalize();
+	
+	return isTransformed ? GetWorldToLocalTransposeDir(normal) : normal;
+}
+
+void Torus::SamplePrimitiveLocal(Point3& resultingSample) {
+	// nothing to see here for now
+}
+
+void Torus::SamplePrimitiveWorld(Point3& resultingSample) {
 	// nothing to see here for now
 }
 
@@ -138,7 +160,24 @@ float Torus::PDF(const IntersectionResult& intersectionResult) const {
 	return 1.0f;
 }
 
-AABBox Torus::GetBoundingBox() const {
+AABBox Torus::GetBoundingBoxLocal() const {
 	return boundingBox;
 }
 
+AABBox Torus::GetBoundingBoxWorld() const {
+	auto minPoint = boundingBox.GetMin();
+	auto maxPoint = boundingBox.GetMax();
+	return AABBox(GetLocalToWorldPos(minPoint),
+				  GetLocalToWorldPos(maxPoint));
+}
+
+void Torus::Initialize() {
+	sweptRadiusSquared = sweptRadius*sweptRadius;
+	tubeRadiusSquared = tubeRadius*tubeRadius;
+	boundingBox = AABBox(-sweptRadius - tubeRadius,
+						 -tubeRadius,
+						 -sweptRadius - tubeRadius,
+						 sweptRadius + tubeRadius,
+						 tubeRadius,
+						 sweptRadius + tubeRadius);
+}

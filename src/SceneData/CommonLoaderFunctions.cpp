@@ -130,17 +130,6 @@ void CommonLoaderFunctions::SetUpTransformFromJsonNode(nlohmann::json const & tr
 															  (float)scaleValue[1],
 															  (float)scaleValue[2]));
 		}
-		else if (CommonLoaderFunctions::HasKey(elementValue, "rotate_axis")) {
-			auto const & rotValue = CommonLoaderFunctions::SafeGetToken(elementValue,
-																		  "rotate_axis");
-			localToWorldElem = Matrix4x4::RotationMatrix(Vector3((float)rotValue[0],
-																 (float)rotValue[1],
-																 (float)rotValue[2]),
-																(float)rotValue[3]);
-			worldToLocalElem = Matrix4x4::InvRotationMatrix(Vector3((float)rotValue[0],
-																	(float)rotValue[1],
-																	(float)rotValue[2]), (float)rotValue[3]);
-		}
 		else if (CommonLoaderFunctions::HasKey(elementValue, "translate")) {
 			auto const & transVal = CommonLoaderFunctions::SafeGetToken(elementValue,
 																		  "translate");

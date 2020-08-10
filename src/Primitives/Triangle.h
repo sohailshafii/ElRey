@@ -14,6 +14,7 @@ public:
 		p0(p0), p1(p1), p2(p2) {
 		normalVec = (p1-p0)^(p2-p0);
 		normalVec.Normalize();
+		ComputeLocalBoundingBox();
 	}
 
 	Triangle(Point3 const & p0, Point3 const & p1,
@@ -23,17 +24,20 @@ public:
 		p0(p0), p1(p1), p2(p2) {
 		normalVec = (p2-p0)^(p1-p0);
 		normalVec.Normalize();
+		ComputeLocalBoundingBox();
 	}
 
-	bool Intersect(const Ray &ray, float tMin, float& tMax,
+	bool IntersectLocal(const Ray &rayLocal, float tMin, float& tMax,
 				   IntersectionResult &intersectionResult) override;
-	bool IntersectShadow(const Ray &ray, float tMin, float tMax) override;
+	bool IntersectShadowLocal(const Ray &rayLocal, float tMin, float tMax) override;
 	
-	virtual Vector3 GetNormalAtPosition(IntersectionResult const &intersectionResult) const override {
-		return normalVec;
+	virtual Vector3 GetNormalWorld(IntersectionResult const &intersectionResult) const override {
+		return isTransformed ? GetWorldToLocalTransposeDir(normalVec) : normalVec;
 	}
 	
-	virtual void SamplePrimitive(Point3& resultingSample) override;
+	virtual void SamplePrimitiveLocal(Point3& resultingSample) override;
+	
+	virtual void SamplePrimitiveWorld(Point3& resultingSample) override;
 	
 	virtual float PDF(const IntersectionResult& intersectionResult) const override;
 	
@@ -41,9 +45,14 @@ public:
 		return true;
 	}
 	
-	virtual AABBox GetBoundingBox() const override;
+	virtual AABBox GetBoundingBoxLocal() const override;
+	
+	virtual AABBox GetBoundingBoxWorld() const override;
 
 private:
 	Point3 p0, p1, p2;
 	Vector3 normalVec;
+	AABBox boundingBox;
+	
+	AABBox ComputeLocalBoundingBox() const;
 };

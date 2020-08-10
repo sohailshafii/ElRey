@@ -23,15 +23,17 @@ public:
 		Initialize(iSide1Vec, iSide2Vec);
 	}
 
-	bool Intersect(const Ray &ray, float tMin, float& tMax,
+	bool IntersectLocal(const Ray &rayLocal, float tMin, float& tMax,
 					IntersectionResult &intersectionResult) override;
-	bool IntersectShadow(const Ray &ray, float tMin, float tMax) override;
+	bool IntersectShadowLocal(const Ray &rayLocal, float tMin, float tMax) override;
 	
-	virtual Vector3 GetNormalAtPosition(IntersectionResult const &intersectionResult) const override {
-		return normal;
+	virtual Vector3 GetNormalWorld(IntersectionResult const &intersectionResult) const override {
+		return isTransformed ? GetWorldToLocalTransposeDir(normal) : normal;
 	}
 	
-	virtual void SamplePrimitive(Point3& resultingSample) override;
+	virtual void SamplePrimitiveLocal(Point3& resultingSample) override;
+	
+	virtual void SamplePrimitiveWorld(Point3& resultingSample) override;
 	
 	virtual float PDF(const IntersectionResult& intersectionResult) const override;
 	
@@ -39,25 +41,19 @@ public:
 		return true;
 	}
 	
-	virtual AABBox GetBoundingBox() const override;
+	virtual AABBox GetBoundingBoxLocal() const override;
+	
+	virtual AABBox GetBoundingBoxWorld() const override;
 
 private:
-	void Initialize(const Vector3& iSide1Vec, const Vector3& iSide2Vec)
-	{
-		side1Vec = iSide1Vec;
-		side2Vec = iSide2Vec;
-		side1LengthSqr = side1Vec.NormSqr();
-		side2LengthSqr = side2Vec.NormSqr();
-		area = sqrt(side1LengthSqr) * sqrt(side2LengthSqr);
-		inverseArea = 1.0f / area;
-		// assume left-handed
-		normal = side2Vec ^ side1Vec;
-		normal.Normalize();
-	}
+	void Initialize(const Vector3& iSide1Vec, const Vector3& iSide2Vec);
+	
+	AABBox ComputeBoundingBoxLocal() const;
 
 	Point3 origin;
 	Vector3 side1Vec, side2Vec;
 	float side1LengthSqr, side2LengthSqr;
 	float area, inverseArea;
 	Vector3 normal;
+	AABBox boundingBoxLocal;
 };

@@ -5,10 +5,10 @@
 #include <cmath>
 #include <iostream>
 
-bool Sphere::Intersect(const Ray &ray, float tMin, float& tMax,
+bool Sphere::IntersectLocal(const Ray &rayLocal, float tMin, float& tMax,
 	IntersectionResult &intersectionResult) {
-	const Point3& rayOrigin = ray.GetOrigin();
-	const Vector3& rayDirection = ray.GetDirection();
+	const Point3& rayOrigin = rayLocal.GetOrigin();
+	const Vector3& rayDirection = rayLocal.GetDirection();
 
 	Vector3 centerToRayOrigin = rayOrigin - center;
 	float a = rayDirection*rayDirection;
@@ -41,9 +41,9 @@ bool Sphere::Intersect(const Ray &ray, float tMin, float& tMax,
 	return false;
 }
 
-bool Sphere::IntersectShadow(const Ray &ray, float tMin, float tMax) {
-	const Point3& rayOrigin = ray.GetOrigin();
-	const Vector3& rayDirection = ray.GetDirection();
+bool Sphere::IntersectShadowLocal(const Ray &rayLocal, float tMin, float tMax) {
+	const Point3& rayOrigin = rayLocal.GetOrigin();
+	const Vector3& rayDirection = rayLocal.GetDirection();
 
 	Vector3 centerToRayOrigin = rayOrigin - center;
 	float a = rayDirection*rayDirection;
@@ -71,7 +71,17 @@ bool Sphere::IntersectShadow(const Ray &ray, float tMin, float tMax) {
 	return false;
 }
 
-void Sphere::SamplePrimitive(Point3& resultingSample) {
+Vector3 Sphere::GetNormalWorld(IntersectionResult const &intersectionResult) const {
+	Vector3 normalVec = (intersectionResult.GetIntersectionPosLocal() - center);
+	normalVec.Normalize();
+	return isTransformed ? GetWorldToLocalTransposeDir(normalVec) : normalVec;
+}
+
+void Sphere::SamplePrimitiveLocal(Point3& resultingSample) {
+	// Not valid; necessary for sampling if we want area lights that are spheres
+}
+
+void Sphere::SamplePrimitiveWorld(Point3& resultingSample) {
 	// Not valid; necessary for sampling if we want area lights that are spheres
 }
 
@@ -79,7 +89,21 @@ float Sphere::PDF(const IntersectionResult& intersectionResult) const {
 	return 1.0f; // invalid until we need to use it
 }
 
-AABBox Sphere::GetBoundingBox() const {
+AABBox Sphere::GetBoundingBoxLocal() const {
+	return boundingBoxLocal;
+}
+
+AABBox Sphere::GetBoundingBoxWorld() const {
+	Point3 worldSpaceMin =
+		GetLocalToWorldPos(boundingBoxLocal.GetMin());
+	Point3 worldSpaceMax =
+		GetLocalToWorldPos(boundingBoxLocal.GetMax());
+	return AABBox(worldSpaceMin[0], worldSpaceMin[1],
+				  worldSpaceMin[2], worldSpaceMax[0],
+				  worldSpaceMax[1], worldSpaceMax[2]);
+}
+
+AABBox Sphere::ComputeBoundingBoxLocal() const {
 	Point3 minPoint = center - Vector3(radius, radius, radius);
 	Point3 maxPoint = center + Vector3(radius, radius, radius);
 	

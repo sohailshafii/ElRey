@@ -107,3 +107,12 @@ bool AABBox::PointInside(Point4 const& point) const {
 			(point[1] > y0 && point[1] < y1) &&
 			(point[2] > z0 && point[2] < z1));
 }
+
+Point3 AABBox::GetMin() const {
+	return Point3(x0, y0, z0);
+}
+
+Point3 AABBox::GetMax() const {
+	return Point3(x1, y1, z1);
+}
+

@@ -31,29 +31,15 @@ public:
 		Initialize();
 	}
 
-	bool Intersect(const Ray &ray, float tMin, float& tMax,
+	bool IntersectLocal(const Ray &rayLocal, float tMin, float& tMax,
 					IntersectionResult &intersectionResult) override;
-	bool IntersectShadow(const Ray &ray, float tMin, float tMax) override;
+	bool IntersectShadowLocal(const Ray &rayLocal, float tMin, float tMax) override;
 	
-	virtual Vector3 GetNormalAtPosition(IntersectionResult const &intersectionResult) const override {
-		Vector3 normal;
-		float paramSquared = sweptRadiusSquared + tubeRadiusSquared;
+	virtual Vector3 GetNormalWorld(IntersectionResult const &intersectionResult) const override;
 	
-		auto intersecPos = intersectionResult.GetIntersectionPos();
-		float x = intersecPos[0];
-		float y = intersecPos[1];
-		float z = intersecPos[2];
-		float sumSquared = x * x + y * y + z * z;
-		
-		normal[0] = 4.0f * x * (sumSquared - paramSquared);
-		normal[1] = 4.0f * y * (sumSquared - paramSquared + 2.0 * sweptRadiusSquared);
-		normal[2] = 4.0f * z * (sumSquared - paramSquared);
-		normal.Normalize();
-		
-		return normal;
-	}
+	virtual void SamplePrimitiveLocal(Point3& resultingSample) override;
 	
-	virtual void SamplePrimitive(Point3& resultingSample) override;
+	virtual void SamplePrimitiveWorld(Point3& resultingSample) override;
 	
 	virtual float PDF(const IntersectionResult& intersectionResult) const override;
 	
@@ -61,7 +47,9 @@ public:
 		return true;
 	}
 	
-	virtual AABBox GetBoundingBox() const override;
+	virtual AABBox GetBoundingBoxLocal() const override;
+	
+	virtual AABBox GetBoundingBoxWorld() const override;
 
 private:
 	AABBox boundingBox;
@@ -71,14 +59,5 @@ private:
 	float sweptRadiusSquared;
 	float tubeRadiusSquared;
 	
-	void Initialize() {
-		sweptRadiusSquared = sweptRadius*sweptRadius;
-		tubeRadiusSquared = tubeRadius*tubeRadius;
-		boundingBox = AABBox(-sweptRadius - tubeRadius,
-							 -tubeRadius,
-							 -sweptRadius - tubeRadius,
-							 sweptRadius + tubeRadius,
-							 tubeRadius,
-							 sweptRadius + tubeRadius);
-	}
+	void Initialize();
 };

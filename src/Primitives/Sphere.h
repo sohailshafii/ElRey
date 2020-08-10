@@ -11,6 +11,7 @@ public:
 			const std::string& iName) : Primitive(iMaterial, iName),
 		center(iCenter), radius(iRadius) {
 		radiusSqr = radius*radius;
+		boundingBoxLocal = ComputeBoundingBoxLocal();
 	}
 
 	Sphere(const Point3& iCenter, float iRadius,
@@ -18,19 +19,18 @@ public:
 		const std::string& iName) : Primitive(iMaterial, iName),
 		center(iCenter), radius(iRadius) {
 		radiusSqr = radius * radius;
+		boundingBoxLocal = ComputeBoundingBoxLocal();
 	}
 
-	bool Intersect(const Ray &ray, float tMin, float& tMax,
+	bool IntersectLocal(const Ray &rayLocal, float tMin, float& tMax,
 				   IntersectionResult &intersectionResult) override;
-	bool IntersectShadow(const Ray &ray, float tMin, float tMax) override;
+	bool IntersectShadowLocal(const Ray &rayLocal, float tMin, float tMax) override;
 	
-	virtual Vector3 GetNormalAtPosition(IntersectionResult const &intersectionResult) const override {
-		Vector3 normalVec = (intersectionResult.GetIntersectionPos() - center);
-		normalVec.Normalize();
-		return normalVec;
-	}
+	virtual Vector3 GetNormalWorld(IntersectionResult const &intersectionResult) const override;
 	
-	virtual void SamplePrimitive(Point3& resultingSample) override;
+	virtual void SamplePrimitiveLocal(Point3& resultingSample) override;
+	
+	virtual void SamplePrimitiveWorld(Point3& resultingSample) override;
 	
 	virtual float PDF(const IntersectionResult& intersectionResult) const override;
 	
@@ -38,9 +38,14 @@ public:
 		return true;
 	}
 	
-	virtual AABBox GetBoundingBox() const override;
+	virtual AABBox GetBoundingBoxLocal() const override;
+	
+	virtual AABBox GetBoundingBoxWorld() const override;
 
 private:
 	Point3 center;
 	float radius, radiusSqr;
+	AABBox boundingBoxLocal;
+	
+	AABBox ComputeBoundingBoxLocal() const;
 };

@@ -4,10 +4,10 @@
 #include <cmath>
 #include <algorithm>
 
-bool Triangle::Intersect(const Ray &ray, float tMin, float& tMax,
+bool Triangle::IntersectLocal(const Ray &rayLocal, float tMin, float& tMax,
 	IntersectionResult &intersectionResult) {
-	const Point3& rayOrigin = ray.GetOrigin();
-	const Vector3& rayDirection = ray.GetDirection();
+	const Point3& rayOrigin = rayLocal.GetOrigin();
+	const Vector3& rayDirection = rayLocal.GetDirection();
 	
 	float a = p0[0] - p1[0], b = p0[0] - p2[0],
 		c = rayDirection[0], d = p0[0] - rayOrigin[0];
@@ -54,9 +54,9 @@ bool Triangle::Intersect(const Ray &ray, float tMin, float& tMax,
 	return true;
 }
 
-bool Triangle::IntersectShadow(const Ray &ray, float tMin, float tMax) {
-	const Point3& rayOrigin = ray.GetOrigin();
-	const Vector3& rayDirection = ray.GetDirection();
+bool Triangle::IntersectShadowLocal(const Ray &rayLocal, float tMin, float tMax) {
+	const Point3& rayOrigin = rayLocal.GetOrigin();
+	const Vector3& rayDirection = rayLocal.GetDirection();
 	
 	float a = p0[0] - p1[0], b = p0[0] - p2[0],
 		c = rayDirection[0], d = p0[0] - rayOrigin[0];
@@ -100,7 +100,11 @@ bool Triangle::IntersectShadow(const Ray &ray, float tMin, float tMax) {
 	return true;
 }
 
-void Triangle::SamplePrimitive(Point3& resultingSample) {
+void Triangle::SamplePrimitiveLocal(Point3& resultingSample) {
+	// Not valid; necessary for sampling if we want area lights that are spheres
+}
+
+void Triangle::SamplePrimitiveWorld(Point3& resultingSample) {
 	// Not valid; necessary for sampling if we want area lights that are spheres
 }
 
@@ -108,7 +112,7 @@ float Triangle::PDF(const IntersectionResult& intersectionResult) const {
 	return 1.0f; // invalid until we need to use it
 }
 
-AABBox Triangle::GetBoundingBox() const {
+AABBox Triangle::ComputeLocalBoundingBox() const {
 	Point3 minPoint = p0;
 	Point3 maxPoint = p0;
 	
@@ -136,10 +140,21 @@ AABBox Triangle::GetBoundingBox() const {
 	}
 	if (fabs(maxPoint[1] - minPoint[1]) < EPSILON) {
 		maxPoint[1] += 0.1f;
-	}	
+	}
 	if (fabs(maxPoint[0] - minPoint[0]) < EPSILON) {
 		maxPoint[0] += 0.1f;
 	}
 	
 	return AABBox(minPoint, maxPoint);
+}
+
+AABBox Triangle::GetBoundingBoxLocal() const {
+	return boundingBox;
+}
+
+AABBox Triangle::GetBoundingBoxWorld() const {
+	auto minPoint = boundingBox.GetMin();
+	auto maxPoint = boundingBox.GetMax();
+	return AABBox(GetLocalToWorldPos(minPoint),
+				  GetLocalToWorldPos(maxPoint));
 }
