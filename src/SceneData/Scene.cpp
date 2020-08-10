@@ -126,7 +126,7 @@ bool Scene::Intersect(const Ray &ray, Color &newColor,
 	Vector3 originalDir = ray.GetDirection();
 	Point3 originalOrigin = ray.GetOrigin();
 	for (auto currentPrimitive : primitives) {
-		// If primitive is not transformed, then it's local and world transforms are one-to-one.
+		// If primitive is not transformed, then its local and world transforms are one-to-one.
 		// If not, then transform ray into local space first before intersecting.
 		if (currentPrimitive->GetIsTransformed()) {
 			rayToCast.SetOrigin(currentPrimitive->GetWorldToLocalPos(originalOrigin));
