@@ -125,6 +125,7 @@ bool Scene::Intersect(const Ray &ray, Color &newColor,
 	Ray rayToCast = ray;
 	Vector3 originalDir = ray.GetDirection();
 	Point3 originalOrigin = ray.GetOrigin();
+	
 	for (auto currentPrimitive : primitives) {
 		// If primitive is not transformed, then its local and world transforms are one-to-one.
 		// If not, then transform ray into local space first before intersecting.
@@ -147,6 +148,7 @@ bool Scene::Intersect(const Ray &ray, Color &newColor,
 	if (closestPrimitive != nullptr) {
 		std::shared_ptr<Material> primitiveMaterial = closestPrimitive->GetMaterial();
 		// TODO: how is ray used here?
+		// TODO: separate light information from intersection information
 		intersectionResult.SetIncomingRay(ray);
 		auto intersectionPos = ray.GetPositionAtParam(tMax);
 		intersectionResult.SetIntersectionT(tMax);

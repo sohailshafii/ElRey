@@ -46,30 +46,10 @@ public:
 	void AddPrimitive(Primitive * primitive);
 	void RemovePrimitiveAtIndex(unsigned int index);
 	void RemovePrimitiveWithName(std::string const & name);
-	
-	void RecomputeTransformsForChildren();
-
-	virtual Vector3 GetLocalToWorldDir(Vector3 const & inDir)
-		const override;
-	virtual Vector3 GetWorldToLocalDir(Vector3 const & inDir)
-		const override;
-	virtual Vector3 GetLocalToWorldTransposeDir(Vector3 const & inDir)
-		const override;
-	virtual Vector3 GetWorldToLocalTransposeDir(Vector3 const & inDir)
-		const override;
-	
-	virtual Point3 GetLocalToWorldPos(Point3 const & inPos)
-		const override;
-	virtual Point3 GetWorldToLocalPos(Point3 const & inPos)
-		const override;
 
 private:
 	std::vector<Primitive*> primitives;
 	Primitive *closestPrimSoFar;
-	
-	Matrix4x4 worldToLocalChildren, localToWorldChildren;
-	Matrix4x4 localToWorldTransposeChildren;
-	Matrix4x4 worldToLocalTransposeChildren;
 	
 	Primitive* GetPrimitiveByIntersectionResult(IntersectionResult const &intersectionResult) const;
 };

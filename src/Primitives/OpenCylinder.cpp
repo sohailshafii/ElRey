@@ -30,16 +30,11 @@ bool OpenCylinder::IntersectShadowLocal(const Ray &rayLocal, float tMin, float t
 
 Vector3 OpenCylinder::GetNormalWorld(IntersectionResult const &intersectionResult) const {
 	Ray const & incomingRay = intersectionResult.GetIncomingRay();
-	Point3 rayOrigin = incomingRay.GetOrigin();
 	Vector3 rayDir = incomingRay.GetDirection();
-	if (isTransformed) {
-		rayOrigin = GetWorldToLocalPos(rayOrigin);
-		rayDir = GetWorldToLocalDir(rayDir);
-	}
-	float tIntersec = intersectionResult.GetRayIntersectT();
+	Point3 intersectLocal = intersectionResult.GetIntersectionPosLocal();
+	Vector3 normalVec = Vector3(intersectLocal[0]*invRadius, 0.0f,
+								intersectLocal[2]*invRadius);
 	
-	Vector3 normalVec = Vector3((rayOrigin[0] + tIntersec*rayDir[0])*invRadius, 0.0f,
-								(rayOrigin[2] + tIntersec*rayDir[2])*invRadius);
 	// inside surface?
 	if (-rayDir*normalVec < 0.0f) {
 		normalVec = -normalVec;
