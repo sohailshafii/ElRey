@@ -26,7 +26,7 @@ public:
 	
 	virtual Vector3 GetNormalWorld(IntersectionResult const &intersectionResult)
 		const override {
-		return isTransformed ? GetWorldToLocalTransposeDir(normal) : normal;
+		return isTransformed ? GetWorldToLocalTransposeDir(normal).Normalized() : normal;
 	}
 	
 	virtual void SamplePrimitiveLocal(Point3& resultingSample) override;

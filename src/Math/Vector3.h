@@ -46,6 +46,8 @@ public:
 	inline void Normalize();
 	inline float Norm() const;
 	inline float NormSqr() const;
+	
+	inline Vector3 Normalized() const;
 
 	static Vector3 Zero() {
 		return Vector3(0.0f, 0.0f, 0.0f);
@@ -146,6 +148,12 @@ inline void Vector3::Normalize() {
 	comp[0] /= vectorNorm;
 	comp[1] /= vectorNorm;
 	comp[2] /= vectorNorm;
+}
+
+inline Vector3 Vector3::Normalized() const {
+	Vector3 normalizedVec(comp[0], comp[1], comp[2]);
+	normalizedVec.Normalize();
+	return normalizedVec;
 }
 
 inline float Vector3::Norm() const {

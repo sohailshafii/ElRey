@@ -175,7 +175,8 @@ bool AABBoxPrim::IntersectLocal(const Ray &rayLocal, float tMin, float& tMax,
 				default:
 					tempNorm = Vector3(0.0f, 0.0f, 1.0f);
 			}
-			tempNorm = GetWorldToLocalTransposeDir(tempNorm);
+			tempNorm = isTransformed ?
+				GetWorldToLocalTransposeDir(tempNorm).Normalized() : tempNorm;
 		}
 		intersectionResult.SetIntersectionT(tMax);
 		intersectionResult.SetGenericMetadata(tempNorm[0], tempNorm[1],

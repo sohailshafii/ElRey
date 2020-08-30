@@ -144,7 +144,7 @@ Vector3 Torus::GetNormalWorld(IntersectionResult const &intersectionResult) cons
 	normal[2] = 4.0f * z * (sumSquared - paramSquared);
 	normal.Normalize();
 	
-	return isTransformed ? GetWorldToLocalTransposeDir(normal) : normal;
+	return isTransformed ? GetWorldToLocalTransposeDir(normal).Normalized() : normal;
 }
 
 void Torus::SamplePrimitiveLocal(Point3& resultingSample) {

@@ -32,7 +32,7 @@ public:
 	bool IntersectShadowLocal(const Ray &rayLocal, float tMin, float tMax) override;
 	
 	virtual Vector3 GetNormalWorld(IntersectionResult const &intersectionResult) const override {
-		return isTransformed ? GetWorldToLocalTransposeDir(normalVec) : normalVec;
+		return isTransformed ? GetWorldToLocalTransposeDir(normalVec).Normalized() : normalVec;
 	}
 	
 	virtual void SamplePrimitiveLocal(Point3& resultingSample) override;

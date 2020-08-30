@@ -40,7 +40,7 @@ Vector3 OpenCylinder::GetNormalWorld(IntersectionResult const &intersectionResul
 		normalVec = -normalVec;
 	}
 	normalVec.Normalize();
-	return isTransformed ? GetWorldToLocalTransposeDir(normalVec) : normalVec;
+	return isTransformed ? GetWorldToLocalTransposeDir(normalVec).Normalized() : normalVec;
 }
 
 bool OpenCylinder::TestRayAndSetTMax(const Ray &rayLocal, float tMin, float& tMax) {

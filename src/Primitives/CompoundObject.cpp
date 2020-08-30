@@ -40,7 +40,7 @@ Vector3 CompoundObject::GetNormalWorld(
 	Primitive* foundPrim = GetPrimitiveByIntersectionResult(intersectionResult);
 	Vector3 normalWorld = foundPrim != nullptr ? foundPrim->GetNormalWorld(intersectionResult)
 		: Vector3();
-	return isTransformed ? worldToLocalTranspose * normalWorld : normalWorld;
+	return isTransformed ? GetWorldToLocalTransposeDir(normalWorld).Normalized() : normalWorld;
 }
 
 Primitive* CompoundObject::GetPrimitiveByIntersectionResult(IntersectionResult const &intersectionResult) const {
