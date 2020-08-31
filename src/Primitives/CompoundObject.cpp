@@ -2,7 +2,7 @@
 #include "OpenCylinder.h"
 
 // TODO: what if compound object contains compound object? each object should transform the ray on
-// its own
+// its own. same goes for normals
 bool CompoundObject::IntersectLocal(const Ray &rayLocal, float tMin, float& tMax,
 									IntersectionResult &intersectionResult) {
 	unsigned int numElements = primitives.size();
