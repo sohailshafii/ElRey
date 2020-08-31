@@ -191,10 +191,8 @@ bool Scene::Intersect(const Ray &ray, Color &newColor,
 			else {
 				// infinite lights don't rely on normalization
 				auto lightDistanceInfinite = currentLight->IsLightDistanceInfinite();
-				// TODO: it should be clear that the scaled vector to light will be normalized
-				// for non-infinite sources
 				vectorToLight = -currentLight->GetDirectionFromPositionScaled(
-				intersectionResult);
+																			  intersectionResult);
 				if (lightDistanceInfinite) {
 					vectorMagn = std::numeric_limits<float>::max();
 				}
