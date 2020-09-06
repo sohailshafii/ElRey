@@ -1,15 +1,15 @@
 #include "CompoundObject.h"
 #include "OpenCylinder.h"
 
-// TODO: what if compound object contains compound object? each object should transform the ray on
-// its own. same goes for normals
 bool CompoundObject::IntersectLocal(const Ray &rayLocal, float tMin, float& tMax,
 									IntersectionResult &intersectionResult) {
 	unsigned int numElements = primitives.size();
 	closestPrimSoFar = nullptr;
 	for (unsigned int index = 0; index < numElements; index++) {
 		auto currPrimitive = primitives[index];
-		
+		// each primitive inside will do their own world-to-local transform
+		// because this compound object should be treated as the coordinate system, or
+		// world system, that its children live in
 		if (currPrimitive->Intersect(rayLocal, tMin, tMax, intersectionResult)) {
 			closestPrimSoFar = currPrimitive;
 		}

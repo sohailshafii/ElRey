@@ -28,6 +28,15 @@ public:
 	void Reset();
 	
 	void Superset(AABBox const & other) {
+		if (uninitialized) {
+			x0 = other.x0;
+			y0 = other.y0;
+			z0 = other.z0;
+			x1 = other.x1;
+			y1 = other.y1;
+			z1 = other.z1;
+			return;
+		}
 		x0 = x0 < other.x0 ? x0 : other.x0;
 		y0 = y0 < other.y0 ? y0 : other.y0;
 		z0 = z0 < other.z0 ? z0 : other.z0;
@@ -41,5 +50,6 @@ public:
 	float x0, y0, z0;
 	// max point
 	float x1, y1, z1;
+	bool uninitialized;
 };
 

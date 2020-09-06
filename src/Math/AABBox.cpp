@@ -5,22 +5,26 @@
 #include "CommonMath.h"
 
 AABBox::AABBox() : x0(0.0f), y0(0.0f), z0(0.0f),
-	x1(0.0f), y1(0.0f), z1(10.0f) {	
+	x1(0.0f), y1(0.0f), z1(0.0f) {
+	uninitialized = true;
 }
 
 AABBox::AABBox(const float x0, const float y0, const float z0,
 	   const float x1, const float y1, const float z1) : x0(x0),
 	y0(y0), z0(z0), x1(x1), y1(y1), z1(z1) {
+	uninitialized = false;
 }
 
 AABBox::AABBox(Point3 const & min, Point3 const & max) :
 	x0(min[0]), y0(min[1]), z0(min[2]),
 	x1(max[0]), y1(max[1]), z1(max[2]) {
+	uninitialized = false;
 }
 
 AABBox::AABBox(Point4 const & min, Point4 const & max) :
 	x0(min[0]), y0(min[1]), z0(min[2]),
 	x1(max[0]), y1(max[1]), z1(max[2]){
+	uninitialized = false;
 }
 
 bool AABBox::RayHit(Ray const& ray) const {
@@ -116,6 +120,7 @@ Point3 AABBox::GetMax() const {
 }
 
 void AABBox::Reset() {
+	uninitialized = true;
 	x0 = 0.0; y0 = 0.0f; z0 = 0.0f;
 	x1 = 0.0; y1 = 0.0f; z1 = 0.0f;
 }
