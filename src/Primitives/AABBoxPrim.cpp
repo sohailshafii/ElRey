@@ -175,8 +175,6 @@ bool AABBoxPrim::IntersectLocal(const Ray &rayLocal, float tMin, float& tMax,
 				default:
 					tempNorm = Vector3(0.0f, 0.0f, 1.0f);
 			}
-			tempNorm = isTransformed ?
-				GetWorldToLocalTransposeDir(tempNorm).Normalized() : tempNorm;
 		}
 		intersectionResult.SetIntersectionT(tMax);
 		intersectionResult.SetGenericMetadata(tempNorm[0], tempNorm[1],
@@ -281,7 +279,7 @@ bool AABBoxPrim::PointInsideLocal(Point4 const& point) const {
 			(point[2] > z0 && point[2] < z1));
 }
 
-Vector3 AABBoxPrim::GetNormalWorld(IntersectionResult const &intersectionResult) const {
+Vector3 AABBoxPrim::GetNormalLocal(IntersectionResult const &intersectionResult) const {
 	float meta1 = intersectionResult.GetGenericMetadata1();
 	float meta2 = intersectionResult.GetGenericMetadata2();
 	float meta3 = intersectionResult.GetGenericMetadata3();

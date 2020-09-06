@@ -28,7 +28,7 @@ bool OpenCylinder::IntersectShadowLocal(const Ray &rayLocal, float tMin, float t
 	return boundingBoxLocal.RayHit(rayLocal) && TestRayAndSetTMax(rayLocal, tMin, tMax);
 }
 
-Vector3 OpenCylinder::GetNormalWorld(IntersectionResult const &intersectionResult) const {
+Vector3 OpenCylinder::GetNormalLocal(IntersectionResult const &intersectionResult) const {
 	Ray const & incomingRay = intersectionResult.GetIncomingRay();
 	Vector3 rayDir = incomingRay.GetDirection();
 	Point3 intersectLocal = intersectionResult.GetIntersectionPosLocal();
@@ -40,7 +40,7 @@ Vector3 OpenCylinder::GetNormalWorld(IntersectionResult const &intersectionResul
 		normalVec = -normalVec;
 	}
 	normalVec.Normalize();
-	return isTransformed ? GetWorldToLocalTransposeDir(normalVec).Normalized() : normalVec;
+	return normalVec;
 }
 
 bool OpenCylinder::TestRayAndSetTMax(const Ray &rayLocal, float tMin, float& tMax) {

@@ -1,5 +1,32 @@
 #include "Primitive.h"
 
+bool Primitive::Intersect(const Ray &rayWorld, float tMin, float& tMax,
+	IntersectionResult &intersectionResult) {
+	Ray rayToCast = rayWorld;
+	Vector3 originalDir = rayWorld.GetDirection();
+	Point3 originalOrigin = rayWorld.GetOrigin();
+	if (isTransformed) {
+		rayToCast.SetOrigin(GetWorldToLocalPos(originalOrigin));
+		rayToCast.SetDirection(GetWorldToLocalDir(originalDir));
+	}
+	return IntersectLocal(rayToCast, tMin, tMax, intersectionResult);
+}
+
+bool Primitive::IntersectShadow(const Ray &rayWorld, float tMin, float tMax) {
+	Ray rayToCast = rayWorld;
+	Vector3 originalDir = rayWorld.GetDirection();
+	Point3 originalOrigin = rayWorld.GetOrigin();
+	if (isTransformed) {
+		rayToCast.SetOrigin(GetWorldToLocalPos(originalOrigin));
+		rayToCast.SetDirection(GetWorldToLocalDir(originalDir));
+	}
+	return IntersectShadowLocal(rayToCast, tMin, tMax);
+}
+
+Vector3 Primitive::GetNormal(IntersectionResult const &intersectionResult) const {
+	Vector3 normalLocal = GetNormalLocal(intersectionResult);
+	return isTransformed ? GetWorldToLocalTransposeDir(normalLocal).Normalized() : normalLocal;
+}
 
 void Primitive::SetLocalToWorld(Matrix4x4 const & localToWorld) {
 	this->localToWorld = localToWorld;

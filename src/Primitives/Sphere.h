@@ -21,12 +21,6 @@ public:
 		radiusSqr = radius * radius;
 		boundingBoxLocal = ComputeBoundingBoxLocal();
 	}
-
-	bool IntersectLocal(const Ray &rayLocal, float tMin, float& tMax,
-				   IntersectionResult &intersectionResult) override;
-	bool IntersectShadowLocal(const Ray &rayLocal, float tMin, float tMax) override;
-	
-	virtual Vector3 GetNormalWorld(IntersectionResult const &intersectionResult) const override;
 	
 	virtual void SamplePrimitiveLocal(Point3& resultingSample) override;
 	
@@ -42,6 +36,13 @@ public:
 	
 	virtual AABBox GetBoundingBoxWorld() const override;
 
+protected:
+	bool IntersectLocal(const Ray &rayLocal, float tMin, float& tMax,
+				   IntersectionResult &intersectionResult) override;
+	bool IntersectShadowLocal(const Ray &rayLocal, float tMin, float tMax) override;
+	
+	virtual Vector3 GetNormalLocal(IntersectionResult const &intersectionResult) const override;
+	
 private:
 	Point3 center;
 	float radius, radiusSqr;

@@ -14,32 +14,32 @@ class Primitive {
 public:
 	Primitive(std::shared_ptr<Material> const& iMaterial,
 		const std::string& iName)
-		: material(iMaterial), name(iName), isTransformed(false)
+		: material(iMaterial), isTransformed(false), name(iName)
 	{ }
 	Primitive(std::shared_ptr<Material> const& iMaterial,
 			std::shared_ptr<GenericSampler> const& iSampler,
 			const std::string& iName)
-		: material(iMaterial), sampler(iSampler), name(iName), isTransformed(false)
+		: material(iMaterial), sampler(iSampler), isTransformed(false), name(iName)
 	{ }
 
 	Primitive(std::shared_ptr<Material> && material,
 		const std::string& iName)
-		: material(std::move(material)), name(iName), isTransformed(false)
+		: material(std::move(material)), isTransformed(false), name(iName)
 	{ }
 	Primitive(std::shared_ptr<Material> && material,
 		std::shared_ptr<GenericSampler> && sampler,
 		const std::string& iName)
 		: material(std::move(material)),
-			sampler(std::move(sampler)), name(iName), isTransformed(false)
+			sampler(std::move(sampler)), isTransformed(false), name(iName)
 	{ }
 
 	virtual ~Primitive() { }
 
-	virtual bool IntersectLocal(const Ray &rayLocal, float tMin, float& tMax,
-						   IntersectionResult &intersectionResult) = 0;
-	virtual bool IntersectShadowLocal(const Ray &rayLocal, float tMin, float tMax) = 0;
+	bool Intersect(const Ray &rayWorld, float tMin, float& tMax,
+						   IntersectionResult &intersectionResult);
+	bool IntersectShadow(const Ray &rayWorld, float tMin, float tMax);
 	
-	virtual Vector3 GetNormalWorld(IntersectionResult const &intersectionResult) const = 0;
+	Vector3 GetNormal(IntersectionResult const &intersectionResult) const;
 	
 	// a compound object might have a different material per sub-object
 	virtual std::shared_ptr<Material> GetMaterial() {
@@ -115,4 +115,10 @@ protected:
 	bool isTransformed;
 
 	std::string name;
+	
+	virtual bool IntersectLocal(const Ray &rayLocal, float tMin, float& tMax,
+						   IntersectionResult &intersectionResult) = 0;
+	virtual bool IntersectShadowLocal(const Ray &rayLocal, float tMin, float tMax) = 0;
+	
+	virtual Vector3 GetNormalLocal(IntersectionResult const &intersectionResult) const = 0;
 };

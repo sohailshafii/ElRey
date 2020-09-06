@@ -23,12 +23,6 @@ public:
 	}
 	
 	void GenerateBoundingBox();
-
-	bool IntersectLocal(const Ray &rayLocal, float tMin, float& tMax,
-				   IntersectionResult &intersectionResult) override;
-	bool IntersectShadowLocal(const Ray &rayLocal, float tMin, float tMax) override;
-	
-	virtual Vector3 GetNormalWorld(IntersectionResult const &intersectionResult) const override;
 	
 	virtual void SamplePrimitiveLocal(Point3& resultingSample) override;
 	
@@ -43,6 +37,13 @@ public:
 	virtual AABBox GetBoundingBoxLocal() const override;
 
 	virtual AABBox GetBoundingBoxWorld() const override;
+	
+protected:
+	bool IntersectLocal(const Ray &rayLocal, float tMin, float& tMax,
+				   IntersectionResult &intersectionResult) override;
+	bool IntersectShadowLocal(const Ray &rayLocal, float tMin, float tMax) override;
+	
+	virtual Vector3 GetNormalLocal(IntersectionResult const &intersectionResult) const override;
 	
 private:
 	// bottom y value

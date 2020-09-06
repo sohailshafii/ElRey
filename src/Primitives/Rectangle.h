@@ -22,14 +22,6 @@ public:
 		Primitive(iMaterial, iSampler, iName), origin(iOrigin) {
 		Initialize(iSide1Vec, iSide2Vec);
 	}
-
-	bool IntersectLocal(const Ray &rayLocal, float tMin, float& tMax,
-					IntersectionResult &intersectionResult) override;
-	bool IntersectShadowLocal(const Ray &rayLocal, float tMin, float tMax) override;
-	
-	virtual Vector3 GetNormalWorld(IntersectionResult const &intersectionResult) const override {
-		return isTransformed ? GetWorldToLocalTransposeDir(normal).Normalized() : normal;
-	}
 	
 	virtual void SamplePrimitiveLocal(Point3& resultingSample) override;
 	
@@ -45,6 +37,15 @@ public:
 	
 	virtual AABBox GetBoundingBoxWorld() const override;
 
+protected:
+	bool IntersectLocal(const Ray &rayLocal, float tMin, float& tMax,
+					IntersectionResult &intersectionResult) override;
+	bool IntersectShadowLocal(const Ray &rayLocal, float tMin, float tMax) override;
+	
+	virtual Vector3 GetNormalLocal(IntersectionResult const &intersectionResult) const override {
+		return normal;
+	}
+	
 private:
 	void Initialize(const Vector3& iSide1Vec, const Vector3& iSide2Vec);
 	

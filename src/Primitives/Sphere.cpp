@@ -71,10 +71,10 @@ bool Sphere::IntersectShadowLocal(const Ray &rayLocal, float tMin, float tMax) {
 	return false;
 }
 
-Vector3 Sphere::GetNormalWorld(IntersectionResult const &intersectionResult) const {
+Vector3 Sphere::GetNormalLocal(IntersectionResult const &intersectionResult) const {
 	Vector3 normalVec = (intersectionResult.GetIntersectionPosLocal() - center);
 	normalVec.Normalize();
-	return isTransformed ? GetWorldToLocalTransposeDir(normalVec).Normalized() : normalVec;
+	return normalVec;
 }
 
 void Sphere::SamplePrimitiveLocal(Point3& resultingSample) {

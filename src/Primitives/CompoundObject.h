@@ -15,12 +15,6 @@ public:
 		const std::string& iName) :
 		Primitive(iMaterial, iName) {
 	}
-
-	bool IntersectLocal(const Ray &rayLocal, float tMin, float& tMax,
-					IntersectionResult &intersectionResult) override;
-	bool IntersectShadowLocal(const Ray &rayLocal, float tMin, float tMax) override;
-	
-	virtual Vector3 GetNormalWorld(IntersectionResult const &intersectionResult) const override;
 	
 	virtual void SamplePrimitiveLocal(Point3& resultingSample) override;
 	
@@ -47,6 +41,13 @@ public:
 	void RemovePrimitiveAtIndex(unsigned int index);
 	void RemovePrimitiveWithName(std::string const & name);
 
+protected:
+	virtual bool IntersectLocal(const Ray &rayLocal, float tMin, float& tMax,
+								IntersectionResult &intersectionResult) override;
+	virtual bool IntersectShadowLocal(const Ray &rayLocal, float tMin, float tMax) override;
+	
+	virtual Vector3 GetNormalLocal(IntersectionResult const &intersectionResult) const override;
+	
 private:
 	std::vector<Primitive*> primitives;
 	Primitive *closestPrimSoFar;

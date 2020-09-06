@@ -10,7 +10,7 @@ bool CompoundObject::IntersectLocal(const Ray &rayLocal, float tMin, float& tMax
 	for (unsigned int index = 0; index < numElements; index++) {
 		auto currPrimitive = primitives[index];
 		
-		if (currPrimitive->IntersectLocal(rayLocal, tMin, tMax, intersectionResult)) {
+		if (currPrimitive->Intersect(rayLocal, tMin, tMax, intersectionResult)) {
 			closestPrimSoFar = currPrimitive;
 		}
 	}
@@ -31,18 +31,17 @@ bool CompoundObject::IntersectShadowLocal(const Ray &rayLocal, float tMin,
 	for (unsigned int index = 0; index < numElements; index++) {
 		auto currPrimitive = primitives[index];
 		hitSomething =
-			currPrimitive->IntersectShadowLocal(rayLocal, tMin, tMax);
+			currPrimitive->IntersectShadow(rayLocal, tMin, tMax);
 	}
 	
 	return hitSomething;
 }
 
-Vector3 CompoundObject::GetNormalWorld(
-	IntersectionResult const &intersectionResult) const {
+Vector3 CompoundObject::GetNormalLocal(IntersectionResult const &intersectionResult) const {
 	Primitive* foundPrim = GetPrimitiveByIntersectionResult(intersectionResult);
-	Vector3 normalWorld = foundPrim != nullptr ? foundPrim->GetNormalWorld(intersectionResult)
+	Vector3 normalVec = foundPrim != nullptr ? foundPrim->GetNormal(intersectionResult)
 		: Vector3();
-	return isTransformed ? GetWorldToLocalTransposeDir(normalWorld).Normalized() : normalWorld;
+	return normalVec;
 }
 
 Primitive* CompoundObject::GetPrimitiveByIntersectionResult(IntersectionResult const &intersectionResult) const {

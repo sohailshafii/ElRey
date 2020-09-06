@@ -29,16 +29,10 @@ public:
 			   std::shared_ptr<GenericSampler> const & iSampler,
 			   const std::string& iName);
 	
-	bool IntersectLocal(const Ray &rayLocal, float tMin, float& tMax,
-				IntersectionResult &intersectionResult) override;
-	
-	bool IntersectShadowLocal(const Ray &rayLocal, float tMin, float tMax) override;
-	
 	bool PointInsideLocal(Point3 const& point) const;
 	
 	bool PointInsideLocal(Point4 const& point) const;
 	
-	virtual Vector3 GetNormalWorld(IntersectionResult const &intersectionResult) const override;
 	
 	virtual void SamplePrimitiveLocal(Point3& resultingSample) override;
 	
@@ -53,7 +47,14 @@ public:
 	virtual AABBox GetBoundingBoxLocal() const override;
 	
 	virtual AABBox GetBoundingBoxWorld() const override;
+
+protected:
+	virtual bool IntersectLocal(const Ray &rayLocal, float tMin, float& tMax,
+								IntersectionResult &intersectionResult) override;
 	
+	virtual bool IntersectShadowLocal(const Ray &rayLocal, float tMin, float tMax) override;
+	virtual Vector3 GetNormalLocal(IntersectionResult const &intersectionResult) const override;
+
 private:
 	enum FaceHit {
 		NegativeX = 0,

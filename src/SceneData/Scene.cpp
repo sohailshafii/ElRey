@@ -122,23 +122,11 @@ bool Scene::Intersect(const Ray &ray, Color &newColor,
 	float tMin, float& tMax) const {
 	Primitive* closestPrimitive = nullptr;
 	IntersectionResult intersectionResult;
-	Ray rayToCast = ray;
-	Vector3 originalDir = ray.GetDirection();
-	Point3 originalOrigin = ray.GetOrigin();
 	
 	for (auto currentPrimitive : primitives) {
-		// If primitive is not transformed, then its local and world transforms are one-to-one.
-		// If not, then transform ray into local space first before intersecting.
-		if (currentPrimitive->GetIsTransformed()) {
-			rayToCast.SetOrigin(currentPrimitive->GetWorldToLocalPos(originalOrigin));
-			rayToCast.SetDirection(currentPrimitive->GetWorldToLocalDir(originalDir));
-		}
-		else {
-			rayToCast = ray;
-		}
 		// TODO: intersection result stores a lot of data, it's hard to manage what is set
 		// maybe the function should make that clear
-		auto hitPrimitive = currentPrimitive->IntersectLocal(rayToCast, tMin, tMax,
+		auto hitPrimitive = currentPrimitive->Intersect(ray, tMin, tMax,
 														intersectionResult);
 		if (hitPrimitive) {
 			closestPrimitive = currentPrimitive;
@@ -155,7 +143,7 @@ bool Scene::Intersect(const Ray &ray, Color &newColor,
 		intersectionResult.SetIntersectionPositionLocal(
 														closestPrimitive->GetWorldToLocalPos(intersectionPos));
 		intersectionResult.SetIntersectionPosition(intersectionPos);
-		Vector3 normalVec = closestPrimitive->GetNormalWorld(intersectionResult);
+		Vector3 normalVec = closestPrimitive->GetNormal(intersectionResult);
 		intersectionResult.SetIntersectionNormal(normalVec);
 		
 		// ambient light if available
@@ -254,7 +242,7 @@ bool Scene::ShadowFeelerIntersectsAnObject(const Ray& ray, float tMin,
 			rayToCast = ray;
 		}
 		
-		if (currentPrimitive->IntersectShadowLocal(rayToCast, tMin, tMax))
+		if (currentPrimitive->IntersectShadow(rayToCast, tMin, tMax))
 		{
 			return true;
 		}

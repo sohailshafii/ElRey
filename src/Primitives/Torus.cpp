@@ -129,7 +129,7 @@ bool Torus::IntersectShadowLocal(const Ray &rayLocal, float tMin, float tMax) {
 	return true;
 }
 
-Vector3 Torus::GetNormalWorld(IntersectionResult const &intersectionResult) const {
+Vector3 Torus::GetNormalLocal(IntersectionResult const &intersectionResult) const {
 	Vector3 normal;
 	float paramSquared = sweptRadiusSquared + tubeRadiusSquared;
 
@@ -144,7 +144,7 @@ Vector3 Torus::GetNormalWorld(IntersectionResult const &intersectionResult) cons
 	normal[2] = 4.0f * z * (sumSquared - paramSquared);
 	normal.Normalize();
 	
-	return isTransformed ? GetWorldToLocalTransposeDir(normal).Normalized() : normal;
+	return normal;
 }
 
 void Torus::SamplePrimitiveLocal(Point3& resultingSample) {
