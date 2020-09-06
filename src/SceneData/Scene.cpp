@@ -234,15 +234,8 @@ bool Scene::ShadowFeelerIntersectsAnObject(const Ray& ray, float tMin,
 		if (currentPrimitive == primitiveToExclude) {
 			continue;
 		}
-		if (currentPrimitive->GetIsTransformed()) {
-			rayToCast.SetOrigin(currentPrimitive->GetWorldToLocalPos(originalOrigin));
-			rayToCast.SetDirection(currentPrimitive->GetWorldToLocalDir(originalDir));
-		}
-		else {
-			rayToCast = ray;
-		}
 		
-		if (currentPrimitive->IntersectShadow(rayToCast, tMin, tMax))
+		if (currentPrimitive->IntersectShadow(ray, tMin, tMax))
 		{
 			return true;
 		}
