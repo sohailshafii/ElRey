@@ -4,9 +4,8 @@
 #include "Ray.h"
 #include "CommonMath.h"
 
-AABBox::AABBox() : x0(-1.0f), y0(-1.0f), z0(-1.0f),
-x1(1.0f), y1(1.0f), z1(1.0f) {
-	
+AABBox::AABBox() : x0(0.0f), y0(0.0f), z0(0.0f),
+	x1(0.0f), y1(0.0f), z1(10.0f) {	
 }
 
 AABBox::AABBox(const float x0, const float y0, const float z0,
@@ -116,3 +115,7 @@ Point3 AABBox::GetMax() const {
 	return Point3(x1, y1, z1);
 }
 
+void AABBox::Reset() {
+	x0 = 0.0; y0 = 0.0f; z0 = 0.0f;
+	x1 = 0.0; y1 = 0.0f; z1 = 0.0f;
+}

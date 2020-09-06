@@ -26,13 +26,9 @@ public:
 		return false;
 	}
 	
-	virtual AABBox GetBoundingBoxLocal() const override {
-		return AABBox();
-	}
+	virtual AABBox GetBoundingBoxLocal() const override;
 	
-	virtual AABBox GetBoundingBoxWorld() const override {
-		return AABBox();
-	}
+	virtual AABBox GetBoundingBoxWorld() const override;
 	
 	virtual std::shared_ptr<Material> GetMaterial() override;
 	virtual const GenericSampler* GetSampler() override;
@@ -51,7 +47,9 @@ protected:
 private:
 	std::vector<Primitive*> primitives;
 	Primitive *closestPrimSoFar;
+	AABBox localBoundingBox;
 	
 	Primitive* GetPrimitiveByIntersectionResult(IntersectionResult const &intersectionResult) const;
+	void RecomputeBoundingBox();
 };
 

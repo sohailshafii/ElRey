@@ -71,12 +71,25 @@ float CompoundObject::PDF(const IntersectionResult& intersectionResult) const {
 	return foundPrim != nullptr ? foundPrim->PDF(intersectionResult) : 0.0f;
 }
 
+AABBox CompoundObject::GetBoundingBoxLocal() const {
+	return localBoundingBox;
+}
+
+AABBox CompoundObject::GetBoundingBoxWorld() const {
+	auto minPoint = localBoundingBox.GetMin();
+	auto maxPoint = localBoundingBox.GetMax();
+	return AABBox(GetLocalToWorldPos(minPoint),
+				  GetLocalToWorldPos(maxPoint));
+}
+
 void CompoundObject::AddPrimitive(Primitive * primitive) {
 	primitives.push_back(primitive);
+	RecomputeBoundingBox();
 }
 
 void CompoundObject::RemovePrimitiveAtIndex(unsigned int index) {
 	primitives.erase(primitives.begin() + index);
+	RecomputeBoundingBox();
 }
 
 void CompoundObject::RemovePrimitiveWithName(std::string const & name) {
@@ -92,6 +105,7 @@ void CompoundObject::RemovePrimitiveWithName(std::string const & name) {
 	
 	if (foundObject) {
 		RemovePrimitiveAtIndex(indexToRemove);
+		RecomputeBoundingBox();
 	}
 }
 
@@ -103,4 +117,12 @@ std::shared_ptr<Material> CompoundObject::GetMaterial() {
 const GenericSampler* CompoundObject::GetSampler() {
 	return closestPrimSoFar != nullptr ?
 	 closestPrimSoFar->GetSampler() : nullptr;
+}
+
+void CompoundObject::RecomputeBoundingBox() {
+	localBoundingBox.Reset();
+	unsigned int numElements = primitives.size();
+	for(unsigned int index = 0; index < numElements; index++) {
+		localBoundingBox.Superset(primitives[index]->GetBoundingBoxLocal());
+	}
 }
