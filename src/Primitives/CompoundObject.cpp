@@ -60,6 +60,15 @@ void CompoundObject::SamplePrimitiveLocal(Point3& resultingSample) {
 	}
 }
 
+// if there is another compound object underneath, it will
+// apply its own local to world transformation
+void CompoundObject::SamplePrimitiveWorld(Point3& resultingSample) {
+	if (closestPrimSoFar != nullptr) {
+		closestPrimSoFar->SamplePrimitiveLocal(resultingSample);
+		resultingSample = GetLocalToWorldPos(resultingSample);
+	}
+}
+
 float CompoundObject::PDF(const IntersectionResult& intersectionResult) const {
 	Primitive* foundPrim = GetPrimitiveByIntersectionResult(intersectionResult);
 	return foundPrim != nullptr ? foundPrim->PDF(intersectionResult) : 0.0f;
