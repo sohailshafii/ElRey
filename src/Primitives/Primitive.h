@@ -12,6 +12,9 @@
 
 class Primitive {
 public:
+	Primitive(std::string const & iName) : name(iName) {
+	}
+	
 	Primitive(std::shared_ptr<Material> const& iMaterial,
 			  const std::string& iName)
 		: material(iMaterial), isTransformed(false), name(iName)

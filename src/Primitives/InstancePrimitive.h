@@ -4,6 +4,8 @@
 
 class InstancePrimitive : public Primitive {
 public:
+	InstancePrimitive(std::string const & iName,
+					  std::shared_ptr<Primitive> & primitive);
 	InstancePrimitive(std::shared_ptr<Material> const& iMaterial,
 					  const std::string& iName,
 					  std::shared_ptr<Primitive> & primitive);

@@ -9,8 +9,29 @@
 #include "Primitives/OpenCylinder.h"
 #include "Primitives/Disk.h"
 #include "Primitives/CompoundObject.h"
+#include "SceneData/Scene.h"
 #include "SceneData/CommonLoaderFunctions.h"
 #include <sstream>
+
+void PrimitiveLoader::AddPrimitivesToScene(Scene* scene,
+										   nlohmann::json const & objectsArray) {
+	std::vector<nlohmann::json> instancePrimitiveJsonObjs;
+	
+	for(auto& element : objectsArray.items()) {
+		Primitive* newPrimitive = PrimitiveLoader::CreatePrimitive(element.value());
+		if (newPrimitive != nullptr) {
+			scene->AddPrimitive(newPrimitive);
+		}
+	}
+	
+	if (instancePrimitiveJsonObjs.size() > 0) {
+		unsigned int numPrimitives = scene->GetNumPrimitives();
+		for(unsigned int primIndex = 0; primIndex < numPrimitives;
+			primIndex++) {
+			
+		}
+	}
+}
 
 Primitive* PrimitiveLoader::CreateInstancePrimitive(const nlohmann::json& jsonObj) {
 	

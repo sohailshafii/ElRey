@@ -26,7 +26,7 @@
 static Camera* CreateCamera(const nlohmann::json& jsonObj);
 static Light* CreateLight(const nlohmann::json& jsonObj);
 
-void SceneLoader::DeserializeJSONFileIntoScene(class Scene* scene,
+void SceneLoader::DeserializeJSONFileIntoScene(Scene* scene,
 											   const std::string &jsonFilePath) {
 	try {
 		std::ifstream jsonFile(jsonFilePath);
@@ -41,13 +41,7 @@ void SceneLoader::DeserializeJSONFileIntoScene(class Scene* scene,
 		Camera* mainCamera = CreateCamera(cameraSettings);
 		scene->SetCamera(mainCamera);
 		
-		nlohmann::json objectsArray = jsonObj["objects"];
-		for(auto& element : objectsArray.items()) {
-			Primitive* newPrimitive = PrimitiveLoader::CreatePrimitive(element.value());
-			if (newPrimitive != nullptr) {
-				scene->AddPrimitive(newPrimitive);
-			}
-		}
+		PrimitiveLoader::AddPrimitivesToScene(scene, jsonObj["objects"]);
 
 		nlohmann::json lightsArray = jsonObj["lights"];
 		for (auto& element : lightsArray.items()) {
