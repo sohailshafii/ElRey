@@ -34,7 +34,6 @@ public:
 	virtual Vector3 GetNormal(IntersectionResult const &intersectionResult)
 		const override;
 	
-	// TODO
 protected:
 	virtual bool IntersectLocal(const Ray &rayLocal, float tMin,
 								float& tMax,

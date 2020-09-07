@@ -61,7 +61,7 @@ bool InstancePrimitive::Intersect(const Ray &rayWorld, float tMin,
 		rayToCast.SetOrigin(GetWorldToLocalPos(originalOrigin));
 		rayToCast.SetDirection(GetWorldToLocalDir(originalDir));
 	}
-	return Intersect(rayToCast, tMin, tMax, intersectionResult);
+	return instancePrimitive->Intersect(rayToCast, tMin, tMax, intersectionResult);
 }
 
 bool InstancePrimitive::IntersectShadow(const Ray &rayWorld,
@@ -73,17 +73,19 @@ bool InstancePrimitive::IntersectShadow(const Ray &rayWorld,
 		rayToCast.SetOrigin(GetWorldToLocalPos(originalOrigin));
 		rayToCast.SetDirection(GetWorldToLocalDir(originalDir));
 	}
-	return IntersectShadow(rayToCast, tMin, tMax);
+	return instancePrimitive->IntersectShadow(rayToCast, tMin, tMax);
 }
 
 Vector3 InstancePrimitive::GetNormal(IntersectionResult const &intersectionResult)
 	const {
-	Vector3 normalLocal = GetNormal(intersectionResult);
+	Vector3 normalLocal = instancePrimitive->GetNormal(intersectionResult);
 	return isTransformed ? GetWorldToLocalTransposeDir(normalLocal).Normalized() :
 		normalLocal;
 }
 
 // TODO: re-write to use transforms in one place when ready
+// primitive base class won't do any transformations but provide overridable pure
+// functions for intersect, intersect shadow, and normal calculation
 bool InstancePrimitive::IntersectLocal(const Ray &rayLocal,
 									   float tMin, float& tMax,
 									   IntersectionResult &intersectionResult) {
