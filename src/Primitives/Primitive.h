@@ -39,7 +39,7 @@ public:
 		return material;
 	}
 	
-	void SetSampler(std::shared_ptr<GenericSampler> sampler) {
+	virtual void SetSampler(std::shared_ptr<GenericSampler> sampler) {
 		this->sampler = sampler;
 	}
 	
@@ -69,6 +69,7 @@ public:
 		return isTransformed;
 	}
 	
+	// TODO: remove these transform functions once instance primitive is ready-to-go
 	virtual void SetLocalToWorld(Matrix4x4 const & localToWorld);
 	virtual void SetWorldToLocal(Matrix4x4 const & worldToLocal);
 	virtual void SetTransformAndInverse(Matrix4x4 const & localToWorld,

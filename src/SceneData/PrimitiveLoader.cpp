@@ -1,5 +1,6 @@
 
 #include "PrimitiveLoader.h"
+#include "Primitives/InstancePrimitive.h"
 #include "Primitives/Sphere.h"
 #include "Primitives/Plane.h"
 #include "Primitives/Rectangle.h"
@@ -18,24 +19,47 @@ void PrimitiveLoader::AddPrimitivesToScene(Scene* scene,
 	std::vector<nlohmann::json> instancePrimitiveJsonObjs;
 	
 	for(auto& element : objectsArray.items()) {
-		Primitive* newPrimitive = PrimitiveLoader::CreatePrimitive(element.value());
+		nlohmann::json elementJson = element.value();
+		Primitive* newPrimitive = PrimitiveLoader::CreatePrimitive(elementJson);
 		if (newPrimitive != nullptr) {
-			scene->AddPrimitive(newPrimitive);
+			// assemble instances after the rest have been assembled
+			if (CommonLoaderFunctions::HasKey(elementJson, "inst_name")) {
+				instancePrimitiveJsonObjs.push_back(elementJson);
+			}
+			else {
+				scene->AddPrimitive(newPrimitive);
+			}
 		}
 	}
 	
 	if (instancePrimitiveJsonObjs.size() > 0) {
-		unsigned int numPrimitives = scene->GetNumPrimitives();
-		for(unsigned int primIndex = 0; primIndex < numPrimitives;
-			primIndex++) {
-			
+		for(auto & instancePrimObj : instancePrimitiveJsonObjs) {
+			CreateInstancePrimitive(scene, instancePrimObj);
 		}
 	}
 }
 
-Primitive* PrimitiveLoader::CreateInstancePrimitive(const nlohmann::json& jsonObj) {
+Primitive* PrimitiveLoader::CreateInstancePrimitive(Scene* scene,
+													const nlohmann::json& jsonObj) {
+
+	Primitive* newPrimitive = nullptr;
+	std::string objectName = CommonLoaderFunctions::SafeGetToken(jsonObj, "name");
+	std::string instanceName = CommonLoaderFunctions::SafeGetToken(jsonObj, "inst_name");
+	//newPrimitive = new InstancePrimitive()
+	Primitive* originalPrimitive = nullptr;
+	unsigned int numPrimitives = scene->GetNumPrimitives();
+	for(unsigned int primIndex = 0; primIndex < numPrimitives;
+		primIndex++) {
+		Primitive *currPrimitive = scene->GetPrimitive(primIndex);
+		if (currPrimitive->GetName() == instanceName) {
+			originalPrimitive = currPrimitive;
+			break;
+		}
+	}
 	
-	return nullptr;
+	newPrimitive = new InstancePrimitive(objectName, originalPrimitive);
+	
+	return newPrimitive;
 }
 
 Primitive* PrimitiveLoader::CreatePrimitive(const nlohmann::json& jsonObj) {

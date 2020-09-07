@@ -5,14 +5,25 @@
 class InstancePrimitive : public Primitive {
 public:
 	InstancePrimitive(std::string const & iName,
-					  std::shared_ptr<Primitive> & primitive);
-	InstancePrimitive(std::shared_ptr<Material> const& iMaterial,
-					  const std::string& iName,
-					  std::shared_ptr<Primitive> & primitive);
-	InstancePrimitive(std::shared_ptr<Material> const& iMaterial,
-					  std::shared_ptr<GenericSampler> const& iSampler,
-					  const std::string& iName,
-					  std::shared_ptr<Primitive> & primitive);
+					  // don't own
+					  Primitive* primitive);
+	
+	virtual std::shared_ptr<Material> GetMaterial() override {
+		return instancePrimitive->GetMaterial();
+	}
+	
+	virtual void SetSampler(std::shared_ptr<GenericSampler> sampler) override {
+		instancePrimitive->SetSampler(sampler);
+	}
+	
+	// a compound object might have a different sampler per-subbject
+	virtual const GenericSampler* GetSampler() override {
+		return instancePrimitive->GetSampler();
+	}
+	
+	virtual float PDF(const IntersectionResult& intersectionResult) const override {
+		return instancePrimitive->PDF(intersectionResult);
+	}
 	
 	virtual void SamplePrimitiveLocal(Point3& resultingSample) override;
 	virtual void SamplePrimitiveWorld(Point3& resultingSample) override;
@@ -38,5 +49,6 @@ protected:
 								   &intersectionResult) const override;
 	
 private:
-	std::shared_ptr<Primitive> instancePrimitive;
+	// don't own
+	Primitive* instancePrimitive;
 };

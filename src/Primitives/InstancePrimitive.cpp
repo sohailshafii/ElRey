@@ -1,25 +1,8 @@
 #include "InstancePrimitive.h"
 
 InstancePrimitive::InstancePrimitive(std::string const & iName,
-									 std::shared_ptr<Primitive> & primitive) :
+									 Primitive* primitive) :
 	Primitive(iName), instancePrimitive(primitive) {
-}
-
-InstancePrimitive::InstancePrimitive(std::shared_ptr<Material> const& iMaterial,
-									 const std::string& iName,
-									 std::shared_ptr<Primitive> & primitive) :
-	Primitive(iMaterial, iName), instancePrimitive(primitive) {
-	
-}
-
-InstancePrimitive::InstancePrimitive(std::shared_ptr<Material> const&
-									 iMaterial,
-									 std::shared_ptr<GenericSampler> const& iSampler,
-									 const std::string& iName,
-									 std::shared_ptr<Primitive> & primitive) :
-									Primitive(iMaterial, iSampler, iName),
-									instancePrimitive(primitive) {
-	
 }
 
 void InstancePrimitive::SamplePrimitiveLocal(Point3& resultingSample) {

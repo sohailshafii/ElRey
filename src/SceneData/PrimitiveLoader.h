@@ -9,6 +9,7 @@ public:
 	static void AddPrimitivesToScene(class Scene* scene,
 									 nlohmann::json const & objectsArray);
 	
-	static Primitive* CreateInstancePrimitive(const nlohmann::json& jsonObj);
+	static Primitive* CreateInstancePrimitive(Scene* scene,
+											  const nlohmann::json& jsonObj);
 	static Primitive* CreatePrimitive(const nlohmann::json& jsonObj);
 };
