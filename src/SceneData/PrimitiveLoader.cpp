@@ -59,6 +59,8 @@ Primitive* PrimitiveLoader::CreateInstancePrimitive(Scene* scene,
 	
 	newPrimitive = new InstancePrimitive(objectName, originalPrimitive);
 	
+	// TODO: transforms
+	
 	return newPrimitive;
 }
 
