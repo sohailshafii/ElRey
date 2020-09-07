@@ -77,13 +77,6 @@ void Rectangle::SamplePrimitiveLocal(Point3& resultingSample) {
 		side2Vec * sampleOnSquare[1];
 }
 
-void Rectangle::SamplePrimitiveWorld(Point3& resultingSample) {
-	Point2 sampleOnSquare = sampler->GetSampleOnUnitSquare();
-	resultingSample = origin + side1Vec * sampleOnSquare[0] +
-		side2Vec * sampleOnSquare[1];
-	resultingSample = GetLocalToWorldPos(resultingSample);
-}
-
 // each sample's probability is 1.0/inverseArea
 float Rectangle::PDF(const IntersectionResult& intersectionResult) const {
 	return inverseArea;

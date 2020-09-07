@@ -72,3 +72,8 @@ Point3 Primitive::GetLocalToWorldPos(Point3 const & inPos) const {
 Point3 Primitive::GetWorldToLocalPos(Point3 const & inPos) const {
 	return worldToLocal*inPos;
 }
+
+void Primitive::SamplePrimitiveWorld(Point3& resultingSample) {
+	SamplePrimitiveLocal(resultingSample);
+	resultingSample = GetLocalToWorldPos(resultingSample);
+}

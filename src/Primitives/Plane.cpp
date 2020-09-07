@@ -47,10 +47,6 @@ void Plane::SamplePrimitiveLocal(Point3& resultingSample) {
 	// not valid for area lighting
 }
 
-void Plane::SamplePrimitiveWorld(Point3& resultingSample) {
-	// not valid for area lighting
-}
-
 float Plane::PDF(const IntersectionResult& intersectionResult) const {
 	return 1.0f; // not valid for area lighting
 }

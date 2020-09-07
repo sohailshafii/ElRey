@@ -18,8 +18,6 @@ public:
 	
 	virtual void SamplePrimitiveLocal(Point3& resultingSample) override;
 	
-	virtual void SamplePrimitiveWorld(Point3& resultingSample) override;
-	
 	virtual float PDF(const IntersectionResult& intersectionResult) const override;
 	
 	virtual bool HasBoundingBox() const override {

@@ -290,10 +290,6 @@ void AABBoxPrim::SamplePrimitiveLocal(Point3& resultingSample) {
 	// we have to sample to unit cube; leave out unless we need it
 }
 
-void AABBoxPrim::SamplePrimitiveWorld(Point3& resultingSample) {
-	// we have to sample to unit cube; leave out unless we need it
-}
-
 float AABBoxPrim::PDF(const IntersectionResult& intersectionResult) const {
 	return invVolume;
 }

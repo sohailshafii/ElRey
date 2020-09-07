@@ -89,10 +89,6 @@ void Disk::SamplePrimitiveLocal(Point3& resultingSample) {
 	// Leave out for now
 }
 
-void Disk::SamplePrimitiveWorld(Point3& resultingSample) {
-	// Leave out for now
-}
-
 float Disk::PDF(const IntersectionResult& intersectionResult) const {
 	return 1.0f; // Doesn't return a valid value because we don't use it for sampling
 }

@@ -60,12 +60,6 @@ void CompoundObject::SamplePrimitiveLocal(Point3& resultingSample) {
 	}
 }
 
-void CompoundObject::SamplePrimitiveWorld(Point3& resultingSample) {
-	if (closestPrimSoFar != nullptr) {
-		closestPrimSoFar->SamplePrimitiveWorld(resultingSample);
-	}
-}
-
 float CompoundObject::PDF(const IntersectionResult& intersectionResult) const {
 	Primitive* foundPrim = GetPrimitiveByIntersectionResult(intersectionResult);
 	return foundPrim != nullptr ? foundPrim->PDF(intersectionResult) : 0.0f;

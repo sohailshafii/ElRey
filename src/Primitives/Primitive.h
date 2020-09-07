@@ -13,33 +13,34 @@
 class Primitive {
 public:
 	Primitive(std::shared_ptr<Material> const& iMaterial,
-		const std::string& iName)
+			  const std::string& iName)
 		: material(iMaterial), isTransformed(false), name(iName)
 	{ }
 	Primitive(std::shared_ptr<Material> const& iMaterial,
-			std::shared_ptr<GenericSampler> const& iSampler,
-			const std::string& iName)
+			  std::shared_ptr<GenericSampler> const& iSampler,
+			  const std::string& iName)
 		: material(iMaterial), sampler(iSampler), isTransformed(false), name(iName)
 	{ }
 
 	Primitive(std::shared_ptr<Material> && material,
-		const std::string& iName)
+			  const std::string& iName)
 		: material(std::move(material)), isTransformed(false), name(iName)
 	{ }
 	Primitive(std::shared_ptr<Material> && material,
-		std::shared_ptr<GenericSampler> && sampler,
-		const std::string& iName)
+			  std::shared_ptr<GenericSampler> && sampler,
+			  const std::string& iName)
 		: material(std::move(material)),
 			sampler(std::move(sampler)), isTransformed(false), name(iName)
 	{ }
 
 	virtual ~Primitive() { }
 
-	bool Intersect(const Ray &rayWorld, float tMin, float& tMax,
+	// TODO: remove virtual once instance is ready to use
+	virtual bool Intersect(const Ray &rayWorld, float tMin, float& tMax,
 						   IntersectionResult &intersectionResult);
-	bool IntersectShadow(const Ray &rayWorld, float tMin, float tMax);
+	virtual bool IntersectShadow(const Ray &rayWorld, float tMin, float tMax);
 	
-	Vector3 GetNormal(IntersectionResult const &intersectionResult) const;
+	virtual Vector3 GetNormal(IntersectionResult const &intersectionResult) const;
 	
 	// a compound object might have a different material per sub-object
 	virtual std::shared_ptr<Material> GetMaterial() {
@@ -55,8 +56,9 @@ public:
 		return sampler.get();
 	}
 	
+	// TODO: remove virtual when instance primitive is ready
 	virtual void SamplePrimitiveLocal(Point3& resultingSample) = 0;
-	virtual void SamplePrimitiveWorld(Point3& resultingSample) = 0;
+	virtual void SamplePrimitiveWorld(Point3& resultingSample);
 	
 	virtual float PDF(const IntersectionResult& intersectionResult) const {
 		return 1.0f;

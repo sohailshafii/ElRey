@@ -86,10 +86,6 @@ void OpenCylinder::SamplePrimitiveLocal(Point3& resultingSample) {
 	// Leave out for now
 }
 
-void OpenCylinder::SamplePrimitiveWorld(Point3& resultingSample) {
-	// Leave out for now
-}
-
 float OpenCylinder::PDF(const IntersectionResult& intersectionResult) const {
 	return 1.0f; // Doesn't return a valid value because we don't use it for sampling
 }

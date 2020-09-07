@@ -104,10 +104,6 @@ void Triangle::SamplePrimitiveLocal(Point3& resultingSample) {
 	// Not valid; necessary for sampling if we want area lights that are spheres
 }
 
-void Triangle::SamplePrimitiveWorld(Point3& resultingSample) {
-	// Not valid; necessary for sampling if we want area lights that are spheres
-}
-
 float Triangle::PDF(const IntersectionResult& intersectionResult) const {
 	return 1.0f; // invalid until we need to use it
 }

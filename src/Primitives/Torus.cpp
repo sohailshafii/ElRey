@@ -151,10 +151,6 @@ void Torus::SamplePrimitiveLocal(Point3& resultingSample) {
 	// nothing to see here for now
 }
 
-void Torus::SamplePrimitiveWorld(Point3& resultingSample) {
-	// nothing to see here for now
-}
-
 // each sample's probability is 1.0/inverseArea
 float Torus::PDF(const IntersectionResult& intersectionResult) const {
 	return 1.0f;
