@@ -17,16 +17,6 @@ public:
 		ComputeLocalBoundingBox();
 	}
 
-	Triangle(Point3 const & p0, Point3 const & p1,
-		   Point3 const & p2,
-		   std::shared_ptr<Material> && iMaterial,
-		   const std::string& iName) : Primitive(iMaterial, iName),
-		p0(p0), p1(p1), p2(p2) {
-		normalVec = (p2-p0)^(p1-p0);
-		normalVec.Normalize();
-		ComputeLocalBoundingBox();
-	}
-
 	virtual void SamplePrimitiveLocal(Point3& resultingSample) override;
 	
 	virtual float PDF(const IntersectionResult& intersectionResult) const override;

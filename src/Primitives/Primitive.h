@@ -22,17 +22,6 @@ public:
 		: material(iMaterial), sampler(iSampler), isTransformed(false), name(iName)
 	{ }
 
-	Primitive(std::shared_ptr<Material> && material,
-			  const std::string& iName)
-		: material(std::move(material)), isTransformed(false), name(iName)
-	{ }
-	Primitive(std::shared_ptr<Material> && material,
-			  std::shared_ptr<GenericSampler> && sampler,
-			  const std::string& iName)
-		: material(std::move(material)),
-			sampler(std::move(sampler)), isTransformed(false), name(iName)
-	{ }
-
 	virtual ~Primitive() { }
 
 	// TODO: remove virtual once instance is ready to use

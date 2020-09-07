@@ -10,11 +10,6 @@ public:
 			const std::string& iName) :
 		Primitive(iMaterial, iName) {
 	}
-
-	CompoundObject(std::shared_ptr<Material> && iMaterial,
-		const std::string& iName) :
-		Primitive(iMaterial, iName) {
-	}
 	
 	virtual void SamplePrimitiveLocal(Point3& resultingSample) override;
 	virtual void SamplePrimitiveWorld(Point3& resultingSample) override;

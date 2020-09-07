@@ -12,14 +12,6 @@ public:
 					  const std::string& iName,
 					  std::shared_ptr<Primitive> & primitive);
 	
-	InstancePrimitive(std::shared_ptr<Material> && material,
-					  const std::string& iName,
-					  std::shared_ptr<Primitive> & primitive);
-	InstancePrimitive(std::shared_ptr<Material> && material,
-					  std::shared_ptr<GenericSampler> && sampler,
-					  const std::string& iName,
-					  std::shared_ptr<Primitive> & primitive);
-	
 	virtual void SamplePrimitiveLocal(Point3& resultingSample) override;
 	virtual void SamplePrimitiveWorld(Point3& resultingSample) override;
 	virtual bool HasBoundingBox() const override;

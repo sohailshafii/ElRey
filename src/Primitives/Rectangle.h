@@ -14,14 +14,6 @@ public:
 		Primitive(iMaterial, iSampler, iName), origin(iOrigin) {
 		Initialize(iSide1Vec, iSide2Vec);
 	}
-
-	Rectangle(const Point3& iOrigin, const Vector3& iSide1Vec,
-		const Vector3& iSide2Vec, std::shared_ptr<Material> && iMaterial,
-		std::shared_ptr<GenericSampler> && iSampler,
-		const std::string& iName) :
-		Primitive(iMaterial, iSampler, iName), origin(iOrigin) {
-		Initialize(iSide1Vec, iSide2Vec);
-	}
 	
 	virtual void SamplePrimitiveLocal(Point3& resultingSample) override;
 	

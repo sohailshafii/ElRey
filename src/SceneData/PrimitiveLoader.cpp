@@ -12,6 +12,11 @@
 #include "SceneData/CommonLoaderFunctions.h"
 #include <sstream>
 
+Primitive* PrimitiveLoader::CreateInstancePrimitive(const nlohmann::json& jsonObj) {
+	
+	return nullptr;
+}
+
 Primitive* PrimitiveLoader::CreatePrimitive(const nlohmann::json& jsonObj) {
 	std::string primitiveType = CommonLoaderFunctions::SafeGetToken(jsonObj, "type");
 	Primitive* newPrimitive = nullptr;

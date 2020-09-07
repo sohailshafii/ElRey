@@ -15,15 +15,6 @@ public:
 		normalVec.Normalize();
 		GenerateBoundingBox();
 	}
-
-	Disk(Point3 const & center,
-		 Vector3 const & normal, float radius,
-		 std::shared_ptr<Material> && iMaterial,
-		const std::string& iName) : Primitive(iMaterial, iName),
-		center(center), normalVec(normal), radiusSquared(radius*radius) {
-		normalVec.Normalize();
-		GenerateBoundingBox();
-	}
 	
 	void GenerateBoundingBox();
 

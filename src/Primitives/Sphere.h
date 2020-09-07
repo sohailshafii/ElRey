@@ -13,14 +13,6 @@ public:
 		radiusSqr = radius*radius;
 		boundingBoxLocal = ComputeBoundingBoxLocal();
 	}
-
-	Sphere(const Point3& iCenter, float iRadius,
-		std::shared_ptr<Material> && iMaterial,
-		const std::string& iName) : Primitive(std::move(iMaterial), iName),
-		center(iCenter), radius(iRadius) {
-		radiusSqr = radius * radius;
-		boundingBoxLocal = ComputeBoundingBoxLocal();
-	}
 	
 	virtual void SamplePrimitiveLocal(Point3& resultingSample) override;
 	

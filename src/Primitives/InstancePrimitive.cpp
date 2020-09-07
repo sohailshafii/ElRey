@@ -16,21 +16,6 @@ InstancePrimitive::InstancePrimitive(std::shared_ptr<Material> const&
 	
 }
 
-InstancePrimitive::InstancePrimitive(std::shared_ptr<Material> && material,
-									 const std::string& iName,
-									 std::shared_ptr<Primitive> & primitive) :
-	Primitive(std::move(material), iName), instancePrimitive(primitive) {
-					  
-}
-
-InstancePrimitive::InstancePrimitive(std::shared_ptr<Material> && material,
-									 std::shared_ptr<GenericSampler> && sampler,
-									 const std::string& iName,
-									 std::shared_ptr<Primitive> & primitive)  :
-	Primitive(std::move(material), std::move(sampler), iName), instancePrimitive(primitive) {
-					  
-}
-
 void InstancePrimitive::SamplePrimitiveLocal(Point3& resultingSample) {
 	instancePrimitive->SamplePrimitiveLocal(resultingSample);
 }

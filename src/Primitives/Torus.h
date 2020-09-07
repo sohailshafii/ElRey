@@ -22,15 +22,6 @@ public:
 		Initialize();
 	}
 
-	Torus(float sweptRadius, float tubeRadius,
-			  const Vector3& iSide2Vec, std::shared_ptr<Material> && iMaterial,
-			  std::shared_ptr<GenericSampler> && iSampler,
-			  const std::string& iName) :
-		Primitive(iMaterial, iSampler, iName), sweptRadius(sweptRadius),
-		tubeRadius(tubeRadius) {
-		Initialize();
-	}
-
 	virtual void SamplePrimitiveLocal(Point3& resultingSample) override;
 	
 	virtual float PDF(const IntersectionResult& intersectionResult) const override;

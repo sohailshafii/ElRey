@@ -14,13 +14,6 @@ public:
 		y0(y0), y1(y1), radius(radius), radiusSqr(radius*radius), invRadius(1.0f/radius) {
 		GenerateBoundingBox();
 	}
-
-	OpenCylinder(float y0, float y1, float radius,
-				 std::shared_ptr<Material> && iMaterial,
-				 const std::string& iName) : Primitive(iMaterial, iName),
-		y0(y0), y1(y1), radius(radius), radiusSqr(radius*radius), invRadius(1.0f/radius) {
-		GenerateBoundingBox();
-	}
 	
 	void GenerateBoundingBox();
 	

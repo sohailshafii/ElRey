@@ -12,13 +12,6 @@ public:
 		origin(iOrigin), normal(iNormal) {
 		this->distance = -origin*normal;
 	}
-
-	Plane(const Point3& iOrigin, const Vector3& iNormal,
-		std::shared_ptr<Material> && iMaterial,
-		const std::string& iName) : Primitive(iMaterial, iName),
-		origin(iOrigin), normal(iNormal) {
-		this->distance = -origin * normal;
-	}
 	
 	virtual void SamplePrimitiveLocal(Point3& resultingSample) override;
 	
