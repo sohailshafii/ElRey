@@ -69,6 +69,12 @@ void SceneLoader::DeserializeJSONFileIntoScene(Scene* scene,
 			if (foundPrimitive != nullptr) {
 				currentLight->SetPrimitive(foundPrimitive);
 			}
+			else {
+				std::stringstream exceptionMsg;
+				exceptionMsg << "Could not find primitive " << primName
+				<< " related to area light!\n";
+				throw exceptionMsg;
+			}
 		}
 	}
 }

@@ -45,13 +45,12 @@ Primitive* PrimitiveLoader::CreateInstancePrimitive(Scene* scene,
 	Primitive* newPrimitive = nullptr;
 	std::string objectName = CommonLoaderFunctions::SafeGetToken(jsonObj, "name");
 	std::string instanceName = CommonLoaderFunctions::SafeGetToken(jsonObj, "inst_name");
-	//newPrimitive = new InstancePrimitive()
+
 	Primitive* originalPrimitive = nullptr;
 	unsigned int numPrimitives = scene->GetNumPrimitives();
-	for(unsigned int primIndex = 0; primIndex < numPrimitives;
-		primIndex++) {
-		Primitive *currPrimitive = scene->GetPrimitive(primIndex);
-		if (currPrimitive->GetName() == instanceName) {
+	for(unsigned int primIndex = 0; primIndex < numPrimitives; primIndex++) {
+		Primitive *currPrimitive = scene->FindPrimitiveByName(instanceName);
+		if (currPrimitive != nullptr) {
 			originalPrimitive = currPrimitive;
 			break;
 		}
