@@ -17,22 +17,21 @@ public:
 	
 	Primitive(std::shared_ptr<Material> const& iMaterial,
 			  const std::string& iName)
-		: material(iMaterial), isTransformed(false), name(iName)
+		: material(iMaterial), name(iName)
 	{ }
 	Primitive(std::shared_ptr<Material> const& iMaterial,
 			  std::shared_ptr<GenericSampler> const& iSampler,
 			  const std::string& iName)
-		: material(iMaterial), sampler(iSampler), isTransformed(false), name(iName)
+		: material(iMaterial), sampler(iSampler), name(iName)
 	{ }
 
 	virtual ~Primitive() { }
 
-	// TODO: remove virtual once instance is ready to use
-	virtual bool Intersect(const Ray &rayWorld, float tMin, float& tMax,
-						   IntersectionResult &intersectionResult);
-	virtual bool IntersectShadow(const Ray &rayWorld, float tMin, float tMax);
+	virtual bool Intersect(const Ray &ray, float tMin, float& tMax,
+						   IntersectionResult &intersectionResult) = 0;
+	virtual bool IntersectShadow(const Ray &ray, float tMin, float tMax) = 0;
 	
-	virtual Vector3 GetNormal(IntersectionResult const &intersectionResult) const;
+	virtual Vector3 GetNormal(IntersectionResult const &intersectionResult) const = 0;
 	
 	// a compound object might have a different material per sub-object
 	virtual std::shared_ptr<Material> GetMaterial() {
@@ -48,9 +47,7 @@ public:
 		return sampler.get();
 	}
 	
-	// TODO: remove virtual when instance primitive is ready
-	virtual void SamplePrimitiveLocal(Point3& resultingSample) = 0;
-	virtual void SamplePrimitiveWorld(Point3& resultingSample);
+	virtual void SamplePrimitive(Point3& resultingSample) = 0;
 	
 	virtual float PDF(const IntersectionResult& intersectionResult) const {
 		return 1.0f;
@@ -62,58 +59,11 @@ public:
 	
 	virtual bool HasBoundingBox() const = 0;
 	
-	virtual AABBox GetBoundingBoxLocal() const = 0;
-	virtual AABBox GetBoundingBoxWorld() const = 0;
-	
-	bool GetIsTransformed() const {
-		return isTransformed;
-	}
-	
-	// TODO: remove these transform functions once instance primitive is ready-to-go
-	virtual void SetLocalToWorld(Matrix4x4 const & localToWorld);
-	virtual void SetWorldToLocal(Matrix4x4 const & worldToLocal);
-	virtual void SetTransformAndInverse(Matrix4x4 const & localToWorld,
-								Matrix4x4 const & worldToLocal);
-	
-	// compound objects might want to accumulate transforms, so
-	// make these virtual
-	virtual Vector3 GetLocalToWorldDir(Vector3 const & inDir) const;
-	virtual Vector3 GetWorldToLocalDir(Vector3 const & inDir) const;
-	virtual Vector3 GetLocalToWorldTransposeDir(Vector3 const & inDir) const;
-	virtual Vector3 GetWorldToLocalTransposeDir(Vector3 const & inDir) const;
-	
-	virtual Point3 GetLocalToWorldPos(Point3 const & inPos) const;
-	virtual Point3 GetWorldToLocalPos(Point3 const & inPos) const;
-	
-	virtual Matrix4x4 GetWorldToLocal() const {
-		return worldToLocal;
-	}
-	
-	virtual Matrix4x4 GetLocalToWorld() const {
-		return localToWorld;
-	}
-	
-	virtual Matrix4x4 GetLocalToWorldTranspose() const {
-		return localToWorldTranspose;
-	}
-	
-	virtual Matrix4x4 GetWorldToLocalTranspose() const {
-		return worldToLocalTranspose;
-	}
+	virtual AABBox GetBoundingBox() const = 0;
 
 protected:
 	std::shared_ptr<Material> material;
 	std::shared_ptr<GenericSampler> sampler;
-	
-	Matrix4x4 worldToLocal, localToWorld;
-	Matrix4x4 localToWorldTranspose, worldToLocalTranspose;
-	bool isTransformed;
 
 	std::string name;
-	
-	virtual bool IntersectLocal(const Ray &rayLocal, float tMin, float& tMax,
-						   IntersectionResult &intersectionResult) = 0;
-	virtual bool IntersectShadowLocal(const Ray &rayLocal, float tMin, float tMax) = 0;
-	
-	virtual Vector3 GetNormalLocal(IntersectionResult const &intersectionResult) const = 0;
 };
