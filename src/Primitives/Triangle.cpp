@@ -4,8 +4,8 @@
 #include <cmath>
 #include <algorithm>
 
-bool Triangle::IntersectLocal(const Ray &rayLocal, float tMin, float& tMax,
-	IntersectionResult &intersectionResult) {
+bool Triangle::Intersect(const Ray &rayLocal, float tMin, float& tMax,
+						 IntersectionResult &intersectionResult) {
 	const Point3& rayOrigin = rayLocal.GetOrigin();
 	const Vector3& rayDirection = rayLocal.GetDirection();
 	
@@ -54,7 +54,7 @@ bool Triangle::IntersectLocal(const Ray &rayLocal, float tMin, float& tMax,
 	return true;
 }
 
-bool Triangle::IntersectShadowLocal(const Ray &rayLocal, float tMin, float tMax) {
+bool Triangle::IntersectShadow(const Ray &rayLocal, float tMin, float tMax) {
 	const Point3& rayOrigin = rayLocal.GetOrigin();
 	const Vector3& rayDirection = rayLocal.GetDirection();
 	
@@ -100,7 +100,7 @@ bool Triangle::IntersectShadowLocal(const Ray &rayLocal, float tMin, float tMax)
 	return true;
 }
 
-void Triangle::SamplePrimitiveLocal(Point3& resultingSample) {
+void Triangle::SamplePrimitive(Point3& resultingSample) {
 	// Not valid; necessary for sampling if we want area lights that are spheres
 }
 
@@ -108,7 +108,7 @@ float Triangle::PDF(const IntersectionResult& intersectionResult) const {
 	return 1.0f; // invalid until we need to use it
 }
 
-AABBox Triangle::ComputeLocalBoundingBox() const {
+AABBox Triangle::ComputeBoundingBox() const {
 	Point3 minPoint = p0;
 	Point3 maxPoint = p0;
 	

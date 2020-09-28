@@ -27,19 +27,8 @@ public:
 		return false;
 	}
 	
-	virtual AABBox GetBoundingBoxLocal() const override {
+	virtual AABBox GetBoundingBox() const override {
 		return AABBox(); // not valid for planes
-	}
-	
-	virtual AABBox GetBoundingBoxWorld() const override {
-		return AABBox(); // not valid for planes
-	}
-	
-protected:
-	
-	virtual Vector3 GetNormalLocal(IntersectionResult const &intersectionResult)
-		const override {
-		return normal;
 	}
 
 private:

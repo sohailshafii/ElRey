@@ -2,8 +2,8 @@
 #include "CommonMath.h"
 #include <algorithm>
 
-bool Rectangle::IntersectLocal(const Ray &rayLocal, float tMin, float& tMax,
-					IntersectionResult &intersectionResult) {
+bool Rectangle::Intersect(const Ray &rayLocal, float tMin, float& tMax,
+						  IntersectionResult &intersectionResult) {
 	const Point3& rayOrigin = rayLocal.GetOrigin();
 	const Vector3& rayDirection = rayLocal.GetDirection();
 	float t = (origin - rayOrigin) * normal / (rayDirection * normal);
@@ -38,7 +38,7 @@ bool Rectangle::IntersectLocal(const Ray &rayLocal, float tMin, float& tMax,
 	return true;
 }
 
-bool Rectangle::IntersectShadowLocal(const Ray &rayLocal, float tMin, float tMax)
+bool Rectangle::IntersectShadow(const Ray &rayLocal, float tMin, float tMax)
 {
 	const Point3& rayOrigin = rayLocal.GetOrigin();
 	const Vector3& rayDirection = rayLocal.GetDirection();
@@ -71,7 +71,7 @@ bool Rectangle::IntersectShadowLocal(const Ray &rayLocal, float tMin, float tMax
 	return true;
 }
 
-void Rectangle::SamplePrimitiveLocal(Point3& resultingSample) {
+void Rectangle::SamplePrimitive(Point3& resultingSample) {
 	Point2 sampleOnSquare = sampler->GetSampleOnUnitSquare();
 	resultingSample = origin + side1Vec * sampleOnSquare[0] +
 		side2Vec * sampleOnSquare[1];
@@ -82,18 +82,8 @@ float Rectangle::PDF(const IntersectionResult& intersectionResult) const {
 	return inverseArea;
 }
 
-AABBox Rectangle::GetBoundingBoxLocal() const {
+AABBox Rectangle::GetBoundingBox() const {
 	return boundingBoxLocal;
-}
-
-AABBox Rectangle::GetBoundingBoxWorld() const {
-	Point3 worldSpaceMin =
-		GetLocalToWorldPos(boundingBoxLocal.GetMin());
-	Point3 worldSpaceMax =
-		GetLocalToWorldPos(boundingBoxLocal.GetMax());
-	return AABBox(worldSpaceMin[0], worldSpaceMin[1],
-				  worldSpaceMin[2], worldSpaceMax[0],
-				  worldSpaceMax[1], worldSpaceMax[2]);
 }
 
 void Rectangle::Initialize(const Vector3& iSide1Vec, const Vector3& iSide2Vec)
@@ -108,10 +98,10 @@ void Rectangle::Initialize(const Vector3& iSide1Vec, const Vector3& iSide2Vec)
 	normal = side2Vec ^ side1Vec;
 	normal.Normalize();
 	
-	boundingBoxLocal = ComputeBoundingBoxLocal();
+	boundingBoxLocal = ComputeBoundingBox();
 }
 
-AABBox Rectangle::ComputeBoundingBoxLocal() const {
+AABBox Rectangle::ComputeBoundingBox() const {
 	Point3 minPoint;
 	Point3 maxPoint;
 	

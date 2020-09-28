@@ -32,7 +32,7 @@ void Disk::GenerateBoundingBox() {
 	boundingBoxLocal = AABBox(minPoint, maxPoint);
 }
 
-bool Disk::IntersectLocal(const Ray &rayLocal, float tMin, float& tMax,
+bool Disk::Intersect(const Ray &rayLocal, float tMin, float& tMax,
 	IntersectionResult &intersectionResult) {
 	const Point3& rayOrigin = rayLocal.GetOrigin();
 	const Vector3& rayDirection = rayLocal.GetDirection();
@@ -60,7 +60,7 @@ bool Disk::IntersectLocal(const Ray &rayLocal, float tMin, float& tMax,
 	return false;
 }
 
-bool Disk::IntersectShadowLocal(const Ray &rayLocal, float tMin, float tMax) {
+bool Disk::IntersectShadow(const Ray &rayLocal, float tMin, float tMax) {
 	const Point3& rayOrigin = rayLocal.GetOrigin();
 	const Vector3& rayDirection = rayLocal.GetDirection();
 
@@ -85,7 +85,11 @@ bool Disk::IntersectShadowLocal(const Ray &rayLocal, float tMin, float tMax) {
 	return false;
 }
 
-void Disk::SamplePrimitiveLocal(Point3& resultingSample) {
+Vector3 Disk::GetNormal(IntersectionResult const &intersectionResult) const {
+	return normalVec;
+}
+
+void Disk::SamplePrimitive(Point3& resultingSample) {
 	// Leave out for now
 }
 
@@ -93,13 +97,6 @@ float Disk::PDF(const IntersectionResult& intersectionResult) const {
 	return 1.0f; // Doesn't return a valid value because we don't use it for sampling
 }
 
-AABBox Disk::GetBoundingBoxLocal() const {
+AABBox Disk::GetBoundingBox() const {
 	return boundingBoxLocal;
-}
-
-AABBox Disk::GetBoundingBoxWorld() const {
-	auto minPoint = boundingBoxLocal.GetMin();
-	auto maxPoint = boundingBoxLocal.GetMax();
-	return AABBox(GetLocalToWorldPos(minPoint),
-				  GetLocalToWorldPos(maxPoint));
 }

@@ -16,9 +16,15 @@ public:
 		GenerateBoundingBox();
 	}
 	
+	virtual bool Intersect(const Ray &ray, float tMin, float& tMax,
+						   IntersectionResult &intersectionResult) override;
+	virtual bool IntersectShadow(const Ray &ray, float tMin, float tMax) override;
+	
+	virtual Vector3 GetNormal(IntersectionResult const &intersectionResult) const override;
+	
 	void GenerateBoundingBox();
 
-	virtual void SamplePrimitiveLocal(Point3& resultingSample) override;
+	virtual void SamplePrimitive(Point3& resultingSample) override;
 	
 	virtual float PDF(const IntersectionResult& intersectionResult) const override;
 	
@@ -26,20 +32,7 @@ public:
 		return true;
 	}
 	
-	virtual AABBox GetBoundingBoxLocal() const override;
-	
-	virtual AABBox GetBoundingBoxWorld() const override;
-
-protected:
-	virtual bool IntersectLocal(const Ray &rayLocal, float tMin, float& tMax,
-								IntersectionResult &intersectionResult) override;
-	virtual bool IntersectShadowLocal(const Ray &rayLocal, float tMin, float tMax) override;
-	
-	virtual Vector3 GetNormalLocal(IntersectionResult const
-								   &intersectionResult)
-		const override {
-		return normalVec;
-	}
+	virtual AABBox GetBoundingBox() const override;
 	
 private:
 	Point3 center;
