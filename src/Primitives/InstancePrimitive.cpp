@@ -54,3 +54,21 @@ Vector3 InstancePrimitive::GetNormal(IntersectionResult const &intersectionResul
 	return //isTransformed ? GetWorldToLocalTransposeDir(normalLocal).Normalized() :
 		normalLocal;
 }
+
+void InstancePrimitive::SetLocalToWorld(Matrix4x4 const & localToWorld) {
+	this->localToWorld = localToWorld;
+	this->localToWorldTranspose = localToWorld.Transpose();
+}
+
+void InstancePrimitive::SetWorldToLocal(Matrix4x4 const & worldToLocal) {
+	this->worldToLocal = worldToLocal;
+	this->worldToLocalTranspose = worldToLocal.Transpose();
+}
+
+void InstancePrimitive::SetTransformAndInverse(Matrix4x4 const & localToWorld,
+									   Matrix4x4 const & worldToLocal) {
+	this->localToWorld = localToWorld;
+	this->localToWorldTranspose = localToWorld.Transpose();
+	this->worldToLocal = worldToLocal;
+	this->worldToLocalTranspose = worldToLocal.Transpose();
+}

@@ -57,15 +57,16 @@ Primitive* PrimitiveLoader::CreateInstancePrimitive(Scene* scene,
 	}
 	
 	newPrimitive = new InstancePrimitive(objectName, originalPrimitive);
+	InstancePrimitive* instancePrim = dynamic_cast<InstancePrimitive*>(newPrimitive);
 	if (CommonLoaderFunctions::HasKey(jsonObj, "local_to_world_matrix")) {
 		Matrix4x4 localToWorld =
 			CommonLoaderFunctions::ConstructMatrixFromJsonNode(jsonObj["local_to_world_matrix"]);
-		newPrimitive->SetLocalToWorld(localToWorld);
+		instancePrim->SetLocalToWorld(localToWorld);
 	}
 	if (CommonLoaderFunctions::HasKey(jsonObj, "world_to_local_matrix")) {
 		Matrix4x4 worldToLocal =
 			CommonLoaderFunctions::ConstructMatrixFromJsonNode(jsonObj["world_to_local_matrix"]);
-		newPrimitive->SetWorldToLocal(worldToLocal);
+		instancePrim->SetWorldToLocal(worldToLocal);
 	}
 	if (CommonLoaderFunctions::HasKey(jsonObj, "local_to_world_transform")) {
 		Matrix4x4 worldToLocal;
@@ -73,7 +74,7 @@ Primitive* PrimitiveLoader::CreateInstancePrimitive(Scene* scene,
 		CommonLoaderFunctions::SetUpTransformFromJsonNode(
 		CommonLoaderFunctions::SafeGetToken(jsonObj, "local_to_world_transform"),
 														  worldToLocal, localToWorld);
-		newPrimitive->SetTransformAndInverse(worldToLocal, localToWorld);
+		instancePrim->SetTransformAndInverse(worldToLocal, localToWorld);
 	}
 	
 	return newPrimitive;
@@ -210,28 +211,6 @@ Primitive* PrimitiveLoader::CreatePrimitive(const nlohmann::json& jsonObj) {
 		exceptionMsg << "Could not recognize type: " << primitiveType
 			<< ".\n";
 		throw exceptionMsg;
-	}
-	
-	// TODO: remove once primitive base class doesn't have transform information
-	if (newPrimitive != nullptr) {
-		if (CommonLoaderFunctions::HasKey(jsonObj, "local_to_world_matrix")) {
-			Matrix4x4 localToWorld =
-				CommonLoaderFunctions::ConstructMatrixFromJsonNode(jsonObj["local_to_world_matrix"]);
-			newPrimitive->SetLocalToWorld(localToWorld);
-		}
-		if (CommonLoaderFunctions::HasKey(jsonObj, "world_to_local_matrix")) {
-			Matrix4x4 worldToLocal =
-				CommonLoaderFunctions::ConstructMatrixFromJsonNode(jsonObj["world_to_local_matrix"]);
-			newPrimitive->SetWorldToLocal(worldToLocal);
-		}
-		if (CommonLoaderFunctions::HasKey(jsonObj, "local_to_world_transform")) {
-			Matrix4x4 worldToLocal;
-			Matrix4x4 localToWorld;
-			CommonLoaderFunctions::SetUpTransformFromJsonNode(
-			CommonLoaderFunctions::SafeGetToken(jsonObj, "local_to_world_transform"),
-															  worldToLocal, localToWorld);
-			newPrimitive->SetTransformAndInverse(worldToLocal, localToWorld);
-		}
 	}
 	
 	return newPrimitive;

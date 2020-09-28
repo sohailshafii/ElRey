@@ -140,6 +140,7 @@ bool Scene::Intersect(const Ray &ray, Color &newColor,
 		intersectionResult.SetIncomingRay(ray);
 		auto intersectionPos = ray.GetPositionAtParam(tMax);
 		intersectionResult.SetIntersectionT(tMax);
+		// TODO:
 		intersectionResult.SetIntersectionPositionLocal(
 														closestPrimitive->GetWorldToLocalPos(intersectionPos));
 		intersectionResult.SetIntersectionPosition(intersectionPos);

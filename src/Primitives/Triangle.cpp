@@ -144,13 +144,6 @@ AABBox Triangle::ComputeBoundingBox() const {
 	return AABBox(minPoint, maxPoint);
 }
 
-AABBox Triangle::GetBoundingBoxLocal() const {
+AABBox Triangle::GetBoundingBox() const {
 	return boundingBox;
-}
-
-AABBox Triangle::GetBoundingBoxWorld() const {
-	auto minPoint = boundingBox.GetMin();
-	auto maxPoint = boundingBox.GetMax();
-	return AABBox(GetLocalToWorldPos(minPoint),
-				  GetLocalToWorldPos(maxPoint));
 }

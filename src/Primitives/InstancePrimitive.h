@@ -36,7 +36,15 @@ public:
 	
 	virtual AABBox GetBoundingBox() const override;
 	
+	virtual void SetLocalToWorld(Matrix4x4 const & localToWorld);
+	virtual void SetWorldToLocal(Matrix4x4 const & worldToLocal);
+	virtual void SetTransformAndInverse(Matrix4x4 const & localToWorld,
+										Matrix4x4 const & worldToLocal);
+	
 private:
 	// don't own
 	Primitive* instancePrimitive;
+	
+	Matrix4x4 worldToLocal, localToWorld;
+	Matrix4x4 localToWorldTranspose, worldToLocalTranspose;
 };

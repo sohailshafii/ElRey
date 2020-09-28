@@ -60,6 +60,13 @@ public:
 	virtual bool HasBoundingBox() const = 0;
 	
 	virtual AABBox GetBoundingBox() const = 0;
+	
+	// by default this point is untransformed, but instance primitive transforms it
+	// kind of a hack, but put in this class so that the scene intersection code can
+	// distinguish between local and world intersections
+	virtual Point3 GetWorldToLocalPos(Point3 const & intersectionPos) const {
+		return intersectionPos;
+	}
 
 protected:
 	std::shared_ptr<Material> material;

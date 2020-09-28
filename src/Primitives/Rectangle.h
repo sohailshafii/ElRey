@@ -19,7 +19,9 @@ public:
 						   IntersectionResult &intersectionResult) override;
 	virtual bool IntersectShadow(const Ray &ray, float tMin, float tMax) override;
 	
-	virtual Vector3 GetNormal(IntersectionResult const &intersectionResult) const override;
+	virtual Vector3 GetNormal(IntersectionResult const &intersectionResult) const override {
+		return normal;
+	}
 	
 	virtual void SamplePrimitive(Point3& resultingSample) override;
 	

@@ -18,7 +18,7 @@ AreaLight::~AreaLight() {
 Vector3 AreaLight::GetDirectionFromPositionScaled(
 	const IntersectionResult& intersectionRes) const {
 	Point3 primitiveSample;
-	primitive->SamplePrimitiveWorld(primitiveSample);
+	primitive->SamplePrimitive(primitiveSample);
 	Vector3 lightDirection = intersectionRes.GetIntersectionPos() -
 		primitiveSample;
 	return lightDirection;
@@ -27,7 +27,7 @@ Vector3 AreaLight::GetDirectionFromPositionScaled(
 void AreaLight::ComputeAndStoreAreaLightInformation(
 	IntersectionResult& intersectionRes) const {
 	Point3 lightPrimitiveSample;
-	primitive->SamplePrimitiveWorld(lightPrimitiveSample);
+	primitive->SamplePrimitive(lightPrimitiveSample);
 	
 	auto oldIntersection = intersectionRes.GetIntersectionPos();
 	// set intersection position to calculate correct sample

@@ -34,7 +34,6 @@ public:
 	}
 	
 	virtual AABBox GetBoundingBox() const override;
-	}
 
 private:
 	Point3 p0, p1, p2;

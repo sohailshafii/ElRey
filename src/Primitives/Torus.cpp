@@ -4,8 +4,8 @@
 #include <limits>
 
 // use doubles for accuracy
-bool Torus::IntersectLocal(const Ray &rayLocal, float tMin, float& tMax,
-					IntersectionResult &intersectionResult) {
+bool Torus::Intersect(const Ray &rayLocal, float tMin, float& tMax,
+					  IntersectionResult &intersectionResult) {
 	if (!boundingBox.RayHit(rayLocal)) {
 		return false;
 	}
@@ -69,7 +69,7 @@ bool Torus::IntersectLocal(const Ray &rayLocal, float tMin, float& tMax,
 	return true;
 }
 
-bool Torus::IntersectShadowLocal(const Ray &rayLocal, float tMin, float tMax) {
+bool Torus::IntersectShadow(const Ray &rayLocal, float tMin, float tMax) {
 	if (!boundingBox.RayHit(rayLocal)) {
 		return false;
 	}
@@ -129,7 +129,7 @@ bool Torus::IntersectShadowLocal(const Ray &rayLocal, float tMin, float tMax) {
 	return true;
 }
 
-Vector3 Torus::GetNormalLocal(IntersectionResult const &intersectionResult) const {
+Vector3 Torus::GetNormal(IntersectionResult const &intersectionResult) const {
 	Vector3 normal;
 	float paramSquared = sweptRadiusSquared + tubeRadiusSquared;
 
@@ -147,7 +147,7 @@ Vector3 Torus::GetNormalLocal(IntersectionResult const &intersectionResult) cons
 	return normal;
 }
 
-void Torus::SamplePrimitiveLocal(Point3& resultingSample) {
+void Torus::SamplePrimitive(Point3& resultingSample) {
 	// nothing to see here for now
 }
 
@@ -156,15 +156,8 @@ float Torus::PDF(const IntersectionResult& intersectionResult) const {
 	return 1.0f;
 }
 
-AABBox Torus::GetBoundingBoxLocal() const {
+AABBox Torus::GetBoundingBox() const {
 	return boundingBox;
-}
-
-AABBox Torus::GetBoundingBoxWorld() const {
-	auto minPoint = boundingBox.GetMin();
-	auto maxPoint = boundingBox.GetMax();
-	return AABBox(GetLocalToWorldPos(minPoint),
-				  GetLocalToWorldPos(maxPoint));
 }
 
 void Torus::Initialize() {
