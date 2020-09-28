@@ -29,6 +29,9 @@ bool InstancePrimitive::Intersect(const Ray &rayWorld, float tMin,
 	Point3 originalOrigin = rayWorld.GetOrigin();
 	rayToCast.SetOrigin(GetWorldToLocalPos(originalOrigin));
 	rayToCast.SetDirection(GetWorldToLocalDir(originalDir));
+	// TODO: make sure intersect ONLY touches certain things.
+	// right now it doesn't enforce the rule that intersection position needs to be
+	// set elsewhere. a primitive can modify it
 	return instancePrimitive->Intersect(rayToCast, tMin, tMax, intersectionResult);
 }
 
