@@ -11,18 +11,21 @@ public:
 		Primitive(iMaterial, iName) {
 	}
 	
-	virtual void SamplePrimitiveLocal(Point3& resultingSample) override;
-	virtual void SamplePrimitiveWorld(Point3& resultingSample) override;
+	virtual bool Intersect(const Ray &ray, float tMin, float& tMax,
+						   IntersectionResult &intersectionResult) override;
+	virtual bool IntersectShadow(const Ray &ray, float tMin, float tMax) override;
 	
+	virtual Vector3 GetNormal(IntersectionResult const &intersectionResult) const override;
+	
+	virtual void SamplePrimitive(Point3& resultingSample) override;
+		
 	virtual float PDF(const IntersectionResult& intersectionResult) const override;
 	
 	virtual bool HasBoundingBox() const override {
 		return false;
 	}
 	
-	virtual AABBox GetBoundingBoxLocal() const override;
-	
-	virtual AABBox GetBoundingBoxWorld() const override;
+	virtual AABBox GetBoundingBox() const override;
 	
 	virtual std::shared_ptr<Material> GetMaterial() override;
 	virtual const GenericSampler* GetSampler() override;
@@ -30,18 +33,11 @@ public:
 	void AddPrimitive(Primitive * primitive);
 	void RemovePrimitiveAtIndex(unsigned int index);
 	void RemovePrimitiveWithName(std::string const & name);
-
-protected:
-	virtual bool IntersectLocal(const Ray &rayLocal, float tMin, float& tMax,
-								IntersectionResult &intersectionResult) override;
-	virtual bool IntersectShadowLocal(const Ray &rayLocal, float tMin, float tMax) override;
-	
-	virtual Vector3 GetNormalLocal(IntersectionResult const &intersectionResult) const override;
 	
 private:
 	std::vector<Primitive*> primitives;
 	Primitive *closestPrimSoFar;
-	AABBox localBoundingBox;
+	AABBox boundingBox;
 	
 	Primitive* GetPrimitiveByIntersectionResult(IntersectionResult const &intersectionResult) const;
 	void RecomputeBoundingBox();

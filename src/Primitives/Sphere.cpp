@@ -5,8 +5,8 @@
 #include <cmath>
 #include <iostream>
 
-bool Sphere::IntersectLocal(const Ray &rayLocal, float tMin, float& tMax,
-	IntersectionResult &intersectionResult) {
+bool Sphere::Intersect(const Ray &rayLocal, float tMin, float& tMax,
+					   IntersectionResult &intersectionResult) {
 	const Point3& rayOrigin = rayLocal.GetOrigin();
 	const Vector3& rayDirection = rayLocal.GetDirection();
 
@@ -41,7 +41,7 @@ bool Sphere::IntersectLocal(const Ray &rayLocal, float tMin, float& tMax,
 	return false;
 }
 
-bool Sphere::IntersectShadowLocal(const Ray &rayLocal, float tMin, float tMax) {
+bool Sphere::IntersectShadow(const Ray &rayLocal, float tMin, float tMax) {
 	const Point3& rayOrigin = rayLocal.GetOrigin();
 	const Vector3& rayDirection = rayLocal.GetDirection();
 
@@ -71,13 +71,13 @@ bool Sphere::IntersectShadowLocal(const Ray &rayLocal, float tMin, float tMax) {
 	return false;
 }
 
-Vector3 Sphere::GetNormalLocal(IntersectionResult const &intersectionResult) const {
+Vector3 Sphere::GetNormal(IntersectionResult const &intersectionResult) const {
 	Vector3 normalVec = (intersectionResult.GetIntersectionPosLocal() - center);
 	normalVec.Normalize();
 	return normalVec;
 }
 
-void Sphere::SamplePrimitiveLocal(Point3& resultingSample) {
+void Sphere::SamplePrimitive(Point3& resultingSample) {
 	// Not valid; necessary for sampling if we want area lights that are spheres
 }
 
@@ -85,18 +85,8 @@ float Sphere::PDF(const IntersectionResult& intersectionResult) const {
 	return 1.0f; // invalid until we need to use it
 }
 
-AABBox Sphere::GetBoundingBoxLocal() const {
+AABBox Sphere::GetBoundingBox() const {
 	return boundingBoxLocal;
-}
-
-AABBox Sphere::GetBoundingBoxWorld() const {
-	Point3 worldSpaceMin =
-		GetLocalToWorldPos(boundingBoxLocal.GetMin());
-	Point3 worldSpaceMax =
-		GetLocalToWorldPos(boundingBoxLocal.GetMax());
-	return AABBox(worldSpaceMin[0], worldSpaceMin[1],
-				  worldSpaceMin[2], worldSpaceMax[0],
-				  worldSpaceMax[1], worldSpaceMax[2]);
 }
 
 AABBox Sphere::ComputeBoundingBoxLocal() const {

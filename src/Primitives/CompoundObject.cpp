@@ -1,8 +1,8 @@
 #include "CompoundObject.h"
 #include "OpenCylinder.h"
 
-bool CompoundObject::IntersectLocal(const Ray &rayLocal, float tMin, float& tMax,
-									IntersectionResult &intersectionResult) {
+bool CompoundObject::Intersect(const Ray &rayLocal, float tMin, float& tMax,
+							   IntersectionResult &intersectionResult) {
 	unsigned int numElements = primitives.size();
 	closestPrimSoFar = nullptr;
 	for (unsigned int index = 0; index < numElements; index++) {
@@ -23,8 +23,8 @@ bool CompoundObject::IntersectLocal(const Ray &rayLocal, float tMin, float& tMax
 	return false;
 }
 
-bool CompoundObject::IntersectShadowLocal(const Ray &rayLocal, float tMin,
-										  float tMax) {
+bool CompoundObject::IntersectShadow(const Ray &rayLocal, float tMin,
+									 float tMax) {
 	unsigned int numElements = primitives.size();
 	bool hitSomething = false;
 	
@@ -37,7 +37,7 @@ bool CompoundObject::IntersectShadowLocal(const Ray &rayLocal, float tMin,
 	return hitSomething;
 }
 
-Vector3 CompoundObject::GetNormalLocal(IntersectionResult const &intersectionResult) const {
+Vector3 CompoundObject::GetNormal(IntersectionResult const &intersectionResult) const {
 	Primitive* foundPrim = GetPrimitiveByIntersectionResult(intersectionResult);
 	Vector3 normalVec = foundPrim != nullptr ? foundPrim->GetNormal(intersectionResult)
 		: Vector3();
@@ -54,18 +54,9 @@ Primitive* CompoundObject::GetPrimitiveByIntersectionResult(IntersectionResult c
 	return nullptr;
 }
 
-void CompoundObject::SamplePrimitiveLocal(Point3& resultingSample) {
+void CompoundObject::SamplePrimitive(Point3& resultingSample) {
 	if (closestPrimSoFar != nullptr) {
-		closestPrimSoFar->SamplePrimitiveLocal(resultingSample);
-	}
-}
-
-// if there is another compound object underneath, it will
-// apply its own local to world transformation
-void CompoundObject::SamplePrimitiveWorld(Point3& resultingSample) {
-	if (closestPrimSoFar != nullptr) {
-		closestPrimSoFar->SamplePrimitiveLocal(resultingSample);
-		resultingSample = GetLocalToWorldPos(resultingSample);
+		closestPrimSoFar->SamplePrimitive(resultingSample);
 	}
 }
 
@@ -74,15 +65,8 @@ float CompoundObject::PDF(const IntersectionResult& intersectionResult) const {
 	return foundPrim != nullptr ? foundPrim->PDF(intersectionResult) : 0.0f;
 }
 
-AABBox CompoundObject::GetBoundingBoxLocal() const {
-	return localBoundingBox;
-}
-
-AABBox CompoundObject::GetBoundingBoxWorld() const {
-	auto minPoint = localBoundingBox.GetMin();
-	auto maxPoint = localBoundingBox.GetMax();
-	return AABBox(GetLocalToWorldPos(minPoint),
-				  GetLocalToWorldPos(maxPoint));
+AABBox CompoundObject::GetBoundingBox() const {
+	return boundingBox;
 }
 
 void CompoundObject::AddPrimitive(Primitive * primitive) {
@@ -123,9 +107,9 @@ const GenericSampler* CompoundObject::GetSampler() {
 }
 
 void CompoundObject::RecomputeBoundingBox() {
-	localBoundingBox.Reset();
+	boundingBox.Reset();
 	unsigned int numElements = primitives.size();
 	for(unsigned int index = 0; index < numElements; index++) {
-		localBoundingBox.Superset(primitives[index]->GetBoundingBoxLocal());
+		boundingBox.Superset(primitives[index]->GetBoundingBox());
 	}
 }

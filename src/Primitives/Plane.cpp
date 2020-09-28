@@ -1,7 +1,7 @@
 #include "Plane.h"
 #include "CommonMath.h"
 
-bool Plane::IntersectLocal(const Ray &rayLocal, float tMin, float& tMax,
+bool Plane::Intersect(const Ray &rayLocal, float tMin, float& tMax,
 					  IntersectionResult &intersectionResult) {
 	const Point3& rayOrigin = rayLocal.GetOrigin();
 	const Vector3& rayDirection = rayLocal.GetDirection();
@@ -23,7 +23,7 @@ bool Plane::IntersectLocal(const Ray &rayLocal, float tMin, float& tMax,
 	return true;
 }
 
-bool Plane::IntersectShadowLocal(const Ray &rayLocal, float tMin, float tMax)
+bool Plane::IntersectShadow(const Ray &rayLocal, float tMin, float tMax)
 {
 	const Point3& rayOrigin = rayLocal.GetOrigin();
 	const Vector3& rayDirection = rayLocal.GetDirection();
@@ -43,7 +43,11 @@ bool Plane::IntersectShadowLocal(const Ray &rayLocal, float tMin, float tMax)
 	return true;
 }
 
-void Plane::SamplePrimitiveLocal(Point3& resultingSample) {
+Vector3 Plane::GetNormal(IntersectionResult const &intersectionResult) const {
+	return normal;
+}
+
+void Plane::SamplePrimitive(Point3& resultingSample) {
 	// not valid for area lighting
 }
 

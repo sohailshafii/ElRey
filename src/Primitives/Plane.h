@@ -13,7 +13,13 @@ public:
 		this->distance = -origin*normal;
 	}
 	
-	virtual void SamplePrimitiveLocal(Point3& resultingSample) override;
+	virtual bool Intersect(const Ray &ray, float tMin, float& tMax,
+						   IntersectionResult &intersectionResult) override;
+	virtual bool IntersectShadow(const Ray &ray, float tMin, float tMax) override;
+	
+	virtual Vector3 GetNormal(IntersectionResult const &intersectionResult) const override;
+	
+	virtual void SamplePrimitive(Point3& resultingSample) override;
 	
 	virtual float PDF(const IntersectionResult& intersectionResult) const override;
 	
@@ -30,9 +36,6 @@ public:
 	}
 	
 protected:
-	bool IntersectLocal(const Ray &rayLocal, float tMin, float& tMax,
-						IntersectionResult &intersectionResult) override;
-	bool IntersectShadowLocal(const Ray &rayLocal, float tMin, float tMax) override;
 	
 	virtual Vector3 GetNormalLocal(IntersectionResult const &intersectionResult)
 		const override {

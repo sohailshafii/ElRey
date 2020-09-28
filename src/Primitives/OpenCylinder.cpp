@@ -10,8 +10,8 @@ void OpenCylinder::GenerateBoundingBox() {
 							  radius, y1, radius);
 }
 
-bool OpenCylinder::IntersectLocal(const Ray &rayLocal, float tMin, float& tMax,
-	IntersectionResult &intersectionResult) {
+bool OpenCylinder::Intersect(const Ray &rayLocal, float tMin, float& tMax,
+							 IntersectionResult &intersectionResult) {
 	if (!boundingBoxLocal.RayHit(rayLocal)) {
 		return false;
 	}
@@ -24,11 +24,11 @@ bool OpenCylinder::IntersectLocal(const Ray &rayLocal, float tMin, float& tMax,
 	return false;
 }
 
-bool OpenCylinder::IntersectShadowLocal(const Ray &rayLocal, float tMin, float tMax) {
+bool OpenCylinder::IntersectShadow(const Ray &rayLocal, float tMin, float tMax) {
 	return boundingBoxLocal.RayHit(rayLocal) && TestRayAndSetTMax(rayLocal, tMin, tMax);
 }
 
-Vector3 OpenCylinder::GetNormalLocal(IntersectionResult const &intersectionResult) const {
+Vector3 OpenCylinder::GetNormal(IntersectionResult const &intersectionResult) const {
 	Ray const & incomingRay = intersectionResult.GetIncomingRay();
 	Vector3 rayDir = incomingRay.GetDirection();
 	Point3 intersectLocal = intersectionResult.GetIntersectionPosLocal();
@@ -82,7 +82,7 @@ bool OpenCylinder::TestRayAndSetTMax(const Ray &rayLocal, float tMin, float& tMa
 	return false;
 }
 
-void OpenCylinder::SamplePrimitiveLocal(Point3& resultingSample) {
+void OpenCylinder::SamplePrimitive(Point3& resultingSample) {
 	// Leave out for now
 }
 
@@ -90,16 +90,6 @@ float OpenCylinder::PDF(const IntersectionResult& intersectionResult) const {
 	return 1.0f; // Doesn't return a valid value because we don't use it for sampling
 }
 
-AABBox OpenCylinder::GetBoundingBoxLocal() const {
+AABBox OpenCylinder::GetBoundingBox() const {
 	return boundingBoxLocal;
-}
-
-AABBox OpenCylinder::GetBoundingBoxWorld() const {
-	if (!isTransformed) {
-		return boundingBoxLocal;
-	}
-	auto boundingBoxMin = boundingBoxLocal.GetMin();
-	auto boundingBoxMax = boundingBoxLocal.GetMax();
-	return AABBox(GetLocalToWorldPos(boundingBoxMin),
-				  GetLocalToWorldPos(boundingBoxMax));
 }
