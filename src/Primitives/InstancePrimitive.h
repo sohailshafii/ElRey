@@ -36,10 +36,34 @@ public:
 	
 	virtual AABBox GetBoundingBox() const override;
 	
-	virtual void SetLocalToWorld(Matrix4x4 const & localToWorld);
-	virtual void SetWorldToLocal(Matrix4x4 const & worldToLocal);
-	virtual void SetTransformAndInverse(Matrix4x4 const & localToWorld,
-										Matrix4x4 const & worldToLocal);
+	void SetLocalToWorld(Matrix4x4 const & localToWorld);
+	void SetWorldToLocal(Matrix4x4 const & worldToLocal);
+	void SetTransformAndInverse(Matrix4x4 const & localToWorld,
+								Matrix4x4 const & worldToLocal);
+	
+	Vector3 GetLocalToWorldDir(Vector3 const & inDir) const;
+	Vector3 GetWorldToLocalDir(Vector3 const & inDir) const;
+	Vector3 GetLocalToWorldTransposeDir(Vector3 const & inDir) const;
+	Vector3 GetWorldToLocalTransposeDir(Vector3 const & inDir) const;
+	
+	Point3 GetLocalToWorldPos(Point3 const & inPos) const;
+	Point3 GetWorldToLocalPos(Point3 const & inPos) const;
+	
+	virtual Matrix4x4 GetWorldToLocal() const {
+		return worldToLocal;
+	}
+	
+	virtual Matrix4x4 GetLocalToWorld() const {
+		return localToWorld;
+	}
+	
+	virtual Matrix4x4 GetLocalToWorldTranspose() const {
+		return localToWorldTranspose;
+	}
+	
+	virtual Matrix4x4 GetWorldToLocalTranspose() const {
+		return worldToLocalTranspose;
+	}
 	
 private:
 	// don't own

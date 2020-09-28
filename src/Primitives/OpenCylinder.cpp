@@ -31,7 +31,7 @@ bool OpenCylinder::IntersectShadow(const Ray &rayLocal, float tMin, float tMax) 
 Vector3 OpenCylinder::GetNormal(IntersectionResult const &intersectionResult) const {
 	Ray const & incomingRay = intersectionResult.GetIncomingRay();
 	Vector3 rayDir = incomingRay.GetDirection();
-	Point3 intersectLocal = intersectionResult.GetIntersectionPosLocal();
+	Point3 intersectLocal = intersectionResult.GetIntersectionPos();
 	Vector3 normalVec = Vector3(intersectLocal[0]*invRadius, 0.0f,
 								intersectLocal[2]*invRadius);
 	

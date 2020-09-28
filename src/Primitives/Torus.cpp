@@ -133,7 +133,7 @@ Vector3 Torus::GetNormal(IntersectionResult const &intersectionResult) const {
 	Vector3 normal;
 	float paramSquared = sweptRadiusSquared + tubeRadiusSquared;
 
-	auto intersecPos = intersectionResult.GetIntersectionPosLocal();
+	auto intersecPos = intersectionResult.GetIntersectionPos();
 	float x = intersecPos[0];
 	float y = intersecPos[1];
 	float z = intersecPos[2];

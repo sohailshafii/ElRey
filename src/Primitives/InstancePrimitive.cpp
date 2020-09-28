@@ -6,18 +6,20 @@ InstancePrimitive::InstancePrimitive(std::string const & iName,
 }
 
 void InstancePrimitive::SamplePrimitive(Point3& resultingSample) {
-	// TODO: transform
+	resultingSample = GetLocalToWorldPos(resultingSample);
 	instancePrimitive->SamplePrimitive(resultingSample);
 }
 
 bool InstancePrimitive::HasBoundingBox() const {
-	// TODO: transform
 	return instancePrimitive->HasBoundingBox();
 }
 
 AABBox InstancePrimitive::GetBoundingBox() const {
-	// TODO: transform
-	return instancePrimitive->GetBoundingBox();
+	AABBox localBoundingBox = instancePrimitive->GetBoundingBox();
+	auto minPoint = localBoundingBox.GetMin();
+	auto maxPoint = localBoundingBox.GetMax();
+	return AABBox(GetLocalToWorldPos(minPoint),
+				  GetLocalToWorldPos(maxPoint));
 }
 bool InstancePrimitive::Intersect(const Ray &rayWorld, float tMin,
 								  float& tMax,
@@ -25,11 +27,8 @@ bool InstancePrimitive::Intersect(const Ray &rayWorld, float tMin,
 	Ray rayToCast = rayWorld;
 	Vector3 originalDir = rayWorld.GetDirection();
 	Point3 originalOrigin = rayWorld.GetOrigin();
-	// TODO: transform
-	/*if (isTransformed) {
-		rayToCast.SetOrigin(GetWorldToLocalPos(originalOrigin));
-		rayToCast.SetDirection(GetWorldToLocalDir(originalDir));
-	}*/
+	rayToCast.SetOrigin(GetWorldToLocalPos(originalOrigin));
+	rayToCast.SetDirection(GetWorldToLocalDir(originalDir));
 	return instancePrimitive->Intersect(rayToCast, tMin, tMax, intersectionResult);
 }
 
@@ -38,21 +37,19 @@ bool InstancePrimitive::IntersectShadow(const Ray &rayWorld,
 	Ray rayToCast = rayWorld;
 	Vector3 originalDir = rayWorld.GetDirection();
 	Point3 originalOrigin = rayWorld.GetOrigin();
-	// TODO: transform
-	/*if (isTransformed) {
-		rayToCast.SetOrigin(GetWorldToLocalPos(originalOrigin));
-		rayToCast.SetDirection(GetWorldToLocalDir(originalDir));
-	}*/
+	rayToCast.SetOrigin(GetWorldToLocalPos(originalOrigin));
+	rayToCast.SetDirection(GetWorldToLocalDir(originalDir));
 	return instancePrimitive->IntersectShadow(rayToCast, tMin, tMax);
 }
 
 Vector3 InstancePrimitive::GetNormal(IntersectionResult const &intersectionResult)
 	const {
-	Vector3 normalLocal = instancePrimitive->GetNormal(intersectionResult);
-		
-		// TODO: transform
-	return //isTransformed ? GetWorldToLocalTransposeDir(normalLocal).Normalized() :
-		normalLocal;
+	// hack; modify intersection position so that primitive thinks its in local space
+	IntersectionResult resModified = intersectionResult;
+	resModified.SetIntersectionPosition(GetWorldToLocalPos(intersectionResult.GetIntersectionPos()));
+	Vector3 normalLocal = instancePrimitive->GetNormal(resModified);
+
+	return GetWorldToLocalTransposeDir(normalLocal).Normalized();
 }
 
 void InstancePrimitive::SetLocalToWorld(Matrix4x4 const & localToWorld) {
@@ -71,4 +68,28 @@ void InstancePrimitive::SetTransformAndInverse(Matrix4x4 const & localToWorld,
 	this->localToWorldTranspose = localToWorld.Transpose();
 	this->worldToLocal = worldToLocal;
 	this->worldToLocalTranspose = worldToLocal.Transpose();
+}
+
+Vector3 InstancePrimitive::GetLocalToWorldDir(Vector3 const & inDir) const {
+	return localToWorld*inDir;
+}
+
+Vector3 InstancePrimitive::GetWorldToLocalDir(Vector3 const & inDir) const {
+	return worldToLocal*inDir;
+}
+
+Vector3 InstancePrimitive::GetLocalToWorldTransposeDir(Vector3 const & inDir) const {
+	return localToWorldTranspose*inDir;
+}
+
+Vector3 InstancePrimitive::GetWorldToLocalTransposeDir(Vector3 const & inDir) const {
+	return worldToLocalTranspose*inDir;
+}
+
+Point3 InstancePrimitive::GetLocalToWorldPos(Point3 const & inPos) const {
+	return localToWorld*inPos;
+}
+
+Point3 InstancePrimitive::GetWorldToLocalPos(Point3 const & inPos) const {
+	return worldToLocal*inPos;
 }

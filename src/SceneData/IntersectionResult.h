@@ -46,10 +46,6 @@ public:
 		this->intersectionPosition = intersectionPos;
 	}
 	
-	void SetIntersectionPositionLocal(const Point3& intersectionPosLocal) {
-		this->intersectionPosLocal = intersectionPosLocal;
-	}
-	
 	void SetIntersectionT(float rayIntersectT) {
 		this->rayIntersectT = rayIntersectT;
 	}
@@ -97,10 +93,6 @@ public:
 		return intersectionPosition;
 	}
 	
-	Point3 GetIntersectionPosLocal() const {
-		return intersectionPosLocal;
-	}
-	
 	float GetRayIntersectT() const {
 		return rayIntersectT;
 	}
@@ -142,7 +134,7 @@ private:
 	Vector3 areaLightNormalVector;
 	Vector3 incomingDirInverse;
 	Vector3 normalVector;
-	Point3 intersectionPosition, intersectionPosLocal;
+	Point3 intersectionPosition;
 	float rayIntersectT;
 
 	// special stuff
