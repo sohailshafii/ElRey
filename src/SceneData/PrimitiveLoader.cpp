@@ -20,29 +20,40 @@ void PrimitiveLoader::AddPrimitivesToScene(Scene* scene,
 	
 	for(auto& element : objectsArray.items()) {
 		nlohmann::json elementJson = element.value();
-		Primitive* newPrimitive = PrimitiveLoader::CreatePrimitive(elementJson);
-		if (newPrimitive != nullptr) {
-			// assemble instances after the rest have been assembled
-			if (CommonLoaderFunctions::HasKey(elementJson, "inst_name")) {
-				instancePrimitiveJsonObjs.push_back(elementJson);
-			}
-			else {
-				scene->AddPrimitive(newPrimitive);
-			}
+		std::string typeName = CommonLoaderFunctions::SafeGetToken(
+																   elementJson, "type");
+		// create instances after the rest have been assembled,
+		// because instance reference normal primitives by name
+		if (typeName == "instance") {
+			instancePrimitiveJsonObjs.push_back(elementJson);
+		}
+		else {
+			Primitive* newPrimitive = PrimitiveLoader::CreatePrimitive(elementJson);
+			scene->AddPrimitive(newPrimitive);
 		}
 	}
 	
 	if (instancePrimitiveJsonObjs.size() > 0) {
 		for(auto & instancePrimObj : instancePrimitiveJsonObjs) {
-			CreateInstancePrimitive(scene, instancePrimObj);
+			InstancePrimitive* instancePrim = CreateInstancePrimitive(scene,
+																	  instancePrimObj);
+			if (instancePrim != nullptr) {
+				scene->AddPrimitive(instancePrim);
+				// original primitive cannot be used for intersections
+				Primitive* originalPrimitive = scene->FindPrimitiveByName(
+					instancePrim->GetOriginalPrimName());
+				if (originalPrimitive != nullptr) {
+					originalPrimitive->SetUsedForInstancing(true);
+				}
+			}
 		}
 	}
 }
 
-Primitive* PrimitiveLoader::CreateInstancePrimitive(Scene* scene,
+InstancePrimitive* PrimitiveLoader::CreateInstancePrimitive(Scene* scene,
 													const nlohmann::json& jsonObj) {
 
-	Primitive* newPrimitive = nullptr;
+	InstancePrimitive* newPrimitive = nullptr;
 	std::string objectName = CommonLoaderFunctions::SafeGetToken(jsonObj, "name");
 	std::string instanceName = CommonLoaderFunctions::SafeGetToken(jsonObj, "inst_name");
 
@@ -73,8 +84,9 @@ Primitive* PrimitiveLoader::CreateInstancePrimitive(Scene* scene,
 		Matrix4x4 localToWorld;
 		CommonLoaderFunctions::SetUpTransformFromJsonNode(
 		CommonLoaderFunctions::SafeGetToken(jsonObj, "local_to_world_transform"),
-														  worldToLocal, localToWorld);
+											worldToLocal, localToWorld);
 		instancePrim->SetTransformAndInverse(worldToLocal, localToWorld);
+		localToWorld.Print();
 	}
 	
 	return newPrimitive;

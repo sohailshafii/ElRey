@@ -30,6 +30,33 @@
 				"kd":0.7,
 				"color":[1.0,1.0,0.0,1.0]
 			}
+		},
+		{
+			"type":"sphere",
+			"position":[0.0,0.0,0.0],
+			"radius":0.8,
+			"name":"main_sphere",
+			"material":
+			{
+				"type":"phong",
+				"ka":0.1,
+				"kd":0.95,
+				"ks":0.1,
+				"exponent":10,
+				"ks_color":[1.0, 1.0, 1.0],
+				"color":[0.0, 1.0, 1.0, 1.0]
+			}
+
+		},
+		{
+			"type":"instance",
+			"name":"sphere_instance1",
+			"inst_name":"main_sphere",
+			"local_to_world_transform":
+			[
+				{"scale":[1.0, 1.0, 1.0]},
+				{"translate":[0, 0.5, 1]}
+			]
 		}
 	],
 	"lights":

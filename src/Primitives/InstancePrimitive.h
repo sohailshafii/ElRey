@@ -65,6 +65,10 @@ public:
 		return worldToLocalTranspose;
 	}
 	
+	std::string GetOriginalPrimName() const {
+		return instancePrimitive->GetName();
+	}
+	
 private:
 	// don't own
 	Primitive* instancePrimitive;

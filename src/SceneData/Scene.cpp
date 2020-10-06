@@ -76,6 +76,21 @@ void Scene::AddPrimitives(Primitive **newPrimitives, unsigned int numNewPrimitiv
 	}
 }
 
+void Scene::RemovePrimitive(Primitive* primitiveToRemove) {
+	if (primitiveToRemove == nullptr) {
+		throw std::runtime_error("Trying to remove invalid primitive!");
+	}
+	std::string const & primitiveName = primitiveToRemove->GetName();
+	for (auto it = primitives.begin(); it != primitives.end(); ) {
+		if ((*it)->GetName() == primitiveName) {
+			primitives.erase(it);
+			break;
+		} else {
+			++it;
+		}
+	}
+}
+
 void Scene::AddLight(Light* newLight) {
 	if (newLight == nullptr) {
 		throw std::runtime_error("Trying to add invalid light!");
@@ -124,6 +139,9 @@ bool Scene::Intersect(const Ray &ray, Color &newColor,
 	IntersectionResult intersectionResult;
 	
 	for (auto currentPrimitive : primitives) {
+		if (currentPrimitive->UsedForInstancing()) {
+			continue;
+		}
 		// TODO: intersection result stores a lot of data, it's hard to manage what is set
 		// maybe the function should make that clear
 		auto hitPrimitive = currentPrimitive->Intersect(ray, tMin, tMax,
@@ -229,7 +247,8 @@ bool Scene::ShadowFeelerIntersectsAnObject(const Ray& ray, float tMin,
 	Vector3 originalDir = ray.GetDirection();
 	Point3 originalOrigin = ray.GetOrigin();
 	for (auto currentPrimitive : primitives) {
-		if (currentPrimitive == primitiveToExclude) {
+		if (currentPrimitive == primitiveToExclude ||
+			currentPrimitive->UsedForInstancing()) {
 			continue;
 		}
 		

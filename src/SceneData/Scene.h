@@ -17,6 +17,8 @@ public:
 	virtual void AddPrimitive(Primitive *newPrimitive);
 	virtual void AddPrimitives(Primitive **newPrimitives,
 		unsigned int numNewPrimitives);
+	
+	virtual void RemovePrimitive(Primitive* primitiveToRemove);
 
 	virtual void AddLight(Light* newLight);
 	virtual void AddLights(Light** newLights, unsigned int numNewLights);
