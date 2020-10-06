@@ -4,14 +4,14 @@
 #include <limits>
 
 // use doubles for accuracy
-bool Torus::Intersect(const Ray &rayLocal, float tMin, float& tMax,
+bool Torus::Intersect(const Ray &ray, float tMin, float& tMax,
 					  IntersectionResult &intersectionResult) {
-	if (!boundingBox.RayHit(rayLocal)) {
+	if (!boundingBox.RayHit(ray)) {
 		return false;
 	}
 	
-	const Point3& rayOrigin = rayLocal.GetOrigin();
-	const Vector3& rayDirection = rayLocal.GetDirection();
+	const Point3& rayOrigin = ray.GetOrigin();
+	const Vector3& rayDirection = ray.GetDirection();
 	
 	double rayOriginX = rayOrigin[0];
 	double rayOriginY = rayOrigin[1];
@@ -69,13 +69,13 @@ bool Torus::Intersect(const Ray &rayLocal, float tMin, float& tMax,
 	return true;
 }
 
-bool Torus::IntersectShadow(const Ray &rayLocal, float tMin, float tMax) {
-	if (!boundingBox.RayHit(rayLocal)) {
+bool Torus::IntersectShadow(const Ray &ray, float tMin, float tMax) {
+	if (!boundingBox.RayHit(ray)) {
 		return false;
 	}
 	
-	const Point3& rayOrigin = rayLocal.GetOrigin();
-	const Vector3& rayDirection = rayLocal.GetDirection();
+	const Point3& rayOrigin = ray.GetOrigin();
+	const Vector3& rayDirection = ray.GetDirection();
 	
 	double rayOriginX = rayOrigin[0];
 	double rayOriginY = rayOrigin[1];

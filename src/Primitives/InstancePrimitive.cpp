@@ -47,7 +47,7 @@ bool InstancePrimitive::IntersectShadow(const Ray &rayWorld,
 
 Vector3 InstancePrimitive::GetNormal(IntersectionResult const &intersectionResult)
 	const {
-	// hack; modify intersection position so that primitive thinks its in local space
+	// hack; modify intersection position so that primitive thinks it's in local space
 	IntersectionResult resModified = intersectionResult;
 	resModified.SetIntersectionPosition(GetWorldToLocalPos(intersectionResult.GetIntersectionPos()));
 	Vector3 normalLocal = instancePrimitive->GetNormal(resModified);

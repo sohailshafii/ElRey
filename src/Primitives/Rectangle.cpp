@@ -2,10 +2,10 @@
 #include "CommonMath.h"
 #include <algorithm>
 
-bool Rectangle::Intersect(const Ray &rayLocal, float tMin, float& tMax,
+bool Rectangle::Intersect(const Ray &ray, float tMin, float& tMax,
 						  IntersectionResult &intersectionResult) {
-	const Point3& rayOrigin = rayLocal.GetOrigin();
-	const Vector3& rayDirection = rayLocal.GetDirection();
+	const Point3& rayOrigin = ray.GetOrigin();
+	const Vector3& rayDirection = ray.GetDirection();
 	float t = (origin - rayOrigin) * normal / (rayDirection * normal);
 
 	if (t < EPSILON)
@@ -17,7 +17,7 @@ bool Rectangle::Intersect(const Ray &rayLocal, float tMin, float& tMax,
 		return false;
 	}
 
-	Point3 intersectionPoint = rayLocal.GetPositionAtParam(t);
+	Point3 intersectionPoint = ray.GetPositionAtParam(t);
 	Vector3 vectorAlongPlane = intersectionPoint - origin;
 
 	float projectionSide1 = vectorAlongPlane * side1Vec;
@@ -38,10 +38,10 @@ bool Rectangle::Intersect(const Ray &rayLocal, float tMin, float& tMax,
 	return true;
 }
 
-bool Rectangle::IntersectShadow(const Ray &rayLocal, float tMin, float tMax)
+bool Rectangle::IntersectShadow(const Ray &ray, float tMin, float tMax)
 {
-	const Point3& rayOrigin = rayLocal.GetOrigin();
-	const Vector3& rayDirection = rayLocal.GetDirection();
+	const Point3& rayOrigin = ray.GetOrigin();
+	const Vector3& rayDirection = ray.GetDirection();
 	float t = (origin - rayOrigin) * normal / (rayDirection * normal);
 
 	if (t < EPSILON)
@@ -53,7 +53,7 @@ bool Rectangle::IntersectShadow(const Ray &rayLocal, float tMin, float tMax)
 		return false;
 	}
 
-	Point3 intersectionPoint = rayLocal.GetPositionAtParam(t);
+	Point3 intersectionPoint = ray.GetPositionAtParam(t);
 	Vector3 vectorAlongPlane = intersectionPoint - origin;
 
 	float projectionSide1 = vectorAlongPlane * side1Vec;
@@ -86,8 +86,7 @@ AABBox Rectangle::GetBoundingBox() const {
 	return boundingBoxLocal;
 }
 
-void Rectangle::Initialize(const Vector3& iSide1Vec, const Vector3& iSide2Vec)
-{
+void Rectangle::Initialize(const Vector3& iSide1Vec, const Vector3& iSide2Vec) {
 	side1Vec = iSide1Vec;
 	side2Vec = iSide2Vec;
 	side1LengthSqr = side1Vec.NormSqr();

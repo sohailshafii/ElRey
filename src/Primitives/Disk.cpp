@@ -32,10 +32,10 @@ void Disk::GenerateBoundingBox() {
 	boundingBoxLocal = AABBox(minPoint, maxPoint);
 }
 
-bool Disk::Intersect(const Ray &rayLocal, float tMin, float& tMax,
+bool Disk::Intersect(const Ray &ray, float tMin, float& tMax,
 	IntersectionResult &intersectionResult) {
-	const Point3& rayOrigin = rayLocal.GetOrigin();
-	const Vector3& rayDirection = rayLocal.GetDirection();
+	const Point3& rayOrigin = ray.GetOrigin();
+	const Vector3& rayDirection = ray.GetDirection();
 
 	float rayDotNormal = rayDirection * normalVec;
 	
@@ -49,7 +49,7 @@ bool Disk::Intersect(const Ray &rayLocal, float tMin, float& tMax,
 		return false;
 	}
 	
-	Point3 pointOnPlane = rayLocal.GetPositionAtParam(t);
+	Point3 pointOnPlane = ray.GetPositionAtParam(t);
 	
 	if (center.GetDistanceSquared(pointOnPlane) < radiusSquared) {
 		tMax = t;
@@ -60,9 +60,9 @@ bool Disk::Intersect(const Ray &rayLocal, float tMin, float& tMax,
 	return false;
 }
 
-bool Disk::IntersectShadow(const Ray &rayLocal, float tMin, float tMax) {
-	const Point3& rayOrigin = rayLocal.GetOrigin();
-	const Vector3& rayDirection = rayLocal.GetDirection();
+bool Disk::IntersectShadow(const Ray &ray, float tMin, float tMax) {
+	const Point3& rayOrigin = ray.GetOrigin();
+	const Vector3& rayDirection = ray.GetDirection();
 
 	float rayDotNormal = rayDirection * normalVec;
 	
@@ -76,7 +76,7 @@ bool Disk::IntersectShadow(const Ray &rayLocal, float tMin, float tMax) {
 		return false;
 	}
 	
-	Point3 pointOnPlane = rayLocal.GetPositionAtParam(t);
+	Point3 pointOnPlane = ray.GetPositionAtParam(t);
 	
 	if (center.GetDistanceSquared(pointOnPlane) < radiusSquared) {
 		return true;

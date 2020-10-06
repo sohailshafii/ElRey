@@ -6,17 +6,17 @@
 #include <cstdlib>
 
 void OpenCylinder::GenerateBoundingBox() {
-	boundingBoxLocal = AABBox(-radius, y0, -radius,
-							  radius, y1, radius);
+	boundingBox = AABBox(-radius, y0, -radius,
+						 radius, y1, radius);
 }
 
-bool OpenCylinder::Intersect(const Ray &rayLocal, float tMin, float& tMax,
+bool OpenCylinder::Intersect(const Ray &ray, float tMin, float& tMax,
 							 IntersectionResult &intersectionResult) {
-	if (!boundingBoxLocal.RayHit(rayLocal)) {
+	if (!boundingBox.RayHit(ray)) {
 		return false;
 	}
 	
-	if (TestRayAndSetTMax(rayLocal, tMin, tMax)) {
+	if (TestRayAndSetTMax(ray, tMin, tMax)) {
 		intersectionResult.SetIntersectionT(tMax);
 		return true;
 	}
@@ -24,8 +24,8 @@ bool OpenCylinder::Intersect(const Ray &rayLocal, float tMin, float& tMax,
 	return false;
 }
 
-bool OpenCylinder::IntersectShadow(const Ray &rayLocal, float tMin, float tMax) {
-	return boundingBoxLocal.RayHit(rayLocal) && TestRayAndSetTMax(rayLocal, tMin, tMax);
+bool OpenCylinder::IntersectShadow(const Ray &ray, float tMin, float tMax) {
+	return boundingBox.RayHit(ray) && TestRayAndSetTMax(ray, tMin, tMax);
 }
 
 Vector3 OpenCylinder::GetNormal(IntersectionResult const &intersectionResult) const {
@@ -43,9 +43,9 @@ Vector3 OpenCylinder::GetNormal(IntersectionResult const &intersectionResult) co
 	return normalVec;
 }
 
-bool OpenCylinder::TestRayAndSetTMax(const Ray &rayLocal, float tMin, float& tMax) {
-	const Point3& rayOrigin = rayLocal.GetOrigin();
-	const Vector3& rayDirection = rayLocal.GetDirection();
+bool OpenCylinder::TestRayAndSetTMax(const Ray &ray, float tMin, float& tMax) {
+	const Point3& rayOrigin = ray.GetOrigin();
+	const Vector3& rayDirection = ray.GetDirection();
 	
 	float originX = rayOrigin[0];
 	float originY = rayOrigin[1];
@@ -91,5 +91,5 @@ float OpenCylinder::PDF(const IntersectionResult& intersectionResult) const {
 }
 
 AABBox OpenCylinder::GetBoundingBox() const {
-	return boundingBoxLocal;
+	return boundingBox;
 }

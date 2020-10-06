@@ -40,7 +40,7 @@ private:
 	float y1;
 	float radius, radiusSqr;
 	float invRadius;
-	AABBox boundingBoxLocal;
+	AABBox boundingBox;
 	
 	bool TestIfTMaxPasses(float originY, float dirY,
 						float tVal, float tMin, float tMax) {
@@ -51,5 +51,5 @@ private:
 		return false;
 	}
 	
-	bool TestRayAndSetTMax(const Ray &rayLocal, float tMin, float& tMax);
+	bool TestRayAndSetTMax(const Ray &ray, float tMin, float& tMax);
 };

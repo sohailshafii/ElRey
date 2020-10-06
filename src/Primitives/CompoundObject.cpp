@@ -1,7 +1,7 @@
 #include "CompoundObject.h"
 #include "OpenCylinder.h"
 
-bool CompoundObject::Intersect(const Ray &rayLocal, float tMin, float& tMax,
+bool CompoundObject::Intersect(const Ray &ray, float tMin, float& tMax,
 							   IntersectionResult &intersectionResult) {
 	unsigned int numElements = primitives.size();
 	closestPrimSoFar = nullptr;
@@ -10,7 +10,7 @@ bool CompoundObject::Intersect(const Ray &rayLocal, float tMin, float& tMax,
 		// each primitive inside will do their own world-to-local transform
 		// because this compound object should be treated as the coordinate system, or
 		// world system, that its children live in
-		if (currPrimitive->Intersect(rayLocal, tMin, tMax, intersectionResult)) {
+		if (currPrimitive->Intersect(ray, tMin, tMax, intersectionResult)) {
 			closestPrimSoFar = currPrimitive;
 		}
 	}
@@ -23,7 +23,7 @@ bool CompoundObject::Intersect(const Ray &rayLocal, float tMin, float& tMax,
 	return false;
 }
 
-bool CompoundObject::IntersectShadow(const Ray &rayLocal, float tMin,
+bool CompoundObject::IntersectShadow(const Ray &ray, float tMin,
 									 float tMax) {
 	unsigned int numElements = primitives.size();
 	bool hitSomething = false;
@@ -31,7 +31,7 @@ bool CompoundObject::IntersectShadow(const Ray &rayLocal, float tMin,
 	for (unsigned int index = 0; index < numElements; index++) {
 		auto currPrimitive = primitives[index];
 		hitSomething =
-			currPrimitive->IntersectShadow(rayLocal, tMin, tMax);
+			currPrimitive->IntersectShadow(ray, tMin, tMax);
 	}
 	
 	return hitSomething;

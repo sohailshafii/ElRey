@@ -1,10 +1,10 @@
 #include "Plane.h"
 #include "CommonMath.h"
 
-bool Plane::Intersect(const Ray &rayLocal, float tMin, float& tMax,
+bool Plane::Intersect(const Ray &ray, float tMin, float& tMax,
 					  IntersectionResult &intersectionResult) {
-	const Point3& rayOrigin = rayLocal.GetOrigin();
-	const Vector3& rayDirection = rayLocal.GetDirection();
+	const Point3& rayOrigin = ray.GetOrigin();
+	const Vector3& rayDirection = ray.GetDirection();
 
 	float vDotNormal = rayDirection*normal;
 	if (vDotNormal > -EPSILON && vDotNormal <
@@ -23,10 +23,10 @@ bool Plane::Intersect(const Ray &rayLocal, float tMin, float& tMax,
 	return true;
 }
 
-bool Plane::IntersectShadow(const Ray &rayLocal, float tMin, float tMax)
+bool Plane::IntersectShadow(const Ray &ray, float tMin, float tMax)
 {
-	const Point3& rayOrigin = rayLocal.GetOrigin();
-	const Vector3& rayDirection = rayLocal.GetDirection();
+	const Point3& rayOrigin = ray.GetOrigin();
+	const Vector3& rayDirection = ray.GetDirection();
 
 	float vDotNormal = rayDirection*normal;
 	if (vDotNormal > -EPSILON && vDotNormal <

@@ -4,10 +4,10 @@
 #include <cmath>
 #include <algorithm>
 
-bool Triangle::Intersect(const Ray &rayLocal, float tMin, float& tMax,
+bool Triangle::Intersect(const Ray &ray, float tMin, float& tMax,
 						 IntersectionResult &intersectionResult) {
-	const Point3& rayOrigin = rayLocal.GetOrigin();
-	const Vector3& rayDirection = rayLocal.GetDirection();
+	const Point3& rayOrigin = ray.GetOrigin();
+	const Vector3& rayDirection = ray.GetDirection();
 	
 	float a = p0[0] - p1[0], b = p0[0] - p2[0],
 		c = rayDirection[0], d = p0[0] - rayOrigin[0];
@@ -54,9 +54,9 @@ bool Triangle::Intersect(const Ray &rayLocal, float tMin, float& tMax,
 	return true;
 }
 
-bool Triangle::IntersectShadow(const Ray &rayLocal, float tMin, float tMax) {
-	const Point3& rayOrigin = rayLocal.GetOrigin();
-	const Vector3& rayDirection = rayLocal.GetDirection();
+bool Triangle::IntersectShadow(const Ray &ray, float tMin, float tMax) {
+	const Point3& rayOrigin = ray.GetOrigin();
+	const Vector3& rayDirection = ray.GetDirection();
 	
 	float a = p0[0] - p1[0], b = p0[0] - p2[0],
 		c = rayDirection[0], d = p0[0] - rayOrigin[0];

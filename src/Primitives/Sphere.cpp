@@ -5,10 +5,10 @@
 #include <cmath>
 #include <iostream>
 
-bool Sphere::Intersect(const Ray &rayLocal, float tMin, float& tMax,
+bool Sphere::Intersect(const Ray &ray, float tMin, float& tMax,
 					   IntersectionResult &intersectionResult) {
-	const Point3& rayOrigin = rayLocal.GetOrigin();
-	const Vector3& rayDirection = rayLocal.GetDirection();
+	const Point3& rayOrigin = ray.GetOrigin();
+	const Vector3& rayDirection = ray.GetDirection();
 
 	Vector3 centerToRayOrigin = rayOrigin - center;
 	float a = rayDirection*rayDirection;
@@ -41,9 +41,9 @@ bool Sphere::Intersect(const Ray &rayLocal, float tMin, float& tMax,
 	return false;
 }
 
-bool Sphere::IntersectShadow(const Ray &rayLocal, float tMin, float tMax) {
-	const Point3& rayOrigin = rayLocal.GetOrigin();
-	const Vector3& rayDirection = rayLocal.GetDirection();
+bool Sphere::IntersectShadow(const Ray &ray, float tMin, float tMax) {
+	const Point3& rayOrigin = ray.GetOrigin();
+	const Vector3& rayDirection = ray.GetDirection();
 
 	Vector3 centerToRayOrigin = rayOrigin - center;
 	float a = rayDirection*rayDirection;
