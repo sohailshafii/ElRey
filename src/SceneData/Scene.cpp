@@ -152,7 +152,7 @@ bool Scene::Intersect(const Ray &ray, Color &newColor,
 	}
 	
 	if (closestPrimitive != nullptr) {
-		std::shared_ptr<Material> primitiveMaterial = closestPrimitive->GetMaterial();
+		Material* primitiveMaterial = closestPrimitive->GetMaterial();
 		// TODO: how is ray used here?
 		// TODO: separate light information from intersection information
 		intersectionResult.SetIncomingRay(ray);

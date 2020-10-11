@@ -27,7 +27,7 @@ public:
 	
 	virtual AABBox GetBoundingBox() const override;
 	
-	virtual std::shared_ptr<Material> GetMaterial() override;
+	virtual Material* GetMaterial() override;
 	virtual const GenericSampler* GetSampler() override;
 	
 	void AddPrimitive(Primitive * primitive);

@@ -14,11 +14,11 @@ public:
 	
 	virtual Vector3 GetNormal(IntersectionResult const &intersectionResult) const override;
 	
-	virtual std::shared_ptr<Material> GetMaterial() override {
+	virtual Material* GetMaterial() override {
 		return instancePrimitive->GetMaterial();
 	}
 	
-	virtual void SetSampler(std::shared_ptr<GenericSampler> sampler) override {
+	virtual void SetSampler(std::shared_ptr<GenericSampler> const & sampler) override {
 		instancePrimitive->SetSampler(sampler);
 	}
 	

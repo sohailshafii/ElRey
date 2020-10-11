@@ -36,11 +36,11 @@ public:
 	virtual Vector3 GetNormal(IntersectionResult const &intersectionResult) const = 0;
 	
 	// a compound object might have a different material per sub-object
-	virtual std::shared_ptr<Material> GetMaterial() {
-		return material;
+	virtual Material* GetMaterial() {
+		return material.get();
 	}
 	
-	virtual void SetSampler(std::shared_ptr<GenericSampler> sampler) {
+	virtual void SetSampler(std::shared_ptr<GenericSampler> const & sampler) {
 		this->sampler = sampler;
 	}
 	
