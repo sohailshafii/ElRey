@@ -76,6 +76,84 @@
 				{"scale":[1.0, 1.0, 1.0]},
 				{"translate":[0, 0.5, 1]}
 			]
+		},
+		{
+			"type":"compound_object",
+			"name":"closed_cylinder",
+			"material":
+			{
+				"type":"phong",
+				"ka":0.1,
+				"kd":0.85,
+				"ks":0.1,
+				"exponent":10,
+				"ks_color":[1.0, 1.0, 1.0],
+				"color":[0.5,0.0,1.0,1.0]
+			},
+			"children":
+			[
+				{
+					"type":"open_cylinder",
+					"name":"closed_cylinder_body",
+					"y0":0.1,
+					"y1":0.8,
+					"radius":0.45,
+					"material":
+					{
+						"type":"phong",
+						"ka":0.1,
+						"kd":0.85,
+						"ks":0.1,
+						"exponent":10,
+						"ks_color":[1.0, 1.0, 1.0],
+						"color":[0.5,0.0,1.0,1.0]
+					}
+				},
+				{
+					"type":"disk",
+					"name":"closed_cylinder_top",
+					"center":[0.0,0.8,0.0],
+					"normal":[0.0,1.0,0.0],
+					"radius":0.45,
+					"material":
+					{
+						"type":"phong",
+						"ka":0.1,
+						"kd":0.85,
+						"ks":0.1,
+						"exponent":10,
+						"ks_color":[1.0, 1.0, 1.0],
+						"color":[0.5,0.0,1.0,1.0]
+					}
+				},
+				{
+					"type":"disk",
+					"name":"closed_cylinder_bottom",
+					"center":[0.0,0.1,0.0],
+					"normal":[0.0,1.0,0.0],
+					"radius":0.45,
+					"material":
+					{
+						"type":"phong",
+						"ka":0.1,
+						"kd":0.85,
+						"ks":0.1,
+						"exponent":10,
+						"ks_color":[1.0, 1.0, 1.0],
+						"color":[0.5,0.0,1.0,1.0]
+					}
+				}
+			]
+		},
+		{
+			"type":"instance",
+			"name":"closed_cylinder_instance1",
+			"inst_name":"closed_cylinder",
+			"local_to_world_transform":
+			[
+				{"scale":[0.8, 0.7, 0.8]},
+				{"translate":[0.9,-1.2, 0.5]}
+			]
 		}
 	],
 	"lights":
