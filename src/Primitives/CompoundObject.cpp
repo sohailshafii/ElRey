@@ -32,6 +32,9 @@ bool CompoundObject::IntersectShadow(const Ray &ray, float tMin,
 		auto currPrimitive = primitives[index];
 		hitSomething =
 			currPrimitive->IntersectShadow(ray, tMin, tMax);
+		if (hitSomething) {
+			break;
+		}
 	}
 	
 	return hitSomething;
