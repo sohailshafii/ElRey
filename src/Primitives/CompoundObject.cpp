@@ -96,7 +96,7 @@ void CompoundObject::RemovePrimitiveWithName(std::string const & name) {
 	}
 }
 
-Material* CompoundObject::GetMaterial() {
+Material const * CompoundObject::GetMaterial() {
 	return closestPrimSoFar != nullptr ?
 	 closestPrimSoFar->GetMaterial() : nullptr;
 }

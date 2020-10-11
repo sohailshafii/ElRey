@@ -14,7 +14,7 @@ public:
 	
 	virtual Vector3 GetNormal(IntersectionResult const &intersectionResult) const override;
 	
-	virtual Material* GetMaterial() override {
+	virtual Material const * GetMaterial() override {
 		return instancePrimitive->GetMaterial();
 	}
 	

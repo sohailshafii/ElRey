@@ -32,7 +32,8 @@ const IntersectionResult& intersectionRes) const {
 	return right*sp[0] + up*sp[1] + forward*sp[2];
 }
 
-Color3 AmbientLightOccluder::GetRadiance(const IntersectionResult& intersectionRes, const Scene& scene) {
+Color3 AmbientLightOccluder::GetRadiance(const IntersectionResult& intersectionRes,
+										 const Scene& scene) const {
 	Vector3 castVec = GetDirectionFromPositionScaled(intersectionRes);
 	castVec.Normalize();
 	Point3 castPoint = intersectionRes.GetIntersectionPos()+

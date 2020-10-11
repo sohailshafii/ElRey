@@ -16,6 +16,6 @@ Vector3 PointLight::GetDirectionFromPositionScaled(const IntersectionResult& int
 	return directionFromPos;
 }
 
-Color3 PointLight::GetRadiance(const IntersectionResult& intersectionRes, const Scene& scene) {
+Color3 PointLight::GetRadiance(const IntersectionResult& intersectionRes, const Scene& scene) const {
 	return radiancePreScaled;
 }

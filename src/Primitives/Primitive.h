@@ -36,7 +36,7 @@ public:
 	virtual Vector3 GetNormal(IntersectionResult const &intersectionResult) const = 0;
 	
 	// a compound object might have a different material per sub-object
-	virtual Material* GetMaterial() {
+	virtual Material const * GetMaterial() {
 		return material.get();
 	}
 	
@@ -45,7 +45,7 @@ public:
 	}
 	
 	// a compound object might have a different sampler per-subbject
-	virtual const GenericSampler* GetSampler() {
+	virtual GenericSampler const * GetSampler() {
 		return sampler.get();
 	}
 	

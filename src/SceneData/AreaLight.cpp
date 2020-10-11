@@ -45,7 +45,8 @@ void AreaLight::ComputeAndStoreAreaLightInformation(
 	intersectionRes.SetSamplePointOnLight(lightPrimitiveSample);
 }
 
-Color3 AreaLight::GetRadiance(const IntersectionResult& intersectionRes, const Scene& scene) {
+Color3 AreaLight::GetRadiance(const IntersectionResult& intersectionRes,
+							  const Scene& scene) const {
 	float nDotVectorToLight = -intersectionRes.GetAreaLightNormal()
 		* intersectionRes.GetVectorToLight();
 	if (nDotVectorToLight > 0.0f) {

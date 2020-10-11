@@ -31,7 +31,7 @@ Vector3 EnvironmentLight::GetDirectionFromPositionScaled(
 	return -right*sp[0] - up*sp[1] - forward*sp[2];
 }
 
-Color3 EnvironmentLight::GetRadiance(const IntersectionResult& intersectionRes, const Scene& scene) {
+Color3 EnvironmentLight::GetRadiance(const IntersectionResult& intersectionRes, const Scene& scene) const {
 	Color areaLightColor = material->GetColorForAreaLight(intersectionRes);
 	return Color3(areaLightColor[0], areaLightColor[1],
 				  areaLightColor[2]);

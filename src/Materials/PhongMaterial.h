@@ -11,13 +11,9 @@ public:
 	PhongMaterial(float ka, float kd, float ks, float exponent, const Color3& color,
 				  const Color3& ksColor);
 
-	virtual Color GetAmbientColor(const IntersectionResult &intersectionResult)
-		override;
-	virtual Color GetDirectColor(const IntersectionResult &intersectionResult)
-		override;
-
-	virtual Color GetColorForAreaLight(const IntersectionResult& intersectionResult)
-		override;
+	virtual Color GetAmbientColor(const IntersectionResult &intersectionResult) const override;
+	virtual Color GetDirectColor(const IntersectionResult &intersectionResult) const override;
+	virtual Color GetColorForAreaLight(const IntersectionResult& intersectionResult) const override;
 private:
 	LambertianBRDF ambientBRDF;
 	LambertianBRDF diffuseBRDF;

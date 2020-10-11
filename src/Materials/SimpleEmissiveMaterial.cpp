@@ -7,15 +7,15 @@ SimpleEmissiveMaterial::SimpleEmissiveMaterial(float ka, float kd, const Color3&
 	deadColor = Color::Black();
 }
 
-Color SimpleEmissiveMaterial::GetAmbientColor(const IntersectionResult &intersectionResult) {
+Color SimpleEmissiveMaterial::GetAmbientColor(const IntersectionResult &intersectionResult) const  {
 	return ambientColor;
 }
 
-Color SimpleEmissiveMaterial::GetDirectColor(const IntersectionResult &intersectionResult) {
+Color SimpleEmissiveMaterial::GetDirectColor(const IntersectionResult &intersectionResult) const  {
 	return directColor;
 }
 
-Color SimpleEmissiveMaterial::GetColorForAreaLight(const IntersectionResult& intersectionResult) {
+Color SimpleEmissiveMaterial::GetColorForAreaLight(const IntersectionResult& intersectionResult) const {
 	if (intersectionResult.GetNormalVector() * intersectionResult.GetIncomingDirInverse()
 		> 0.0) {
 		return directColor;

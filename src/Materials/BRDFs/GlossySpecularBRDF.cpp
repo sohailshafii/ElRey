@@ -11,7 +11,7 @@ GlossySpecularBRDF::GlossySpecularBRDF(float ks, Color3 cs, float exponent) {
 	this->exponent = exponent;
 }
 
-Color3 GlossySpecularBRDF::GetRadiance(const IntersectionResult& intersectionResult)  {
+Color3 GlossySpecularBRDF::GetRadiance(const IntersectionResult& intersectionResult) const {
 	Color3 	finalColor;
 	Vector3 intersectionNormal = intersectionResult.GetNormalVector();
 	Vector3 incomingDirReverse = intersectionResult.GetIncomingDirInverse();
@@ -27,7 +27,7 @@ Color3 GlossySpecularBRDF::GetRadiance(const IntersectionResult& intersectionRes
 	return finalColor;
 }
 
-Color3 GlossySpecularBRDF::GetRho(const IntersectionResult& IntersectionResult) {
+Color3 GlossySpecularBRDF::GetRho(const IntersectionResult& IntersectionResult) const {
 	return Color3::Black();
 }
 

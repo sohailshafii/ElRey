@@ -11,7 +11,7 @@ public:
 
 	virtual Vector3 GetDirectionFromPositionScaled(
 		const IntersectionResult& intersectionRes) const override;
-	virtual Color3 GetRadiance(const IntersectionResult& intersectionRes, const Scene& scene) override;
+	virtual Color3 GetRadiance(const IntersectionResult& intersectionRes, const Scene& scene) const override;
 
 private:
 	Point3 lightPosition;

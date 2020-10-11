@@ -12,7 +12,7 @@ public:
 		
 	}
 	
-	virtual Color GetAmbientColor(const IntersectionResult &intersectionResult) = 0;
-	virtual Color GetDirectColor(const IntersectionResult &intersectionResult) = 0;
-	virtual Color GetColorForAreaLight(const IntersectionResult& intersectionResult) = 0;
+	virtual Color GetAmbientColor(const IntersectionResult &intersectionResult) const = 0;
+	virtual Color GetDirectColor(const IntersectionResult &intersectionResult) const = 0;
+	virtual Color GetColorForAreaLight(const IntersectionResult& intersectionResult) const = 0;
 };

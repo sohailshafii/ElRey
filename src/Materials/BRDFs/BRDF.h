@@ -6,7 +6,7 @@
 
 class BRDF {
 public:
-	virtual Color3 GetRadiance(const IntersectionResult& IntersectionResult) = 0;
-	virtual Color3 GetRho(const IntersectionResult& IntersectionResult) = 0;
+	virtual Color3 GetRadiance(const IntersectionResult& IntersectionResult) const  = 0;
+	virtual Color3 GetRho(const IntersectionResult& IntersectionResult) const  = 0;
 private:
 };

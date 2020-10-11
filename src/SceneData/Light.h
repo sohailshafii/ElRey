@@ -27,7 +27,8 @@ public:
 		return " ";
 	}
 	
-	virtual Color3 GetRadiance(const IntersectionResult& intersectionRes, const Scene& scene) = 0;
+	virtual Color3 GetRadiance(const IntersectionResult& intersectionRes,
+							   const Scene& scene) const = 0;
 	
 	bool CastsShadows() {
 		return castsShadows;
