@@ -72,7 +72,11 @@ bool Sphere::IntersectShadow(const Ray &ray, float tMin, float tMax) {
 }
 
 Vector3 Sphere::GetNormal(IntersectionResult const &intersectionResult) const {
-	Vector3 normalVec = (intersectionResult.GetIntersectionPos() - center);
+	return GetNormalAtPosition(intersectionResult.GetIntersectionPos());
+}
+
+Vector3 Sphere::GetNormalAtPosition(Point3 const &position) const {
+	Vector3 normalVec = (position - center);
 	normalVec.Normalize();
 	return normalVec;
 }

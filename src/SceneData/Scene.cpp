@@ -142,8 +142,6 @@ bool Scene::Intersect(const Ray &ray, Color &newColor,
 		if (currentPrimitive->UsedForInstancing()) {
 			continue;
 		}
-		// TODO: intersection result stores a lot of data, it's hard to manage what is set
-		// maybe the function should make that clear
 		auto hitPrimitive = currentPrimitive->Intersect(ray, tMin, tMax,
 														intersectionResult);
 		if (hitPrimitive) {
@@ -153,8 +151,6 @@ bool Scene::Intersect(const Ray &ray, Color &newColor,
 	
 	if (closestPrimitive != nullptr) {
 		Material const * primitiveMaterial = closestPrimitive->GetMaterial();
-		// TODO: how is ray used here?
-		// TODO: separate light information from intersection information
 		intersectionResult.SetIncomingRay(ray);
 		auto intersectionPos = ray.GetPositionAtParam(tMax);
 		intersectionResult.SetIntersectionT(tMax);

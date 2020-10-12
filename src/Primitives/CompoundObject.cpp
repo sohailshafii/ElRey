@@ -47,6 +47,11 @@ Vector3 CompoundObject::GetNormal(IntersectionResult const &intersectionResult) 
 	return normalVec;
 }
 
+Vector3 CompoundObject::GetNormalAtPosition(Point3 const &position) const {
+	return closestPrimSoFar != nullptr ? closestPrimSoFar->GetNormalAtPosition(position)
+		: Vector3(0.0f, 0.0f, 0.0f);
+}
+
 Primitive* CompoundObject::GetPrimitiveByIntersectionResult(IntersectionResult const &intersectionResult) const {
 	auto intersecPrimName = intersectionResult.GetPrimitiveName();
 	for (Primitive* currPrim : primitives) {

@@ -20,6 +20,8 @@ public:
 	
 	virtual Vector3 GetNormal(IntersectionResult const &intersectionResult) const override;
 	
+	virtual Vector3 GetNormalAtPosition(Point3 const &position) const override;
+	
 	virtual void SamplePrimitive(Point3& resultingSample) override;
 	
 	virtual float PDF(const IntersectionResult& intersectionResult) const override;

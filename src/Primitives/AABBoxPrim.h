@@ -35,6 +35,8 @@ public:
 	virtual bool IntersectShadow(const Ray &ray, float tMin, float tMax) override;
 	virtual Vector3 GetNormal(IntersectionResult const &intersectionResult) const override;
 	
+	virtual Vector3 GetNormalAtPosition(Point3 const &position) const override;
+	
 	virtual void SamplePrimitive(Point3& resultingSample) override;
 
 	virtual float PDF(const IntersectionResult& intersectionResult) const override;
@@ -63,6 +65,13 @@ private:
 	float x0, y0, z0;
 	// max point
 	float x1, y1, z1;
+	
+	const Vector3 posXNormal = Vector3( 1.0f, 0.0f, 0.0f);
+	const Vector3 negXNormal = Vector3(-1.0f, 0.0f, 0.0f);
+	const Vector3 posYNormal = Vector3( 0.0f, 1.0f, 0.0f);
+	const Vector3 negYNormal = Vector3( 0.0f,-1.0f, 0.0f);
+	const Vector3 posZNormal = Vector3( 0.0f, 0.0f, 1.0f);
+	const Vector3 negZNormal = Vector3( 0.0f, 0.0f,-1.0f);
 	
 	float invVolume;
 	Point3 center;

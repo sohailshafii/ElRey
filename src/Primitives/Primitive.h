@@ -35,6 +35,9 @@ public:
 	
 	virtual Vector3 GetNormal(IntersectionResult const &intersectionResult) const = 0;
 	
+	// useful if you just want to query a normal without intersection information
+	virtual Vector3 GetNormalAtPosition(Point3 const &position) const = 0;
+	
 	// a compound object might have a different material per sub-object
 	virtual Material const * GetMaterial() {
 		return material.get();

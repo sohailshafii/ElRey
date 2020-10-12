@@ -133,22 +133,22 @@ bool AABBoxPrim::Intersect(const Ray &ray, float tMin, float& tMax,
 			tMax = t0;
 			switch (faceIn) {
 				case NegativeX:
-					tempNorm = Vector3(-1.0f, 0.0f, 0.0f);
+					tempNorm = negXNormal;
 					break;
 				case NegativeY:
-					tempNorm = Vector3(0.0f,-1.0f, 0.0f);
+					tempNorm = negYNormal;
 					break;
 				case NegativeZ:
-					tempNorm = Vector3(0.0f, 0.0f,-1.0f);
+					tempNorm = negZNormal;
 					break;
 				case PositiveX:
-					tempNorm = Vector3(1.0f, 0.0f, 0.0f);
+					tempNorm = posXNormal;
 					break;
 				case PositiveY:
-					tempNorm = Vector3(0.0f, 1.0f, 0.0f);
+					tempNorm = posYNormal;
 					break;
 				default:
-					tempNorm = Vector3(0.0f, 0.0f, 1.0f);
+					tempNorm = posZNormal;
 			}
 		}
 		else {
@@ -158,22 +158,22 @@ bool AABBoxPrim::Intersect(const Ray &ray, float tMin, float& tMax,
 			tMax = t1;
 			switch (faceOut) {
 				case NegativeX:
-					tempNorm = Vector3(-1.0f, 0.0f, 0.0f);
+					tempNorm = negXNormal;
 					break;
 				case NegativeY:
-					tempNorm = Vector3(0.0f,-1.0f, 0.0f);
+					tempNorm = negYNormal;
 					break;
 				case NegativeZ:
-					tempNorm = Vector3(0.0f, 0.0f,-1.0f);
+					tempNorm = negZNormal;
 					break;
 				case PositiveX:
-					tempNorm = Vector3(1.0f, 0.0f, 0.0f);
+					tempNorm = posXNormal;
 					break;
 				case PositiveY:
-					tempNorm = Vector3(0.0f, 1.0f, 0.0f);
+					tempNorm = posYNormal;
 					break;
 				default:
-					tempNorm = Vector3(0.0f, 0.0f, 1.0f);
+					tempNorm = posZNormal;
 			}
 		}
 		intersectionResult.SetIntersectionT(tMax);
@@ -271,6 +271,26 @@ Vector3 AABBoxPrim::GetNormal(IntersectionResult const &intersectionResult) cons
 	float meta2 = intersectionResult.GetGenericMetadata2();
 	float meta3 = intersectionResult.GetGenericMetadata3();
 	return Vector3(meta1, meta2, meta3);
+}
+
+Vector3 AABBoxPrim::GetNormalAtPosition(Point3 const &position) const {
+	Vector3 centerToPosition = position - center;
+	float xCompAbs = fabs(centerToPosition[0]);
+	float yCompAbs = fabs(centerToPosition[1]);
+	float zCompAbs = fabs(centerToPosition[2]);
+	
+	if (xCompAbs > yCompAbs && xCompAbs > zCompAbs) {
+		return centerToPosition[0] > 0.0f ? posXNormal :
+			negXNormal;
+	}
+	else if (yCompAbs > xCompAbs && yCompAbs > zCompAbs) {
+		return centerToPosition[1] > 0.0f ? posYNormal :
+			negYNormal;
+	}
+	else {
+		return centerToPosition[2] > 0.0f ? posZNormal :
+			negZNormal;
+	}
 }
 
 void AABBoxPrim::SamplePrimitive(Point3& resultingSample) {

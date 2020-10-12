@@ -31,14 +31,17 @@ bool OpenCylinder::IntersectShadow(const Ray &ray, float tMin, float tMax) {
 Vector3 OpenCylinder::GetNormal(IntersectionResult const &intersectionResult) const {
 	Ray const & incomingRay = intersectionResult.GetIncomingRay();
 	Vector3 rayDir = incomingRay.GetDirection();
-	Point3 intersectLocal = intersectionResult.GetIntersectionPos();
-	Vector3 normalVec = Vector3(intersectLocal[0]*invRadius, 0.0f,
-								intersectLocal[2]*invRadius);
-	
+	Vector3 normalVec = GetNormalAtPosition(intersectionResult.GetIntersectionPos());
 	// inside surface?
 	if (-rayDir*normalVec < 0.0f) {
 		normalVec = -normalVec;
 	}
+	return normalVec;
+}
+
+Vector3 OpenCylinder::GetNormalAtPosition(Point3 const &position) const {
+	Vector3 normalVec = Vector3(position[0]*invRadius, 0.0f,
+								position[2]*invRadius);
 	normalVec.Normalize();
 	return normalVec;
 }
