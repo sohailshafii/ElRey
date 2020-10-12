@@ -155,7 +155,7 @@ bool Scene::Intersect(const Ray &ray, Color &newColor,
 		auto intersectionPos = ray.GetPositionAtParam(tMax);
 		intersectionResult.SetIntersectionT(tMax);
 		intersectionResult.SetIntersectionPosition(intersectionPos);
-		ParamsForNormal paramsForNormal(intersectionResult.GetIncomingRay().GetDirection(),
+		ParamsForNormal paramsForNormal(ray.GetDirection().Normalized(),
 										intersectionPos, intersectionResult.GetGenericMetadata1(),
 										intersectionResult.GetGenericMetadata2(),
 										intersectionResult.GetGenericMetadata3(),

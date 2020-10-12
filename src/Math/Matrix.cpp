@@ -277,6 +277,7 @@ Matrix& Matrix::operator*=(float scalar) {
 	return *this;
 }
 
+// TODO: move to 4x4 version, doesn't make sense here
 // yeah, ignores dimensions of matrix and doesn't check them
 // assumes 3d point as a w-coordinate of 1
 Point3 Matrix::operator*(const Point3& rhs) const {

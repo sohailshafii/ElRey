@@ -77,4 +77,7 @@ private:
 	
 	Matrix4x4 worldToLocal, localToWorld;
 	Matrix4x4 localToWorldTranspose, worldToLocalTranspose;
+	
+	Point3 cachedPos;
+	Vector3 cachedDir;
 };
