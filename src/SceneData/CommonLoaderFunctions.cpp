@@ -168,6 +168,7 @@ void CommonLoaderFunctions::SetUpTransformFromJsonNode(nlohmann::json const & tr
 		worldToLocalArray.push_back(worldToLocalElem);
 	}
 	
+	
 	for(size_t i = 0; i < localToWorldArray.size(); i++) {
 		localToWorld *= localToWorldArray[i];
 		worldToLocal *= worldToLocalArray[i];

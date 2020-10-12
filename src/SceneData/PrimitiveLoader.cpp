@@ -85,9 +85,8 @@ InstancePrimitive* PrimitiveLoader::CreateInstancePrimitive(Scene* scene,
 		Matrix4x4 localToWorld;
 		CommonLoaderFunctions::SetUpTransformFromJsonNode(
 		CommonLoaderFunctions::SafeGetToken(jsonObj, "local_to_world_transform"),
-											worldToLocal, localToWorld);
-		instancePrim->SetTransformAndInverse(worldToLocal, localToWorld);
-		localToWorld.Print();
+											localToWorld, worldToLocal);
+		instancePrim->SetTransformAndInverse(localToWorld, worldToLocal);
 	}
 	
 	return newPrimitive;
