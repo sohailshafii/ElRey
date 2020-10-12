@@ -151,7 +151,7 @@
 			"inst_name":"closed_cylinder",
 			"local_to_world_transform":
 			[
-				{"scale":[0.8, 0.7, 0.8]},
+				{"scale":[1.2, 1.2, 1.2]},
 				{"translate":[0.9,-1.2, 0.5]}
 			]
 		}

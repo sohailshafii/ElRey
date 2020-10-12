@@ -129,8 +129,8 @@ bool Torus::IntersectShadow(const Ray &ray, float tMin, float tMax) {
 	return true;
 }
 
-Vector3 Torus::GetNormal(IntersectionResult const &intersectionResult) const {
-	return GetNormalAtPosition(intersectionResult.GetIntersectionPos());
+Vector3 Torus::GetNormal(ParamsForNormal const &paramsForNormal) const {
+	return GetNormalAtPosition(paramsForNormal.GetIntersectionPos());
 }
 
 Vector3 Torus::GetNormalAtPosition(Point3 const &position) const {
@@ -154,7 +154,7 @@ void Torus::SamplePrimitive(Point3& resultingSample) {
 }
 
 // each sample's probability is 1.0/inverseArea
-float Torus::PDF(const IntersectionResult& intersectionResult) const {
+float Torus::PDF(ParamsForNormal const &paramsForNormal) const {
 	return 1.0f;
 }
 

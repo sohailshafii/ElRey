@@ -71,8 +71,8 @@ bool Sphere::IntersectShadow(const Ray &ray, float tMin, float tMax) {
 	return false;
 }
 
-Vector3 Sphere::GetNormal(IntersectionResult const &intersectionResult) const {
-	return GetNormalAtPosition(intersectionResult.GetIntersectionPos());
+Vector3 Sphere::GetNormal(ParamsForNormal const &paramsForNormal) const {
+	return GetNormalAtPosition(paramsForNormal.GetIntersectionPos());
 }
 
 Vector3 Sphere::GetNormalAtPosition(Point3 const &position) const {
@@ -85,7 +85,7 @@ void Sphere::SamplePrimitive(Point3& resultingSample) {
 	// Not valid; necessary for sampling if we want area lights that are spheres
 }
 
-float Sphere::PDF(const IntersectionResult& intersectionResult) const {
+float Sphere::PDF(ParamsForNormal const &paramsForNormal) const {
 	return 1.0f; // invalid until we need to use it
 }
 

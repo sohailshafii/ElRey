@@ -40,9 +40,9 @@ bool CompoundObject::IntersectShadow(const Ray &ray, float tMin,
 	return hitSomething;
 }
 
-Vector3 CompoundObject::GetNormal(IntersectionResult const &intersectionResult) const {
-	Primitive* foundPrim = GetPrimitiveByIntersectionResult(intersectionResult);
-	Vector3 normalVec = foundPrim != nullptr ? foundPrim->GetNormal(intersectionResult)
+Vector3 CompoundObject::GetNormal(ParamsForNormal const &paramsForNormal) const {
+	Primitive* foundPrim = GetPrimitiveByParams(paramsForNormal);
+	Vector3 normalVec = foundPrim != nullptr ? foundPrim->GetNormal(paramsForNormal)
 		: Vector3();
 	return normalVec;
 }
@@ -52,8 +52,8 @@ Vector3 CompoundObject::GetNormalAtPosition(Point3 const &position) const {
 		: Vector3(0.0f, 0.0f, 0.0f);
 }
 
-Primitive* CompoundObject::GetPrimitiveByIntersectionResult(IntersectionResult const &intersectionResult) const {
-	auto intersecPrimName = intersectionResult.GetPrimitiveName();
+Primitive* CompoundObject::GetPrimitiveByParams(ParamsForNormal const &paramsForNormal) const {
+	auto intersecPrimName = paramsForNormal.GetPrimitiveName();
 	for (Primitive* currPrim : primitives) {
 		if (currPrim->GetName() == intersecPrimName) {
 			return currPrim;
@@ -68,9 +68,9 @@ void CompoundObject::SamplePrimitive(Point3& resultingSample) {
 	}
 }
 
-float CompoundObject::PDF(const IntersectionResult& intersectionResult) const {
-	Primitive* foundPrim = GetPrimitiveByIntersectionResult(intersectionResult);
-	return foundPrim != nullptr ? foundPrim->PDF(intersectionResult) : 0.0f;
+float CompoundObject::PDF(ParamsForNormal const &paramsForNormal) const {
+	Primitive* foundPrim = GetPrimitiveByParams(paramsForNormal);
+	return foundPrim != nullptr ? foundPrim->PDF(paramsForNormal) : 0.0f;
 }
 
 AABBox CompoundObject::GetBoundingBox() const {

@@ -266,10 +266,10 @@ bool AABBoxPrim::IntersectShadow(const Ray &ray, float tMin, float tMax) {
 	return false;
 }
 
-Vector3 AABBoxPrim::GetNormal(IntersectionResult const &intersectionResult) const {
-	float meta1 = intersectionResult.GetGenericMetadata1();
-	float meta2 = intersectionResult.GetGenericMetadata2();
-	float meta3 = intersectionResult.GetGenericMetadata3();
+Vector3 AABBoxPrim::GetNormal(ParamsForNormal const &paramsForNormal) const {
+	float meta1 = paramsForNormal.GetGenericMetadata1();
+	float meta2 = paramsForNormal.GetGenericMetadata2();
+	float meta3 = paramsForNormal.GetGenericMetadata3();
 	return Vector3(meta1, meta2, meta3);
 }
 
@@ -297,7 +297,7 @@ void AABBoxPrim::SamplePrimitive(Point3& resultingSample) {
 	// we have to sample to unit cube; leave out unless we need it
 }
 
-float AABBoxPrim::PDF(const IntersectionResult& intersectionResult) const {
+float AABBoxPrim::PDF(ParamsForNormal const &paramsForNormal) const {
 	return invVolume;
 }
 

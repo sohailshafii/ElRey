@@ -47,8 +47,7 @@ public:
 		return 1.0f;
 	}
 
-	virtual float PDF(
-		const IntersectionResult& intersectionRes) const {
+	virtual float PDF(ParamsForNormal const &paramsForNormal) const {
 		return 1.0f;
 	}
 

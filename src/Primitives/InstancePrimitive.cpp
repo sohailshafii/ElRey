@@ -28,9 +28,7 @@ bool InstancePrimitive::Intersect(const Ray &rayWorld, float tMin,
 	Vector3 originalDir = rayWorld.GetDirection();
 	Point3 originalOrigin = rayWorld.GetOrigin();
 	rayToCast.SetOrigin(GetWorldToLocalPos(originalOrigin));
-	rayToCast.SetDirection(GetWorldToLocalDir(originalDir));
-	// right now it doesn't enforce the rule that intersection position needs to be
-	// set elsewhere. a primitive can modify it
+	rayToCast.SetDirection(GetWorldToLocalDir(originalDir).Normalized());
 	return instancePrimitive->Intersect(rayToCast, tMin, tMax, intersectionResult);
 }
 
@@ -40,15 +38,15 @@ bool InstancePrimitive::IntersectShadow(const Ray &rayWorld,
 	Vector3 originalDir = rayWorld.GetDirection();
 	Point3 originalOrigin = rayWorld.GetOrigin();
 	rayToCast.SetOrigin(GetWorldToLocalPos(originalOrigin));
-	rayToCast.SetDirection(GetWorldToLocalDir(originalDir));
+	rayToCast.SetDirection(GetWorldToLocalDir(originalDir).Normalized());
 	return instancePrimitive->IntersectShadow(rayToCast, tMin, tMax);
 }
 
-Vector3 InstancePrimitive::GetNormal(IntersectionResult const &intersectionResult)
-	const {
+Vector3 InstancePrimitive::GetNormal(ParamsForNormal const &paramsForNormal) const {
 	// hack; modify intersection position so that primitive thinks it's in local space
-	IntersectionResult resModified = intersectionResult;
-	resModified.SetIntersectionPosition(GetWorldToLocalPos(intersectionResult.GetIntersectionPos()));
+	ParamsForNormal resModified = paramsForNormal;
+	resModified.SetIntersectionPosition(GetWorldToLocalPos(paramsForNormal.GetIntersectionPos()));
+	resModified.SetRayDirection(GetWorldToLocalDir(paramsForNormal.GetRayDirection().Normalized()));
 	Vector3 normalLocal = instancePrimitive->GetNormal(resModified);
 
 	return GetWorldToLocalTransposeDir(normalLocal).Normalized();

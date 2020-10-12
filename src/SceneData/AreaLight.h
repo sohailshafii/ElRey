@@ -52,9 +52,8 @@ public:
 		const IntersectionResult& intersectionRes)
 		const override;
 
-	virtual float PDF(
-		const IntersectionResult& intersectionRes) const override {
-		return primitive->PDF(intersectionRes);
+	virtual float PDF(ParamsForNormal const &paramsForNormal) const override {
+		return primitive->PDF(paramsForNormal);
 	}
 
 private:

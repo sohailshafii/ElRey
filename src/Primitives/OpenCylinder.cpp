@@ -28,10 +28,9 @@ bool OpenCylinder::IntersectShadow(const Ray &ray, float tMin, float tMax) {
 	return boundingBox.RayHit(ray) && TestRayAndSetTMax(ray, tMin, tMax);
 }
 
-Vector3 OpenCylinder::GetNormal(IntersectionResult const &intersectionResult) const {
-	Ray const & incomingRay = intersectionResult.GetIncomingRay();
-	Vector3 rayDir = incomingRay.GetDirection();
-	Vector3 normalVec = GetNormalAtPosition(intersectionResult.GetIntersectionPos());
+Vector3 OpenCylinder::GetNormal(ParamsForNormal const &paramsForNormal) const {
+	Vector3 rayDir = paramsForNormal.GetRayDirection();
+	Vector3 normalVec = GetNormalAtPosition(paramsForNormal.GetIntersectionPos());
 	// inside surface?
 	if (-rayDir*normalVec < 0.0f) {
 		normalVec = -normalVec;
@@ -89,7 +88,7 @@ void OpenCylinder::SamplePrimitive(Point3& resultingSample) {
 	// Leave out for now
 }
 
-float OpenCylinder::PDF(const IntersectionResult& intersectionResult) const {
+float OpenCylinder::PDF(ParamsForNormal const &paramsForNormal) const {
 	return 1.0f; // Doesn't return a valid value because we don't use it for sampling
 }
 

@@ -43,7 +43,7 @@ bool Plane::IntersectShadow(const Ray &ray, float tMin, float tMax)
 	return true;
 }
 
-Vector3 Plane::GetNormal(IntersectionResult const &intersectionResult) const {
+Vector3 Plane::GetNormal(ParamsForNormal const &paramsForNormal) const {
 	return normal;
 }
 
@@ -55,6 +55,6 @@ void Plane::SamplePrimitive(Point3& resultingSample) {
 	// not valid for area lighting
 }
 
-float Plane::PDF(const IntersectionResult& intersectionResult) const {
+float Plane::PDF(ParamsForNormal const &paramsForNormal) const {
 	return 1.0f; // not valid for area lighting
 }

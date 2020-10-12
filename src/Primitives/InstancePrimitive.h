@@ -12,7 +12,7 @@ public:
 						   IntersectionResult &intersectionResult) override;
 	virtual bool IntersectShadow(const Ray &ray, float tMin, float tMax) override;
 	
-	virtual Vector3 GetNormal(IntersectionResult const &intersectionResult) const override;
+	virtual Vector3 GetNormal(ParamsForNormal const &paramsForNormal) const override;
 	
 	virtual Vector3 GetNormalAtPosition(Point3 const &position) const override;
 	
@@ -29,8 +29,8 @@ public:
 		return instancePrimitive->GetSampler();
 	}
 	
-	virtual float PDF(const IntersectionResult& intersectionResult) const override {
-		return instancePrimitive->PDF(intersectionResult);
+	virtual float PDF(ParamsForNormal const &paramsForNormal) const override {
+		return instancePrimitive->PDF(paramsForNormal);
 	}
 	
 	virtual void SamplePrimitive(Point3& resultingSample) override;

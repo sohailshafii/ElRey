@@ -7,6 +7,7 @@
 #include "Materials/Material.h"
 #include "Math/AABBox.h"
 #include "SceneData/IntersectionResult.h"
+#include "SceneData/ParamsForNormal.h"
 #include "Sampling/GenericSampler.h"
 #include <string>
 
@@ -33,7 +34,7 @@ public:
 						   IntersectionResult &intersectionResult) = 0;
 	virtual bool IntersectShadow(const Ray &ray, float tMin, float tMax) = 0;
 	
-	virtual Vector3 GetNormal(IntersectionResult const &intersectionResult) const = 0;
+	virtual Vector3 GetNormal(ParamsForNormal const &paramsForNormal) const = 0;
 	
 	// useful if you just want to query a normal without intersection information
 	virtual Vector3 GetNormalAtPosition(Point3 const &position) const = 0;
@@ -54,7 +55,7 @@ public:
 	
 	virtual void SamplePrimitive(Point3& resultingSample) = 0;
 	
-	virtual float PDF(const IntersectionResult& intersectionResult) const {
+	virtual float PDF(ParamsForNormal const &paramsForNormal) const {
 		return 1.0f;
 	}
 

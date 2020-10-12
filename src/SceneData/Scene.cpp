@@ -155,7 +155,12 @@ bool Scene::Intersect(const Ray &ray, Color &newColor,
 		auto intersectionPos = ray.GetPositionAtParam(tMax);
 		intersectionResult.SetIntersectionT(tMax);
 		intersectionResult.SetIntersectionPosition(intersectionPos);
-		Vector3 normalVec = closestPrimitive->GetNormal(intersectionResult);
+		ParamsForNormal paramsForNormal(intersectionResult.GetIncomingRay().GetDirection(),
+										intersectionPos, intersectionResult.GetGenericMetadata1(),
+										intersectionResult.GetGenericMetadata2(),
+										intersectionResult.GetGenericMetadata3(),
+										intersectionResult.GetPrimitiveName());
+		Vector3 normalVec = closestPrimitive->GetNormal(paramsForNormal);
 		intersectionResult.SetIntersectionNormal(normalVec);
 		
 		// ambient light if available
@@ -225,7 +230,7 @@ bool Scene::Intersect(const Ray &ray, Color &newColor,
 						primitiveMaterial->GetColorForAreaLight(intersectionResult)*
 						lightRadColor4*projectionTerm*
 						currentLight->GeometricTerm(intersectionResult)/
-						currentLight->PDF(intersectionResult)
+						currentLight->PDF(paramsForNormal)
 						:
 						primitiveMaterial->GetDirectColor(intersectionResult)*
 						lightRadColor4*projectionTerm;

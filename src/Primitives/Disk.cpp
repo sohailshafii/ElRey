@@ -85,7 +85,7 @@ bool Disk::IntersectShadow(const Ray &ray, float tMin, float tMax) {
 	return false;
 }
 
-Vector3 Disk::GetNormal(IntersectionResult const &intersectionResult) const {
+Vector3 Disk::GetNormal(ParamsForNormal const &paramsForNormal) const {
 	return normalVec;
 }
 
@@ -97,7 +97,7 @@ void Disk::SamplePrimitive(Point3& resultingSample) {
 	// Leave out for now
 }
 
-float Disk::PDF(const IntersectionResult& intersectionResult) const {
+float Disk::PDF(ParamsForNormal const &paramsForNormal) const {
 	return 1.0f; // Doesn't return a valid value because we don't use it for sampling
 }
 

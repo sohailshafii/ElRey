@@ -19,7 +19,7 @@ public:
 						   IntersectionResult &intersectionResult) override;
 	virtual bool IntersectShadow(const Ray &ray, float tMin, float tMax) override;
 	
-	virtual Vector3 GetNormal(IntersectionResult const &intersectionResult) const override;
+	virtual Vector3 GetNormal(ParamsForNormal const &paramsForNormal) const override;
 	
 	virtual Vector3 GetNormalAtPosition(Point3 const &position) const override;
 	
@@ -27,7 +27,7 @@ public:
 	
 	virtual void SamplePrimitive(Point3& resultingSample) override;
 	
-	virtual float PDF(const IntersectionResult& intersectionResult) const override;
+	virtual float PDF(ParamsForNormal const &paramsForNormal) const override;
 	
 	virtual bool HasBoundingBox() const override {
 		return true;
