@@ -40,6 +40,7 @@ void PrimitiveLoader::AddPrimitivesToScene(Scene* scene,
 			if (instancePrim != nullptr) {
 				scene->AddPrimitive(instancePrim);
 				// original primitive cannot be used for intersections
+				// that's because the instance will be used for intersections instead
 				Primitive* originalPrimitive = scene->FindPrimitiveByName(
 					instancePrim->GetOriginalPrimName());
 				if (originalPrimitive != nullptr) {
