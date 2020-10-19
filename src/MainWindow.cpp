@@ -61,11 +61,13 @@ int main(int argc, char* argv[]) {
 			std::string currentToken = argv[argIndex];
 			ConvertTokenToLowerCase(currentToken);
 
-			if (currentToken == "-scenePath" && argIndex+1 < argc) {
-				scenePath = atoi(argv[++argIndex]);
+			if (currentToken == "-scenepath" && argIndex+1 < argc) {
+				scenePath = argv[++argIndex];
+				std::cout << "Scene path: " << scenePath << std::endl;
 			}
 			else if (currentToken == "-offline") {
 				offlineRender = true;
+				std::cout << "Offline render specified.\n";
 			}
 		}
 	}

@@ -47,6 +47,7 @@ Matrix::Matrix(Matrix const & rhs) {
 Matrix::Matrix(Matrix &&rhs): m(rhs.m),
 	numRows(rhs.numRows), numColumns(rhs.numColumns),
 	numElements(rhs.numElements) {
+	rhs.m = nullptr;
 }
 
 Matrix& Matrix::operator=(Matrix const & rhs) {
@@ -114,7 +115,9 @@ void Matrix::AllocateAndCopyFrom(const Matrix& other) {
 	this->numColumns = other.numColumns;
 
 	numElements = numRows*numColumns;
-	m = new float[numElements];
+	if (m == nullptr) {
+		m = new float[numElements];
+	}
 	memcpy(m, other.m, numElements * sizeof(float));
 }
 
