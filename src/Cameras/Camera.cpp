@@ -5,6 +5,7 @@
 #include "Math/Point2.h"
 #include "Math/Ray.h"
 #include "SceneData/Scene.h"
+#include "Math/Matrix4x4.h"
 
 Camera::Camera() {
 	this->eyePosition = Point3::Zero();
@@ -72,13 +73,13 @@ void Camera::Displace(const Vector3& displacementVector) {
 	eyePosition[2] += displacementVector[2];
 }
 
-void Camera::Rotate(const Matrix& matrix) {
+void Camera::Rotate(const Matrix4x4& matrix) {
 	right = matrix*right;
 	up = matrix*up;
 	forward = matrix*forward;
 }
 
-void Camera::Transform(const Matrix& matrix) {
+void Camera::Transform(const Matrix4x4& matrix) {
 	right = matrix*right;
 	up = matrix*up;
 	forward = matrix*forward;

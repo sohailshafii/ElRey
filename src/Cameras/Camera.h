@@ -3,13 +3,13 @@
 #include "Sampling/SamplerCreator.h"
 #include "Math/Point3.h"
 #include "Math/Vector3.h"
-#include "Math/Matrix.h"
 #include "Materials/Color.h"
 
 class GenericSampler;
 class Scene;
 class Point2;
 class Ray;
+class Matrix4x4;
 
 // assume left-handed coordinate system, where z goes into screen
 class Camera {
@@ -35,9 +35,9 @@ public:
 							   float frameTime, bool BGRMode) const;
 	
 	void Displace(const Vector3& displacementVector);
-	void Rotate(const Matrix& matrix);
+	void Rotate(const Matrix4x4& matrix);
 	// transform includes a rotation but also affects eye position
-	void Transform(const Matrix& matrix);
+	void Transform(const Matrix4x4& matrix);
 	void TranslateAndRotate(const Vector3& translation, float rightRotationDegrees,
 							float upRotationDegrees);
 	

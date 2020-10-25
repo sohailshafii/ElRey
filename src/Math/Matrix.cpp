@@ -283,7 +283,7 @@ Matrix& Matrix::operator*=(float scalar) {
 // TODO: move to 4x4 version, doesn't make sense here
 // yeah, ignores dimensions of matrix and doesn't check them
 // assumes 3d point as a w-coordinate of 1
-Point3 Matrix::operator*(const Point3& rhs) const {
+/*Point3 Matrix::operator*(const Point3& rhs) const {
 	return Point3(m[0]*rhs[0] + m[1]*rhs[1] + m[2]*rhs[2] + m[3],
 				  m[4]*rhs[0] + m[5]*rhs[1] + m[6]*rhs[2] + m[7],
 				  m[8]*rhs[0] + m[9]*rhs[1] + m[10]*rhs[2] + m[11]);
@@ -300,7 +300,7 @@ Vector3 Matrix::operator*(const Vector3& rhs) const {
 	return Vector3(m[0]*rhs[0] + m[1]*rhs[1] + m[2]*rhs[2],
 				   m[4]*rhs[0] + m[5]*rhs[1] + m[6]*rhs[2],
 				   m[8]*rhs[0] + m[9]*rhs[1] + m[10]*rhs[2]);
-}
+}*/
 
 Matrix& Matrix::operator/=(float scalar) {
 	for (unsigned int elementIndex = 0; elementIndex < numElements;
@@ -309,148 +309,4 @@ Matrix& Matrix::operator/=(float scalar) {
 	}
 
 	return *this;
-}
-
-Matrix Matrix::TranslationMatrix(const Vector3& translationVec) {
-	return Matrix(
-		1.0f, 0.0f, 0.0f, translationVec[0],
-		0.0f, 1.0f, 0.0f, translationVec[1],
-		0.0f, 0.0f, 1.0f, translationVec[2],
-		0.0f, 0.0f, 0.0f, 1.0f);
-}
-
-Matrix Matrix::InvTranslationMatrix(const Vector3& translationVec) {
-	return Matrix(
-		1.0f, 0.0f, 0.0f,-translationVec[0],
-		0.0f, 1.0f, 0.0f,-translationVec[1],
-		0.0f, 0.0f, 1.0f,-translationVec[2],
-		0.0f, 0.0f, 0.0f, 1.0f);
-}
-
-Matrix Matrix::ScaleMatrix(const Vector3& scaleVec) {
-	return Matrix(
-		scaleVec[0], 0.0f, 0.0f, 0.0f,
-		0.0f, scaleVec[1], 0.0f, 0.0f,
-		0.0f, 0.0f, scaleVec[2], 0.0f,
-		0.0f, 0.0f, 0.0f, 1.0f);
-}
-
-Matrix Matrix::InvScaleMatrix(const Vector3& scaleVec) {
-	return Matrix(
-		1.0f/scaleVec[0], 0.0f, 0.0f, 0.0f,
-		0.0f,1.0f/scaleVec[1], 0.0f, 0.0f,
-		0.0f, 0.0f,1.0f/scaleVec[2], 0.0f,
-		0.0f, 0.0f, 0.0f, 1.0f);
-}
-
-Matrix Matrix::RotationMatrix(const Vector3& axis, float angleDegrees) {
-	float cosAngle = cos(angleDegrees*DEG_2_RAD);
-	float sinAngle = sin(angleDegrees*DEG_2_RAD);
-	float oneMinusCos = 1.0f - cosAngle;
-	float uxUy = axis[0] * axis[1];
-	float uzUy = axis[2] * axis[1];
-	float uzUx = axis[2] * axis[0];
-	return Matrix(
-		cosAngle + axis[0] * axis[0] * oneMinusCos,
-		uxUy * oneMinusCos - axis[2] * sinAngle,
-		uzUx * oneMinusCos + axis[1] * sinAngle,
-		0.0f,
-
-		uxUy * oneMinusCos + axis[2] * sinAngle,
-		cosAngle + axis[1]*axis[1]*oneMinusCos,
-		uzUy*oneMinusCos - axis[0]*sinAngle,
-		0.0f,
-		
-		uzUx*oneMinusCos - axis[1]*sinAngle,
-		uzUy*oneMinusCos + axis[0]*sinAngle,
-		cosAngle + axis[2]*axis[2]*oneMinusCos,
-		0.0f,
-		
-		0.0f, 0.0f, 0.0f, 1.0f);
-}
-
-Matrix Matrix::InvRotationMatrix(const Vector3& axis, float angleDegrees) {
-	float cosAngle = cos(-angleDegrees*DEG_2_RAD);
-	float sinAngle = sin(-angleDegrees*DEG_2_RAD);
-	float oneMinusCos = 1.0f - cosAngle;
-	float uxUy = axis[0] * axis[1];
-	float uzUy = axis[2] * axis[1];
-	float uzUx = axis[2] * axis[0];
-	return Matrix(
-		cosAngle + axis[0] * axis[0] * oneMinusCos,
-		uxUy * oneMinusCos - axis[2] * sinAngle,
-		uzUx * oneMinusCos + axis[1] * sinAngle,
-		0.0f,
-
-		uxUy * oneMinusCos + axis[2] * sinAngle,
-		cosAngle + axis[1]*axis[1]*oneMinusCos,
-		uzUy*oneMinusCos - axis[0]*sinAngle,
-		0.0f,
-		
-		uzUx*oneMinusCos - axis[1]*sinAngle,
-		uzUy*oneMinusCos + axis[0]*sinAngle,
-		cosAngle + axis[2]*axis[2]*oneMinusCos,
-		0.0f,
-		
-		0.0f, 0.0f, 0.0f, 1.0f);
-}
-
-Matrix Matrix::RotationMatrixX(float angleDegrees) {
-	float cosAngle = cos(angleDegrees*DEG_2_RAD);
-	float sinAngle = sin(angleDegrees*DEG_2_RAD);
-	return Matrix(
-		1.0f, 0.0f, 0.0f, 0.0f,
-		0.0f, cosAngle, -sinAngle, 0.0f,
-		0.0f, sinAngle, cosAngle, 0.0f,
-		0.0f, 0.0f, 0.0f, 1.0f);
-}
-
-Matrix Matrix::InvRotationMatrixX(float angleDegrees) {
-	float cosAngle = cos(-angleDegrees*DEG_2_RAD);
-	float sinAngle = sin(-angleDegrees*DEG_2_RAD);
-	return Matrix(
-		1.0f, 0.0f, 0.0f, 0.0f,
-		0.0f, cosAngle, -sinAngle, 0.0f,
-		0.0f, sinAngle, cosAngle, 0.0f,
-		0.0f, 0.0f, 0.0f, 1.0f);
-}
-
-Matrix Matrix::RotationMatrixY(float angleDegrees) {
-	float cosAngle = cos(angleDegrees*DEG_2_RAD);
-	float sinAngle = sin(angleDegrees*DEG_2_RAD);
-	return Matrix(
-		cosAngle, 0.0f, sinAngle, 0.0f,
-		0.0f, 1.0f, 0.0f, 0.0f,
-		-sinAngle, 0.0f, cosAngle, 0.0f,
-		0.0f, 0.0f, 0.0f, 1.0f);
-}
-
-Matrix Matrix::InvRotationMatrixY(float angleDegrees) {
-	float cosAngle = cos(-angleDegrees*DEG_2_RAD);
-	float sinAngle = sin(-angleDegrees*DEG_2_RAD);
-	return Matrix(
-		cosAngle, 0.0f, sinAngle, 0.0f,
-		0.0f, 1.0f, 0.0f, 0.0f,
-		-sinAngle, 0.0f, cosAngle, 0.0f,
-		0.0f, 0.0f, 0.0f, 1.0f);
-}
-
-Matrix Matrix::RotationMatrixZ(float angleDegrees) {
-	float cosAngle = cos(angleDegrees*DEG_2_RAD);
-	float sinAngle = sin(angleDegrees*DEG_2_RAD);
-	return Matrix(
-		cosAngle, -sinAngle, 0.0f, 0.0f,
-		sinAngle, cosAngle, 0.0f, 0.0f,
-		0.0f, 0.0f, 1.0f, 0.0f,
-		0.0f, 0.0f, 0.0f, 1.0f);
-}
-
-Matrix Matrix::InvRotationMatrixZ(float angleDegrees) {
-	float cosAngle = cos(-angleDegrees*DEG_2_RAD);
-	float sinAngle = sin(-angleDegrees*DEG_2_RAD);
-	return Matrix(
-		cosAngle, -sinAngle, 0.0f, 0.0f,
-		sinAngle, cosAngle, 0.0f, 0.0f,
-		0.0f, 0.0f, 1.0f, 0.0f,
-		0.0f, 0.0f, 0.0f, 1.0f);
 }

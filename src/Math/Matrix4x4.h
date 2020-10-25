@@ -13,6 +13,10 @@ public:
 	Matrix4x4(const Matrix4x4 &rhs);
 	Matrix4x4& operator=(const Matrix4x4& rhs);
 	
+	Point3 operator*(const Point3& rhs) const;
+	Point4 operator*(const Point4& rhs) const;
+	Vector3 operator*(const Vector3& rhs) const;
+	
 	Matrix4x4 Transpose() const;
 	
 	static Matrix4x4 TranslationMatrix(const Vector3& translationVec);
