@@ -45,7 +45,14 @@ void PrimitiveLoader::AddPrimitivesToScene(Scene* scene,
 					instancePrim->GetOriginalPrimName());
 				if (originalPrimitive != nullptr) {
 					originalPrimitive->SetUsedForInstancing(true);
+					std::cout << originalPrimitive->GetName() << " used for instancing.\n";
 				}
+			}
+			else {
+				std::stringstream exceptionMsg;
+				exceptionMsg << "Could not find original primitive for instance: " <<
+					instancePrim->GetName() << ".\n";
+				throw exceptionMsg;
 			}
 		}
 	}
