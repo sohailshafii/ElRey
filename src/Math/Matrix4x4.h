@@ -69,7 +69,6 @@ public:
 	
 private:
 	float *m;
-	void AllocateAndCopyFrom(const Matrix4x4& other);
 };
 
 inline float* Matrix4x4::GetRow(unsigned int rowIndex) {

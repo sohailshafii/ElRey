@@ -20,7 +20,8 @@ Matrix4x4::Matrix4x4(float m00, float m01, float m02, float m03,
 }
 
 Matrix4x4::Matrix4x4(Matrix4x4 const & rhs) {
-	AllocateAndCopyFrom(rhs);
+	m = new float[16];
+	memcpy(m, rhs.m, 16 * sizeof(float));
 }
 
 Matrix4x4::Matrix4x4(Matrix4x4 &&rhs): m(rhs.m) {
@@ -35,17 +36,10 @@ Matrix4x4::~Matrix4x4() {
 
 Matrix4x4& Matrix4x4::operator=(Matrix4x4 const & rhs) {
 	if (&rhs != this) {
-		AllocateAndCopyFrom(rhs);
+		memcpy(m, rhs.m, 16 * sizeof(float));
 	}
 
 	return *this;
-}
-
-void Matrix4x4::AllocateAndCopyFrom(const Matrix4x4& other) {
-	if (m == nullptr) {
-		m = new float[16];
-	}
-	memcpy(m, other.m, 16 * sizeof(float));
 }
 
 Matrix4x4 Matrix4x4::operator+(const Matrix4x4& rhs) const {
