@@ -73,7 +73,7 @@
 			"inst_name":"main_sphere",
 			"local_to_world_transform":
 			[
-				{"scale":[1.0, 1.0, 1]},
+				{"scale":[0.2, 0.5, 0.2]},
 				{"translate":[0, 0.5, 1]}
 			]
 		},

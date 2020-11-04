@@ -22,22 +22,23 @@ AABBox InstancePrimitive::GetBoundingBox() const {
 	return AABBox(GetLocalToWorldPos(minPoint),
 				  GetLocalToWorldPos(maxPoint));
 }
+
 bool InstancePrimitive::Intersect(const Ray &rayWorld, float tMin,
 								  float& tMax,
 								  IntersectionResult &intersectionResult) {
 	Ray rayToCast = rayWorld;
 	Vector3 originalDir = rayWorld.GetDirection();
 	Point3 originalOrigin = rayWorld.GetOrigin();
+	// NOTE: do not normalize ray direction after transformation!
+	// the local-to-world's t value equals the world-to-local's t
+	// and that relationship is ruined if the vector is normalized
+	// see https://cs.brown.edu/courses/cs123/lectures/CS123_18_Raytracing_10.24.19.pdf
+	// https://graphicscompendium.com/raytracing/12-transformations
+	// ray-object intersections don't assume normal vector anyway and should
+	// not
 	rayToCast.SetOrigin(GetWorldToLocalPos(originalOrigin));
-	Vector3 newDirection = GetWorldToLocalDir(originalDir);
-	Vector3 newDirectionNorm = newDirection.Normalized();
-	rayToCast.SetDirection(newDirectionNorm);
-	bool found = instancePrimitive->Intersect(rayToCast, tMin, tMax, intersectionResult);
-	if (found) {
-		cachedPos = rayToCast.GetPositionAtParam(tMax);
-		cachedDir = newDirectionNorm;
-	}
-	return found;
+	rayToCast.SetDirection(GetWorldToLocalDir(originalDir));
+	return instancePrimitive->Intersect(rayToCast, tMin, tMax, intersectionResult);
 }
 
 bool InstancePrimitive::IntersectShadow(const Ray &rayWorld,
@@ -46,16 +47,15 @@ bool InstancePrimitive::IntersectShadow(const Ray &rayWorld,
 	Vector3 originalDir = rayWorld.GetDirection();
 	Point3 originalOrigin = rayWorld.GetOrigin();
 	rayToCast.SetOrigin(GetWorldToLocalPos(originalOrigin));
-	// TODO: fix, this screws up with scaling. ugh
-	rayToCast.SetDirection(GetWorldToLocalDir(originalDir).Normalized());
+	rayToCast.SetDirection(GetWorldToLocalDir(originalDir));
 	return instancePrimitive->IntersectShadow(rayToCast, tMin, tMax);
 }
 
 Vector3 InstancePrimitive::GetNormal(ParamsForNormal const &paramsForNormal) const {
 	// hack; modify intersection position so that primitive thinks it's in local space
 	ParamsForNormal resModified = paramsForNormal;
-	resModified.SetIntersectionPosition(cachedPos);
-	resModified.SetRayDirection(cachedDir);
+	resModified.SetIntersectionPosition(GetWorldToLocalPos(resModified.GetIntersectionPos()));
+	resModified.SetRayDirection(GetWorldToLocalDir(resModified.GetRayDirection()));
 	Vector3 normalLocal = instancePrimitive->GetNormal(resModified);
 	
 	return GetWorldToLocalTransposeDir(normalLocal).Normalized();
