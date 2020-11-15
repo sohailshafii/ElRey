@@ -54,6 +54,10 @@ public:
 		srand(seed);
 	}
 	
+	static float Clamp(float x, float min, float max) {
+		return (x < min ? min : (x > max ? max : x));
+	}
+	
 	static void ComputeUVWFromWandU(Vector3 &right, Vector3 &up, Vector3 &forward);
 	
 	static int SolveQuadric(double c[3], double s[2]);

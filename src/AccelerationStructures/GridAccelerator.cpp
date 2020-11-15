@@ -1,5 +1,7 @@
 #include "GridAccelerator.h"
 #include "CommonMath.h"
+#include "CompoundObject.h"
+#include <iostream>
 
 GridAccelerator::GridAccelerator() {
 	
@@ -38,18 +40,83 @@ void GridAccelerator::SetupCells() {
 	ny = multiplier * wy / s + 1;
 	nz = multiplier * wz / s + 1;
 	
-	// grid cells start out with nullptrs
+	// grid cells start out with nothing
 	int numCells = nx*ny*nz;
 	cells.reserve(numPrimitives);
 	
 	for (size_t index = 0; index < numCells; index++) {
-		cells.push_back(nullptr);
+		cells.push_back(PrimitiveCollection());
 	}
 	
 	// temp objects to hold number of objects in each
 	// cell
 	std::vector<int> counts;
 	counts.reserve(numCells);
+	for (int cellIndex = 0; cellIndex < numCells; cellIndex++) {
+		counts.push_back(0);
+	}
+	
+	AABBox objectBBox;
+	int cellArrayIndex;
+	float xConversionFactor = nx/(p1[0] - p0[0]);
+	float yConversionFactor = ny/(p1[1] - p0[1]);
+	float zConversionFactor = nz/(p1[2] - p0[2]);
+	int zSliceSize = nx*ny;
+	for (size_t primIndex = 0; primIndex < numPrimitives; primIndex++) {
+		Primitive* currPrimitive = primitives[primIndex];
+		objectBBox = currPrimitive->GetBoundingBox();
+		// compute the cell indices at the corners of
+		// the bounding box of the object
+		int ixMin = CommonMath::Clamp((objectBBox.x0 - p0[0])*xConversionFactor, 0, nx - 1);
+		int iyMin = CommonMath::Clamp((objectBBox.y0 - p0[1])*yConversionFactor, 0, ny - 1);
+		int izMin = CommonMath::Clamp((objectBBox.z0 - p0[2])*yConversionFactor, 0, nz - 1);
+
+		int ixMax = CommonMath::Clamp((objectBBox.x1 - p0[0])*xConversionFactor, 0, nx - 1);
+		int iyMax = CommonMath::Clamp((objectBBox.y1 - p0[1])*yConversionFactor, 0, ny - 1);
+		int izMax = CommonMath::Clamp((objectBBox.z1 - p0[2])*yConversionFactor, 0, nz - 1);
+		
+		// add objects to the cells
+		for (int zIndex = izMin; zIndex <= izMax; zIndex++) {
+			for (int yIndex = iyMin; yIndex <= iyMax; yIndex++) {
+				int yOffset = nx*yIndex;
+				for (int xIndex = ixMin; xIndex <= ixMax; xIndex++) {
+					int oneDimIndex = xIndex + yOffset + zSliceSize*zIndex;
+					cells[oneDimIndex].primitives.push_back(currPrimitive);
+					counts[oneDimIndex] += 1;
+				}
+			}
+		}
+	}
+	
+	primitives.erase(primitives.begin(), primitives.end());
+
+	// useful stats
+	int numZeroes = 0, numOnes = 0,
+		numTwos = 0, numThrees = 0,
+		numGreater = 0;
+	for (int cellIndex = 0; cellIndex < numCells; cellIndex++) {
+		if (counts[cellIndex] == 0) {
+			numZeroes++;
+		}
+		else if (counts[cellIndex] == 1) {
+			numOnes++;
+		}
+		else if (counts[cellIndex] == 1) {
+			numTwos++;
+		}
+		else if (counts[cellIndex] == 2) {
+			numThrees++;
+		}
+		else if (counts[cellIndex] > 3) {
+			numGreater++;
+		}
+	}
+	
+	std::cout << "Num cells total = " << numCells << std::endl;
+	std::cout << "num zeroes = " << numZeroes << ", num ones = " << numOnes << "  numTwos = " << numTwos << std::endl;
+	std::cout << "num threes = " << numThrees << "  numGreater = " << numGreater << std::endl;
+	
+	counts.erase(counts.begin(), counts.end());
 }
 
 // TODO make sure all primitives have some sort of bounding

@@ -11,12 +11,24 @@ public:
 	GridAccelerator();
 	
 private:
+	class PrimitiveCollection {
+	public:
+		AABBox GetBoundingBox() {
+			AABBox boundingBox;
+			for(auto primitive : primitives) {
+				boundingBox.Superset(primitive->GetBoundingBox());
+			}
+		}
+		
+		std::vector<Primitive*> primitives;
+	};
+	
 	void SetupCells();
 	Point3 GetMinCoordinates();
 	Point3 GetMaxCoordinates();
 	
 	AABBox boundingBox;
-	std::vector<Primitive*> cells;
+	std::vector<PrimitiveCollection> cells;
 	std::vector<Primitive*> primitives;
 	int nx, ny, nz;
 };
