@@ -16,6 +16,7 @@ private:
 	Point3 GetMaxCoordinates();
 	
 	AABBox boundingBox;
+	std::vector<Primitive*> cells;
 	std::vector<Primitive*> primitives;
 	int nx, ny, nz;
 };

@@ -29,9 +29,27 @@ void GridAccelerator::SetupCells() {
 	float multiplier = 2.0;
 	float s = pow(wx * wy * wz / numPrimitives,
 				  0.333333);
+	// s is like volume/object, and we do the
+	// cube root of it, to make it per dim
+	// multiplying wx by the inverse sorta
+	// cancels the volume, so that you are left
+	// with number of objects per axis
 	nx = multiplier * wx / s + 1;
 	ny = multiplier * wy / s + 1;
 	nz = multiplier * wz / s + 1;
+	
+	// grid cells start out with nullptrs
+	int numCells = nx*ny*nz;
+	cells.reserve(numPrimitives);
+	
+	for (size_t index = 0; index < numCells; index++) {
+		cells.push_back(nullptr);
+	}
+	
+	// temp objects to hold number of objects in each
+	// cell
+	std::vector<int> counts;
+	counts.reserve(numCells);
 }
 
 // TODO make sure all primitives have some sort of bounding
