@@ -40,7 +40,6 @@ Point3 GridAccelerator::GetMinCoordinates() {
 	AABBox objectBBox;
 	Point3 minCoord;
 	bool xSet = false, ySet = false, zSet = false;
-	
 	size_t numPrimitives = primitives.size();
 	
 	for (size_t index = 0; index < numPrimitives; index++) {
@@ -66,7 +65,31 @@ Point3 GridAccelerator::GetMinCoordinates() {
 	return minCoord;
 }
 
-// TODO
 Point3 GridAccelerator::GetMaxCoordinates() {
-	return Point3(0.0f, 0.0f, 0.0f);
+	AABBox objectBBox;
+	Point3 maxCoord;
+	bool xSet = false, ySet = false, zSet = false;
+	size_t numPrimitives = primitives.size();
+	
+	for (size_t index = 0; index < numPrimitives; index++) {
+		objectBBox = primitives[index]->GetBoundingBox();
+		if (!xSet || objectBBox.x1 > maxCoord[0]) {
+			maxCoord[0] = objectBBox.x1;
+			xSet = true;
+		}
+		if (!ySet || objectBBox.y1 > maxCoord[1]) {
+			maxCoord[1] = objectBBox.y1;
+			ySet = true;
+		}
+		if (!zSet || objectBBox.z1 > maxCoord[2]) {
+			maxCoord[2] = objectBBox.z1;
+			zSet = true;
+		}
+	}
+	
+	maxCoord[0] += EPSILON;
+	maxCoord[1] += EPSILON;
+	maxCoord[2] += EPSILON;
+	
+	return maxCoord;
 }
