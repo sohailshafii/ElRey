@@ -1,4 +1,5 @@
 #include "GridAccelerator.h"
+#include "CommonMath.h"
 
 GridAccelerator::GridAccelerator() {
 	
@@ -33,9 +34,36 @@ void GridAccelerator::SetupCells() {
 	nz = multiplier * wz / s + 1;
 }
 
-// TODO
+// TODO make sure all primitives have some sort of bounding
+// box for this to work
 Point3 GridAccelerator::GetMinCoordinates() {
-	return Point3(0.0f, 0.0f, 0.0f);
+	AABBox objectBBox;
+	Point3 minCoord;
+	bool xSet = false, ySet = false, zSet = false;
+	
+	size_t numPrimitives = primitives.size();
+	
+	for (size_t index = 0; index < numPrimitives; index++) {
+		objectBBox = primitives[index]->GetBoundingBox();
+		if (!xSet || objectBBox.x0 < minCoord[0]) {
+			minCoord[0] = objectBBox.x0;
+			xSet = true;
+		}
+		if (!ySet || objectBBox.y0 < minCoord[1]) {
+			minCoord[1] = objectBBox.y0;
+			ySet = true;
+		}
+		if (!zSet || objectBBox.z0 < minCoord[2]) {
+			minCoord[2] = objectBBox.z0;
+			zSet = true;
+		}
+	}
+	
+	minCoord[0] -= EPSILON;
+	minCoord[1] -= EPSILON;
+	minCoord[2] -= EPSILON;
+	
+	return minCoord;
 }
 
 // TODO
