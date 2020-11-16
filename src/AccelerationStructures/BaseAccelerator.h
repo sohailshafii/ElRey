@@ -15,6 +15,9 @@ public:
 	BaseAccelerator(Primitive **primitives, unsigned int numPrimitives);
 	
 	virtual ~BaseAccelerator();
+	
+	// call to set accelerator after modifying primitives
+	virtual void SetUpAccelerator() = 0;
 
 	void AddPrimitive(Primitive *newPrimitive);
 	void AddPrimitives(Primitive **newPrimitives,

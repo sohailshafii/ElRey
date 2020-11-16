@@ -50,6 +50,10 @@ public:
 		return baseAccelerator->GetNumPrimitives();
 	}
 	
+	void SetUpAccelerator() {
+		baseAccelerator->SetUpAccelerator();
+	}
+	
 	unsigned int GetNumLights() const {
 		return lights.size();
 	}

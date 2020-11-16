@@ -12,7 +12,7 @@ public:
 	GridAccelerator(Primitive **primitives,
 					unsigned int numPrimitives);
 	
-	void SetUp(std::vector<Primitive*> const & primitives);
+	virtual void SetUpAccelerator() override;
 	
 	virtual Primitive* Intersect(const Ray &ray, float tMin, float& tMax,
 								IntersectionResult &intersectionResult) override;
@@ -36,9 +36,9 @@ private:
 		std::vector<Primitive*> primitives;
 	};
 	
-	void SetupCells(std::vector<Primitive*> const & primitives);
-	Point3 GetMinCoordinates(std::vector<Primitive*> const & primitives);
-	Point3 GetMaxCoordinates(std::vector<Primitive*> const & primitives);
+	void SetupCells();
+	Point3 GetMinCoordinates();
+	Point3 GetMaxCoordinates();
 	
 	AABBox boundingBox;
 	std::vector<PrimitiveCollection> cells;

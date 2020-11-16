@@ -42,6 +42,9 @@ void SceneLoader::DeserializeJSONFileIntoScene(Scene* scene,
 		scene->SetCamera(mainCamera);
 		
 		PrimitiveLoader::AddPrimitivesToScene(scene, jsonObj["objects"]);
+		// TODO: setup accelerator via enum provided in json
+		// previously
+		scene->SetUpAccelerator();
 
 		nlohmann::json lightsArray = jsonObj["lights"];
 		for (auto& element : lightsArray.items()) {

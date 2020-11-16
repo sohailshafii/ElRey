@@ -10,6 +10,10 @@ SimpleWorld::SimpleWorld(Primitive **primitives,
 	: BaseAccelerator(primitives, numPrimitives) {	
 }
 
+void SimpleWorld::SetUpAccelerator() {
+	// nothing to see here for simple world
+}
+
 Primitive* SimpleWorld::Intersect(const Ray &ray, float tMin, float& tMax,
 							IntersectionResult &intersectionResult) {
 	Primitive* closestPrimitive = nullptr;

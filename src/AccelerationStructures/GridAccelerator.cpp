@@ -47,14 +47,14 @@ bool GridAccelerator::ShadowFeelerIntersectsAnObject(const Ray& ray, float tMin,
 	return false;
 }
 
-void GridAccelerator::SetUp(std::vector<Primitive*> const & primitives) {
-	SetupCells(primitives);
+void GridAccelerator::SetUpAccelerator() {
+	SetupCells();
 }
 
-void GridAccelerator::SetupCells(std::vector<Primitive*> const & primitives) {
+void GridAccelerator::SetupCells() {
 	// find min and max coordinates of the grid
-	Point3 p0 = GetMinCoordinates(primitives);
-	Point3 p1 = GetMaxCoordinates(primitives);
+	Point3 p0 = GetMinCoordinates();
+	Point3 p1 = GetMaxCoordinates();
 	
 	// update bounding box with min and max coords
 	boundingBox.x0 = p0[0];
@@ -160,7 +160,7 @@ void GridAccelerator::SetupCells(std::vector<Primitive*> const & primitives) {
 	counts.erase(counts.begin(), counts.end());
 }
 
-Point3 GridAccelerator::GetMinCoordinates(std::vector<Primitive*> const & primitives) {
+Point3 GridAccelerator::GetMinCoordinates() {
 	AABBox objectBBox;
 	Point3 minCoord;
 	bool xSet = false, ySet = false, zSet = false;
@@ -194,7 +194,7 @@ Point3 GridAccelerator::GetMinCoordinates(std::vector<Primitive*> const & primit
 	return minCoord;
 }
 
-Point3 GridAccelerator::GetMaxCoordinates(std::vector<Primitive*> const & primitives) {
+Point3 GridAccelerator::GetMaxCoordinates() {
 	AABBox objectBBox;
 	Point3 maxCoord;
 	bool xSet = false, ySet = false, zSet = false;
