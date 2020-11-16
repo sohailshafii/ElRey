@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Primitives/Primitive.h"
+#include "AccelerationStructures/BaseAccelerator.h"
 #include "SceneData/Light.h"
 #include "Cameras/Camera.h"
 #include <string>
@@ -10,15 +11,24 @@
 // that represents our world.
 class Scene {
 public:
-	Scene();
-	Scene(Primitive **primitives, unsigned int numPrimitives);
+	Scene(BaseAccelerator::AcceleratorType acceleratorType);
+	Scene(Primitive **primitives, unsigned int numPrimitives,
+		  BaseAccelerator::AcceleratorType acceleratorType);
 	virtual ~Scene();
 
-	virtual void AddPrimitive(Primitive *newPrimitive);
-	virtual void AddPrimitives(Primitive **newPrimitives,
-		unsigned int numNewPrimitives);
+	void AddPrimitive(Primitive *newPrimitive) {
+		return baseAccelerator->AddPrimitive(newPrimitive);
+	}
 	
-	virtual void RemovePrimitive(Primitive* primitiveToRemove);
+	void AddPrimitives(Primitive **newPrimitives,
+					   unsigned int numNewPrimitives) {
+		return baseAccelerator->AddPrimitives(newPrimitives,
+											  numNewPrimitives);
+	}
+	
+	void RemovePrimitive(Primitive* primitiveToRemove) {
+		return baseAccelerator->RemovePrimitive(primitiveToRemove);
+	}
 
 	virtual void AddLight(Light* newLight);
 	virtual void AddLights(Light** newLights, unsigned int numNewLights);
@@ -29,13 +39,15 @@ public:
 		float tMin, float& tMax) const;
 
 	Primitive* GetPrimitive(unsigned int index) {
-		return primitives[index];	
+		return baseAccelerator->GetPrimitive(index);
 	}
 
-	Primitive* FindPrimitiveByName(const std::string& name);
+	Primitive* FindPrimitiveByName(const std::string& name) {
+		return baseAccelerator->FindPrimitiveByName(name);
+	}
 
 	unsigned int GetNumPrimitives() const {
-		return primitives.size();
+		return baseAccelerator->GetNumPrimitives();
 	}
 	
 	unsigned int GetNumLights() const {
@@ -79,14 +91,10 @@ public:
 										const Primitive* primitiveToExclude = nullptr) const;
 
 private:
-	void CleanUpPrimitives();
 	void CleanUpLights();
 
 protected:
-	// each item is a pointer to a primitive type,
-	// whatever that might be
-	std::vector<Primitive*> primitives;
-
+	BaseAccelerator *baseAccelerator;
 	std::vector<Light*> lights;
 	Light* ambientLight;
 	

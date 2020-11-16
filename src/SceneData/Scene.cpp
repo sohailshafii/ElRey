@@ -7,22 +7,38 @@
 #include "SceneData/DirectionalLight.h"
 #include "SceneData/AmbientLight.h"
 #include "Primitives/CompoundObject.h"
+#include "AccelerationStructures/GridAccelerator.h"
+#include "AccelerationStructures/SimpleWorld.h"
 
-Scene::Scene() {
+Scene::Scene(BaseAccelerator::AcceleratorType acceleratorType) {
+	if (acceleratorType == BaseAccelerator::AcceleratorType::SimpleWorld) {
+		baseAccelerator = new SimpleWorld();
+	}
+	else {
+		baseAccelerator = new GridAccelerator();
+	}
+	
 	ambientLight = nullptr;
 	mainCamera = nullptr;
 }
 
-Scene::Scene(Primitive **primitives, unsigned int numPrimitives) {
-	for (unsigned int i = 0; i < numPrimitives; i++) {
-		this->primitives.push_back(primitives[i]);
+Scene::Scene(Primitive **primitives, unsigned int numPrimitives,
+			 BaseAccelerator::AcceleratorType acceleratorType) {
+	if (acceleratorType == BaseAccelerator::AcceleratorType::SimpleWorld) {
+		baseAccelerator = new SimpleWorld(primitives, numPrimitives);
 	}
+	else {
+		baseAccelerator = new GridAccelerator(primitives, numPrimitives);
+	}
+	
 	ambientLight = nullptr;
 	mainCamera = nullptr;
 }
 
 Scene::~Scene() {
-	CleanUpPrimitives();
+	if (baseAccelerator != nullptr) {
+		delete baseAccelerator;
+	}
 	CleanUpLights();
 	if (mainCamera != nullptr) {
 		delete mainCamera;
@@ -32,63 +48,11 @@ Scene::~Scene() {
 	}
 }
 
-void Scene::CleanUpPrimitives() {
-	for(auto primitive : primitives) {
-		delete primitive;
-	}
-	primitives.clear();
-}
-
 void Scene::CleanUpLights() {
 	for(auto light : lights) {
 		delete light;
 	}
 	lights.clear();
-}
-
-void Scene::AddPrimitive(Primitive *newPrimitive) {
-	if (newPrimitive == nullptr) {
-		throw std::runtime_error("Trying to add invalid primitive!");
-	}
-	std::string const & primitiveName = newPrimitive->GetName();
-	for(Primitive* prim : primitives)
-	{
-		if (prim->GetName() == primitiveName) {
-			std::stringstream exceptionMsg;
-			exceptionMsg << "Trying to add primitive with duplicate name: " <<
-				primitiveName << ". Primitive should have unique names otherwise " <<
-				"compound objects cannot distinguish between children for normal " <<
-				"vector calculation.\n";
-			throw exceptionMsg;
-		}
-	}
-
-	primitives.push_back(newPrimitive);
-}
-
-void Scene::AddPrimitives(Primitive **newPrimitives, unsigned int numNewPrimitives) {
-	if (newPrimitives == nullptr || numNewPrimitives == 0) {
-		throw std::runtime_error("Trying to add invalid primitives!");
-	}
-
-	for (unsigned int i = 0; i < numNewPrimitives; i++) {
-		this->primitives.push_back(newPrimitives[i]);
-	}
-}
-
-void Scene::RemovePrimitive(Primitive* primitiveToRemove) {
-	if (primitiveToRemove == nullptr) {
-		throw std::runtime_error("Trying to remove invalid primitive!");
-	}
-	std::string const & primitiveName = primitiveToRemove->GetName();
-	for (auto it = primitives.begin(); it != primitives.end(); ) {
-		if ((*it)->GetName() == primitiveName) {
-			primitives.erase(it);
-			break;
-		} else {
-			++it;
-		}
-	}
 }
 
 void Scene::AddLight(Light* newLight) {
@@ -114,18 +78,6 @@ void Scene::AddLights(Light** newLights, unsigned int numNewLights) {
 	}
 }
 
-Primitive* Scene::FindPrimitiveByName(const std::string& name) {
-	Primitive* foundPrimitive = nullptr;
-
-	for (auto currentPrimitive : primitives) {
-		if (currentPrimitive->GetName() == name) {
-			foundPrimitive = currentPrimitive;
-		}
-	}
-
-	return foundPrimitive;
-}
-
 void Scene::SetAmbientLight(Light* newAmbientLight) {
 	if (ambientLight != nullptr) {
 		delete ambientLight;
@@ -135,19 +87,9 @@ void Scene::SetAmbientLight(Light* newAmbientLight) {
 
 bool Scene::Intersect(const Ray &ray, Color &newColor,
 	float tMin, float& tMax) const {
-	Primitive* closestPrimitive = nullptr;
 	IntersectionResult intersectionResult;
 	
-	for (auto currentPrimitive : primitives) {
-		if (currentPrimitive->UsedForInstancing()) {
-			continue;
-		}
-		auto hitPrimitive = currentPrimitive->Intersect(ray, tMin, tMax,
-														intersectionResult);
-		if (hitPrimitive) {
-			closestPrimitive = currentPrimitive;
-		}
-	}
+	Primitive* closestPrimitive = baseAccelerator->Intersect(ray, tMin, tMax, intersectionResult);
 	
 	if (closestPrimitive != nullptr) {
 		Material const * primitiveMaterial = closestPrimitive->GetMaterial();
@@ -244,21 +186,8 @@ bool Scene::Intersect(const Ray &ray, Color &newColor,
 
 bool Scene::ShadowFeelerIntersectsAnObject(const Ray& ray, float tMin,
 	float tMax, const Primitive* primitiveToExclude) const {
-	Ray rayToCast = ray;
-	Vector3 originalDir = ray.GetDirection();
-	Point3 originalOrigin = ray.GetOrigin();
-	for (auto currentPrimitive : primitives) {
-		if (currentPrimitive == primitiveToExclude ||
-			currentPrimitive->UsedForInstancing()) {
-			continue;
-		}
-		
-		if (currentPrimitive->IntersectShadow(ray, tMin, tMax))
-		{
-			return true;
-		}
-	}
-	return false;
+	return baseAccelerator->ShadowFeelerIntersectsAnObject(ray, tMin, tMax,
+														   primitiveToExclude);
 }
 
 void Scene::TranslateAndRotate(const Vector3& translation, float rightRotationDegrees,

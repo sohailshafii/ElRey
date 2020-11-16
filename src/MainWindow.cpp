@@ -137,7 +137,7 @@ SDL_Window* createWindow(int screenWidth, int screenHeight) {
 }
 
 Scene* CreateSimpleWorld(const std::string& sceneFilePath) {
-	Scene *simpleWorld = new Scene();
+	Scene *simpleWorld = new Scene(BaseAccelerator::SimpleWorld);
 	SceneLoader::DeserializeJSONFileIntoScene(simpleWorld,
 											  sceneFilePath);
 	return simpleWorld;

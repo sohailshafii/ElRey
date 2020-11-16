@@ -3,13 +3,25 @@
 #include "Math/Point3.h"
 #include "Math/AABBox.h"
 #include "Primitives/Primitive.h"
+#include "AccelerationStructures/BaseAccelerator.h"
 #include <vector>
 
-class GridAccelerator {
+class GridAccelerator : public BaseAccelerator {
 public:
 	GridAccelerator();
+	GridAccelerator(Primitive **primitives,
+					unsigned int numPrimitives);
 	
 	void SetUp(std::vector<Primitive*> const & primitives);
+	
+	virtual Primitive* Intersect(const Ray &ray, float tMin, float& tMax,
+								IntersectionResult &intersectionResult) override;
+	
+	virtual bool ShadowFeelerIntersectsAnObject(const Ray& ray, float tMin,
+												float tMax,
+												const Primitive* primitiveToExclude) override;
+	
+protected:
 	
 private:
 	class PrimitiveCollection {
