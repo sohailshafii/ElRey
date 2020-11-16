@@ -4,13 +4,16 @@
 #include <iostream>
 
 GridAccelerator::GridAccelerator() {
-	
 }
 
-void GridAccelerator::SetupCells() {
+void GridAccelerator::SetUp(std::vector<Primitive*> const & primitives) {
+	SetupCells(primitives);
+}
+
+void GridAccelerator::SetupCells(std::vector<Primitive*> const & primitives) {
 	// find min and max coordinates of the grid
-	Point3 p0 = GetMinCoordinates();
-	Point3 p1 = GetMaxCoordinates();
+	Point3 p0 = GetMinCoordinates(primitives);
+	Point3 p1 = GetMaxCoordinates(primitives);
 	
 	// update bounding box with min and max coords
 	boundingBox.x0 = p0[0];
@@ -57,7 +60,6 @@ void GridAccelerator::SetupCells() {
 	}
 	
 	AABBox objectBBox;
-	int cellArrayIndex;
 	float xConversionFactor = nx/(p1[0] - p0[0]);
 	float yConversionFactor = ny/(p1[1] - p0[1]);
 	float zConversionFactor = nz/(p1[2] - p0[2]);
@@ -88,8 +90,6 @@ void GridAccelerator::SetupCells() {
 		}
 	}
 	
-	primitives.erase(primitives.begin(), primitives.end());
-
 	// useful stats
 	int numZeroes = 0, numOnes = 0,
 		numTwos = 0, numThrees = 0,
@@ -113,21 +113,24 @@ void GridAccelerator::SetupCells() {
 	}
 	
 	std::cout << "Num cells total = " << numCells << std::endl;
-	std::cout << "num zeroes = " << numZeroes << ", num ones = " << numOnes << "  numTwos = " << numTwos << std::endl;
-	std::cout << "num threes = " << numThrees << "  numGreater = " << numGreater << std::endl;
+	std::cout << "Num zeroes = " << numZeroes << ", num ones = " << numOnes << "  numTwos = " << numTwos << std::endl;
+	std::cout << "Num threes = " << numThrees << "  numGreater = " << numGreater << std::endl;
 	
 	counts.erase(counts.begin(), counts.end());
 }
 
-// TODO make sure all primitives have some sort of bounding
-// box for this to work
-Point3 GridAccelerator::GetMinCoordinates() {
+Point3 GridAccelerator::GetMinCoordinates(std::vector<Primitive*> const & primitives) {
 	AABBox objectBBox;
 	Point3 minCoord;
 	bool xSet = false, ySet = false, zSet = false;
 	size_t numPrimitives = primitives.size();
 	
 	for (size_t index = 0; index < numPrimitives; index++) {
+		// skip primitives that don't have a bounding box
+		if (!primitives[index]->HasBoundingBox()) {
+			continue;
+		}
+		
 		objectBBox = primitives[index]->GetBoundingBox();
 		if (!xSet || objectBBox.x0 < minCoord[0]) {
 			minCoord[0] = objectBBox.x0;
@@ -150,13 +153,18 @@ Point3 GridAccelerator::GetMinCoordinates() {
 	return minCoord;
 }
 
-Point3 GridAccelerator::GetMaxCoordinates() {
+Point3 GridAccelerator::GetMaxCoordinates(std::vector<Primitive*> const & primitives) {
 	AABBox objectBBox;
 	Point3 maxCoord;
 	bool xSet = false, ySet = false, zSet = false;
 	size_t numPrimitives = primitives.size();
 	
 	for (size_t index = 0; index < numPrimitives; index++) {
+		// skip primitives that don't have a bounding box
+		if (!primitives[index]->HasBoundingBox()) {
+			continue;
+		}
+		
 		objectBBox = primitives[index]->GetBoundingBox();
 		if (!xSet || objectBBox.x1 > maxCoord[0]) {
 			maxCoord[0] = objectBBox.x1;

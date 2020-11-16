@@ -7,8 +7,9 @@
 
 class GridAccelerator {
 public:
-	
 	GridAccelerator();
+	
+	void SetUp(std::vector<Primitive*> const & primitives);
 	
 private:
 	class PrimitiveCollection {
@@ -23,12 +24,11 @@ private:
 		std::vector<Primitive*> primitives;
 	};
 	
-	void SetupCells();
-	Point3 GetMinCoordinates();
-	Point3 GetMaxCoordinates();
+	void SetupCells(std::vector<Primitive*> const & primitives);
+	Point3 GetMinCoordinates(std::vector<Primitive*> const & primitives);
+	Point3 GetMaxCoordinates(std::vector<Primitive*> const & primitives);
 	
 	AABBox boundingBox;
 	std::vector<PrimitiveCollection> cells;
-	std::vector<Primitive*> primitives;
 	int nx, ny, nz;
 };
