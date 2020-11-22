@@ -146,7 +146,7 @@ Primitive* GridAccelerator::Intersect(const Ray &ray, float tMin, float& tMax,
 		ixStop = nx;
 	}
 	else {
-		// txMin is behind the ray, so we need to get next
+		// if the ray starts inside, txMin is behind the ray, so we need to get next
 		// point right after the starting cell. So start from
 		// txMin, traversing number of cells in-between that and
 		// start plus one (nx - ix), and multiply by step length
