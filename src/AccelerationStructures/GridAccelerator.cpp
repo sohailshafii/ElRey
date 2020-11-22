@@ -91,7 +91,7 @@ Primitive* GridAccelerator::Intersect(const Ray &ray, float tMin, float& tMax,
 		t0 = tzMin;
 	}
 	
-	// find closest entry
+	// find closest exit
 	if (txMax < tyMax) {
 		t1 = txMax;
 	}
@@ -108,7 +108,7 @@ Primitive* GridAccelerator::Intersect(const Ray &ray, float tMin, float& tMax,
 		return nullptr;
 	}
 	
-	// find initial cell coordinates
+	// find cell coordinates of initial point
 	int ix, iy, iz;
 	if (boundingBox.PointInside(rayOrigin)) {
 		ix = CommonMath::Clamp((originX - x0)*nx/(x1 - x0), 0, nx - 1);
@@ -125,29 +125,39 @@ Primitive* GridAccelerator::Intersect(const Ray &ray, float tMin, float& tMax,
 	
 	// steps along x, y and z (where cell size is a step)
 	// t-size/num-cells = size of ray per cell along that dimension
+	// size being in parameter space. while the intersections with ray
+	// cells are not equally spaced along ray, they are relative
+	// per dimension
 	float dtx = (txMax - txMin) / nx;
 	float dty = (tyMax - tyMin) / ny;
 	float dtz = (tzMax - tzMin) / nz;
 	
 	float txNext, tyNext, tzNext;
+	bool txHuge = false, tyHuge = false, tzHuge = false;
 	int ixStep, iyStep, izStep;
 	int ixStop, iyStop, izStop;
 	
+	// compute next step along ray, parameterized
+	// if the direction is positive in world space
+	// progress along cells in positive direction
 	if (dirX > 0) {
 		txNext = txMin + (ix + 1) * dtx;
 		ixStep = +1;
 		ixStop = nx;
 	}
 	else {
-		// if nx is 100, and ix is 3, nx-ix = 97??
+		// txMin is behind the ray, so we need to get next
+		// point right after the starting cell. So start from
+		// txMin, traversing number of cells in-between that and
+		// start plus one (nx - ix), and multiply by step length
 		txNext = txMin + (nx - ix) * dtx;
 		ixStep = -1;
 		ixStop = -1;
 	}
 	
+	// this is assuming the ray is practically vertical in the x-dir
 	if (fabs(dirX) < EPSILON) {
-		// TODO boolean
-		txNext = 1000000000.0;
+		txHuge = true;
 		ixStep = -1;
 		ixStop = -1;
 	}
@@ -164,8 +174,7 @@ Primitive* GridAccelerator::Intersect(const Ray &ray, float tMin, float& tMax,
 	}
 	
 	if (fabs(dirY) < EPSILON) {
-		// TODO boolean
-		tyNext = 1000000000.0;
+		tyHuge = true;
 		iyStep = -1;
 		iyStop = -1;
 	}
@@ -182,8 +191,7 @@ Primitive* GridAccelerator::Intersect(const Ray &ray, float tMin, float& tMax,
 	}
 	
 	if (fabs(dirZ) < EPSILON) {
-		// TODO boolean
-		tzNext = 1000000000.0;
+		tzHuge = true;
 		izStep = -1;
 		izStop = -1;
 	}
