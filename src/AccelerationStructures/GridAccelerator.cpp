@@ -121,6 +121,73 @@ Primitive* GridAccelerator::Intersect(const Ray &ray, float tMin, float& tMax,
 		iz = CommonMath::Clamp((pointHit[2] - z0)*nz/(z1 - z0), 0, nz - 1);
 	}
 	
+	// steps along x, y and z (where cell size is a step)
+	float dtx = (txMax - txMin) / nx;
+	float dty = (tyMax - tyMin) / ny;
+	float dtz = (tzMax - tzMin) / nz;
+	
+	float txNext, tyNext, tzNext;
+	int ixStep, iyStep, izStep;
+	int ixStop, iyStop, izStop;
+	
+	if (dirX > 0) {
+		txNext = txMin + (ix + 1) * dtx;
+		ixStep = +1;
+		ixStop = nx;
+	}
+	else {
+		// nx*(nx - ix)/(txMax - txMin)
+		// basically the number of steps along direction
+		// nx is max cells
+		// (nx - ix)/(txMax - txMin) is fraction along x
+		txNext = txMin + (nx - ix) * dtx;
+		ixStep = -1;
+		ixStop = -1;
+	}
+	
+	if (fabs(dirX) < EPSILON) {
+		// TODO boolean
+		txNext = 1000000000.0;
+		ixStep = -1;
+		ixStop = -1;
+	}
+	
+	if (dirY > 0) {
+		tyNext = tyMin + (iy + 1) * dty;
+		iyStep = +1;
+		iyStop = ny;
+	}
+	else {
+		tyNext = tyMin + (ny - iy) * dty;
+		iyStep = -1;
+		iyStop = -1;
+	}
+	
+	if (fabs(dirY) < EPSILON) {
+		// TODO boolean
+		tyNext = 1000000000.0;
+		iyStep = -1;
+		iyStop = -1;
+	}
+	
+	if (dirZ > 0) {
+		tzNext = tzMin + (iz + 1) * dtz;
+		izStep = +1;
+		izStop = nx;
+	}
+	else {
+		tzNext = tzMin + (nz - iz) * dtz;
+		izStep = -1;
+		izStop = -1;
+	}
+	
+	if (fabs(dirZ) < EPSILON) {
+		// TODO boolean
+		tzNext = 1000000000.0;
+		izStep = -1;
+		izStop = -1;
+	}
+	
 	// TODO: re-write to use grid
 	for (auto currentPrimitive : primitives) {
 		if (currentPrimitive->UsedForInstancing()) {
