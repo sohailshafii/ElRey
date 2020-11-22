@@ -14,6 +14,113 @@ GridAccelerator::GridAccelerator(Primitive **primitives,
 Primitive* GridAccelerator::Intersect(const Ray &ray, float tMin, float& tMax,
 								IntersectionResult &intersectionResult) {
 	Primitive* closestPrimitive = nullptr;
+	
+	for (auto currPrimitive : primitivesNotInCells) {
+		if (currPrimitive->Intersect(ray, tMin, tMax,
+									 intersectionResult)) {
+			return currPrimitive;
+		}
+	}
+	
+	Point3 const & rayOrigin = ray.GetOrigin();
+	Vector3 const & rayDirection = ray.GetDirection();
+	float originX = rayOrigin[0];
+	float originY = rayOrigin[1];
+	float originZ = rayOrigin[2];
+	float dirX = rayDirection[0];
+	float dirY = rayDirection[1];
+	float dirZ = rayDirection[2];
+	
+	float x0 = boundingBox.x0;
+	float y0 = boundingBox.y0;
+	float z0 = boundingBox.z0;
+	float x1 = boundingBox.x1;
+	float y1 = boundingBox.y1;
+	float z1 = boundingBox.z1;
+	
+	float txMin, tyMin, tzMin;
+	float txMax, tyMax, tzMax;
+	
+	// the following code includes modifications
+	// from Shirley and Morley (2003)
+	// from Raytracing from the Ground Up
+	
+	float a = 1.0f / dirX;
+	if (a >= 0) {
+		txMin = (x0 - originX) * a;
+		txMax = (x1 - originX) * a;
+	}
+	else {
+		txMin = (x1 - originX) * a;
+		txMax = (x0 - originX) * a;
+	}
+	
+	float b = 1.0 / dirY;
+	if (b >= 0) {
+		tyMin = (y0 - originY) * b;
+		tyMax = (y1 - originY) * b;
+	}
+	else {
+		tyMin = (y1 - originY) * b;
+		tyMax = (y0 - originY) * b;
+	}
+	
+	float c = 1.0 / dirZ;
+	if (c >= 0) {
+		tzMin = (z0 - originZ) * c;
+		tzMax = (z1 - originZ) * c;
+	}
+	else {
+		tzMin = (z1 - originZ) * c;
+		tzMax = (z0 - originZ) * c;
+	}
+	
+	float t0, t1;
+	
+	// find largest entry
+	if (txMin > tyMin) {
+		t0 = txMin;
+	}
+	else {
+		t0 = tyMin;
+	}
+	
+	if (tzMin > t0) {
+		t0 = tzMin;
+	}
+	
+	// find closest entry
+	if (txMax < tyMax) {
+		t1 = txMax;
+	}
+	else {
+		t1 = tyMax;
+	}
+	
+	if (tzMax < t1) {
+		t1 = tzMax;
+	}
+	
+	// if entry is larger than exit, return false
+	if (t0 > t1) {
+		return nullptr;
+	}
+	
+	// find initial cell coordinates
+	int ix, iy, iz;
+	if (boundingBox.PointInside(rayOrigin)) {
+		ix = CommonMath::Clamp((originX - x0)*nx/(x1 - x0), 0, nx - 1);
+		iy = CommonMath::Clamp((originY - y0)*ny/(y1 - y0), 0, ny - 1);
+		iz = CommonMath::Clamp((originZ - z0)*nz/(z1 - z0), 0, nz - 1);
+	}
+	else {
+		// hit from the outside
+		Point3 pointHit = ray.GetPositionAtParam(t0);
+		ix = CommonMath::Clamp((pointHit[0] - x0)*nx/(x1 - x0), 0, nx - 1);
+		iy = CommonMath::Clamp((pointHit[1] - y0)*ny/(y1 - y0), 0, ny - 1);
+		iz = CommonMath::Clamp((pointHit[2] - z0)*nz/(z1 - z0), 0, nz - 1);
+	}
+	
 	// TODO: re-write to use grid
 	for (auto currentPrimitive : primitives) {
 		if (currentPrimitive->UsedForInstancing()) {
