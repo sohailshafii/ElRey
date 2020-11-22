@@ -45,6 +45,8 @@ Primitive* GridAccelerator::Intersect(const Ray &ray, float tMin, float& tMax,
 	// from Shirley and Morley (2003)
 	// from Raytracing from the Ground Up
 	
+	// find intersections with bounds
+	// in x, y and z directions
 	float a = 1.0f / dirX;
 	if (a >= 0) {
 		txMin = (x0 - originX) * a;
@@ -122,6 +124,7 @@ Primitive* GridAccelerator::Intersect(const Ray &ray, float tMin, float& tMax,
 	}
 	
 	// steps along x, y and z (where cell size is a step)
+	// t-size/num-cells = size of ray per cell along that dimension
 	float dtx = (txMax - txMin) / nx;
 	float dty = (tyMax - tyMin) / ny;
 	float dtz = (tzMax - tzMin) / nz;
@@ -136,10 +139,7 @@ Primitive* GridAccelerator::Intersect(const Ray &ray, float tMin, float& tMax,
 		ixStop = nx;
 	}
 	else {
-		// nx*(nx - ix)/(txMax - txMin)
-		// basically the number of steps along direction
-		// nx is max cells
-		// (nx - ix)/(txMax - txMin) is fraction along x
+		// if nx is 100, and ix is 3, nx-ix = 97??
 		txNext = txMin + (nx - ix) * dtx;
 		ixStep = -1;
 		ixStop = -1;
