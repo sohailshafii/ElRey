@@ -14,6 +14,7 @@ GridAccelerator::GridAccelerator(Primitive **primitives,
 Primitive* GridAccelerator::Intersect(const Ray &ray, float tMin, float& tMax,
 								IntersectionResult &intersectionResult) {
 	Primitive* closestPrimitive = nullptr;
+	// TODO: re-write to use grid
 	for (auto currentPrimitive : primitives) {
 		if (currentPrimitive->UsedForInstancing()) {
 			continue;
@@ -30,6 +31,7 @@ Primitive* GridAccelerator::Intersect(const Ray &ray, float tMin, float& tMax,
 bool GridAccelerator::ShadowFeelerIntersectsAnObject(const Ray& ray, float tMin,
 													 float tMax,
 													 const Primitive* primitiveToExclude) {
+	// TODO: re-write to use grid
 	Ray rayToCast = ray;
 	Vector3 originalDir = ray.GetDirection();
 	Point3 originalOrigin = ray.GetOrigin();
@@ -107,16 +109,21 @@ void GridAccelerator::SetupCells() {
 	int zSliceSize = nx*ny;
 	for (size_t primIndex = 0; primIndex < numPrimitives; primIndex++) {
 		Primitive* currPrimitive = primitives[primIndex];
+		if (!currPrimitive->HasBoundingBox()) {
+			primitivesNotInCells.push_back(currPrimitive);
+			continue;
+		}
+		
 		objectBBox = currPrimitive->GetBoundingBox();
 		// compute the cell indices at the corners of
 		// the bounding box of the object
 		int ixMin = CommonMath::Clamp((objectBBox.x0 - p0[0])*xConversionFactor, 0, nx - 1);
 		int iyMin = CommonMath::Clamp((objectBBox.y0 - p0[1])*yConversionFactor, 0, ny - 1);
-		int izMin = CommonMath::Clamp((objectBBox.z0 - p0[2])*yConversionFactor, 0, nz - 1);
+		int izMin = CommonMath::Clamp((objectBBox.z0 - p0[2])*zConversionFactor, 0, nz - 1);
 
 		int ixMax = CommonMath::Clamp((objectBBox.x1 - p0[0])*xConversionFactor, 0, nx - 1);
 		int iyMax = CommonMath::Clamp((objectBBox.y1 - p0[1])*yConversionFactor, 0, ny - 1);
-		int izMax = CommonMath::Clamp((objectBBox.z1 - p0[2])*yConversionFactor, 0, nz - 1);
+		int izMax = CommonMath::Clamp((objectBBox.z1 - p0[2])*zConversionFactor, 0, nz - 1);
 		
 		// add objects to the cells
 		for (int zIndex = izMin; zIndex <= izMax; zIndex++) {

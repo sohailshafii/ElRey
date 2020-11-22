@@ -41,6 +41,9 @@ private:
 	Point3 GetMaxCoordinates();
 	
 	AABBox boundingBox;
+	// primitives that are not in cells, because they don't have
+	// bounding boxes, like planes
+	std::vector<Primitive*> primitivesNotInCells;
 	std::vector<PrimitiveCollection> cells;
 	int nx, ny, nz;
 };
