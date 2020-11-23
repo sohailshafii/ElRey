@@ -4,6 +4,5 @@
 
 class SceneLoader {
 public:
-	static void DeserializeJSONFileIntoScene(class Scene* scene,
-										const std::string &jsonFilePath);
+	static class Scene* DeserializeJSONFileIntoScene(const std::string &jsonFilePath);
 };

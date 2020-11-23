@@ -28,7 +28,6 @@
 
 bool InitializeSDL();
 SDL_Window* createWindow(int screenWidth, int screenHeight);
-Scene* CreateSimpleWorld(const std::string& sceneFilePath); 
 void StartRenderLoop(SDL_Renderer *sdlRenderer, SDL_Texture* frameBufferTex,
 	int width, int height, int numSamples, RandomSamplerType randomSamplerType,
 	Camera::CameraType cameraType, Scene* gameWorld, bool offlineMode);
@@ -72,9 +71,10 @@ int main(int argc, char* argv[]) {
 		}
 	}
 	
-	Scene *simpleWorld = CreateSimpleWorld(scenePath);
-	width = simpleWorld->GetNumColumnsPixels();
-	height = simpleWorld->GetNumRowsPixels();
+	Scene *constructedScene = SceneLoader::DeserializeJSONFileIntoScene(
+								scenePath);
+	width = constructedScene->GetNumColumnsPixels();
+	height = constructedScene->GetNumRowsPixels();
 
 	std::cout << "Framebuffer dimensions: " <<  width << "x" << height
 		<< ", num samples: " << numSamples << ".\n";
@@ -106,9 +106,9 @@ int main(int argc, char* argv[]) {
 	SDL_ShowCursor(0);
 	
 	StartRenderLoop(sdlRenderer, frameBufferTex, width, height,
-		numSamples, randomSamplerType, cameraType, simpleWorld,
+		numSamples, randomSamplerType, cameraType, constructedScene,
 		offlineRender);
-	delete simpleWorld;
+	delete constructedScene;
 
 	SDL_DestroyTexture(frameBufferTex);
 	SDL_DestroyRenderer(sdlRenderer);
@@ -134,13 +134,6 @@ SDL_Window* createWindow(int screenWidth, int screenHeight) {
 		std::cerr << "Could not create window, error: " << SDL_GetError() << std::endl;
 	}
 	return window;
-}
-
-Scene* CreateSimpleWorld(const std::string& sceneFilePath) {
-	Scene *simpleWorld = new Scene(BaseAccelerator::SimpleWorld);
-	SceneLoader::DeserializeJSONFileIntoScene(simpleWorld,
-											  sceneFilePath);
-	return simpleWorld;
 }
 
 Vector3 GetMovementVectorFromKeyPresses(const SDL_Event &event) {
