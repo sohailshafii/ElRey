@@ -23,63 +23,55 @@ Primitive* GridAccelerator::Intersect(const Ray &ray, float tMin, float& tMax,
 		}
 	}
 	
-	int ix, iy, iz;
-	float dtx, dty, dtz;
-	float txNext, tyNext, tzNext;
-	bool txInvalid, tyInvalid, tzInvalid;
-	int ixStep, iyStep, izStep,
-	ixStop, iyStop, izStop;
 	// the following code includes modifications
 	// from Shirley and Morley (2003)
 	// ported to Raytracing from the Ground Up
-	RayParameters rayParams(ix, iy, iz, dtx, dty, dtz,
-							txNext, tyNext, tzNext,
-							ixStep, iyStep, izStep,
-							ixStop, iyStop, izStop,
-							txInvalid, tyInvalid, tzInvalid);
+	RayParameters rayParams;
 	if (!CheckBoundsOfRay(ray, tMin, tMax, rayParams)) {
 		return nullptr;
 	}
 	
 	while(true) {
-		PrimitiveCollection& currentCell = cells[ix + nx*iy + nx*ny*iz];
-		if (!txInvalid && txNext < tyNext && txNext < tzNext) {
+		PrimitiveCollection& currentCell = cells[rayParams.ix +
+			nx* rayParams.iy + nx*ny* rayParams.iz];
+		if (!rayParams.txInvalid && rayParams.txNext < rayParams.tyNext &&
+			rayParams.txNext < rayParams.tzNext) {
 			auto hitPrimitive =
 			   EvaluatePrimitiveCollectionCell(currentCell,ray, tMin, tMax,
-											   intersectionResult, txNext);
+											   intersectionResult, rayParams.txNext);
 			if (hitPrimitive != nullptr) {
 				return hitPrimitive;
 			}
-			txNext += dtx;
-			ix += ixStep;
-			if (ix == ixStop) {
+			rayParams.txNext += rayParams.dtx;
+			rayParams.ix += rayParams.ixStep;
+			if (rayParams.ix == rayParams.ixStop) {
 				return nullptr;
 			}
 		}
 		else {
-			if (!tyInvalid && tyNext < tzNext) {
+			if (!rayParams.tyInvalid && rayParams.tyNext < rayParams.tzNext) {
 				auto hitPrimitive =
 				EvaluatePrimitiveCollectionCell(currentCell,ray, tMin, tMax,
-												intersectionResult, tyNext);
+												intersectionResult, rayParams.tyNext);
 				if (hitPrimitive != nullptr) {
 					return hitPrimitive;
 				}
-				tyNext += dty;
-				iy += iyStep;
-				if (iy == iyStop) {
+				rayParams.tyNext += rayParams.dty;
+				rayParams.iy += rayParams.iyStep;
+				if (rayParams.iy == rayParams.iyStop) {
 					return nullptr;
 				}
 			}
-			else {
+			else if (!rayParams.tzInvalid) {
 				auto hitPrimitive =
 				EvaluatePrimitiveCollectionCell(currentCell,ray, tMin, tMax,
-												intersectionResult, tzNext);
+												intersectionResult, rayParams.tzNext);
 				if (hitPrimitive != nullptr) {
 					return hitPrimitive;
 				}
-				tzNext += dtz;
-				iz += izStep;
-				if (iz == izStop) {
+				rayParams.tzNext += rayParams.dtz;
+				rayParams.iz += rayParams.izStep;
+				if (rayParams.iz == rayParams.izStop) {
 					return nullptr;
 				}
 			}
@@ -185,16 +177,16 @@ bool GridAccelerator::CheckBoundsOfRay(Ray const &ray, float tMin, float tMax,
 	
 	// find cell coordinates of initial point
 	if (boundingBox.PointInside(rayOrigin)) {
-		rayParams.ix = CommonMath::Clamp((originX - x0)*nx/(x1 - x0), 0, nx - 1);
-		rayParams.iy = CommonMath::Clamp((originY - y0)*ny/(y1 - y0), 0, ny - 1);
-		rayParams.iz = CommonMath::Clamp((originZ - z0)*nz/(z1 - z0), 0, nz - 1);
+		rayParams.ix = (int)CommonMath::Clamp((originX - x0)*nx/(x1 - x0), 0, nx - 1);
+		rayParams.iy = (int)CommonMath::Clamp((originY - y0)*ny/(y1 - y0), 0, ny - 1);
+		rayParams.iz = (int)CommonMath::Clamp((originZ - z0)*nz/(z1 - z0), 0, nz - 1);
 	}
 	else {
 		// hit from the outside
 		Point3 pointHit = ray.GetPositionAtParam(t0);
-		rayParams.ix = CommonMath::Clamp((pointHit[0] - x0)*nx/(x1 - x0), 0, nx - 1);
-		rayParams.iy = CommonMath::Clamp((pointHit[1] - y0)*ny/(y1 - y0), 0, ny - 1);
-		rayParams.iz = CommonMath::Clamp((pointHit[2] - z0)*nz/(z1 - z0), 0, nz - 1);
+		rayParams.ix = (int)CommonMath::Clamp((pointHit[0] - x0)*nx/(x1 - x0), 0, nx - 1);
+		rayParams.iy = (int)CommonMath::Clamp((pointHit[1] - y0)*ny/(y1 - y0), 0, ny - 1);
+		rayParams.iz = (int)CommonMath::Clamp((pointHit[2] - z0)*nz/(z1 - z0), 0, nz - 1);
 	}
 	
 	// steps along x, y and z (where cell size is a step)
@@ -255,7 +247,7 @@ bool GridAccelerator::CheckBoundsOfRay(Ray const &ray, float tMin, float tMax,
 	if (dirZ > 0) {
 		rayParams.tzNext = tzMin + (rayParams.iz + 1) * rayParams.dtz;
 		rayParams.izStep = +1;
-		rayParams.izStop = nx;
+		rayParams.izStop = nz;
 	}
 	else {
 		rayParams.tzNext = tzMin + (nz - rayParams.iz) * rayParams.dtz;
@@ -336,54 +328,52 @@ bool GridAccelerator::ShadowFeelerIntersectsAnObject(const Ray& ray, float tMin,
 	// the following code includes modifications
 	// from Shirley and Morley (2003)
 	// ported to Raytracing from the Ground Up
-	RayParameters rayParams(ix, iy, iz, dtx, dty, dtz,
-							txNext, tyNext, tzNext,
-							ixStep, iyStep, izStep,
-							ixStop, iyStop, izStop,
-							txHuge, tyHuge, tzHuge);
+	RayParameters rayParams;
 	if (!CheckBoundsOfRay(ray, tMin, tMax, rayParams)) {
 		return nullptr;
 	}
 	
 	while(true) {
-		PrimitiveCollection& currentCell = cells[ix + nx*iy + nx*ny*iz];
-		if (!txHuge && txNext < tyNext && txNext < tzNext) {
+		PrimitiveCollection& currentCell = cells[rayParams.ix +
+			nx* rayParams.iy + nx*ny* rayParams.iz];
+		if (!rayParams.txInvalid && rayParams.txNext < rayParams.tyNext
+			&& rayParams.txNext < rayParams.tzNext) {
 			auto hitPrimitive =
 			EvaluatePrimitiveCollectionCellShadow(currentCell,ray, tMin, tMax,
-												  txNext, primitiveToExclude);
+				rayParams.txNext, primitiveToExclude);
 			if (hitPrimitive != nullptr) {
 				return hitPrimitive;
 			}
-			txNext += dtx;
-			ix += ixStep;
-			if (ix == ixStop) {
+			rayParams.txNext += rayParams.dtx;
+			rayParams.ix += rayParams.ixStep;
+			if (rayParams.ix == rayParams.ixStop) {
 				return nullptr;
 			}
 		}
 		else {
-			if (!tyHuge && tyNext < tzNext) {
+			if (!rayParams.tyInvalid && rayParams.tyNext < rayParams.tzNext) {
 				auto hitPrimitive =
 				EvaluatePrimitiveCollectionCellShadow(currentCell,ray, tMin, tMax,
-													  tyNext, primitiveToExclude);
+					rayParams.tyNext, primitiveToExclude);
 				if (hitPrimitive != nullptr) {
 					return hitPrimitive;
 				}
-				tyNext += dty;
-				iy += iyStep;
-				if (iy == iyStop) {
+				rayParams.tyNext += rayParams.dty;
+				rayParams.iy += rayParams.iyStep;
+				if (rayParams.iy == rayParams.iyStop) {
 					return nullptr;
 				}
 			}
-			else {
+			else if (!rayParams.tzInvalid) {
 				auto hitPrimitive =
 				EvaluatePrimitiveCollectionCellShadow(currentCell,ray, tMin, tMax,
-													  tzNext, primitiveToExclude);
+					rayParams.tzNext, primitiveToExclude);
 				if (hitPrimitive != nullptr) {
 					return hitPrimitive;
 				}
-				tzNext += dtz;
-				iz += izStep;
-				if (iz == izStop) {
+				rayParams.tzNext += rayParams.dtz;
+				rayParams.iz += rayParams.izStep;
+				if (rayParams.iz == rayParams.izStop) {
 					return nullptr;
 				}
 			}
