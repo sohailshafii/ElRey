@@ -41,17 +41,50 @@ private:
 		std::vector<Primitive*> primitives;
 	};
 	
+	class RayParameters {
+	public:
+		RayParameters(int ix, int iy, int iz,
+					 float dtx, float dty, float dtz,
+					 float txNext, float tyNext, float tzNext,
+					 int ixStep, int iyStep, int izStep,
+					 int ixStop, int iyStop, int izStop,
+					 bool txHuge, bool tyHuge, bool tzHuge) {
+			this->ix = ix;
+			this->iy = iy;
+			this->iz = iz;
+			this->dtx = dtx;
+			this->dty = dty;
+			this->dtz = dtz;
+			this->txNext = txNext;
+			this->tyNext = tyNext;
+			this->tzNext = tzNext;
+			
+			this->ixStep = ixStep;
+			this->iyStep = iyStep;
+			this->izStep = izStep;
+			this->ixStop = ixStop;
+			this->iyStop = iyStop;
+			this->izStop = izStop;
+			
+			this->txHuge = txHuge;
+			this->tyHuge = tyHuge;
+			this->tzHuge = tzHuge;
+		}
+		
+		int ix, iy, iz;
+		float dtx, dty, dtz;
+		float txNext, tyNext, tzNext;
+		int ixStep, iyStep, izStep;
+		int ixStop, iyStop, izStop;
+		bool txHuge, tyHuge, tzHuge;
+	};
+	
 	void SetupCells();
 	Point3 GetMinCoordinates();
 	Point3 GetMaxCoordinates();
 	
 	bool CheckBoundsOfRay(Ray const &ray, float tMin, float tMax,
-						  int &ix, int &iy, int &iz,
-						  float & dtx, float & dty, float & dtz,
-						  float &txNext, float &tyNext, float & tzNext,
-						  int & ixStep, int & iyStep, int & izStep,
-						  int & ixStop, int & iyStop, int & izStop,
-						  bool & txHuge, bool & tyHuge, bool & tzHuge);
+						  RayParameters& rayParams);
 	
 	Primitive* EvaluatePrimitiveCollectionCell(PrimitiveCollection & primitiveCollection, const Ray &ray, float tMin, float& tMax, IntersectionResult &intersectionResult, float tNext) {
 		IntersectionResult intersectionResultTest = intersectionResult;

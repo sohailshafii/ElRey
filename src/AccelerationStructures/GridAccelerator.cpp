@@ -29,12 +29,12 @@ Primitive* GridAccelerator::Intersect(const Ray &ray, float tMin, float& tMax,
 	// the following code includes modifications
 	// from Shirley and Morley (2003)
 	// ported to Raytracing from the Ground Up
-	if (!CheckBoundsOfRay(ray, tMin, tMax, ix, iy, iz,
-						  dtx, dty, dtz,
-						  txNext, tyNext, tzNext,
-						  ixStep, iyStep, izStep,
-						  ixStop, iyStop, izStop,
-						  txHuge, tyHuge, tzHuge)) {
+	RayParameters rayParams(ix, iy, iz, dtx, dty, dtz,
+							txNext, tyNext, tzNext,
+							ixStep, iyStep, izStep,
+							ixStop, iyStop, izStop,
+							txHuge, tyHuge, tzHuge);
+	if (!CheckBoundsOfRay(ray, tMin, tMax, rayParams)) {
 		return nullptr;
 	}
 	
@@ -87,12 +87,7 @@ Primitive* GridAccelerator::Intersect(const Ray &ray, float tMin, float& tMax,
 }
 
 bool GridAccelerator::CheckBoundsOfRay(Ray const &ray, float tMin, float tMax,
-									   int &ix, int &iy, int &iz,
-									   float & dtx, float & dty, float & dtz,
-									   float &txNext, float &tyNext, float & tzNext,
-									   int & ixStep, int & iyStep, int & izStep,
-									   int & ixStop, int & iyStop, int & izStop,
-									   bool & txHuge, bool & tyHuge, bool & tzHuge) {
+									   RayParameters& rayParams) {
 	Point3 const & rayOrigin = ray.GetOrigin();
 	Vector3 const & rayDirection = ray.GetDirection();
 	float originX = rayOrigin[0];
@@ -187,16 +182,16 @@ bool GridAccelerator::CheckBoundsOfRay(Ray const &ray, float tMin, float tMax,
 	
 	// find cell coordinates of initial point
 	if (boundingBox.PointInside(rayOrigin)) {
-		ix = CommonMath::Clamp((originX - x0)*nx/(x1 - x0), 0, nx - 1);
-		iy = CommonMath::Clamp((originY - y0)*ny/(y1 - y0), 0, ny - 1);
-		iz = CommonMath::Clamp((originZ - z0)*nz/(z1 - z0), 0, nz - 1);
+		rayParams.ix = CommonMath::Clamp((originX - x0)*nx/(x1 - x0), 0, nx - 1);
+		rayParams.iy = CommonMath::Clamp((originY - y0)*ny/(y1 - y0), 0, ny - 1);
+		rayParams.iz = CommonMath::Clamp((originZ - z0)*nz/(z1 - z0), 0, nz - 1);
 	}
 	else {
 		// hit from the outside
 		Point3 pointHit = ray.GetPositionAtParam(t0);
-		ix = CommonMath::Clamp((pointHit[0] - x0)*nx/(x1 - x0), 0, nx - 1);
-		iy = CommonMath::Clamp((pointHit[1] - y0)*ny/(y1 - y0), 0, ny - 1);
-		iz = CommonMath::Clamp((pointHit[2] - z0)*nz/(z1 - z0), 0, nz - 1);
+		rayParams.ix = CommonMath::Clamp((pointHit[0] - x0)*nx/(x1 - x0), 0, nx - 1);
+		rayParams.iy = CommonMath::Clamp((pointHit[1] - y0)*ny/(y1 - y0), 0, ny - 1);
+		rayParams.iz = CommonMath::Clamp((pointHit[2] - z0)*nz/(z1 - z0), 0, nz - 1);
 	}
 	
 	// steps along x, y and z (where cell size is a step)
@@ -204,71 +199,71 @@ bool GridAccelerator::CheckBoundsOfRay(Ray const &ray, float tMin, float tMax,
 	// size being in parameter space. while the intersections with ray
 	// cells are not equally spaced along ray, they are relative
 	// per dimension
-	dtx = (txMax - txMin) / nx;
-	dty = (tyMax - tyMin) / ny;
-	dtz = (tzMax - tzMin) / nz;
+	rayParams.dtx = (txMax - txMin) / nx;
+	rayParams.dty = (tyMax - tyMin) / ny;
+	rayParams.dtz = (tzMax - tzMin) / nz;
 	
-	txHuge = false;
-	tyHuge = false;
-	tzHuge = false;
+	rayParams.txHuge = false;
+	rayParams.tyHuge = false;
+	rayParams.tzHuge = false;
 	
 	// compute next step along ray, parameterized
 	// if the direction is positive in world space
 	// progress along cells in positive direction
 	if (dirX > 0) {
-		txNext = txMin + (ix + 1) * dtx;
-		ixStep = +1;
-		ixStop = nx;
+		rayParams.txNext = txMin + (rayParams.ix + 1) * rayParams.dtx;
+		rayParams.ixStep = +1;
+		rayParams.ixStop = nx;
 	}
 	else {
 		// if the ray starts inside, txMin is behind the ray, so we need to get next
 		// point right after the starting cell. So start from
 		// txMin, traversing number of cells in-between that and
 		// start plus one (nx - ix), and multiply by step length
-		txNext = txMin + (nx - ix) * dtx;
-		ixStep = -1;
-		ixStop = -1;
+		rayParams.txNext = txMin + (nx - rayParams.ix) * rayParams.dtx;
+		rayParams.ixStep = -1;
+		rayParams.ixStop = -1;
 	}
 	
 	// this is assuming the ray is practically vertical in the x-dir
 	if (fabs(dirX) < EPSILON) {
-		txHuge = true;
-		ixStep = -1;
-		ixStop = -1;
+		rayParams.txHuge = true;
+		rayParams.ixStep = -1;
+		rayParams.ixStop = -1;
 	}
 	
 	if (dirY > 0) {
-		tyNext = tyMin + (iy + 1) * dty;
-		iyStep = +1;
-		iyStop = ny;
+		rayParams.tyNext = tyMin + (rayParams.iy + 1) * rayParams.dty;
+		rayParams.iyStep = +1;
+		rayParams.iyStop = ny;
 	}
 	else {
-		tyNext = tyMin + (ny - iy) * dty;
-		iyStep = -1;
-		iyStop = -1;
+		rayParams.tyNext = tyMin + (ny - rayParams.iy) * rayParams.dty;
+		rayParams.iyStep = -1;
+		rayParams.iyStop = -1;
 	}
 	
 	if (fabs(dirY) < EPSILON) {
-		tyHuge = true;
-		iyStep = -1;
-		iyStop = -1;
+		rayParams.tyHuge = true;
+		rayParams.iyStep = -1;
+		rayParams.iyStop = -1;
 	}
 	
 	if (dirZ > 0) {
-		tzNext = tzMin + (iz + 1) * dtz;
-		izStep = +1;
-		izStop = nx;
+		rayParams.tzNext = tzMin + (rayParams.iz + 1) * rayParams.dtz;
+		rayParams.izStep = +1;
+		rayParams.izStop = nx;
 	}
 	else {
-		tzNext = tzMin + (nz - iz) * dtz;
-		izStep = -1;
-		izStop = -1;
+		rayParams.tzNext = tzMin + (nz - rayParams.iz) * rayParams.dtz;
+		rayParams.izStep = -1;
+		rayParams.izStop = -1;
 	}
 	
 	if (fabs(dirZ) < EPSILON) {
-		tzHuge = true;
-		izStep = -1;
-		izStop = -1;
+		rayParams.tzHuge = true;
+		rayParams.izStep = -1;
+		rayParams.izStop = -1;
 	}
 	
 	return true;
