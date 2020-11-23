@@ -276,8 +276,33 @@ Primitive* GridAccelerator::IntersectAgainstPrimitiveCollection(PrimitiveCollect
 	Primitive * closestPrimSoFar = nullptr;
 	for (unsigned int index = 0; index < numElements; index++) {
 		auto currPrimitive = primitives[index];
+		
+		if (currPrimitive->UsedForInstancing()) {
+			continue;
+		}
 
 		if (currPrimitive->Intersect(ray, tMin, tMax, intersectionResult)) {
+			closestPrimSoFar = currPrimitive;
+		}
+	}
+	
+	return closestPrimSoFar;
+}
+
+Primitive* GridAccelerator::IntersectAgainstPrimitiveCollectionShadow(PrimitiveCollection & primitiveCollection, const Ray &ray, float tMin, float& tMax,
+	const Primitive* primitiveToExclude) {
+	auto & primitives = primitiveCollection.primitives;
+	unsigned int numElements = primitives.size();
+	Primitive * closestPrimSoFar = nullptr;
+	for (unsigned int index = 0; index < numElements; index++) {
+		auto currPrimitive = primitives[index];
+		
+		if (currPrimitive == primitiveToExclude ||
+			currPrimitive->UsedForInstancing()) {
+			continue;
+		}
+
+		if (currPrimitive->IntersectShadow(ray, tMin, tMax)) {
 			closestPrimSoFar = currPrimitive;
 		}
 	}
@@ -288,22 +313,81 @@ Primitive* GridAccelerator::IntersectAgainstPrimitiveCollection(PrimitiveCollect
 bool GridAccelerator::ShadowFeelerIntersectsAnObject(const Ray& ray, float tMin,
 													 float tMax,
 													 const Primitive* primitiveToExclude) {
-	// TODO: re-write to use grid
-	Ray rayToCast = ray;
-	Vector3 originalDir = ray.GetDirection();
-	Point3 originalOrigin = ray.GetOrigin();
-	for (auto currentPrimitive : primitives) {
-		if (currentPrimitive == primitiveToExclude ||
-			currentPrimitive->UsedForInstancing()) {
+	for (auto currPrimitive : primitivesNotInCells) {
+		if (currPrimitive == primitiveToExclude ||
+			currPrimitive->UsedForInstancing()) {
 			continue;
 		}
 		
-		if (currentPrimitive->IntersectShadow(ray, tMin, tMax))
-		{
-			return true;
+		if (currPrimitive->IntersectShadow(ray, tMin, tMax)) {
+			return currPrimitive;
 		}
 	}
-	return false;
+	
+	int ix, iy, iz;
+	float dtx, dty, dtz;
+	float txNext, tyNext, tzNext;
+	bool txHuge, tyHuge, tzHuge;
+	int ixStep, iyStep, izStep,
+	ixStop, iyStop, izStop;
+	// the following code includes modifications
+	// from Shirley and Morley (2003)
+	// ported to Raytracing from the Ground Up
+	RayParameters rayParams(ix, iy, iz, dtx, dty, dtz,
+							txNext, tyNext, tzNext,
+							ixStep, iyStep, izStep,
+							ixStop, iyStop, izStop,
+							txHuge, tyHuge, tzHuge);
+	if (!CheckBoundsOfRay(ray, tMin, tMax, rayParams)) {
+		return nullptr;
+	}
+	
+	while(true) {
+		PrimitiveCollection& currentCell = cells[ix + nx*iy + nx*ny*iz];
+		if (!txHuge && txNext < tyNext && txNext < tzNext) {
+			auto hitPrimitive =
+			EvaluatePrimitiveCollectionCellShadow(currentCell,ray, tMin, tMax,
+												  txNext, primitiveToExclude);
+			if (hitPrimitive != nullptr) {
+				return hitPrimitive;
+			}
+			txNext += dtx;
+			ix += ixStep;
+			if (ix == ixStop) {
+				return nullptr;
+			}
+		}
+		else {
+			if (!tyHuge && tyNext < tzNext) {
+				auto hitPrimitive =
+				EvaluatePrimitiveCollectionCellShadow(currentCell,ray, tMin, tMax,
+													  tyNext, primitiveToExclude);
+				if (hitPrimitive != nullptr) {
+					return hitPrimitive;
+				}
+				tyNext += dty;
+				iy += iyStep;
+				if (iy == iyStop) {
+					return nullptr;
+				}
+			}
+			else {
+				auto hitPrimitive =
+				EvaluatePrimitiveCollectionCellShadow(currentCell,ray, tMin, tMax,
+													  tzNext, primitiveToExclude);
+				if (hitPrimitive != nullptr) {
+					return hitPrimitive;
+				}
+				tzNext += dtz;
+				iz += izStep;
+				if (iz == izStop) {
+					return nullptr;
+				}
+			}
+		}
+	}
+	
+	return nullptr;
 }
 
 void GridAccelerator::SetUpAccelerator() {
