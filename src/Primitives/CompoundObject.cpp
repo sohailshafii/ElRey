@@ -7,9 +7,6 @@ bool CompoundObject::Intersect(const Ray &ray, float tMin, float& tMax,
 	closestPrimSoFar = nullptr;
 	for (unsigned int index = 0; index < numElements; index++) {
 		auto currPrimitive = primitives[index];
-		// each primitive inside will do their own world-to-local transform
-		// because this compound object should be treated as the coordinate system, or
-		// world system, that its children live in
 		if (currPrimitive->Intersect(ray, tMin, tMax, intersectionResult)) {
 			closestPrimSoFar = currPrimitive;
 		}

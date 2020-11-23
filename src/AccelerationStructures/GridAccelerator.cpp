@@ -13,8 +13,6 @@ GridAccelerator::GridAccelerator(Primitive **primitives,
 
 Primitive* GridAccelerator::Intersect(const Ray &ray, float tMin, float& tMax,
 								IntersectionResult &intersectionResult) {
-	Primitive* closestPrimitive = nullptr;
-	
 	for (auto currPrimitive : primitivesNotInCells) {
 		if (currPrimitive->Intersect(ray, tMin, tMax,
 									 intersectionResult)) {
@@ -108,6 +106,16 @@ Primitive* GridAccelerator::Intersect(const Ray &ray, float tMin, float& tMax,
 		return nullptr;
 	}
 	
+	// check against bounds of ray
+	// entry cannot be greater than max of ray
+	if (t0 > tMax) {
+		return nullptr;
+	}
+	// exit cannot be greater than max of ray
+	if (t1 > tMax) {
+		return nullptr;
+	}
+	
 	// find cell coordinates of initial point
 	int ix, iy, iz;
 	if (boundingBox.PointInside(rayOrigin)) {
@@ -196,18 +204,80 @@ Primitive* GridAccelerator::Intersect(const Ray &ray, float tMin, float& tMax,
 		izStop = -1;
 	}
 	
-	// TODO: re-write to use grid
-	for (auto currentPrimitive : primitives) {
-		if (currentPrimitive->UsedForInstancing()) {
-			continue;
+	while(true) {
+		PrimitiveCollection& currentCell = cells[ix + nx*iy + nx*ny*iz];
+		if (!txHuge && txNext < tyNext && txNext < tzNext) {
+			IntersectionResult intersectionResultTest = intersectionResult;
+			float tMaxTest = tMax;
+			auto hitPrimitive =
+			IntersectAgainstPrimitiveCollection(currentCell,ray, tMin, tMaxTest,
+												intersectionResultTest);
+			if (hitPrimitive != nullptr && tMax < txNext) {
+				intersectionResult = intersectionResultTest;
+				tMax = tMaxTest;
+				return hitPrimitive;
+			}
+			txNext += dtx;
+			ix += ixStep;
+			if (ix == ixStop) {
+				return nullptr;
+			}
 		}
-		auto hitPrimitive = currentPrimitive->Intersect(ray, tMin, tMax,
-														intersectionResult);
-		if (hitPrimitive) {
-			closestPrimitive = currentPrimitive;
+		else {
+			if (tyNext < tzNext) {
+				IntersectionResult intersectionResultTest = intersectionResult;
+				float tMaxTest = tMax;
+				auto hitPrimitive =
+				IntersectAgainstPrimitiveCollection(currentCell,ray, tMin, tMaxTest,
+													intersectionResultTest);
+				if (hitPrimitive != nullptr && tMax < tyNext) {
+					intersectionResult = intersectionResultTest;
+					tMax = tMaxTest;
+					return hitPrimitive;
+				}
+				tyNext += dty;
+				iy += iyStep;
+				if (iy == iyStop) {
+					return nullptr;
+				}
+			}
+			else {
+				IntersectionResult intersectionResultTest = intersectionResult;
+				float tMaxTest = tMax;
+				auto hitPrimitive =
+				IntersectAgainstPrimitiveCollection(currentCell,ray, tMin, tMaxTest,
+													intersectionResultTest);
+				if (hitPrimitive != nullptr && tMax < tzNext) {
+					intersectionResult = intersectionResultTest;
+					tMax = tMaxTest;
+					return hitPrimitive;
+				}
+				tzNext += dtz;
+				iz += izStep;
+				if (iz == izStop) {
+					return nullptr;
+				}
+			}
 		}
 	}
-	return closestPrimitive;
+	
+	return nullptr;
+}
+
+Primitive* GridAccelerator::IntersectAgainstPrimitiveCollection(PrimitiveCollection & primitiveCollection, const Ray &ray, float tMin, float& tMax,
+	IntersectionResult &intersectionResult) {
+	auto & primitives = primitiveCollection.primitives;
+	unsigned int numElements = primitives.size();
+	Primitive * closestPrimSoFar = nullptr;
+	for (unsigned int index = 0; index < numElements; index++) {
+		auto currPrimitive = primitives[index];
+
+		if (currPrimitive->Intersect(ray, tMin, tMax, intersectionResult)) {
+			closestPrimSoFar = currPrimitive;
+		}
+	}
+	
+	return closestPrimSoFar;
 }
 
 bool GridAccelerator::ShadowFeelerIntersectsAnObject(const Ray& ray, float tMin,
@@ -318,6 +388,11 @@ void GridAccelerator::SetupCells() {
 				}
 			}
 		}
+	}
+	
+	// compute bounding boxes
+	for(auto primitiveCollection : cells) {
+		primitiveCollection.ComputeBoundingBox();
 	}
 	
 	// useful stats

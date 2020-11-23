@@ -26,19 +26,27 @@ protected:
 private:
 	class PrimitiveCollection {
 	public:
-		AABBox GetBoundingBox() {
-			AABBox boundingBox;
+		void ComputeBoundingBox() {
+			boundingBox.Reset();
 			for(auto primitive : primitives) {
 				boundingBox.Superset(primitive->GetBoundingBox());
 			}
 		}
 		
+		AABBox const & GetBoundingBox() {
+			return boundingBox;
+		}
+		
+		AABBox boundingBox;
 		std::vector<Primitive*> primitives;
 	};
 	
 	void SetupCells();
 	Point3 GetMinCoordinates();
 	Point3 GetMaxCoordinates();
+	
+	Primitive* IntersectAgainstPrimitiveCollection(PrimitiveCollection & primitiveCollection, const Ray &ray, float tMin, float& tMax,
+												   IntersectionResult &intersectionResult);
 	
 	AABBox boundingBox;
 	// primitives that are not in cells, because they don't have
