@@ -37,7 +37,7 @@ Primitive* GridAccelerator::Intersect(const Ray &ray, float tMin, float& tMax,
 		if (!rayParams.txInvalid && rayParams.txNext < rayParams.tyNext &&
 			rayParams.txNext < rayParams.tzNext) {
 			auto hitPrimitive =
-			   EvaluatePrimitiveCollectionCell(currentCell,ray, tMin, tMax,
+			   EvaluatePrimitiveCollectionCell(currentCell, ray, tMin, tMax,
 											   intersectionResult, rayParams.txNext);
 			if (hitPrimitive != nullptr) {
 				return hitPrimitive;
@@ -51,7 +51,7 @@ Primitive* GridAccelerator::Intersect(const Ray &ray, float tMin, float& tMax,
 		else {
 			if (!rayParams.tyInvalid && rayParams.tyNext < rayParams.tzNext) {
 				auto hitPrimitive =
-				EvaluatePrimitiveCollectionCell(currentCell,ray, tMin, tMax,
+				EvaluatePrimitiveCollectionCell(currentCell, ray, tMin, tMax,
 												intersectionResult, rayParams.tyNext);
 				if (hitPrimitive != nullptr) {
 					return hitPrimitive;
@@ -64,7 +64,7 @@ Primitive* GridAccelerator::Intersect(const Ray &ray, float tMin, float& tMax,
 			}
 			else if (!rayParams.tzInvalid) {
 				auto hitPrimitive =
-				EvaluatePrimitiveCollectionCell(currentCell,ray, tMin, tMax,
+				EvaluatePrimitiveCollectionCell(currentCell, ray, tMin, tMax,
 												intersectionResult, rayParams.tzNext);
 				if (hitPrimitive != nullptr) {
 					return hitPrimitive;
@@ -85,12 +85,12 @@ bool GridAccelerator::CheckBoundsOfRay(Ray const &ray, float tMin, float tMax,
 									   RayParameters& rayParams) {
 	Point3 const & rayOrigin = ray.GetOrigin();
 	Vector3 const & rayDirection = ray.GetDirection();
-	float originX = rayOrigin[0];
-	float originY = rayOrigin[1];
-	float originZ = rayOrigin[2];
-	float dirX = rayDirection[0];
-	float dirY = rayDirection[1];
-	float dirZ = rayDirection[2];
+	float ox = rayOrigin[0];
+	float oy = rayOrigin[1];
+	float oz = rayOrigin[2];
+	float dx = rayDirection[0];
+	float dy = rayDirection[1];
+	float dz = rayDirection[2];
 	
 	float x0 = boundingBox.x0;
 	float y0 = boundingBox.y0;
@@ -104,34 +104,34 @@ bool GridAccelerator::CheckBoundsOfRay(Ray const &ray, float tMin, float tMax,
 	
 	// find intersections with bounds
 	// in x, y and z directions
-	float a = 1.0f / dirX;
+	float a = 1.0f / dx;
 	if (a >= 0) {
-		txMin = (x0 - originX) * a;
-		txMax = (x1 - originX) * a;
+		txMin = (x0 - ox) * a;
+		txMax = (x1 - ox) * a;
 	}
 	else {
-		txMin = (x1 - originX) * a;
-		txMax = (x0 - originX) * a;
+		txMin = (x1 - ox) * a;
+		txMax = (x0 - ox) * a;
 	}
 	
-	float b = 1.0 / dirY;
+	float b = 1.0 / dy;
 	if (b >= 0) {
-		tyMin = (y0 - originY) * b;
-		tyMax = (y1 - originY) * b;
+		tyMin = (y0 - oy) * b;
+		tyMax = (y1 - oy) * b;
 	}
 	else {
-		tyMin = (y1 - originY) * b;
-		tyMax = (y0 - originY) * b;
+		tyMin = (y1 - oy) * b;
+		tyMax = (y0 - oy) * b;
 	}
 	
-	float c = 1.0 / dirZ;
+	float c = 1.0 / dz;
 	if (c >= 0) {
-		tzMin = (z0 - originZ) * c;
-		tzMax = (z1 - originZ) * c;
+		tzMin = (z0 - oz) * c;
+		tzMax = (z1 - oz) * c;
 	}
 	else {
-		tzMin = (z1 - originZ) * c;
-		tzMax = (z0 - originZ) * c;
+		tzMin = (z1 - oz) * c;
+		tzMax = (z0 - oz) * c;
 	}
 	
 	float t0, t1;
@@ -177,9 +177,9 @@ bool GridAccelerator::CheckBoundsOfRay(Ray const &ray, float tMin, float tMax,
 	
 	// find cell coordinates of initial point
 	if (boundingBox.PointInside(rayOrigin)) {
-		rayParams.ix = (int)CommonMath::Clamp((originX - x0)*nx/(x1 - x0), 0, nx - 1);
-		rayParams.iy = (int)CommonMath::Clamp((originY - y0)*ny/(y1 - y0), 0, ny - 1);
-		rayParams.iz = (int)CommonMath::Clamp((originZ - z0)*nz/(z1 - z0), 0, nz - 1);
+		rayParams.ix = (int)CommonMath::Clamp((ox - x0)*nx/(x1 - x0), 0, nx - 1);
+		rayParams.iy = (int)CommonMath::Clamp((oy - y0)*ny/(y1 - y0), 0, ny - 1);
+		rayParams.iz = (int)CommonMath::Clamp((oz - z0)*nz/(z1 - z0), 0, nz - 1);
 	}
 	else {
 		// hit from the outside
@@ -205,7 +205,7 @@ bool GridAccelerator::CheckBoundsOfRay(Ray const &ray, float tMin, float tMax,
 	// compute next step along ray, parameterized
 	// if the direction is positive in world space
 	// progress along cells in positive direction
-	if (dirX > 0) {
+	if (dx > 0) {
 		rayParams.txNext = txMin + (rayParams.ix + 1) * rayParams.dtx;
 		rayParams.ixStep = +1;
 		rayParams.ixStop = nx;
@@ -221,13 +221,13 @@ bool GridAccelerator::CheckBoundsOfRay(Ray const &ray, float tMin, float tMax,
 	}
 	
 	// this is assuming the ray is practically vertical in the x-dir
-	if (fabs(dirX) < EPSILON) {
+	if (fabs(dx) < EPSILON) {
 		rayParams.txInvalid = true;
 		rayParams.ixStep = -1;
 		rayParams.ixStop = -1;
 	}
 	
-	if (dirY > 0) {
+	if (dy > 0) {
 		rayParams.tyNext = tyMin + (rayParams.iy + 1) * rayParams.dty;
 		rayParams.iyStep = +1;
 		rayParams.iyStop = ny;
@@ -238,13 +238,13 @@ bool GridAccelerator::CheckBoundsOfRay(Ray const &ray, float tMin, float tMax,
 		rayParams.iyStop = -1;
 	}
 	
-	if (fabs(dirY) < EPSILON) {
+	if (fabs(dy) < EPSILON) {
 		rayParams.tyInvalid = true;
 		rayParams.iyStep = -1;
 		rayParams.iyStop = -1;
 	}
 	
-	if (dirZ > 0) {
+	if (dz > 0) {
 		rayParams.tzNext = tzMin + (rayParams.iz + 1) * rayParams.dtz;
 		rayParams.izStep = +1;
 		rayParams.izStop = nz;
@@ -255,7 +255,7 @@ bool GridAccelerator::CheckBoundsOfRay(Ray const &ray, float tMin, float tMax,
 		rayParams.izStop = -1;
 	}
 	
-	if (fabs(dirZ) < EPSILON) {
+	if (fabs(dz) < EPSILON) {
 		rayParams.tzInvalid = true;
 		rayParams.izStep = -1;
 		rayParams.izStop = -1;
@@ -319,12 +319,6 @@ bool GridAccelerator::ShadowFeelerIntersectsAnObject(const Ray& ray, float tMin,
 		}
 	}
 	
-	int ix, iy, iz;
-	float dtx, dty, dtz;
-	float txNext, tyNext, tzNext;
-	bool txHuge, tyHuge, tzHuge;
-	int ixStep, iyStep, izStep,
-	ixStop, iyStop, izStop;
 	// the following code includes modifications
 	// from Shirley and Morley (2003)
 	// ported to Raytracing from the Ground Up
