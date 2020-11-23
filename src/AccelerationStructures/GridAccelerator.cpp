@@ -207,14 +207,10 @@ Primitive* GridAccelerator::Intersect(const Ray &ray, float tMin, float& tMax,
 	while(true) {
 		PrimitiveCollection& currentCell = cells[ix + nx*iy + nx*ny*iz];
 		if (!txHuge && txNext < tyNext && txNext < tzNext) {
-			IntersectionResult intersectionResultTest = intersectionResult;
-			float tMaxTest = tMax;
 			auto hitPrimitive =
-			IntersectAgainstPrimitiveCollection(currentCell,ray, tMin, tMaxTest,
-												intersectionResultTest);
-			if (hitPrimitive != nullptr && tMax < txNext) {
-				intersectionResult = intersectionResultTest;
-				tMax = tMaxTest;
+			   EvaluatePrimitiveCollectionCell(currentCell,ray, tMin, tMax,
+											   intersectionResult, txNext);
+			if (hitPrimitive != nullptr) {
 				return hitPrimitive;
 			}
 			txNext += dtx;
@@ -225,14 +221,10 @@ Primitive* GridAccelerator::Intersect(const Ray &ray, float tMin, float& tMax,
 		}
 		else {
 			if (tyNext < tzNext) {
-				IntersectionResult intersectionResultTest = intersectionResult;
-				float tMaxTest = tMax;
 				auto hitPrimitive =
-				IntersectAgainstPrimitiveCollection(currentCell,ray, tMin, tMaxTest,
-													intersectionResultTest);
-				if (hitPrimitive != nullptr && tMax < tyNext) {
-					intersectionResult = intersectionResultTest;
-					tMax = tMaxTest;
+				EvaluatePrimitiveCollectionCell(currentCell,ray, tMin, tMax,
+												intersectionResult, tyNext);
+				if (hitPrimitive != nullptr) {
 					return hitPrimitive;
 				}
 				tyNext += dty;
@@ -242,14 +234,10 @@ Primitive* GridAccelerator::Intersect(const Ray &ray, float tMin, float& tMax,
 				}
 			}
 			else {
-				IntersectionResult intersectionResultTest = intersectionResult;
-				float tMaxTest = tMax;
 				auto hitPrimitive =
-				IntersectAgainstPrimitiveCollection(currentCell,ray, tMin, tMaxTest,
-													intersectionResultTest);
-				if (hitPrimitive != nullptr && tMax < tzNext) {
-					intersectionResult = intersectionResultTest;
-					tMax = tMaxTest;
+				EvaluatePrimitiveCollectionCell(currentCell,ray, tMin, tMax,
+												intersectionResult, tzNext);
+				if (hitPrimitive != nullptr) {
 					return hitPrimitive;
 				}
 				tzNext += dtz;

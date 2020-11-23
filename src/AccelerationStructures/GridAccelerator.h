@@ -45,6 +45,21 @@ private:
 	Point3 GetMinCoordinates();
 	Point3 GetMaxCoordinates();
 	
+	Primitive* EvaluatePrimitiveCollectionCell(PrimitiveCollection & primitiveCollection, const Ray &ray, float tMin, float& tMax, IntersectionResult &intersectionResult, float tNext) {
+		IntersectionResult intersectionResultTest = intersectionResult;
+		float tMaxTest = tMax;
+		auto hitPrimitive = IntersectAgainstPrimitiveCollection(primitiveCollection,
+																ray, tMin, tMaxTest,
+																intersectionResultTest);
+		if (hitPrimitive != nullptr && tMax < tNext) {
+			intersectionResult = intersectionResultTest;
+			tMax = tMaxTest;
+			return hitPrimitive;
+		}
+		
+		return nullptr;
+	}
+	
 	Primitive* IntersectAgainstPrimitiveCollection(PrimitiveCollection & primitiveCollection, const Ray &ray, float tMin, float& tMax,
 												   IntersectionResult &intersectionResult);
 	
