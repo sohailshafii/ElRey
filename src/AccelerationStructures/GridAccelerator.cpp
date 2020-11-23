@@ -20,6 +20,79 @@ Primitive* GridAccelerator::Intersect(const Ray &ray, float tMin, float& tMax,
 		}
 	}
 	
+	int ix, iy, iz;
+	float dtx, dty, dtz;
+	float txNext, tyNext, tzNext;
+	bool txHuge, tyHuge, tzHuge;
+	int ixStep, iyStep, izStep,
+	ixStop, iyStop, izStop;
+	// the following code includes modifications
+	// from Shirley and Morley (2003)
+	// ported to Raytracing from the Ground Up
+	if (!CheckBoundsOfRay(ray, tMin, tMax, ix, iy, iz,
+						  dtx, dty, dtz,
+						  txNext, tyNext, tzNext,
+						  ixStep, iyStep, izStep,
+						  ixStop, iyStop, izStop,
+						  txHuge, tyHuge, tzHuge)) {
+		return nullptr;
+	}
+	
+	while(true) {
+		PrimitiveCollection& currentCell = cells[ix + nx*iy + nx*ny*iz];
+		if (!txHuge && txNext < tyNext && txNext < tzNext) {
+			auto hitPrimitive =
+			   EvaluatePrimitiveCollectionCell(currentCell,ray, tMin, tMax,
+											   intersectionResult, txNext);
+			if (hitPrimitive != nullptr) {
+				return hitPrimitive;
+			}
+			txNext += dtx;
+			ix += ixStep;
+			if (ix == ixStop) {
+				return nullptr;
+			}
+		}
+		else {
+			if (!tyHuge && tyNext < tzNext) {
+				auto hitPrimitive =
+				EvaluatePrimitiveCollectionCell(currentCell,ray, tMin, tMax,
+												intersectionResult, tyNext);
+				if (hitPrimitive != nullptr) {
+					return hitPrimitive;
+				}
+				tyNext += dty;
+				iy += iyStep;
+				if (iy == iyStop) {
+					return nullptr;
+				}
+			}
+			else {
+				auto hitPrimitive =
+				EvaluatePrimitiveCollectionCell(currentCell,ray, tMin, tMax,
+												intersectionResult, tzNext);
+				if (hitPrimitive != nullptr) {
+					return hitPrimitive;
+				}
+				tzNext += dtz;
+				iz += izStep;
+				if (iz == izStop) {
+					return nullptr;
+				}
+			}
+		}
+	}
+	
+	return nullptr;
+}
+
+bool GridAccelerator::CheckBoundsOfRay(Ray const &ray, float tMin, float tMax,
+									   int &ix, int &iy, int &iz,
+									   float & dtx, float & dty, float & dtz,
+									   float &txNext, float &tyNext, float & tzNext,
+									   int & ixStep, int & iyStep, int & izStep,
+									   int & ixStop, int & iyStop, int & izStop,
+									   bool & txHuge, bool & tyHuge, bool & tzHuge) {
 	Point3 const & rayOrigin = ray.GetOrigin();
 	Vector3 const & rayDirection = ray.GetDirection();
 	float originX = rayOrigin[0];
@@ -38,10 +111,6 @@ Primitive* GridAccelerator::Intersect(const Ray &ray, float tMin, float& tMax,
 	
 	float txMin, tyMin, tzMin;
 	float txMax, tyMax, tzMax;
-	
-	// the following code includes modifications
-	// from Shirley and Morley (2003)
-	// from Raytracing from the Ground Up
 	
 	// find intersections with bounds
 	// in x, y and z directions
@@ -103,21 +172,20 @@ Primitive* GridAccelerator::Intersect(const Ray &ray, float tMin, float& tMax,
 	
 	// if entry is larger than exit, return false
 	if (t0 > t1) {
-		return nullptr;
+		return false;
 	}
 	
 	// check against bounds of ray
 	// entry cannot be greater than max of ray
 	if (t0 > tMax) {
-		return nullptr;
+		return false;
 	}
 	// exit cannot be greater than max of ray
 	if (t1 > tMax) {
-		return nullptr;
+		return false;
 	}
 	
 	// find cell coordinates of initial point
-	int ix, iy, iz;
 	if (boundingBox.PointInside(rayOrigin)) {
 		ix = CommonMath::Clamp((originX - x0)*nx/(x1 - x0), 0, nx - 1);
 		iy = CommonMath::Clamp((originY - y0)*ny/(y1 - y0), 0, ny - 1);
@@ -136,14 +204,13 @@ Primitive* GridAccelerator::Intersect(const Ray &ray, float tMin, float& tMax,
 	// size being in parameter space. while the intersections with ray
 	// cells are not equally spaced along ray, they are relative
 	// per dimension
-	float dtx = (txMax - txMin) / nx;
-	float dty = (tyMax - tyMin) / ny;
-	float dtz = (tzMax - tzMin) / nz;
+	dtx = (txMax - txMin) / nx;
+	dty = (tyMax - tyMin) / ny;
+	dtz = (tzMax - tzMin) / nz;
 	
-	float txNext, tyNext, tzNext;
-	bool txHuge = false, tyHuge = false, tzHuge = false;
-	int ixStep, iyStep, izStep;
-	int ixStop, iyStop, izStop;
+	txHuge = false;
+	tyHuge = false;
+	tzHuge = false;
 	
 	// compute next step along ray, parameterized
 	// if the direction is positive in world space
@@ -204,52 +271,7 @@ Primitive* GridAccelerator::Intersect(const Ray &ray, float tMin, float& tMax,
 		izStop = -1;
 	}
 	
-	while(true) {
-		PrimitiveCollection& currentCell = cells[ix + nx*iy + nx*ny*iz];
-		if (!txHuge && txNext < tyNext && txNext < tzNext) {
-			auto hitPrimitive =
-			   EvaluatePrimitiveCollectionCell(currentCell,ray, tMin, tMax,
-											   intersectionResult, txNext);
-			if (hitPrimitive != nullptr) {
-				return hitPrimitive;
-			}
-			txNext += dtx;
-			ix += ixStep;
-			if (ix == ixStop) {
-				return nullptr;
-			}
-		}
-		else {
-			if (tyNext < tzNext) {
-				auto hitPrimitive =
-				EvaluatePrimitiveCollectionCell(currentCell,ray, tMin, tMax,
-												intersectionResult, tyNext);
-				if (hitPrimitive != nullptr) {
-					return hitPrimitive;
-				}
-				tyNext += dty;
-				iy += iyStep;
-				if (iy == iyStop) {
-					return nullptr;
-				}
-			}
-			else {
-				auto hitPrimitive =
-				EvaluatePrimitiveCollectionCell(currentCell,ray, tMin, tMax,
-												intersectionResult, tzNext);
-				if (hitPrimitive != nullptr) {
-					return hitPrimitive;
-				}
-				tzNext += dtz;
-				iz += izStep;
-				if (iz == izStop) {
-					return nullptr;
-				}
-			}
-		}
-	}
-	
-	return nullptr;
+	return true;
 }
 
 Primitive* GridAccelerator::IntersectAgainstPrimitiveCollection(PrimitiveCollection & primitiveCollection, const Ray &ray, float tMin, float& tMax,

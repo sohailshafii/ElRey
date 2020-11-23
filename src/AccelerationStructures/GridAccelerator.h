@@ -45,6 +45,14 @@ private:
 	Point3 GetMinCoordinates();
 	Point3 GetMaxCoordinates();
 	
+	bool CheckBoundsOfRay(Ray const &ray, float tMin, float tMax,
+						  int &ix, int &iy, int &iz,
+						  float & dtx, float & dty, float & dtz,
+						  float &txNext, float &tyNext, float & tzNext,
+						  int & ixStep, int & iyStep, int & izStep,
+						  int & ixStop, int & iyStop, int & izStop,
+						  bool & txHuge, bool & tyHuge, bool & tzHuge);
+	
 	Primitive* EvaluatePrimitiveCollectionCell(PrimitiveCollection & primitiveCollection, const Ray &ray, float tMin, float& tMax, IntersectionResult &intersectionResult, float tNext) {
 		IntersectionResult intersectionResultTest = intersectionResult;
 		float tMaxTest = tMax;
