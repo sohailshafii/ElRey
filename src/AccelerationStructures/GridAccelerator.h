@@ -48,7 +48,7 @@ private:
 					 float txNext, float tyNext, float tzNext,
 					 int ixStep, int iyStep, int izStep,
 					 int ixStop, int iyStop, int izStop,
-					 bool txHuge, bool tyHuge, bool tzHuge) {
+					 bool txInvalid, bool tyInvalid, bool tzInvalid) {
 			this->ix = ix;
 			this->iy = iy;
 			this->iz = iz;
@@ -66,9 +66,9 @@ private:
 			this->iyStop = iyStop;
 			this->izStop = izStop;
 			
-			this->txHuge = txHuge;
-			this->tyHuge = tyHuge;
-			this->tzHuge = tzHuge;
+			this->txInvalid = txInvalid;
+			this->tyInvalid = tyInvalid;
+			this->tzInvalid = tzInvalid;
 		}
 		
 		int ix, iy, iz;
@@ -76,7 +76,7 @@ private:
 		float txNext, tyNext, tzNext;
 		int ixStep, iyStep, izStep;
 		int ixStop, iyStop, izStop;
-		bool txHuge, tyHuge, tzHuge;
+		bool txInvalid, tyInvalid, tzInvalid;
 	};
 	
 	void SetupCells();
@@ -87,12 +87,13 @@ private:
 						  RayParameters& rayParams);
 	
 	Primitive* EvaluatePrimitiveCollectionCell(PrimitiveCollection & primitiveCollection, const Ray &ray, float tMin, float& tMax, IntersectionResult &intersectionResult, float tNext) {
+		// don't set intersection results and tMax until we are tested against tNext
 		IntersectionResult intersectionResultTest = intersectionResult;
 		float tMaxTest = tMax;
 		auto hitPrimitive = IntersectAgainstPrimitiveCollection(primitiveCollection,
 																ray, tMin, tMaxTest,
 																intersectionResultTest);
-		if (hitPrimitive != nullptr && tMax < tNext) {
+		if (hitPrimitive != nullptr && tMaxTest < tNext) {
 			intersectionResult = intersectionResultTest;
 			tMax = tMaxTest;
 			return hitPrimitive;
@@ -102,10 +103,12 @@ private:
 	}
 	
 	Primitive* EvaluatePrimitiveCollectionCellShadow(PrimitiveCollection & primitiveCollection, const Ray &ray, float tMin, float& tMax, float tNext, const Primitive* primitiveToExclude) {
+		// don't set intersection results and tMax until we are tested against tNext
 		float tMaxTest = tMax;
 		auto hitPrimitive = IntersectAgainstPrimitiveCollectionShadow(primitiveCollection,
-																ray, tMin, tMaxTest, primitiveToExclude);
-		if (hitPrimitive != nullptr && tMax < tNext) {
+																	  ray, tMin, tMaxTest,
+																	  primitiveToExclude);
+		if (hitPrimitive != nullptr && tMaxTest < tNext) {
 			tMax = tMaxTest;
 			return hitPrimitive;
 		}

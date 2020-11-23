@@ -14,6 +14,9 @@ GridAccelerator::GridAccelerator(Primitive **primitives,
 Primitive* GridAccelerator::Intersect(const Ray &ray, float tMin, float& tMax,
 								IntersectionResult &intersectionResult) {
 	for (auto currPrimitive : primitivesNotInCells) {
+		if (currPrimitive->UsedForInstancing()) {
+			continue;
+		}
 		if (currPrimitive->Intersect(ray, tMin, tMax,
 									 intersectionResult)) {
 			return currPrimitive;
@@ -23,7 +26,7 @@ Primitive* GridAccelerator::Intersect(const Ray &ray, float tMin, float& tMax,
 	int ix, iy, iz;
 	float dtx, dty, dtz;
 	float txNext, tyNext, tzNext;
-	bool txHuge, tyHuge, tzHuge;
+	bool txInvalid, tyInvalid, tzInvalid;
 	int ixStep, iyStep, izStep,
 	ixStop, iyStop, izStop;
 	// the following code includes modifications
@@ -33,14 +36,14 @@ Primitive* GridAccelerator::Intersect(const Ray &ray, float tMin, float& tMax,
 							txNext, tyNext, tzNext,
 							ixStep, iyStep, izStep,
 							ixStop, iyStop, izStop,
-							txHuge, tyHuge, tzHuge);
+							txInvalid, tyInvalid, tzInvalid);
 	if (!CheckBoundsOfRay(ray, tMin, tMax, rayParams)) {
 		return nullptr;
 	}
 	
 	while(true) {
 		PrimitiveCollection& currentCell = cells[ix + nx*iy + nx*ny*iz];
-		if (!txHuge && txNext < tyNext && txNext < tzNext) {
+		if (!txInvalid && txNext < tyNext && txNext < tzNext) {
 			auto hitPrimitive =
 			   EvaluatePrimitiveCollectionCell(currentCell,ray, tMin, tMax,
 											   intersectionResult, txNext);
@@ -54,7 +57,7 @@ Primitive* GridAccelerator::Intersect(const Ray &ray, float tMin, float& tMax,
 			}
 		}
 		else {
-			if (!tyHuge && tyNext < tzNext) {
+			if (!tyInvalid && tyNext < tzNext) {
 				auto hitPrimitive =
 				EvaluatePrimitiveCollectionCell(currentCell,ray, tMin, tMax,
 												intersectionResult, tyNext);
@@ -203,9 +206,9 @@ bool GridAccelerator::CheckBoundsOfRay(Ray const &ray, float tMin, float tMax,
 	rayParams.dty = (tyMax - tyMin) / ny;
 	rayParams.dtz = (tzMax - tzMin) / nz;
 	
-	rayParams.txHuge = false;
-	rayParams.tyHuge = false;
-	rayParams.tzHuge = false;
+	rayParams.txInvalid = false;
+	rayParams.tyInvalid = false;
+	rayParams.tzInvalid = false;
 	
 	// compute next step along ray, parameterized
 	// if the direction is positive in world space
@@ -227,7 +230,7 @@ bool GridAccelerator::CheckBoundsOfRay(Ray const &ray, float tMin, float tMax,
 	
 	// this is assuming the ray is practically vertical in the x-dir
 	if (fabs(dirX) < EPSILON) {
-		rayParams.txHuge = true;
+		rayParams.txInvalid = true;
 		rayParams.ixStep = -1;
 		rayParams.ixStop = -1;
 	}
@@ -244,7 +247,7 @@ bool GridAccelerator::CheckBoundsOfRay(Ray const &ray, float tMin, float tMax,
 	}
 	
 	if (fabs(dirY) < EPSILON) {
-		rayParams.tyHuge = true;
+		rayParams.tyInvalid = true;
 		rayParams.iyStep = -1;
 		rayParams.iyStop = -1;
 	}
@@ -261,7 +264,7 @@ bool GridAccelerator::CheckBoundsOfRay(Ray const &ray, float tMin, float tMax,
 	}
 	
 	if (fabs(dirZ) < EPSILON) {
-		rayParams.tzHuge = true;
+		rayParams.tzInvalid = true;
 		rayParams.izStep = -1;
 		rayParams.izStop = -1;
 	}
