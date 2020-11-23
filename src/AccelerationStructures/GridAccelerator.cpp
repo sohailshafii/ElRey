@@ -455,6 +455,12 @@ void GridAccelerator::SetupCells() {
 	int zSliceSize = nx*ny;
 	for (size_t primIndex = 0; primIndex < numPrimitives; primIndex++) {
 		Primitive* currPrimitive = primitives[primIndex];
+		// if used for instancing, skip primitive
+		// instanced primitive will refer to it
+		if (currPrimitive->UsedForInstancing()) {
+			continue;
+		}
+		
 		if (!currPrimitive->HasBoundingBox()) {
 			primitivesNotInCells.push_back(currPrimitive);
 			continue;
