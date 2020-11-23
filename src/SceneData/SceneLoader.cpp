@@ -40,9 +40,9 @@ Scene* SceneLoader::DeserializeJSONFileIntoScene(const std::string &jsonFilePath
 		Camera* mainCamera = CreateCamera(cameraSettings);
 		
 		auto acceleratorType = BaseAccelerator::SimpleWorld;
-		if (CommonLoaderFunctions::HasKey(jsonObj, "accelerator_type")) {
+		if (CommonLoaderFunctions::HasKey(sceneSettings, "accelerator_type")) {
 			std::string acceleratorSpecified =
-				CommonLoaderFunctions::SafeGetToken(jsonObj, "accelerator_type");
+				CommonLoaderFunctions::SafeGetToken(sceneSettings, "accelerator_type");
 			if (acceleratorSpecified == "grid") {
 				acceleratorType = BaseAccelerator::Grid;
 			}

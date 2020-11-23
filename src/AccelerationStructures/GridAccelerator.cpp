@@ -274,11 +274,11 @@ bool GridAccelerator::CheckBoundsOfRay(Ray const &ray, float tMin, float tMax,
 
 Primitive* GridAccelerator::IntersectAgainstPrimitiveCollection(PrimitiveCollection & primitiveCollection, const Ray &ray, float tMin, float& tMax,
 	IntersectionResult &intersectionResult) {
-	auto & primitives = primitiveCollection.primitives;
-	unsigned int numElements = primitives.size();
+	auto & primitivesInCollection = primitiveCollection.primitives;
+	unsigned int numElements = primitivesInCollection.size();
 	Primitive * closestPrimSoFar = nullptr;
 	for (unsigned int index = 0; index < numElements; index++) {
-		auto currPrimitive = primitives[index];
+		auto currPrimitive = primitivesInCollection[index];
 		
 		if (currPrimitive->UsedForInstancing()) {
 			continue;
@@ -294,11 +294,11 @@ Primitive* GridAccelerator::IntersectAgainstPrimitiveCollection(PrimitiveCollect
 
 Primitive* GridAccelerator::IntersectAgainstPrimitiveCollectionShadow(PrimitiveCollection & primitiveCollection, const Ray &ray, float tMin, float& tMax,
 	const Primitive* primitiveToExclude) {
-	auto & primitives = primitiveCollection.primitives;
-	unsigned int numElements = primitives.size();
+	auto & primitivesInCollection = primitiveCollection.primitives;
+	unsigned int numElements = primitivesInCollection.size();
 	Primitive * closestPrimSoFar = nullptr;
 	for (unsigned int index = 0; index < numElements; index++) {
-		auto currPrimitive = primitives[index];
+		auto currPrimitive = primitivesInCollection[index];
 		
 		if (currPrimitive == primitiveToExclude ||
 			currPrimitive->UsedForInstancing()) {
@@ -394,7 +394,9 @@ bool GridAccelerator::ShadowFeelerIntersectsAnObject(const Ray& ray, float tMin,
 }
 
 void GridAccelerator::SetUpAccelerator() {
+	std::cout << "Setting up Grid...\n";
 	SetupCells();
+	std::cout << "Done!\n";
 }
 
 void GridAccelerator::SetupCells() {
