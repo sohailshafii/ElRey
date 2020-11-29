@@ -64,7 +64,7 @@ Primitive* GridAccelerator::Intersect(const Ray &ray, float tMin, float& tMax,
 					return nullptr;
 				}
 			}
-			else if (!rayParams.tzInvalid) {
+			else {
 				auto hitPrimitive =
 				EvaluatePrimitiveCollectionCell(currentCell, ray, tMin, tMax,
 												intersectionResult, rayParams.tzNext);
@@ -360,7 +360,7 @@ bool GridAccelerator::ShadowFeelerIntersectsAnObject(const Ray& ray, float tMin,
 					return nullptr;
 				}
 			}
-			else if (!rayParams.tzInvalid) {
+			else {
 				auto hitPrimitive =
 				EvaluatePrimitiveCollectionCellShadow(currentCell,ray, tMin, tMax,
 					rayParams.tzNext, primitiveToExclude);
