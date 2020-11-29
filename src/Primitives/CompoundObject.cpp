@@ -12,6 +12,7 @@ bool CompoundObject::Intersect(const Ray &ray, float tMin, float& tMax,
 		}
 	}
 	
+	// since the name is set at the top level, only supports one level of compound objects
 	if (closestPrimSoFar != nullptr) {
 		intersectionResult.SetPrimitiveName(closestPrimSoFar->GetName());
 		return true;

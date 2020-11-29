@@ -24,7 +24,7 @@ public:
 	virtual float PDF(ParamsForNormal const &paramsForNormal) const override;
 	
 	virtual bool HasBoundingBox() const override {
-		return false;
+		return true;
 	}
 	
 	virtual AABBox GetBoundingBox() const override;
