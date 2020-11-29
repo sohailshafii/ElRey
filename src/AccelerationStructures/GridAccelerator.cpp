@@ -2,6 +2,8 @@
 #include "CommonMath.h"
 #include "Primitive.h"
 #include <iostream>
+#include <set>
+#include <string>
 
 GridAccelerator::GridAccelerator() : BaseAccelerator() {
 }
@@ -170,9 +172,9 @@ bool GridAccelerator::CheckBoundsOfRay(Ray const &ray, float tMin, float tMax,
 	if (t0 > tMax) {
 		return false;
 	}
-	// exit cannot be greater than max of ray
+	// constrict max
 	if (t1 > tMax) {
-		return false;
+		t1 = tMax;
 	}
 	
 	// find cell coordinates of initial point
@@ -329,7 +331,7 @@ bool GridAccelerator::ShadowFeelerIntersectsAnObject(const Ray& ray, float tMin,
 	
 	while(true) {
 		PrimitiveCollection& currentCell = cells[rayParams.ix +
-			nx* rayParams.iy + nx*ny* rayParams.iz];
+			nx * rayParams.iy + nx * ny * rayParams.iz];
 		if (!rayParams.txInvalid && rayParams.txNext < rayParams.tyNext
 			&& rayParams.txNext < rayParams.tzNext) {
 			auto hitPrimitive =
@@ -437,6 +439,7 @@ void GridAccelerator::SetupCells() {
 	float yConversionFactor = ny/(p1[1] - p0[1]);
 	float zConversionFactor = nz/(p1[2] - p0[2]);
 	int zSliceSize = nx*ny;
+	std::set<std::string> primitivesAdded;
 	for (size_t primIndex = 0; primIndex < numPrimitives; primIndex++) {
 		Primitive* currPrimitive = primitives[primIndex];
 		// if used for instancing, skip primitive
@@ -468,6 +471,7 @@ void GridAccelerator::SetupCells() {
 				for (int xIndex = ixMin; xIndex <= ixMax; xIndex++) {
 					int oneDimIndex = xIndex + yOffset + zSliceSize*zIndex;
 					cells[oneDimIndex].primitives.push_back(currPrimitive);
+					primitivesAdded.insert(currPrimitive->GetName());
 					counts[oneDimIndex] += 1;
 				}
 			}
@@ -504,6 +508,8 @@ void GridAccelerator::SetupCells() {
 	std::cout << "Num cells total = " << numCells << std::endl;
 	std::cout << "Num zeroes = " << numZeroes << ", num ones = " << numOnes << "  numTwos = " << numTwos << std::endl;
 	std::cout << "Num threes = " << numThrees << "  numGreater = " << numGreater << std::endl;
+	std::cout << "Num primitives in grid " << primitivesAdded.size() <<
+	" vs original " << numPrimitives << ".\n";
 	
 	counts.erase(counts.begin(), counts.end());
 }
@@ -515,12 +521,14 @@ Point3 GridAccelerator::GetMinCoordinates() {
 	size_t numPrimitives = primitives.size();
 	
 	for (size_t index = 0; index < numPrimitives; index++) {
+		auto* currPrimitive = primitives[index];
 		// skip primitives that don't have a bounding box
-		if (!primitives[index]->HasBoundingBox()) {
+		if (!currPrimitive->HasBoundingBox() ||
+			currPrimitive->UsedForInstancing()) {
 			continue;
 		}
 		
-		objectBBox = primitives[index]->GetBoundingBox();
+		objectBBox = currPrimitive->GetBoundingBox();
 		if (!xSet || objectBBox.x0 < minCoord[0]) {
 			minCoord[0] = objectBBox.x0;
 			xSet = true;
@@ -549,12 +557,13 @@ Point3 GridAccelerator::GetMaxCoordinates() {
 	size_t numPrimitives = primitives.size();
 	
 	for (size_t index = 0; index < numPrimitives; index++) {
+		auto* currPrimitive = primitives[index];
 		// skip primitives that don't have a bounding box
-		if (!primitives[index]->HasBoundingBox()) {
+		if (!currPrimitive->HasBoundingBox()) {
 			continue;
 		}
 		
-		objectBBox = primitives[index]->GetBoundingBox();
+		objectBBox = currPrimitive->GetBoundingBox();
 		if (!xSet || objectBBox.x1 > maxCoord[0]) {
 			maxCoord[0] = objectBBox.x1;
 			xSet = true;

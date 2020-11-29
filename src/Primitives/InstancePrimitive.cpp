@@ -17,10 +17,63 @@ bool InstancePrimitive::HasBoundingBox() const {
 
 AABBox InstancePrimitive::GetBoundingBox() const {
 	AABBox localBoundingBox = instancePrimitive->GetBoundingBox();
-	auto minPoint = localBoundingBox.GetMin();
-	auto maxPoint = localBoundingBox.GetMax();
-	return AABBox(GetLocalToWorldPos(minPoint),
-				  GetLocalToWorldPos(maxPoint));
+	// transform corners of bounding box, then compute bounding box
+	// of those corners
+	Point3 boxPoints[8];
+	boxPoints[0][0] = localBoundingBox.x0; boxPoints[0][1] = localBoundingBox.y0; boxPoints[0][2] = localBoundingBox.z0;
+	boxPoints[1][0] = localBoundingBox.x1; boxPoints[1][1] = localBoundingBox.y0; boxPoints[1][2] = localBoundingBox.z0;
+	boxPoints[2][0] = localBoundingBox.x1; boxPoints[2][1] = localBoundingBox.y1; boxPoints[2][2] = localBoundingBox.z0;
+	boxPoints[3][0] = localBoundingBox.x0; boxPoints[3][1] = localBoundingBox.y1; boxPoints[3][2] = localBoundingBox.z0;
+
+	boxPoints[4][0] = localBoundingBox.x0; boxPoints[4][1] = localBoundingBox.y0; boxPoints[4][2] = localBoundingBox.z1;
+	boxPoints[5][0] = localBoundingBox.x1; boxPoints[5][1] = localBoundingBox.y0; boxPoints[5][2] = localBoundingBox.z1;
+	boxPoints[6][0] = localBoundingBox.x1; boxPoints[6][1] = localBoundingBox.y1; boxPoints[6][2] = localBoundingBox.z1;
+	boxPoints[7][0] = localBoundingBox.x0; boxPoints[7][1] = localBoundingBox.y1; boxPoints[7][2] = localBoundingBox.z1;
+	
+	// transform using forward transform
+	boxPoints[0] = GetLocalToWorldPos(boxPoints[0]);
+	boxPoints[1] = GetLocalToWorldPos(boxPoints[1]);
+	boxPoints[2] = GetLocalToWorldPos(boxPoints[2]);
+	boxPoints[3] = GetLocalToWorldPos(boxPoints[3]);
+	boxPoints[4] = GetLocalToWorldPos(boxPoints[4]);
+	boxPoints[5] = GetLocalToWorldPos(boxPoints[5]);
+	boxPoints[6] = GetLocalToWorldPos(boxPoints[6]);
+	boxPoints[7] = GetLocalToWorldPos(boxPoints[7]);
+	
+	float x0, y0, z0;
+	bool x0Set = false, y0Set = false, z0Set = false;
+	float x1, y1, z1;
+	bool x1Set = false, y1Set = false, z1Set = false;
+	
+	for (int i = 0; i < 8; i++) {
+		if (!x0Set || boxPoints[i][0] < x0) {
+			x0Set = true;
+			x0 = boxPoints[i][0];
+		}
+		if (!y0Set || boxPoints[i][1] < y0) {
+			y0Set = true;
+			y0 = boxPoints[i][1];
+		}
+		if (!z0Set || boxPoints[i][2] < z0) {
+			z0Set = true;
+			z0 = boxPoints[i][2];
+		}
+		
+		if (!x1Set || boxPoints[i][0] > x1) {
+			x1Set = true;
+			x1 = boxPoints[i][0];
+		}
+		if (!y1Set || boxPoints[i][1] > y1) {
+			y1Set = true;
+			y1 = boxPoints[i][1];
+		}
+		if (!z1Set || boxPoints[i][2] > z1) {
+			z1Set = true;
+			z1 = boxPoints[i][2];
+		}
+	}
+	
+	return AABBox(x0, y0, z0, x1, y1, z1);
 }
 
 bool InstancePrimitive::Intersect(const Ray &rayWorld, float tMin,

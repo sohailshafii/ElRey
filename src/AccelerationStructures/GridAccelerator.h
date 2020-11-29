@@ -75,7 +75,7 @@ private:
 	}
 	
 	Primitive* EvaluatePrimitiveCollectionCellShadow(PrimitiveCollection & primitiveCollection, const Ray &ray, float tMin, float& tMax, float tNext, const Primitive* primitiveToExclude) {
-		// don't set intersection results and tMax until we are tested against tNext
+		// don't set tMax until we are tested against tNext
 		float tMaxTest = tMax;
 		auto hitPrimitive = IntersectAgainstPrimitiveCollectionShadow(primitiveCollection,
 																	  ray, tMin, tMaxTest,
