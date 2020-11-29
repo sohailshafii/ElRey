@@ -15,13 +15,14 @@ GridAccelerator::GridAccelerator(Primitive **primitives,
 
 Primitive* GridAccelerator::Intersect(const Ray &ray, float tMin, float& tMax,
 								IntersectionResult &intersectionResult) {
+	Primitive* closestPrimitive = nullptr;
 	for (auto currPrimitive : primitivesNotInCells) {
 		if (currPrimitive->UsedForInstancing()) {
 			continue;
 		}
 		if (currPrimitive->Intersect(ray, tMin, tMax,
 									 intersectionResult)) {
-			return currPrimitive;
+			closestPrimitive = currPrimitive;
 		}
 	}
 	
@@ -30,7 +31,7 @@ Primitive* GridAccelerator::Intersect(const Ray &ray, float tMin, float& tMax,
 	// ported to Raytracing from the Ground Up
 	RayParameters rayParams;
 	if (!CheckBoundsOfRay(ray, tMin, tMax, rayParams)) {
-		return nullptr;
+		return closestPrimitive;
 	}
 	
 	while(true) {
@@ -42,12 +43,12 @@ Primitive* GridAccelerator::Intersect(const Ray &ray, float tMin, float& tMax,
 			   EvaluatePrimitiveCollectionCell(currentCell, ray, tMin, tMax,
 											   intersectionResult, rayParams.txNext);
 			if (hitPrimitive != nullptr) {
-				return hitPrimitive;
+				closestPrimitive = hitPrimitive;
 			}
 			rayParams.txNext += rayParams.dtx;
 			rayParams.ix += rayParams.ixStep;
 			if (rayParams.ix == rayParams.ixStop) {
-				return nullptr;
+				break;
 			}
 		}
 		else {
@@ -56,12 +57,12 @@ Primitive* GridAccelerator::Intersect(const Ray &ray, float tMin, float& tMax,
 				EvaluatePrimitiveCollectionCell(currentCell, ray, tMin, tMax,
 												intersectionResult, rayParams.tyNext);
 				if (hitPrimitive != nullptr) {
-					return hitPrimitive;
+					closestPrimitive = hitPrimitive;
 				}
 				rayParams.tyNext += rayParams.dty;
 				rayParams.iy += rayParams.iyStep;
 				if (rayParams.iy == rayParams.iyStop) {
-					return nullptr;
+					break;
 				}
 			}
 			else {
@@ -69,18 +70,18 @@ Primitive* GridAccelerator::Intersect(const Ray &ray, float tMin, float& tMax,
 				EvaluatePrimitiveCollectionCell(currentCell, ray, tMin, tMax,
 												intersectionResult, rayParams.tzNext);
 				if (hitPrimitive != nullptr) {
-					return hitPrimitive;
+					closestPrimitive = hitPrimitive;
 				}
 				rayParams.tzNext += rayParams.dtz;
 				rayParams.iz += rayParams.izStep;
 				if (rayParams.iz == rayParams.izStop) {
-					return nullptr;
+					break;
 				}
 			}
 		}
 	}
 	
-	return nullptr;
+	return closestPrimitive;
 }
 
 bool GridAccelerator::CheckBoundsOfRay(Ray const &ray, float tMin, float tMax,
@@ -310,6 +311,7 @@ Primitive* GridAccelerator::IntersectAgainstPrimitiveCollectionShadow(PrimitiveC
 bool GridAccelerator::ShadowFeelerIntersectsAnObject(const Ray& ray, float tMin,
 													 float tMax,
 													 const Primitive* primitiveToExclude) {
+	Primitive* closestPrimitive = nullptr;
 	for (auto currPrimitive : primitivesNotInCells) {
 		if (currPrimitive == primitiveToExclude ||
 			currPrimitive->UsedForInstancing()) {
@@ -317,7 +319,7 @@ bool GridAccelerator::ShadowFeelerIntersectsAnObject(const Ray& ray, float tMin,
 		}
 		
 		if (currPrimitive->IntersectShadow(ray, tMin, tMax)) {
-			return currPrimitive;
+			closestPrimitive = currPrimitive;
 		}
 	}
 	
@@ -326,7 +328,7 @@ bool GridAccelerator::ShadowFeelerIntersectsAnObject(const Ray& ray, float tMin,
 	// ported to Raytracing from the Ground Up
 	RayParameters rayParams;
 	if (!CheckBoundsOfRay(ray, tMin, tMax, rayParams)) {
-		return nullptr;
+		return closestPrimitive;
 	}
 	
 	while(true) {
@@ -338,12 +340,12 @@ bool GridAccelerator::ShadowFeelerIntersectsAnObject(const Ray& ray, float tMin,
 			EvaluatePrimitiveCollectionCellShadow(currentCell,ray, tMin, tMax,
 				rayParams.txNext, primitiveToExclude);
 			if (hitPrimitive != nullptr) {
-				return hitPrimitive;
+				closestPrimitive = hitPrimitive;
 			}
 			rayParams.txNext += rayParams.dtx;
 			rayParams.ix += rayParams.ixStep;
 			if (rayParams.ix == rayParams.ixStop) {
-				return nullptr;
+				break;
 			}
 		}
 		else {
@@ -352,12 +354,12 @@ bool GridAccelerator::ShadowFeelerIntersectsAnObject(const Ray& ray, float tMin,
 				EvaluatePrimitiveCollectionCellShadow(currentCell,ray, tMin, tMax,
 					rayParams.tyNext, primitiveToExclude);
 				if (hitPrimitive != nullptr) {
-					return hitPrimitive;
+					closestPrimitive = hitPrimitive;
 				}
 				rayParams.tyNext += rayParams.dty;
 				rayParams.iy += rayParams.iyStep;
 				if (rayParams.iy == rayParams.iyStop) {
-					return nullptr;
+					break;
 				}
 			}
 			else {
@@ -365,18 +367,18 @@ bool GridAccelerator::ShadowFeelerIntersectsAnObject(const Ray& ray, float tMin,
 				EvaluatePrimitiveCollectionCellShadow(currentCell,ray, tMin, tMax,
 					rayParams.tzNext, primitiveToExclude);
 				if (hitPrimitive != nullptr) {
-					return hitPrimitive;
+					closestPrimitive = hitPrimitive;
 				}
 				rayParams.tzNext += rayParams.dtz;
 				rayParams.iz += rayParams.izStep;
 				if (rayParams.iz == rayParams.izStop) {
-					return nullptr;
+					break;
 				}
 			}
 		}
 	}
 	
-	return nullptr;
+	return closestPrimitive;
 }
 
 void GridAccelerator::SetUpAccelerator() {
