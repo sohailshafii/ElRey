@@ -74,23 +74,21 @@ private:
 		return nullptr;
 	}
 	
-	Primitive* EvaluatePrimitiveCollectionCellShadow(PrimitiveCollection & primitiveCollection, const Ray &ray, float tMin, float& tMax, float tNext, const Primitive* primitiveToExclude) {
-		// don't set tMax until we are tested against tNext
-		float tMaxTest = tMax;
-		auto hitPrimitive = IntersectAgainstPrimitiveCollectionShadow(primitiveCollection,
-																	  ray, tMin, tMaxTest,
-																	  primitiveToExclude);
-		if (hitPrimitive != nullptr && tMaxTest < tNext) {
-			tMax = tMaxTest;
-			return hitPrimitive;
-		}
-		
-		return nullptr;
+	bool EvaluatePrimitiveCollectionCellShadow(PrimitiveCollection & primitiveCollection, const Ray &ray, float tMin, float tMax, float tNext, const Primitive* primitiveToExclude) {
+		return IntersectAgainstPrimitiveCollectionShadow(primitiveCollection,
+														 ray, tMin, tNext,
+														 primitiveToExclude);
 	}
 	
 	Primitive* IntersectAgainstPrimitiveCollection(PrimitiveCollection & primitiveCollection, const Ray &ray, float tMin, float& tMax, IntersectionResult &intersectionResult);
-	Primitive* IntersectAgainstPrimitiveCollectionShadow(PrimitiveCollection & primitiveCollection, const Ray &ray, float tMin, float& tMax,
+	bool IntersectAgainstPrimitiveCollectionShadow(PrimitiveCollection & primitiveCollection, const Ray &ray, float tMin, float tMax,
 		const Primitive* primitiveToExclude);
+	
+	Primitive* BruteForceIntersect(const Ray &ray, float tMin, float& tMax,
+							 IntersectionResult &intersectionResult);
+	bool BruteForceShadowFeelerIntersectsAnObject(const Ray& ray, float tMin,
+												  float tMax,
+												  const Primitive* primitiveToExclude);
 	
 	AABBox boundingBox;
 	// primitives that are not in cells, because they don't have
