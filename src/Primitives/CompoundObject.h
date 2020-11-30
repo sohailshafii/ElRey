@@ -11,15 +11,23 @@ public:
 		Primitive(iMaterial, iName) {
 	}
 	
+	~CompoundObject() {
+		for(Primitive* prim : primitives) {
+			delete prim;
+		}
+		primitives.clear();
+	}
+	
 	virtual bool Intersect(const Ray &ray, float tMin, float& tMax,
 						   IntersectionResult &intersectionResult) override;
 	virtual bool IntersectShadow(const Ray &ray, float tMin, float tMax) override;
 	
 	virtual Vector3 GetNormal(ParamsForNormal const &paramsForNormal) const override;
 	
-	virtual Vector3 GetNormalAtPosition(Point3 const &position) const override;
+	//virtual Vector3 GetNormalAtPosition(Point3 const &position) const override;
 	
-	virtual void SamplePrimitive(Point3& resultingSample) override;
+	virtual void SamplePrimitive(Point3& resultingSample,
+								 IntersectionResult const & intersectionResult) override;
 		
 	virtual float PDF(ParamsForNormal const &paramsForNormal) const override;
 	
@@ -29,19 +37,20 @@ public:
 	
 	virtual AABBox GetBoundingBox() const override;
 	
-	virtual Material const * GetMaterial() override;
-	virtual const GenericSampler* GetSampler() override;
+	virtual Material const * GetMaterial(IntersectionResult const & intersectionResult) override;
+	virtual const GenericSampler* GetSampler(IntersectionResult const & intersectionResult) override;
 	
 	void AddPrimitive(Primitive * primitive);
 	void RemovePrimitiveAtIndex(unsigned int index);
 	void RemovePrimitiveWithName(std::string const & name);
 	
+	void PrintBounds();
+	
 private:
 	std::vector<Primitive*> primitives;
-	Primitive *closestPrimSoFar;
 	AABBox boundingBox;
 	
-	Primitive* GetPrimitiveByParams(ParamsForNormal const &paramsForNormal) const;
+	Primitive* GetPrimitiveByName(std::string const & intersecPrimName) const;
 	void RecomputeBoundingBox();
 };
 

@@ -308,6 +308,11 @@ Primitive* GridAccelerator::IntersectAgainstPrimitiveCollection(PrimitiveCollect
 
 		if (currPrimitive->Intersect(ray, tMin, tMax, intersectionResult)) {
 			closestPrimSoFar = currPrimitive;
+			InstancePrimitive* test = dynamic_cast<InstancePrimitive*>(currPrimitive);
+			if (test != nullptr) {
+				int breakVar;
+				breakVar = 2;
+			}
 		}
 	}
 	
@@ -367,8 +372,9 @@ bool GridAccelerator::ShadowFeelerIntersectsAnObject(const Ray& ray, float tMin,
 		if (!rayParams.txInvalid && rayParams.txNext < rayParams.tyNext
 			&& rayParams.txNext < rayParams.tzNext) {
 			auto hitPrimitive =
-			EvaluatePrimitiveCollectionCellShadow(currentCell,ray, tMin, tMax,
-				rayParams.txNext, primitiveToExclude);
+			EvaluatePrimitiveCollectionCellShadow(currentCell, ray, tMin,
+												  rayParams.txNext,
+												  primitiveToExclude);
 			if (hitPrimitive) {
 				return true;
 			}
@@ -381,7 +387,7 @@ bool GridAccelerator::ShadowFeelerIntersectsAnObject(const Ray& ray, float tMin,
 		else {
 			if (!rayParams.tyInvalid && rayParams.tyNext < rayParams.tzNext) {
 				auto hitPrimitive =
-				EvaluatePrimitiveCollectionCellShadow(currentCell,ray, tMin, tMax,
+				EvaluatePrimitiveCollectionCellShadow(currentCell, ray, tMin,
 					rayParams.tyNext, primitiveToExclude);
 				if (hitPrimitive) {
 					return true;
@@ -394,7 +400,7 @@ bool GridAccelerator::ShadowFeelerIntersectsAnObject(const Ray& ray, float tMin,
 			}
 			else {
 				auto hitPrimitive =
-				EvaluatePrimitiveCollectionCellShadow(currentCell,ray, tMin, tMax,
+				EvaluatePrimitiveCollectionCellShadow(currentCell, ray, tMin,
 					rayParams.tzNext, primitiveToExclude);
 				if (hitPrimitive) {
 					return true;

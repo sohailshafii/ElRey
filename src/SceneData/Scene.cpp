@@ -92,7 +92,7 @@ bool Scene::Intersect(const Ray &ray, Color &newColor,
 	Primitive* closestPrimitive = baseAccelerator->Intersect(ray, tMin, tMax, intersectionResult);
 	
 	if (closestPrimitive != nullptr) {
-		Material const * primitiveMaterial = closestPrimitive->GetMaterial();
+		Material const * primitiveMaterial = closestPrimitive->GetMaterial(intersectionResult);
 		intersectionResult.SetIncomingRay(ray);
 		auto intersectionPos = ray.GetPositionAtParam(tMax);
 		intersectionResult.SetIntersectionT(tMax);
@@ -122,7 +122,7 @@ bool Scene::Intersect(const Ray &ray, Color &newColor,
 
 			if (isAreaLight) {
 				primitiveToExclude = currentLight->GetPrimitive();
-				currentLight->ComputeAndStoreAreaLightInformation(intersectionResult);
+				currentLight->ComputeAndStoreAreaLightInformation(intersectionResult, paramsForNormal);
 				vectorToLight = intersectionResult.GetVectorToLight();
 				vectorMagn = intersectionResult.GetVectorToLightScaled().Norm();
 				projectionTerm = vectorToLight * normalVec;

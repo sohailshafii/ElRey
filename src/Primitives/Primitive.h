@@ -37,10 +37,11 @@ public:
 	virtual Vector3 GetNormal(ParamsForNormal const &paramsForNormal) const = 0;
 	
 	// useful if you just want to query a normal without intersection information
-	virtual Vector3 GetNormalAtPosition(Point3 const &position) const = 0;
+	//virtual Vector3 GetNormalAtPosition(Point3 const &position) const = 0;
 	
 	// a compound object might have a different material per sub-object
-	virtual Material const * GetMaterial() {
+	// which is why intersection result is required
+	virtual Material const * GetMaterial(IntersectionResult const & intersectionResult) {
 		return material.get();
 	}
 	
@@ -49,11 +50,12 @@ public:
 	}
 	
 	// a compound object might have a different sampler per-subbject
-	virtual GenericSampler const * GetSampler() {
+	virtual GenericSampler const * GetSampler(IntersectionResult const & intersectionResult) {
 		return sampler.get();
 	}
 	
-	virtual void SamplePrimitive(Point3& resultingSample) = 0;
+	virtual void SamplePrimitive(Point3& resultingSample,
+								 IntersectionResult const & intersectionResult) = 0;
 	
 	virtual float PDF(ParamsForNormal const &paramsForNormal) const {
 		return 1.0f;

@@ -35,6 +35,7 @@ public:
 			x1 = other.x1;
 			y1 = other.y1;
 			z1 = other.z1;
+			uninitialized = false;
 			return;
 		}
 		x0 = x0 < other.x0 ? x0 : other.x0;
@@ -45,7 +46,8 @@ public:
 		y1 = y1 > other.y1 ? y1 : other.y1;
 		z1 = z1 > other.z1 ? z1 : other.z1;
 	}
-
+	
+	void PrintBounds();
 	// min point
 	float x0, y0, z0;
 	// max point

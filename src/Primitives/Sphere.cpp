@@ -81,7 +81,8 @@ Vector3 Sphere::GetNormalAtPosition(Point3 const &position) const {
 	return normalVec;
 }
 
-void Sphere::SamplePrimitive(Point3& resultingSample) {
+void Sphere::SamplePrimitive(Point3& resultingSample,
+							 IntersectionResult const & intersectionResult) {
 	// Not valid; necessary for sampling if we want area lights that are spheres
 }
 

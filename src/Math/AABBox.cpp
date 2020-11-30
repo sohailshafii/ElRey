@@ -3,6 +3,7 @@
 #include "Point4.h"
 #include "Ray.h"
 #include "CommonMath.h"
+#include <iostream>
 
 AABBox::AABBox() : x0(0.0f), y0(0.0f), z0(0.0f),
 	x1(0.0f), y1(0.0f), z1(0.0f) {
@@ -123,4 +124,9 @@ void AABBox::Reset() {
 	uninitialized = true;
 	x0 = 0.0; y0 = 0.0f; z0 = 0.0f;
 	x1 = 0.0; y1 = 0.0f; z1 = 0.0f;
+}
+
+void AABBox::PrintBounds() {
+	std::cout << "AABox Bounds: (" << x0 << ", " << y0 << ", " << z0 << ") to "
+		<< "(" << x1 << ", " << y1 << ", " << z1 << ").\n";
 }

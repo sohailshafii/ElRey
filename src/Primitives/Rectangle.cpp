@@ -71,7 +71,8 @@ bool Rectangle::IntersectShadow(const Ray &ray, float tMin, float tMax)
 	return true;
 }
 
-void Rectangle::SamplePrimitive(Point3& resultingSample) {
+void Rectangle::SamplePrimitive(Point3& resultingSample,
+								IntersectionResult const & intersectionResult) {
 	Point2 sampleOnSquare = sampler->GetSampleOnUnitSquare();
 	resultingSample = origin + side1Vec * sampleOnSquare[0] +
 		side2Vec * sampleOnSquare[1];

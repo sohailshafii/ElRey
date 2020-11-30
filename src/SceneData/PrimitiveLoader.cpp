@@ -209,9 +209,10 @@ Primitive* PrimitiveLoader::CreatePrimitive(const nlohmann::json& jsonObj) {
 		nlohmann::json childrenArray = jsonObj["children"];
 		for(auto & child : childrenArray) {
 			Primitive* childPrim = CreatePrimitive(child);
+			std::cout << "*************add child\n";
 			compoundObject->AddPrimitive(childPrim);
 		}
-		
+		compoundObject->PrintBounds();
 		newPrimitive = compoundObject;
 	}
 	else if (primitiveType == "open_cylinder"){

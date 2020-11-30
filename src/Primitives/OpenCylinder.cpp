@@ -84,7 +84,8 @@ bool OpenCylinder::TestRayAndSetTMax(const Ray &ray, float tMin, float& tMax) {
 	return false;
 }
 
-void OpenCylinder::SamplePrimitive(Point3& resultingSample) {
+void OpenCylinder::SamplePrimitive(Point3& resultingSample,
+								   IntersectionResult const & intersectionResult) {
 	// Leave out for now
 }
 

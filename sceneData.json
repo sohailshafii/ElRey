@@ -2,7 +2,7 @@
 	"scene_settings":
 	{
 		"navigation_type":"none",
-		"accelerator_type":"simple",
+		"accelerator_type":"grid",
 		"camera":
 		{		
 			"type":"pinhole",

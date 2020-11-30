@@ -46,7 +46,8 @@ public:
 	}
 
 	virtual void ComputeAndStoreAreaLightInformation(
-		IntersectionResult& intersectionRes) const override;
+		IntersectionResult& intersectionRes,
+		ParamsForNormal const &paramsForNormal) const override;
 
 	virtual float GeometricTerm(
 		const IntersectionResult& intersectionRes)

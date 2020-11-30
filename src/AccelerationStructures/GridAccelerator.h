@@ -6,6 +6,11 @@
 #include "AccelerationStructures/BaseAccelerator.h"
 #include <vector>
 
+#include "Primitives/CompoundObject.h"
+#include "Primitives/InstancePrimitive.h"
+
+#include "Primitives/Sphere.h"
+
 class GridAccelerator : public BaseAccelerator {
 public:
 	GridAccelerator();
@@ -66,6 +71,11 @@ private:
 																ray, tMin, tMaxTest,
 																intersectionResultTest);
 		if (hitPrimitive != nullptr && tMaxTest < tNext) {
+			InstancePrimitive* test = dynamic_cast<InstancePrimitive*>(hitPrimitive);
+			if (test != nullptr) {
+				int breakVar;
+				breakVar = 1;
+			}
 			intersectionResult = intersectionResultTest;
 			tMax = tMaxTest;
 			return hitPrimitive;
@@ -74,9 +84,9 @@ private:
 		return nullptr;
 	}
 	
-	bool EvaluatePrimitiveCollectionCellShadow(PrimitiveCollection & primitiveCollection, const Ray &ray, float tMin, float tMax, float tNext, const Primitive* primitiveToExclude) {
+	bool EvaluatePrimitiveCollectionCellShadow(PrimitiveCollection & primitiveCollection, const Ray &ray, float tMin, float tMax, const Primitive* primitiveToExclude) {
 		return IntersectAgainstPrimitiveCollectionShadow(primitiveCollection,
-														 ray, tMin, tNext,
+														 ray, tMin, tMax,
 														 primitiveToExclude);
 	}
 	

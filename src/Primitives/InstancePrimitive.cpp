@@ -6,9 +6,9 @@ InstancePrimitive::InstancePrimitive(std::string const & iName,
 	Primitive(iName), instancePrimitive(primitive) {
 }
 
-void InstancePrimitive::SamplePrimitive(Point3& resultingSample) {
+void InstancePrimitive::SamplePrimitive(Point3& resultingSample, IntersectionResult const & intersectionResult) {
+	instancePrimitive->SamplePrimitive(resultingSample, intersectionResult);
 	resultingSample = GetLocalToWorldPos(resultingSample);
-	instancePrimitive->SamplePrimitive(resultingSample);
 }
 
 bool InstancePrimitive::HasBoundingBox() const {
@@ -114,11 +114,11 @@ Vector3 InstancePrimitive::GetNormal(ParamsForNormal const &paramsForNormal) con
 	return GetWorldToLocalTransposeDir(normalLocal).Normalized();
 }
 
-Vector3 InstancePrimitive::GetNormalAtPosition(Point3 const &position) const {
+/*Vector3 InstancePrimitive::GetNormalAtPosition(Point3 const &position) const {
 	Vector3 normalLocal = instancePrimitive->GetNormalAtPosition(
 																 GetWorldToLocalPos(position));
 	return GetWorldToLocalTransposeDir(normalLocal).Normalized();
-}
+}*/
 
 void InstancePrimitive::SetLocalToWorld(Matrix4x4 const & localToWorld) {
 	this->localToWorld = localToWorld;

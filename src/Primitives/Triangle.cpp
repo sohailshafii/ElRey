@@ -100,7 +100,8 @@ bool Triangle::IntersectShadow(const Ray &ray, float tMin, float tMax) {
 	return true;
 }
 
-void Triangle::SamplePrimitive(Point3& resultingSample) {
+void Triangle::SamplePrimitive(Point3& resultingSample,
+							   IntersectionResult const & intersectionResult) {
 	// Not valid; necessary for sampling if we want area lights that are spheres
 }
 

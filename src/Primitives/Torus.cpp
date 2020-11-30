@@ -149,7 +149,8 @@ Vector3 Torus::GetNormalAtPosition(Point3 const &position) const {
 	return normal;
 }
 
-void Torus::SamplePrimitive(Point3& resultingSample) {
+void Torus::SamplePrimitive(Point3& resultingSample,
+							IntersectionResult const & intersectionResult) {
 	// nothing to see here for now
 }
 

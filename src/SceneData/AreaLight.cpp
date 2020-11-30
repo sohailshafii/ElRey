@@ -18,17 +18,20 @@ AreaLight::~AreaLight() {
 Vector3 AreaLight::GetDirectionFromPositionScaled(
 	const IntersectionResult& intersectionRes) const {
 	Point3 primitiveSample;
-	primitive->SamplePrimitive(primitiveSample);
+	primitive->SamplePrimitive(primitiveSample, intersectionRes);
 	Vector3 lightDirection = intersectionRes.GetIntersectionPos() -
 		primitiveSample;
 	return lightDirection;
 }
 
 void AreaLight::ComputeAndStoreAreaLightInformation(
-	IntersectionResult& intersectionRes) const {
+	IntersectionResult& intersectionRes,
+	ParamsForNormal const &paramsForNormal) const {
 	Point3 lightPrimitiveSample;
-	primitive->SamplePrimitive(lightPrimitiveSample);
-	Vector3 lightPrimitiveNormal = primitive->GetNormalAtPosition(lightPrimitiveSample);
+	primitive->SamplePrimitive(lightPrimitiveSample, intersectionRes);
+	ParamsForNormal newParams = paramsForNormal;
+	newParams.SetIntersectionPosition(lightPrimitiveSample);
+	Vector3 lightPrimitiveNormal = primitive->GetNormal(newParams);
 	
 	Vector3 vectorToLight = lightPrimitiveSample -
 		intersectionRes.GetIntersectionPos();
@@ -44,7 +47,7 @@ Color3 AreaLight::GetRadiance(const IntersectionResult& intersectionRes,
 	float nDotVectorToLight = -intersectionRes.GetAreaLightNormal()
 		* intersectionRes.GetVectorToLight();
 	if (nDotVectorToLight > 0.0f) {
-		Color primitiveColor = primitive->GetMaterial()
+		Color primitiveColor = primitive->GetMaterial(intersectionRes)
 			->GetDirectColor(intersectionRes);
 		return Color3(primitiveColor[0], primitiveColor[1],
 			primitiveColor[2]);

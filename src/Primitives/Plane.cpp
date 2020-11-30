@@ -47,11 +47,12 @@ Vector3 Plane::GetNormal(ParamsForNormal const &paramsForNormal) const {
 	return normal;
 }
 
-Vector3 Plane::GetNormalAtPosition(Point3 const &position) const {
+/*Vector3 Plane::GetNormalAtPosition(Point3 const &position) const {
 	return normal;
-}
+}*/
 
-void Plane::SamplePrimitive(Point3& resultingSample) {
+void Plane::SamplePrimitive(Point3& resultingSample,
+							IntersectionResult const & intersectionResult) {
 	// not valid for area lighting
 }
 

@@ -14,10 +14,10 @@ public:
 	
 	virtual Vector3 GetNormal(ParamsForNormal const &paramsForNormal) const override;
 	
-	virtual Vector3 GetNormalAtPosition(Point3 const &position) const override;
+	//virtual Vector3 GetNormalAtPosition(Point3 const &position) const override;
 	
-	virtual Material const * GetMaterial() override {
-		return instancePrimitive->GetMaterial();
+	virtual Material const * GetMaterial(IntersectionResult const & intersectionResult) override {
+		return instancePrimitive->GetMaterial(intersectionResult);
 	}
 	
 	virtual void SetSampler(std::shared_ptr<GenericSampler> const & sampler) override {
@@ -25,15 +25,16 @@ public:
 	}
 	
 	// a compound object might have a different sampler per-subbject
-	virtual const GenericSampler* GetSampler() override {
-		return instancePrimitive->GetSampler();
+	virtual const GenericSampler* GetSampler(IntersectionResult const & intersectionResult) override {
+		return instancePrimitive->GetSampler(intersectionResult);
 	}
 	
 	virtual float PDF(ParamsForNormal const &paramsForNormal) const override {
 		return instancePrimitive->PDF(paramsForNormal);
 	}
 	
-	virtual void SamplePrimitive(Point3& resultingSample) override;
+	virtual void SamplePrimitive(Point3& resultingSample,
+								 IntersectionResult const & intersectionResult) override;
 	virtual bool HasBoundingBox() const override;
 	
 	virtual AABBox GetBoundingBox() const override;

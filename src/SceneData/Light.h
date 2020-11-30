@@ -60,7 +60,8 @@ public:
 	}
 
 	virtual void ComputeAndStoreAreaLightInformation(
-		IntersectionResult& intersectionRes) const
+		IntersectionResult& intersectionRes,
+		ParamsForNormal const &paramsForNormal) const
 	{
 		// for area lights
 	}

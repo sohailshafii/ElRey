@@ -273,7 +273,7 @@ Vector3 AABBoxPrim::GetNormal(ParamsForNormal const &paramsForNormal) const {
 	return Vector3(meta1, meta2, meta3);
 }
 
-Vector3 AABBoxPrim::GetNormalAtPosition(Point3 const &position) const {
+/*Vector3 AABBoxPrim::GetNormalAtPosition(Point3 const &position) const {
 	Vector3 centerToPosition = position - center;
 	float xCompAbs = fabs(centerToPosition[0]);
 	float yCompAbs = fabs(centerToPosition[1]);
@@ -291,9 +291,10 @@ Vector3 AABBoxPrim::GetNormalAtPosition(Point3 const &position) const {
 		return centerToPosition[2] > 0.0f ? posZNormal :
 			negZNormal;
 	}
-}
+}*/
 
-void AABBoxPrim::SamplePrimitive(Point3& resultingSample) {
+void AABBoxPrim::SamplePrimitive(Point3& resultingSample,
+								 IntersectionResult const & intersectionResult) {
 	// we have to sample to unit cube; leave out unless we need it
 }
 

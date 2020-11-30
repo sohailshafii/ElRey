@@ -28,9 +28,10 @@ public:
 	
 	virtual Vector3 GetNormal(ParamsForNormal const &paramsForNormal) const override;
 	
-	virtual Vector3 GetNormalAtPosition(Point3 const &position) const override;
+	//virtual Vector3 GetNormalAtPosition(Point3 const &position) const override;
 
-	virtual void SamplePrimitive(Point3& resultingSample) override;
+	virtual void SamplePrimitive(Point3& resultingSample,
+								 IntersectionResult const & intersectionResult) override;
 	
 	virtual float PDF(ParamsForNormal const &paramsForNormal) const override;
 	
@@ -48,5 +49,6 @@ private:
 	float sweptRadiusSquared;
 	float tubeRadiusSquared;
 	
+	Vector3 GetNormalAtPosition(Point3 const &position) const;
 	void Initialize();
 };
