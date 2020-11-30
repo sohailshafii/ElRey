@@ -1,5 +1,6 @@
 #include "CompoundObject.h"
 #include "OpenCylinder.h"
+#include <cassert>
 
 bool CompoundObject::Intersect(const Ray &ray, float tMin, float& tMax,
 							   IntersectionResult &intersectionResult) {
@@ -15,11 +16,14 @@ bool CompoundObject::Intersect(const Ray &ray, float tMin, float& tMax,
 	}
 	
 	// set name of deepest intersection found so far
-	// we know that we traversed deeper if if any children set
-	// the prim name. If they have, don't disturb that
-	std::string newPrimName = intersectionResult.GetPrimitiveName();
-	if (closestPrimSoFar != nullptr && prevPrimName == newPrimName) {
-		intersectionResult.SetPrimitiveName(closestPrimSoFar->GetName());
+	// TODO: need to test this!
+	if (closestPrimSoFar != nullptr) {
+		std::string newPrimName = intersectionResult.GetPrimitiveName();
+		// we know that we traversed deeper if if any children set
+		// the prim name. If they have, don't disturb that
+		if (prevPrimName == newPrimName) {
+			intersectionResult.SetPrimitiveName(closestPrimSoFar->GetName());
+		}
 		return true;
 	}
 	
@@ -118,6 +122,10 @@ void CompoundObject::RemovePrimitiveWithName(std::string const & name) {
 
 Material const * CompoundObject::GetMaterial(IntersectionResult const & intersectionResult) {
 	Primitive* foundPrim = GetSubPrimitiveByName(intersectionResult.GetPrimitiveName());
+	if (foundPrim == nullptr) {
+		int breakVar;
+		breakVar = 1;
+	}
 	return foundPrim != nullptr ? foundPrim->GetMaterial(intersectionResult) : nullptr;
 }
 
