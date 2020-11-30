@@ -77,6 +77,10 @@ public:
 		usedForInstancing = setForInstancing;
 	}
 
+	virtual Primitive* GetSubPrimitiveByName(std::string const & intersecPrimName) const {
+		return nullptr;
+	}
+	
 protected:
 	std::shared_ptr<Material> material;
 	std::shared_ptr<GenericSampler> sampler;

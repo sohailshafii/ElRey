@@ -46,7 +46,7 @@ int main(int argc, char* argv[]) {
 		<< ElRey_VERSION_MINOR << "\n";
 	
 	int width = 300, height = 200, numSamples = 1;
-	bool offlineRender = true;
+	bool offlineRender = false;
 	RandomSamplerType randomSamplerType = None;
 	Camera::CameraType cameraType = Camera::CameraType::Pinhole;
 #if __APPLE__

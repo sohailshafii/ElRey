@@ -495,16 +495,13 @@ void GridAccelerator::SetupCells() {
 	std::set<std::string> primitivesAdded;
 	for (size_t primIndex = 0; primIndex < numPrimitives; primIndex++) {
 		Primitive* currPrimitive = primitives[primIndex];
-		std::cout << "curr prim: " << currPrimitive->GetName() << std::endl;
 		// if used for instancing, skip primitive
 		// instanced primitive will refer to it
 		if (currPrimitive->UsedForInstancing()) {
-			std::cout << "skip because instancing\n";
 			continue;
 		}
 		
 		if (!currPrimitive->HasBoundingBox()) {
-			std::cout << "skip because no bounding box\n";
 			primitivesNotInCells.push_back(currPrimitive);
 			continue;
 		}
@@ -520,12 +517,6 @@ void GridAccelerator::SetupCells() {
 		int iyMax = CommonMath::Clamp((objectBBox.y1 - p0[1])*yConversionFactor, 0, ny - 1);
 		int izMax = CommonMath::Clamp((objectBBox.z1 - p0[2])*zConversionFactor, 0, nz - 1);
 		
-		
-		std::cout << "Considering " << currPrimitive->GetName() <<
-			", " << ixMin << " to " << ixMax << "; " <<
-			iyMin << " to " << iyMax << "; " <<
-		izMin << " to " << izMax << std::endl;
-		
 		// add objects to the cells
 		for (int zIndex = izMin; zIndex <= izMax; zIndex++) {
 			for (int yIndex = iyMin; yIndex <= iyMax; yIndex++) {
@@ -534,7 +525,6 @@ void GridAccelerator::SetupCells() {
 					int oneDimIndex = xIndex + yOffset + zSliceSize*zIndex;
 					cells[oneDimIndex].primitives.push_back(currPrimitive);
 					primitivesAdded.insert(currPrimitive->GetName());
-					std::cout << "Adding " << currPrimitive->GetName() << std::endl;
 					counts[oneDimIndex] += 1;
 				}
 			}
