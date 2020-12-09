@@ -57,6 +57,7 @@ Primitive* GridAccelerator::Intersect(const Ray &ray, float tMin, float& tMax,
 											   intersectionResult, rayParams.txNext);
 			if (hitPrimitive != nullptr) {
 				closestPrimitive = hitPrimitive;
+				break;
 			}
 			rayParams.txNext += rayParams.dtx;
 			rayParams.ix += rayParams.ixStep;
@@ -71,6 +72,7 @@ Primitive* GridAccelerator::Intersect(const Ray &ray, float tMin, float& tMax,
 												intersectionResult, rayParams.tyNext);
 				if (hitPrimitive != nullptr) {
 					closestPrimitive = hitPrimitive;
+					break;
 				}
 				rayParams.tyNext += rayParams.dty;
 				rayParams.iy += rayParams.iyStep;
@@ -84,6 +86,7 @@ Primitive* GridAccelerator::Intersect(const Ray &ray, float tMin, float& tMax,
 												intersectionResult, rayParams.tzNext);
 				if (hitPrimitive != nullptr) {
 					closestPrimitive = hitPrimitive;
+					break;
 				}
 				rayParams.tzNext += rayParams.dtz;
 				rayParams.iz += rayParams.izStep;
@@ -298,7 +301,10 @@ Primitive* GridAccelerator::IntersectAgainstPrimitiveCollection(PrimitiveCollect
 	IntersectionResult &intersectionResult) {
 	auto & primitivesInCollection = primitiveCollection.primitives;
 	unsigned int numElements = primitivesInCollection.size();
+	
 	Primitive * closestPrimSoFar = nullptr;
+	IntersectionResult closestIntersectionRes, tempResult;
+	
 	for (unsigned int index = 0; index < numElements; index++) {
 		auto currPrimitive = primitivesInCollection[index];
 		
@@ -306,14 +312,18 @@ Primitive* GridAccelerator::IntersectAgainstPrimitiveCollection(PrimitiveCollect
 			continue;
 		}
 
-		if (currPrimitive->Intersect(ray, tMin, tMax, intersectionResult)) {
+		// if we test against multiple compound objects in a row, reset primitive
+		// intersection data from previous tests that might have returned true
+		tempResult.ResetPrimIntersectionData();
+
+		if (currPrimitive->Intersect(ray, tMin, tMax, tempResult)) {
 			closestPrimSoFar = currPrimitive;
-			InstancePrimitive* test = dynamic_cast<InstancePrimitive*>(currPrimitive);
-			if (test != nullptr) {
-				int breakVar;
-				breakVar = 2;
-			}
+			closestIntersectionRes = tempResult;
 		}
+	}
+	
+	if (closestPrimSoFar != nullptr) {
+		intersectionResult = tempResult;
 	}
 	
 	return closestPrimSoFar;

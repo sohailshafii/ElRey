@@ -65,18 +65,14 @@ private:
 	
 	Primitive* EvaluatePrimitiveCollectionCell(PrimitiveCollection & primitiveCollection, const Ray &ray, float tMin, float& tMax, IntersectionResult &intersectionResult, float tNext) {
 		// don't set intersection results and tMax until we are tested against tNext
-		IntersectionResult intersectionResultTest = intersectionResult;
+		// if we test against multiple compound objects in a row, reset primitive
+		// intersection data from previous tests that might have returned true
+		intersectionResult.ResetPrimIntersectionData();
 		float tMaxTest = tMax;
 		auto hitPrimitive = IntersectAgainstPrimitiveCollection(primitiveCollection,
 																ray, tMin, tMaxTest,
-																intersectionResultTest);
+																intersectionResult);
 		if (hitPrimitive != nullptr && tMaxTest < tNext) {
-			InstancePrimitive* test = dynamic_cast<InstancePrimitive*>(hitPrimitive);
-			if (test != nullptr) {
-				int breakVar;
-				breakVar = 1;
-			}
-			intersectionResult = intersectionResultTest;
 			tMax = tMaxTest;
 			return hitPrimitive;
 		}

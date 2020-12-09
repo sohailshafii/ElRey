@@ -124,6 +124,13 @@ public:
 		float intersectSum2 = otherPos[0] + otherPos[1] + otherPos[2];
 		return intersectSum1 < intersectSum2;
 	}
+	
+	void ResetPrimIntersectionData() {
+		genericMetadata1 = 0.0f;
+		genericMetadata2 = 0.0f;
+		genericMetadata3 = 0.0f;
+		primitiveName = "";
+	}
 
 private:
 	// All items are in world space unless specified otherwise

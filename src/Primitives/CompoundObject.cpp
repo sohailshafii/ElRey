@@ -122,10 +122,6 @@ void CompoundObject::RemovePrimitiveWithName(std::string const & name) {
 
 Material const * CompoundObject::GetMaterial(IntersectionResult const & intersectionResult) {
 	Primitive* foundPrim = GetSubPrimitiveByName(intersectionResult.GetPrimitiveName());
-	if (foundPrim == nullptr) {
-		int breakVar;
-		breakVar = 1;
-	}
 	return foundPrim != nullptr ? foundPrim->GetMaterial(intersectionResult) : nullptr;
 }
 
