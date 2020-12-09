@@ -6,7 +6,7 @@ bool CompoundObject::Intersect(const Ray &ray, float tMin, float& tMax,
 							   IntersectionResult &intersectionResult) {
 	unsigned int numElements = primitives.size();
 	Primitive* closestPrimSoFar = nullptr;
-	std::string prevPrimName = intersectionResult.GetPrimitiveName();
+	std::string primNameBeforeTestsForUs = intersectionResult.GetPrimitiveName();
 	
 	for (unsigned int index = 0; index < numElements; index++) {
 		auto currPrimitive = primitives[index];
@@ -16,12 +16,13 @@ bool CompoundObject::Intersect(const Ray &ray, float tMin, float& tMax,
 	}
 	
 	// set name of deepest intersection found so far
-	// TODO: need to test this!
 	if (closestPrimSoFar != nullptr) {
-		std::string newPrimName = intersectionResult.GetPrimitiveName();
+		std::string primNameAfterTestsForUs = intersectionResult.GetPrimitiveName();
+		bool childrenDidNotSetPrimName = primNameBeforeTestsForUs == primNameAfterTestsForUs;
 		// we know that we traversed deeper if if any children set
-		// the prim name. If they have, don't disturb that
-		if (prevPrimName == newPrimName) {
+		// the prim name. if they have not, that means we are the only
+		// compound object that set the closest intersection.
+		if (childrenDidNotSetPrimName) {
 			intersectionResult.SetPrimitiveName(closestPrimSoFar->GetName());
 		}
 		return true;

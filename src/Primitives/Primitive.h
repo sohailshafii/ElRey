@@ -30,6 +30,7 @@ public:
 
 	virtual ~Primitive() { }
 
+	// TODO: make it obvious that the last two arguments are modified upon succesful intersection
 	virtual bool Intersect(const Ray &ray, float tMin, float& tMax,
 						   IntersectionResult &intersectionResult) = 0;
 	virtual bool IntersectShadow(const Ray &ray, float tMin, float tMax) = 0;

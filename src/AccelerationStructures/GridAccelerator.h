@@ -65,9 +65,6 @@ private:
 	
 	Primitive* EvaluatePrimitiveCollectionCell(PrimitiveCollection & primitiveCollection, const Ray &ray, float tMin, float& tMax, IntersectionResult &intersectionResult, float tNext) {
 		// don't set intersection results and tMax until we are tested against tNext
-		// if we test against multiple compound objects in a row, reset primitive
-		// intersection data from previous tests that might have returned true
-		intersectionResult.ResetPrimIntersectionData();
 		float tMaxTest = tMax;
 		auto hitPrimitive = IntersectAgainstPrimitiveCollection(primitiveCollection,
 																ray, tMin, tMaxTest,

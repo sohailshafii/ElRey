@@ -17,24 +17,18 @@ void SimpleWorld::SetUpAccelerator() {
 Primitive* SimpleWorld::Intersect(const Ray &ray, float tMin, float& tMax,
 							IntersectionResult &intersectionResult) {
 	Primitive* closestPrimitive = nullptr;
-	IntersectionResult tempResult, closestResult;
 	for (auto currentPrimitive : primitives) {
 		if (currentPrimitive->UsedForInstancing()) {
 			continue;
 		}
 		
-		tempResult.ResetPrimIntersectionData();
 		auto hitPrimitive = currentPrimitive->Intersect(ray, tMin, tMax,
-														tempResult);
+														intersectionResult);
 		if (hitPrimitive) {
 			closestPrimitive = currentPrimitive;
-			closestResult = tempResult;
 		}
 	}
-	
-	if (closestPrimitive != nullptr) {
-		intersectionResult = closestResult;
-	}
+
 	return closestPrimitive;
 }
 
