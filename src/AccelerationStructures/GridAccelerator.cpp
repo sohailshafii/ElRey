@@ -52,6 +52,10 @@ Primitive* GridAccelerator::Intersect(const Ray &ray, float tMin, float& tMax,
 			nx* rayParams.iy + nx*ny* rayParams.iz];
 		if (!rayParams.txInvalid && rayParams.txNext < rayParams.tyNext &&
 			rayParams.txNext < rayParams.tzNext) {
+			/*if (rayParams.txNext > tMax) {
+				break;
+			}*/
+			
 			auto hitPrimitive =
 			   EvaluatePrimitiveCollectionCell(currentCell, ray, tMin, tMax,
 											   intersectionResult, rayParams.txNext);
@@ -65,34 +69,40 @@ Primitive* GridAccelerator::Intersect(const Ray &ray, float tMin, float& tMax,
 				break;
 			}
 		}
-		else {
-			if (!rayParams.tyInvalid && rayParams.tyNext < rayParams.tzNext) {
-				auto hitPrimitive =
-				EvaluatePrimitiveCollectionCell(currentCell, ray, tMin, tMax,
-												intersectionResult, rayParams.tyNext);
-				if (hitPrimitive != nullptr) {
-					closestPrimitive = hitPrimitive;
-					break;
-				}
-				rayParams.tyNext += rayParams.dty;
-				rayParams.iy += rayParams.iyStep;
-				if (rayParams.iy == rayParams.iyStop) {
-					break;
-				}
+		else if (!rayParams.tyInvalid && rayParams.tyNext < rayParams.tzNext) {
+			/*if (rayParams.tyNext > tMax) {
+				break;
+			}*/
+			
+			auto hitPrimitive =
+			EvaluatePrimitiveCollectionCell(currentCell, ray, tMin, tMax,
+											intersectionResult, rayParams.tyNext);
+			if (hitPrimitive != nullptr) {
+				closestPrimitive = hitPrimitive;
+				break;
 			}
-			else {
-				auto hitPrimitive =
-				EvaluatePrimitiveCollectionCell(currentCell, ray, tMin, tMax,
-												intersectionResult, rayParams.tzNext);
-				if (hitPrimitive != nullptr) {
-					closestPrimitive = hitPrimitive;
-					break;
-				}
-				rayParams.tzNext += rayParams.dtz;
-				rayParams.iz += rayParams.izStep;
-				if (rayParams.iz == rayParams.izStop) {
-					break;
-				}
+			rayParams.tyNext += rayParams.dty;
+			rayParams.iy += rayParams.iyStep;
+			if (rayParams.iy == rayParams.iyStop) {
+				break;
+			}
+		}
+		else {
+			/*if (rayParams.tzNext > tMax) {
+				break;
+			}*/
+			
+			auto hitPrimitive =
+			EvaluatePrimitiveCollectionCell(currentCell, ray, tMin, tMax,
+											intersectionResult, rayParams.tzNext);
+			if (hitPrimitive != nullptr) {
+				closestPrimitive = hitPrimitive;
+				break;
+			}
+			rayParams.tzNext += rayParams.dtz;
+			rayParams.iz += rayParams.izStep;
+			if (rayParams.iz == rayParams.izStop) {
+				break;
 			}
 		}
 	}
@@ -203,6 +213,7 @@ bool GridAccelerator::CheckBoundsOfRay(Ray const &ray, float tMin, float tMax,
 	if (t0 > tMax) {
 		return false;
 	}
+	
 	// constrict max
 	if (t1 > tMax) {
 		t1 = tMax;
@@ -375,6 +386,10 @@ bool GridAccelerator::ShadowFeelerIntersectsAnObject(const Ray& ray, float tMin,
 			nx * rayParams.iy + nx * ny * rayParams.iz];
 		if (!rayParams.txInvalid && rayParams.txNext < rayParams.tyNext
 			&& rayParams.txNext < rayParams.tzNext) {
+			/*if (rayParams.txNext > tMax) {
+				break;
+			}*/
+			
 			auto hitPrimitive =
 			EvaluatePrimitiveCollectionCellShadow(currentCell, ray, tMin,
 												  rayParams.txNext,
@@ -388,32 +403,38 @@ bool GridAccelerator::ShadowFeelerIntersectsAnObject(const Ray& ray, float tMin,
 				break;
 			}
 		}
-		else {
-			if (!rayParams.tyInvalid && rayParams.tyNext < rayParams.tzNext) {
-				auto hitPrimitive =
-				EvaluatePrimitiveCollectionCellShadow(currentCell, ray, tMin,
-					rayParams.tyNext, primitiveToExclude);
-				if (hitPrimitive) {
-					return true;
-				}
-				rayParams.tyNext += rayParams.dty;
-				rayParams.iy += rayParams.iyStep;
-				if (rayParams.iy == rayParams.iyStop) {
-					break;
-				}
+		else if (!rayParams.tyInvalid && rayParams.tyNext < rayParams.tzNext) {
+			/*if (rayParams.tyNext > tMax) {
+				break;
+			}*/
+			
+			auto hitPrimitive =
+			EvaluatePrimitiveCollectionCellShadow(currentCell, ray, tMin,
+				rayParams.tyNext, primitiveToExclude);
+			if (hitPrimitive) {
+				return true;
 			}
-			else {
-				auto hitPrimitive =
-				EvaluatePrimitiveCollectionCellShadow(currentCell, ray, tMin,
-					rayParams.tzNext, primitiveToExclude);
-				if (hitPrimitive) {
-					return true;
-				}
-				rayParams.tzNext += rayParams.dtz;
-				rayParams.iz += rayParams.izStep;
-				if (rayParams.iz == rayParams.izStop) {
-					break;
-				}
+			rayParams.tyNext += rayParams.dty;
+			rayParams.iy += rayParams.iyStep;
+			if (rayParams.iy == rayParams.iyStop) {
+				break;
+			}
+		}
+		else {
+			/*if (rayParams.tzNext > tMax) {
+				break;
+			}*/
+			
+			auto hitPrimitive =
+			EvaluatePrimitiveCollectionCellShadow(currentCell, ray, tMin,
+				rayParams.tzNext, primitiveToExclude);
+			if (hitPrimitive) {
+				return true;
+			}
+			rayParams.tzNext += rayParams.dtz;
+			rayParams.iz += rayParams.izStep;
+			if (rayParams.iz == rayParams.izStop) {
+				break;
 			}
 		}
 	}
