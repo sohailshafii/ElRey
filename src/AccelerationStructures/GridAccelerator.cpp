@@ -19,6 +19,7 @@ GridAccelerator::GridAccelerator(Primitive **primitives,
 Primitive* GridAccelerator::Intersect(const Ray &ray, float tMin, float& tMax,
 								IntersectionResult &intersectionResult) {
 	Primitive* closestPrimitive = nullptr;
+	bool hitBefore = false;
 	for (auto currPrimitive : primitivesNotInCells) {
 		if (currPrimitive->UsedForInstancing()) {
 			continue;
@@ -26,6 +27,7 @@ Primitive* GridAccelerator::Intersect(const Ray &ray, float tMin, float& tMax,
 		if (currPrimitive->Intersect(ray, tMin, tMax,
 									 intersectionResult)) {
 			closestPrimitive = currPrimitive;
+			hitBefore = true;
 		}
 	}
 	
@@ -52,10 +54,6 @@ Primitive* GridAccelerator::Intersect(const Ray &ray, float tMin, float& tMax,
 			nx* rayParams.iy + nx*ny* rayParams.iz];
 		if (!rayParams.txInvalid && rayParams.txNext < rayParams.tyNext &&
 			rayParams.txNext < rayParams.tzNext) {
-			/*if (rayParams.txNext > tMax) {
-				break;
-			}*/
-			
 			auto hitPrimitive =
 			   EvaluatePrimitiveCollectionCell(currentCell, ray, tMin, tMax,
 											   intersectionResult, rayParams.txNext);
@@ -63,6 +61,7 @@ Primitive* GridAccelerator::Intersect(const Ray &ray, float tMin, float& tMax,
 				closestPrimitive = hitPrimitive;
 				break;
 			}
+			
 			rayParams.txNext += rayParams.dtx;
 			rayParams.ix += rayParams.ixStep;
 			if (rayParams.ix == rayParams.ixStop) {
@@ -70,17 +69,14 @@ Primitive* GridAccelerator::Intersect(const Ray &ray, float tMin, float& tMax,
 			}
 		}
 		else if (!rayParams.tyInvalid && rayParams.tyNext < rayParams.tzNext) {
-			/*if (rayParams.tyNext > tMax) {
-				break;
-			}*/
-			
 			auto hitPrimitive =
-			EvaluatePrimitiveCollectionCell(currentCell, ray, tMin, tMax,
-											intersectionResult, rayParams.tyNext);
+				EvaluatePrimitiveCollectionCell(currentCell, ray, tMin, tMax,
+												intersectionResult, rayParams.tyNext);
 			if (hitPrimitive != nullptr) {
 				closestPrimitive = hitPrimitive;
 				break;
 			}
+			
 			rayParams.tyNext += rayParams.dty;
 			rayParams.iy += rayParams.iyStep;
 			if (rayParams.iy == rayParams.iyStop) {
@@ -88,17 +84,14 @@ Primitive* GridAccelerator::Intersect(const Ray &ray, float tMin, float& tMax,
 			}
 		}
 		else {
-			/*if (rayParams.tzNext > tMax) {
-				break;
-			}*/
-			
 			auto hitPrimitive =
-			EvaluatePrimitiveCollectionCell(currentCell, ray, tMin, tMax,
-											intersectionResult, rayParams.tzNext);
+				EvaluatePrimitiveCollectionCell(currentCell, ray, tMin, tMax,
+												intersectionResult, rayParams.tzNext);
 			if (hitPrimitive != nullptr) {
 				closestPrimitive = hitPrimitive;
 				break;
 			}
+			
 			rayParams.tzNext += rayParams.dtz;
 			rayParams.iz += rayParams.izStep;
 			if (rayParams.iz == rayParams.izStop) {
@@ -386,17 +379,15 @@ bool GridAccelerator::ShadowFeelerIntersectsAnObject(const Ray& ray, float tMin,
 			nx * rayParams.iy + nx * ny * rayParams.iz];
 		if (!rayParams.txInvalid && rayParams.txNext < rayParams.tyNext
 			&& rayParams.txNext < rayParams.tzNext) {
-			/*if (rayParams.txNext > tMax) {
-				break;
-			}*/
-			
 			auto hitPrimitive =
-			EvaluatePrimitiveCollectionCellShadow(currentCell, ray, tMin,
-												  rayParams.txNext,
-												  primitiveToExclude);
+				EvaluatePrimitiveCollectionCellShadow(currentCell, ray, tMin,
+													  rayParams.txNext,
+													  primitiveToExclude);
+			
 			if (hitPrimitive) {
 				return true;
 			}
+			
 			rayParams.txNext += rayParams.dtx;
 			rayParams.ix += rayParams.ixStep;
 			if (rayParams.ix == rayParams.ixStop) {
@@ -404,16 +395,13 @@ bool GridAccelerator::ShadowFeelerIntersectsAnObject(const Ray& ray, float tMin,
 			}
 		}
 		else if (!rayParams.tyInvalid && rayParams.tyNext < rayParams.tzNext) {
-			/*if (rayParams.tyNext > tMax) {
-				break;
-			}*/
-			
 			auto hitPrimitive =
-			EvaluatePrimitiveCollectionCellShadow(currentCell, ray, tMin,
-				rayParams.tyNext, primitiveToExclude);
+				EvaluatePrimitiveCollectionCellShadow(currentCell, ray, tMin,
+													  rayParams.tyNext, primitiveToExclude);
 			if (hitPrimitive) {
 				return true;
 			}
+			
 			rayParams.tyNext += rayParams.dty;
 			rayParams.iy += rayParams.iyStep;
 			if (rayParams.iy == rayParams.iyStop) {
@@ -421,16 +409,13 @@ bool GridAccelerator::ShadowFeelerIntersectsAnObject(const Ray& ray, float tMin,
 			}
 		}
 		else {
-			/*if (rayParams.tzNext > tMax) {
-				break;
-			}*/
-			
 			auto hitPrimitive =
-			EvaluatePrimitiveCollectionCellShadow(currentCell, ray, tMin,
-				rayParams.tzNext, primitiveToExclude);
+				EvaluatePrimitiveCollectionCellShadow(currentCell, ray, tMin,
+													  rayParams.tzNext, primitiveToExclude);
 			if (hitPrimitive) {
 				return true;
 			}
+			
 			rayParams.tzNext += rayParams.dtz;
 			rayParams.iz += rayParams.izStep;
 			if (rayParams.iz == rayParams.izStop) {
