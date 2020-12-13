@@ -5,14 +5,14 @@
 class Point3;
 class Vector3;
 
-class Mesh {
+class TriangleMesh {
 public:
-	Mesh();
-	Mesh(Mesh const& otherMesh);
-	Mesh(Mesh && otherMesh);
-	Mesh& operator= (const Mesh& rhs);
+	TriangleMesh();
+	TriangleMesh(TriangleMesh const& otherMesh);
+	TriangleMesh(TriangleMesh && otherMesh);
+	TriangleMesh& operator= (const TriangleMesh& rhs);
 	
-	~Mesh();
+	~TriangleMesh();
 	
 	void AddVertexFace(unsigned int vertexIndex,
 					   unsigned int triangleIndex);

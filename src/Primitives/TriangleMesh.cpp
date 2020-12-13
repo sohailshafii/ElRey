@@ -2,19 +2,19 @@
 #include "Math/Point3.h"
 #include "Math/Vector3.h"
 
-Mesh::Mesh() {
+TriangleMesh::TriangleMesh() {
 }
 
-Mesh::Mesh(Mesh const& otherMesh) : vertices(otherMesh.vertices),
+TriangleMesh::TriangleMesh(TriangleMesh const& otherMesh) : vertices(otherMesh.vertices),
 	normals(otherMesh.normals), vertexFaces(otherMesh.vertexFaces) {
 }
 
-Mesh::Mesh(Mesh && otherMesh) : vertices(std::move(otherMesh.vertices)),
+TriangleMesh::TriangleMesh(TriangleMesh && otherMesh) : vertices(std::move(otherMesh.vertices)),
 	normals(std::move(otherMesh.normals)),
 	vertexFaces(std::move(otherMesh.vertexFaces)) {
 }
 
-Mesh& Mesh::operator= (const Mesh& rhs) {
+TriangleMesh& TriangleMesh::operator= (const TriangleMesh& rhs) {
 	if (this == &rhs) {
 		return (*this);
 	}

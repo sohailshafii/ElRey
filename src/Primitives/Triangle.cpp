@@ -131,16 +131,12 @@ AABBox Triangle::ComputeBoundingBox() const {
 	maxPoint[2] = std::max(maxPoint[2], p1[2]);
 	maxPoint[2] = std::max(maxPoint[2], p2[2]);
 	
-	// in case any dimension is too thin, add some thickness
-	if (fabs(maxPoint[2] - minPoint[2]) < EPSILON) {
-		maxPoint[2] += 0.1f;
-	}
-	if (fabs(maxPoint[1] - minPoint[1]) < EPSILON) {
-		maxPoint[1] += 0.1f;
-	}
-	if (fabs(maxPoint[0] - minPoint[0]) < EPSILON) {
-		maxPoint[0] += 0.1f;
-	}
+	minPoint[0] -= 0.1f;
+	minPoint[1] -= 0.1f;
+	minPoint[2] -= 0.1f;
+	maxPoint[0] += 0.1f;
+	maxPoint[1] += 0.1f;
+	maxPoint[2] += 0.1f;
 	
 	return AABBox(minPoint, maxPoint);
 }
