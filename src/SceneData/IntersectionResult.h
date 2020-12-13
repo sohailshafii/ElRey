@@ -7,7 +7,6 @@
 class IntersectionResult {
 public:
 	IntersectionResult() {
-		
 	}
 	
 	IntersectionResult(const Ray& incomingRay, const Vector3& lightVector,
@@ -125,6 +124,8 @@ public:
 		return intersectSum1 < intersectSum2;
 	}
 	
+	// TODO: necessary for grid to intersect against same object multiple times
+	// is there an alternative?
 	void ResetPrimIntersectionData() {
 		genericMetadata1 = 0.0f;
 		genericMetadata2 = 0.0f;

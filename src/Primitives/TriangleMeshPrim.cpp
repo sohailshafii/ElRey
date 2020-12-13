@@ -51,6 +51,9 @@ bool TriangleMeshPrimitive::Intersect(const Ray &ray, float tMin, float& tMax,
 	
 	tMax = t;
 	intersectionResult.SetIntersectionT(tMax);
+	if (isSmooth) {
+		intersectionResult.SetGenericMetadata(beta, gamma, 0.0f);
+	}
 	
 	return true;
 }
@@ -106,6 +109,17 @@ bool TriangleMeshPrimitive::IntersectShadow(const Ray &ray, float tMin, float tM
 }
 
 Vector3 TriangleMeshPrimitive::GetNormal(ParamsForNormal const &paramsForNormal) const {
+	if (!isSmooth) {
+		return normal;
+	}
+	
+	float beta = paramsForNormal.GetGenericMetadata1();
+	float gamma = paramsForNormal.GetGenericMetadata2();
+	
+	Vector3 normal(triangleMesh->normals[index0]*(1 - beta - gamma)
+				   + triangleMesh->normals[index1] * beta
+				   + triangleMesh->normals[index2] * gamma);
+	normal.Normalize();
 	return normal;
 }
 

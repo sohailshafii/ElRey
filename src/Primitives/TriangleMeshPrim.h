@@ -8,15 +8,14 @@ class TriangleMesh;
 class TriangleMeshPrimitive : public Primitive {
 public:
 	TriangleMeshPrimitive(std::shared_ptr<Material> const& iMaterial,
-			const std::string& iName) : Primitive(iMaterial, iName) {
+			const std::string& iName) : Primitive(iMaterial, iName),  isSmooth(false) {
 	}
 	
 	TriangleMeshPrimitive(std::shared_ptr<Material> const& iMaterial,
 			const std::string& iName,
 			std::shared_ptr<TriangleMesh> const &meshPtr,
-			size_t index0, size_t index1, size_t index2) : Primitive(iMaterial, iName), triangleMesh(meshPtr),
-				index0(index0), index1(index1), index2(index2)
-		{
+			size_t index0, size_t index1, size_t index2, bool isSmooth) : Primitive(iMaterial, iName), triangleMesh(meshPtr),
+				index0(index0), index1(index1), index2(index2), isSmooth(isSmooth) {
 			ComputeNormal();
 			ComputeBoundingBox();
 	}
@@ -43,6 +42,7 @@ private:
 	std::shared_ptr<TriangleMesh> triangleMesh;
 	size_t index0, index1, index2;
 	class Vector3 normal;
+	bool isSmooth;
 	
 	void ComputeNormal();
 	void ComputeBoundingBox();
