@@ -12,6 +12,7 @@
 #include "Primitives/CompoundObject.h"
 #include "SceneData/Scene.h"
 #include "SceneData/CommonLoaderFunctions.h"
+#include "ThirdParty/ply/ply.h"
 #include <sstream>
 
 void PrimitiveLoader::AddPrimitivesToScene(Scene* scene,
@@ -26,6 +27,9 @@ void PrimitiveLoader::AddPrimitivesToScene(Scene* scene,
 		// because instance reference normal primitives by name
 		if (typeName == "instance") {
 			instancePrimitiveJsonObjs.push_back(elementJson);
+		}
+		else if (typeName == "ply") {
+			PrimitiveLoader::LoadPly(scene, elementJson);
 		}
 		else {
 			Primitive* newPrimitive = PrimitiveLoader::CreatePrimitive(elementJson);
@@ -102,6 +106,7 @@ InstancePrimitive* PrimitiveLoader::CreateInstancePrimitive(Scene* scene,
 Primitive* PrimitiveLoader::CreatePrimitive(const nlohmann::json& jsonObj) {
 	std::string primitiveType = CommonLoaderFunctions::SafeGetToken(jsonObj, "type");
 	Primitive* newPrimitive = nullptr;
+	// TODO: Re-factor, getting huge
 	if (primitiveType == "plane") {
 		auto planeOrigin = CommonLoaderFunctions::SafeGetToken(jsonObj, "position");
 		auto planeNormal = CommonLoaderFunctions::SafeGetToken(jsonObj, "normal");
@@ -233,4 +238,48 @@ Primitive* PrimitiveLoader::CreatePrimitive(const nlohmann::json& jsonObj) {
 	}
 	
 	return newPrimitive;
+}
+
+// borrowed from raytracing from the ground up text
+// originally from Greg Turk...pasted commented:
+// Most of this function was written by Greg Turk and is released under the licence agreement
+// at the start of the PLY.h and PLY.c files
+// The PLY.h file is #included at the start of this file
+// It still has some of his printf statements for debugging
+// I've made changes to construct mesh triangles and store them in the grid
+// mesh_ptr is a data member of Grid
+// objects is a data member of Compound
+// triangle_type is either flat or smooth
+// Using the one function construct to flat and smooth triangles saves a lot of repeated code
+// The ply file is the same for flat and smooth triangles
+void PrimitiveLoader::LoadPly(Scene* scene,
+							  const nlohmann::json& jsonObj) {
+	typedef struct Vertex {
+		float x, y, z;
+	} Vertex;
+	
+	typedef struct Face {
+		unsigned char nverts;
+		int* verts;
+	} Face;
+	
+	const char *xName = "x";
+	const char *yName = "y";
+	const char *zName = "z";
+	PlyProperty vertProps[] = {
+		{(char*)xName, PLY_FLOAT, PLY_FLOAT, offsetof(Vertex, x), 0, 0, 0, 0},
+		{(char*)yName, PLY_FLOAT, PLY_FLOAT, offsetof(Vertex, y), 0, 0, 0, 0},
+		{(char*)zName, PLY_FLOAT, PLY_FLOAT, offsetof(Vertex, x), 0, 0, 0, 0}
+	};
+	
+	const char* vertIndicesName = "vertex_indices";
+	PlyProperty faceProps[] = {
+		(char*)vertIndicesName, PLY_INT, PLY_INT, offsetof(Face, verts),
+		1, PLY_UCHAR, PLY_UCHAR, offsetof(Face, nverts)
+	};
+	
+	int i, j;
+	PlyFile* ply;
+	// number of elements. 2 in our case; vertices and faces
+	int nelems;
 }
