@@ -254,6 +254,8 @@ Primitive* PrimitiveLoader::CreatePrimitive(const nlohmann::json& jsonObj) {
 // The ply file is the same for flat and smooth triangles
 void PrimitiveLoader::LoadPly(Scene* scene,
 							  const nlohmann::json& jsonObj) {
+	std::string fileName = CommonLoaderFunctions::SafeGetToken(jsonObj, "file_name");
+	
 	typedef struct Vertex {
 		float x, y, z;
 	} Vertex;
@@ -282,4 +284,80 @@ void PrimitiveLoader::LoadPly(Scene* scene,
 	PlyFile* ply;
 	// number of elements. 2 in our case; vertices and faces
 	int nelems;
+	char** elist;
+	int fileType;
+	float version;
+	int nprops;
+	int numElems;
+	PlyProperty** plist;
+	Vertex** vlist;
+	Face** flist;
+	char* elemName;
+	int numComments;
+	char** comments;
+	int numObjInfo;
+	char** objInfo;
+	
+	// TODO: figure out why this fails
+	//ply = ply_open_for_reading(fileName, &nelems, &elist, &fileType, &version);
+	
+	std::cout << "Version " << version << ", type " << fileType << ".\n";
+	
+	unsigned int numVertices;
+	std::vector<Point3> vertices;
+	Vertex* vertexPtr = new Vertex;
+	// there are only two elements in our files: vertices and faces
+	for (i = 0; i < nelems; i++) {
+		// get description of first element
+		elemName = elist[i];
+		plist = ply_get_element_description(ply, elemName, &numElems, &nprops);
+		
+		std::cout << "Element name: " << elemName << ", num elements: " << numElems
+			<< ", num properties: " << nprops << std::endl;
+		
+		if (equal_strings("vertex", elemName)) {
+			// set up for getting vertex elements
+			// the three properties are the vertex coords
+			ply_get_property(ply, elemName, &vertProps[0]);
+			ply_get_property(ply, elemName, &vertProps[1]);
+			ply_get_property(ply, elemName, &vertProps[2]);
+			
+			// reserve mesh elements
+			numVertices = numElems;
+			vertices.reserve(numElems);
+			
+			for (j = 0; j < numElems; i++) {
+				ply_get_element(ply, (void*)vertexPtr);
+				vertices.push_back(Point3(vertexPtr->x, vertexPtr->y,
+										vertexPtr->z));
+			}
+		}
+		
+		if (equal_strings("face", elemName)) {
+			// TODO
+		}
+		
+		for (j = 0; j < nprops; j++) {
+			std::cout << "Property: " << plist[j]->name << "\n";
+		}
+	}
+	
+	// TODO: fix
+	//comments = ply_get_element(ply, &numComments);
+	
+	for (i = 0; i < numComments; i++) {
+		std::cout << "Comment: " << comments[i] << std::endl;
+	}
+	
+	objInfo = ply_get_obj_info(ply, &numObjInfo);
+	
+	for (i = 0; i < numObjInfo; i++) {
+		std::cout << "obj_info = " << objInfo[i] << std::endl;
+	}
+	
+	ply_close(ply);
+	
+	// TODO: set up in scene
+	
+	delete vertexPtr;
 }

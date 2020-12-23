@@ -32,8 +32,6 @@ WARRANTY OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.
 
 */
 
-#include <iostream.h>
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
@@ -110,7 +108,7 @@ void ascii_get_element(PlyFile *, char *);
 void binary_get_element(PlyFile *, char *);
 
 /* memory allocation */
-static char *my_alloc(int, int, char *);    // static added 4/3/2005
+char *my_alloc(int, int, char *);    // static added 4/3/2005
 
 
 /*************/
@@ -2509,7 +2507,7 @@ Entry:
   fname - file name from which memory was requested
 ******************************************************************************/
 
-static char *my_alloc(int size, int lnum, char *fname)
+char *my_alloc(int size, int lnum, char *fname)
 {
   char *ptr;
 
