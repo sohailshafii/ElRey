@@ -1,6 +1,9 @@
 #pragma once
 
 #include "ThirdParty/nlohmann/json.hpp"
+#include "ThirdParty/ply/ply.h"
+#include "Point3.h"
+#include <vector>
 
 class Primitive;
 class InstancePrimitive;
@@ -17,4 +20,17 @@ public:
 	
 	static void LoadPly(Scene* scene,
 						const nlohmann::json& jsonObj);
+	
+private:
+	typedef struct Vertex {
+		float x, y, z;
+	} Vertex;
+	
+	typedef struct Face {
+		unsigned char nverts;
+		int* verts;
+	} Face;
+	
+	static void SetUpVerts(PlyFile* ply, char* elemName, PlyProperty vertProps[],
+						   int numElems, Vertex* vertexPtr, std::vector<Point3>& vertices, unsigned int numVertices);
 };

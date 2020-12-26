@@ -12,7 +12,6 @@
 #include "Primitives/CompoundObject.h"
 #include "SceneData/Scene.h"
 #include "SceneData/CommonLoaderFunctions.h"
-#include "ThirdParty/ply/ply.h"
 #include <sstream>
 
 void PrimitiveLoader::AddPrimitivesToScene(Scene* scene,
@@ -256,15 +255,6 @@ void PrimitiveLoader::LoadPly(Scene* scene,
 							  const nlohmann::json& jsonObj) {
 	std::string fileName = CommonLoaderFunctions::SafeGetToken(jsonObj, "file_name");
 	
-	typedef struct Vertex {
-		float x, y, z;
-	} Vertex;
-	
-	typedef struct Face {
-		unsigned char nverts;
-		int* verts;
-	} Face;
-	
 	const char *xName = "x";
 	const char *yName = "y";
 	const char *zName = "z";
@@ -318,21 +308,8 @@ void PrimitiveLoader::LoadPly(Scene* scene,
 		vertices.clear();
 		
 		if (equal_strings((char *)vertexName, elemName)) {
-			// set up for getting vertex elements
-			// the three properties are the vertex coords
-			ply_get_property(ply, elemName, &vertProps[0]);
-			ply_get_property(ply, elemName, &vertProps[1]);
-			ply_get_property(ply, elemName, &vertProps[2]);
-			
-			// reserve mesh elements
-			numVertices = numElems;
-			vertices.reserve(numElems);
-			
-			for (int j = 0; j < numElems; i++) {
-				ply_get_element(ply, (void*)vertexPtr);
-				vertices.push_back(Point3(vertexPtr->x, vertexPtr->y,
-										vertexPtr->z));
-			}
+			SetUpVerts(ply, elemName, vertProps, numElems, vertexPtr,
+					   vertices, numVertices);
 		}
 		
 		if (equal_strings((char*)faceName, elemName)) {
@@ -360,4 +337,24 @@ void PrimitiveLoader::LoadPly(Scene* scene,
 	// TODO: set up in scene
 	
 	delete vertexPtr;
+}
+
+void PrimitiveLoader::SetUpVerts(PlyFile* ply, char* elemName, PlyProperty vertProps[],
+								 int numElems, Vertex* vertexPtr, std::vector<Point3>& vertices, unsigned int numVertices)
+{
+	// set up for getting vertex elements
+	// the three properties are the vertex coords
+	ply_get_property(ply, elemName, &vertProps[0]);
+	ply_get_property(ply, elemName, &vertProps[1]);
+	ply_get_property(ply, elemName, &vertProps[2]);
+	
+	// reserve mesh elements
+	numVertices = numElems;
+	vertices.reserve(numElems);
+	
+	for (int j = 0; j < numElems; j++) {
+		ply_get_element(ply, (void*)vertexPtr);
+		vertices.push_back(Point3(vertexPtr->x, vertexPtr->y,
+								vertexPtr->z));
+	}
 }
