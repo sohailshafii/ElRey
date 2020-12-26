@@ -245,7 +245,7 @@ Primitive* PrimitiveLoader::CreatePrimitive(const nlohmann::json& jsonObj) {
 // Most of this function was written by Greg Turk and is released under the licence agreement
 // at the start of the PLY.h and PLY.c files
 // The PLY.h file is #included at the start of this file
-// It still has some of his printf statements for debugging
+// It still has some of his printf (now cout) statements for debugging
 // I've made changes to construct mesh triangles and store them in the grid
 // mesh_ptr is a data member of Grid
 // objects is a data member of Compound
@@ -280,7 +280,6 @@ void PrimitiveLoader::LoadPly(Scene* scene,
 		1, PLY_UCHAR, PLY_UCHAR, offsetof(Face, nverts)
 	};
 	
-	int i, j;
 	PlyFile* ply;
 	// number of elements. 2 in our case; vertices and faces
 	int nelems;
@@ -294,28 +293,31 @@ void PrimitiveLoader::LoadPly(Scene* scene,
 	Face** flist;
 	char* elemName;
 	int numComments;
-	char** comments;
 	int numObjInfo;
 	char** objInfo;
 	
-	// TODO: figure out why this fails
-	//ply = ply_open_for_reading(fileName, &nelems, &elist, &fileType, &version);
+	const char* fileNameStr = fileName.c_str();
+	ply = ply_open_for_reading((char*)fileNameStr, &nelems, &elist, &fileType, &version);
 	
 	std::cout << "Version " << version << ", type " << fileType << ".\n";
 	
 	unsigned int numVertices;
 	std::vector<Point3> vertices;
 	Vertex* vertexPtr = new Vertex;
+	char const * vertexName = "vertex";
+	char const * faceName = "face";
+	
 	// there are only two elements in our files: vertices and faces
-	for (i = 0; i < nelems; i++) {
+	for (int i = 0; i < nelems; i++) {
 		// get description of first element
 		elemName = elist[i];
 		plist = ply_get_element_description(ply, elemName, &numElems, &nprops);
 		
 		std::cout << "Element name: " << elemName << ", num elements: " << numElems
 			<< ", num properties: " << nprops << std::endl;
+		vertices.clear();
 		
-		if (equal_strings("vertex", elemName)) {
+		if (equal_strings((char *)vertexName, elemName)) {
 			// set up for getting vertex elements
 			// the three properties are the vertex coords
 			ply_get_property(ply, elemName, &vertProps[0]);
@@ -326,32 +328,30 @@ void PrimitiveLoader::LoadPly(Scene* scene,
 			numVertices = numElems;
 			vertices.reserve(numElems);
 			
-			for (j = 0; j < numElems; i++) {
+			for (int j = 0; j < numElems; i++) {
 				ply_get_element(ply, (void*)vertexPtr);
 				vertices.push_back(Point3(vertexPtr->x, vertexPtr->y,
 										vertexPtr->z));
 			}
 		}
 		
-		if (equal_strings("face", elemName)) {
+		if (equal_strings((char*)faceName, elemName)) {
 			// TODO
 		}
 		
-		for (j = 0; j < nprops; j++) {
+		for (int j = 0; j < nprops; j++) {
 			std::cout << "Property: " << plist[j]->name << "\n";
 		}
 	}
 	
-	// TODO: fix
-	//comments = ply_get_element(ply, &numComments);
-	
-	for (i = 0; i < numComments; i++) {
+	char** comments = ply_get_comments(ply, &numComments);
+	for (int i = 0; i < numComments; i++) {
 		std::cout << "Comment: " << comments[i] << std::endl;
 	}
 	
 	objInfo = ply_get_obj_info(ply, &numObjInfo);
 	
-	for (i = 0; i < numObjInfo; i++) {
+	for (int i = 0; i < numObjInfo; i++) {
 		std::cout << "obj_info = " << objInfo[i] << std::endl;
 	}
 	
