@@ -130,10 +130,10 @@ bool Torus::IntersectShadow(const Ray &ray, float tMin, float tMax) {
 }
 
 Vector3 Torus::GetNormal(ParamsForNormal const &paramsForNormal) const {
-	return GetNormalAtPosition(paramsForNormal.GetIntersectionPos());
+	return ComputeHardNormal(paramsForNormal.GetIntersectionPos());
 }
 
-Vector3 Torus::GetNormalAtPosition(Point3 const &position) const {
+Vector3 Torus::ComputeHardNormal(Point3 const &position) const {
 	Vector3 normal;
 	float paramSquared = sweptRadiusSquared + tubeRadiusSquared;
 	float x = position[0];

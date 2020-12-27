@@ -114,11 +114,10 @@ Vector3 InstancePrimitive::GetNormal(ParamsForNormal const &paramsForNormal) con
 	return GetWorldToLocalTransposeDir(normalLocal).Normalized();
 }
 
-/*Vector3 InstancePrimitive::GetNormalAtPosition(Point3 const &position) const {
-	Vector3 normalLocal = instancePrimitive->GetNormalAtPosition(
-																 GetWorldToLocalPos(position));
+Vector3 InstancePrimitive::ComputeHardNormal(Point3 const &position) const {
+	Vector3 normalLocal = instancePrimitive->ComputeHardNormal(GetWorldToLocalPos(position));
 	return GetWorldToLocalTransposeDir(normalLocal).Normalized();
-}*/
+}
 
 void InstancePrimitive::SetLocalToWorld(Matrix4x4 const & localToWorld) {
 	this->localToWorld = localToWorld;

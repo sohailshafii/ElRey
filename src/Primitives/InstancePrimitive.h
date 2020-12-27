@@ -14,7 +14,7 @@ public:
 	
 	virtual Vector3 GetNormal(ParamsForNormal const &paramsForNormal) const override;
 	
-	//virtual Vector3 GetNormalAtPosition(Point3 const &position) const override;
+	virtual Vector3 ComputeHardNormal(Point3 const &position) const override;
 	
 	virtual Material const * GetMaterial(IntersectionResult const & intersectionResult) override {
 		return instancePrimitive->GetMaterial(intersectionResult);

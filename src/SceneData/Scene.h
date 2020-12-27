@@ -26,6 +26,10 @@ public:
 											  numNewPrimitives);
 	}
 	
+	void AddPrimitives(std::vector<Primitive*> newPrimitives) {
+		return baseAccelerator->AddPrimitives(newPrimitives);
+	}
+	
 	void RemovePrimitive(Primitive* primitiveToRemove) {
 		return baseAccelerator->RemovePrimitive(primitiveToRemove);
 	}

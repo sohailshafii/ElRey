@@ -14,6 +14,7 @@
 #include "Primitives/TriangleMesh.h"
 #include "SceneData/Scene.h"
 #include "SceneData/CommonLoaderFunctions.h"
+#include "Math/CommonMath.h"
 #include <sstream>
 
 void PrimitiveLoader::AddPrimitivesToScene(Scene* scene,
@@ -262,6 +263,8 @@ void PrimitiveLoader::LoadPly(Scene* scene,
 	std::string objectName = CommonLoaderFunctions::SafeGetToken(jsonObj, "name");
 	bool reverseNormals = CommonLoaderFunctions::SafeGetToken(jsonObj, "reverse_normals");
 	
+	std::cout << "Loading PLY file: " << fileName << "...\n";
+	
 	const char *xName = "x";
 	const char *yName = "y";
 	const char *zName = "z";
@@ -279,37 +282,31 @@ void PrimitiveLoader::LoadPly(Scene* scene,
 	
 	PlyFile* ply;
 	// number of elements. 2 in our case; vertices and faces
-	int nelems;
 	char** elist;
 	int fileType;
 	float version;
-	int nprops;
-	int numElems;
 	PlyProperty** plist;
-	Vertex** vlist;
-	Face** flist;
-	char* elemName;
-	int numComments;
-	int numObjInfo;
-	char** objInfo;
 	
 	const char* fileNameStr = fileName.c_str();
+	int nelems;
 	ply = ply_open_for_reading((char*)fileNameStr, &nelems, &elist, &fileType, &version);
 	
 	std::cout << "Version " << version << ", type " << fileType << ".\n";
 	
 	unsigned int numVertices;
 	std::shared_ptr<TriangleMesh> triangleMesh = std::make_shared<TriangleMesh>();
-	std::vector<TriangleMeshPrimitive*> triangleMeshPrimitive;
 	Vertex* vertexPtr = new Vertex;
 	Face* facePtr = new Face;
 	char const * vertexName = "vertex";
 	char const * faceName = "face";
+	std::vector<Primitive*> objects;
 	
 	// there are only two elements in our files: vertices and faces
-	for (int i = 0; i < nelems; i++) {
+	for (int elemIndex = 0; elemIndex < nelems; elemIndex++) {
 		// get description of first element
-		elemName = elist[i];
+		char* elemName = elist[elemIndex];
+		int nprops;
+		int numElems;
 		plist = ply_get_element_description(ply, elemName, &numElems, &nprops);
 		
 		std::cout << "Element name: " << elemName << ", num elements: " << numElems
@@ -322,31 +319,39 @@ void PrimitiveLoader::LoadPly(Scene* scene,
 		
 		if (equal_strings((char*)faceName, elemName)) {
 			SetUpFace(ply, elemName, faceProps, numElems, isSmooth, facePtr,
-					  triangleMesh, scene, objMaterial,
+					  triangleMesh, objects, objMaterial,
 					  objectName, reverseNormals);
 		}
 		
-		for (int j = 0; j < nprops; j++) {
-			std::cout << "Property: " << plist[j]->name << "\n";
+		for (int propIndex = 0; propIndex < nprops; propIndex++) {
+			std::cout << "Property: " << plist[propIndex]->name << "\n";
 		}
 	}
 	
+	int numComments;
 	char** comments = ply_get_comments(ply, &numComments);
-	for (int i = 0; i < numComments; i++) {
-		std::cout << "Comment: " << comments[i] << std::endl;
+	for (int commentIndex = 0; commentIndex < numComments; commentIndex++) {
+		std::cout << "Comment: " << comments[commentIndex] << std::endl;
 	}
 	
-	objInfo = ply_get_obj_info(ply, &numObjInfo);
-	
-	for (int i = 0; i < numObjInfo; i++) {
-		std::cout << "obj_info = " << objInfo[i] << std::endl;
+	int numObjInfo;
+	char** objInfo = ply_get_obj_info(ply, &numObjInfo);
+	for (int infoIndex = 0; infoIndex < numObjInfo; infoIndex++) {
+		std::cout << "obj_info = " << objInfo[infoIndex] << std::endl;
 	}
 	
 	ply_close(ply);
-	
-	// TODO: set up in scene
-	
+		
 	delete vertexPtr;
+	delete facePtr;
+	
+	if (isSmooth) {
+		std::cout << "Computing smooth normals..n\n";
+		ComputeSmoothMeshNormals(triangleMesh, objects);
+		std::cout << "Done computing normals!\n";
+	}
+	
+	scene->AddPrimitives(objects);
 }
 
 void PrimitiveLoader::SetUpVerts(PlyFile* ply, char* elemName, PlyProperty vertProps[],
@@ -375,7 +380,7 @@ void PrimitiveLoader::SetUpVerts(PlyFile* ply, char* elemName, PlyProperty vertP
 void PrimitiveLoader::SetUpFace(PlyFile* ply, char* elemName, PlyProperty faceProps[],
 								int numElems, bool isSmooth, Face* facePtr,
 								std::shared_ptr<TriangleMesh> triangleMesh,
-								Scene* scene,
+								std::vector<Primitive*>& allPrimitives,
 								std::shared_ptr<Material> material,
 								std::string primName,
 								bool reverseNormals) {
@@ -399,7 +404,7 @@ void PrimitiveLoader::SetUpFace(PlyFile* ply, char* elemName, PlyProperty facePr
 			new TriangleMeshPrimitive(material, primName, triangleMesh,
 									  facePtr->verts[0], facePtr->verts[1],
 									  facePtr->verts[2], isSmooth, reverseNormals);
-		scene->AddPrimitive(newTriangleMeshPrim);
+		allPrimitives.push_back(newTriangleMeshPrim);
 		
 		if (isSmooth) {
 			triangleMesh->vertexFaces[facePtr->verts[0]].push_back(numFacesRead);
@@ -413,4 +418,44 @@ void PrimitiveLoader::SetUpFace(PlyFile* ply, char* elemName, PlyProperty facePr
 		triangleMesh->vertexFaces.erase(triangleMesh->vertexFaces.begin(),
 										triangleMesh->vertexFaces.end());
 	}
+}
+
+void PrimitiveLoader::ComputeSmoothMeshNormals(std::shared_ptr<TriangleMesh> triangleMesh,
+											   std::vector<Primitive*>& allPrimitives) {
+	size_t numVerts = triangleMesh->vertices.size();
+	triangleMesh->normals.reserve(triangleMesh->vertices.size());
+	
+	for (size_t index = 0; index < numVerts; index++) {
+		Vector3 normal;
+		Point3 dummyPoint;
+		
+		std::vector<unsigned int>& vertexFaces = triangleMesh->vertexFaces[index];
+		size_t numFaces = vertexFaces.size();
+		for (size_t faceIndex = 0; faceIndex < numFaces; faceIndex++) {
+			// doesn't matter what vector is given; it's a normal for a face
+			normal += allPrimitives[vertexFaces[faceIndex]]->ComputeHardNormal(dummyPoint);
+		}
+		
+		if (fabs(normal[0]) < EPSILON && fabs(normal[1]) < EPSILON &&
+			fabs(normal[2]) < EPSILON) {
+			normal[1] = 1.0;
+		}
+		else {
+			normal.Normalize();
+		}
+		
+		triangleMesh->normals.push_back(normal);
+	}
+	
+	for (size_t index = 0; index < numVerts; index++) {
+		std::vector<unsigned int>& vertexFaces = triangleMesh->vertexFaces[index];
+		size_t numFaces = vertexFaces.size();
+		for (size_t faceIndex = 0; faceIndex < numFaces; faceIndex++) {
+			triangleMesh->vertexFaces[faceIndex].erase(vertexFaces.begin(),
+													   vertexFaces.end());
+		}
+	}
+	
+	triangleMesh->vertexFaces.erase(triangleMesh->vertexFaces.begin(),
+									triangleMesh->vertexFaces.end());
 }

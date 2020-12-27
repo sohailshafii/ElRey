@@ -22,6 +22,7 @@ public:
 	void AddPrimitive(Primitive *newPrimitive);
 	void AddPrimitives(Primitive **newPrimitives,
 					   unsigned int numNewPrimitives);
+	void AddPrimitives(std::vector<Primitive*> newPrimitives);
 
 	void RemovePrimitive(Primitive* primitiveToRemove);
 	Primitive* GetPrimitive(unsigned int index);

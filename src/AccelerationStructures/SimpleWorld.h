@@ -2,7 +2,7 @@
 
 #include "AccelerationStructures/BaseAccelerator.h"
 
-class SimpleWorld : public BaseAccelerator{
+class SimpleWorld : public BaseAccelerator {
 public:
 	SimpleWorld();
 	SimpleWorld(Primitive **primitives,

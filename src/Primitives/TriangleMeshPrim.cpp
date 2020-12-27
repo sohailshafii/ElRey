@@ -108,6 +108,10 @@ bool TriangleMeshPrimitive::IntersectShadow(const Ray &ray, float tMin, float tM
 	return true;
 }
 
+Vector3 TriangleMeshPrimitive::ComputeHardNormal(Point3 const &position) const {
+	return normal;
+}
+
 Vector3 TriangleMeshPrimitive::GetNormal(ParamsForNormal const &paramsForNormal) const {
 	if (!isSmooth) {
 		return normal;

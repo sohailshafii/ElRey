@@ -42,8 +42,11 @@ private:
 	static void SetUpFace(PlyFile* ply, char* elemName, PlyProperty faceProps[],
 						  int numElems, bool isSmooth, Face* facePtr,
 						  std::shared_ptr<TriangleMesh> triangleMesh,
-						  Scene* scene,
+						  std::vector<Primitive*>& allPrimitives,
 						  std::shared_ptr<Material> material,
 						  std::string primName,
 						  bool reverseNormals);
+	
+	static void ComputeSmoothMeshNormals(std::shared_ptr<TriangleMesh> triangleMesh,
+										 std::vector<Primitive*>& allPrimitives);
 };

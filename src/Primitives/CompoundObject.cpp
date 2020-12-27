@@ -55,12 +55,10 @@ Vector3 CompoundObject::GetNormal(ParamsForNormal const &paramsForNormal) const 
 	return normalVec;
 }
 
-/*Vector3 CompoundObject::GetNormalAtPosition(Point3 const &position) const {
-	
-	Primitive* foundPrim = GetPrimitiveByName(paramsForNormal.GetPrimitiveName());
-	return closestPrimSoFar != nullptr ? closestPrimSoFar->GetNormalAtPosition(position)
-		: Vector3(0.0f, 0.0f, 0.0f);
-}*/
+// not valid for this primitive
+Vector3 CompoundObject::ComputeHardNormal(Point3 const &position) const {
+	return Vector3(0.0f, 0.0f, 0.0f);
+}
 
 Primitive* CompoundObject::GetSubPrimitiveByName(std::string const & intersecPrimName) const {
 	for (Primitive* currPrim : primitives) {

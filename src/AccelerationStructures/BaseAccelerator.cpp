@@ -47,6 +47,17 @@ void BaseAccelerator::AddPrimitives(Primitive **newPrimitives, unsigned int numN
 	}
 }
 
+void BaseAccelerator::AddPrimitives(std::vector<Primitive*> newPrimitives) {
+	size_t numNewPrimitives = newPrimitives.size();
+	if (numNewPrimitives == 0) {
+		throw std::runtime_error("Trying to add invalid primitives!");
+	}
+
+	for (unsigned int i = 0; i < numNewPrimitives; i++) {
+		this->primitives.push_back(newPrimitives[i]);
+	}
+}
+
 void BaseAccelerator::RemovePrimitive(Primitive* primitiveToRemove) {
 	if (primitiveToRemove == nullptr) {
 		throw std::runtime_error("Trying to remove invalid primitive!");

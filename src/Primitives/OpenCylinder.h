@@ -21,7 +21,7 @@ public:
 	
 	virtual Vector3 GetNormal(ParamsForNormal const &paramsForNormal) const override;
 	
-	//virtual Vector3 GetNormalAtPosition(Point3 const &position) const override;
+	virtual Vector3 ComputeHardNormal(Point3 const &position) const override;
 	
 	void GenerateBoundingBox();
 	
@@ -44,8 +44,6 @@ private:
 	float radius, radiusSqr;
 	float invRadius;
 	AABBox boundingBox;
-	
-	Vector3 GetNormalAtPosition(Point3 const &position) const;
 	
 	bool TestIfTMaxPasses(float originY, float dirY,
 						float tVal, float tMin, float tMax) {

@@ -89,9 +89,9 @@ Vector3 Disk::GetNormal(ParamsForNormal const &paramsForNormal) const {
 	return normalVec;
 }
 
-/*Vector3 Disk::GetNormalAtPosition(Point3 const &position) const {
+Vector3 Disk::ComputeHardNormal(Point3 const &position) const {
 	return normalVec;
-}*/
+}
 
 void Disk::SamplePrimitive(Point3& resultingSample,
 						   IntersectionResult const & intersectionResult) {

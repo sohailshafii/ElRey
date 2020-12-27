@@ -35,10 +35,8 @@ public:
 						   IntersectionResult &intersectionResult) = 0;
 	virtual bool IntersectShadow(const Ray &ray, float tMin, float tMax) = 0;
 	
+	virtual Vector3 ComputeHardNormal(Point3 const & position) const = 0;
 	virtual Vector3 GetNormal(ParamsForNormal const &paramsForNormal) const = 0;
-	
-	// useful if you just want to query a normal without intersection information
-	//virtual Vector3 GetNormalAtPosition(Point3 const &position) const = 0;
 	
 	// a compound object might have a different material per sub-object
 	// which is why intersection result is required
