@@ -12,10 +12,8 @@ public:
 	TriangleMesh(TriangleMesh && otherMesh);
 	TriangleMesh& operator= (const TriangleMesh& rhs);
 	
-	~TriangleMesh();
-	
-	void AddVertexFace(unsigned int vertexIndex,
-					   unsigned int triangleIndex);
+	~TriangleMesh() {
+	}
 	
 	std::vector<Point3> vertices;
 	std::vector<Vector3> normals;

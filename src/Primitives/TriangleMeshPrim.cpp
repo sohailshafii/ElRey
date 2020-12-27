@@ -142,6 +142,9 @@ void TriangleMeshPrimitive::ComputeNormal() {
 	Point3 p2(triangleMesh->vertices[index2]);
 	normal = (p1-p0)^(p2-p0);
 	normal.Normalize();
+	if (reverseNormal) {
+		normal = -normal;
+	}
 }
 
 void TriangleMeshPrimitive::ComputeBoundingBox() {

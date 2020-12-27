@@ -8,6 +8,9 @@
 class Primitive;
 class InstancePrimitive;
 class Scene;
+class TriangleMesh;
+class TriangleMeshPrimitive;
+class Material;
 
 class PrimitiveLoader {
 public:
@@ -32,5 +35,15 @@ private:
 	} Face;
 	
 	static void SetUpVerts(PlyFile* ply, char* elemName, PlyProperty vertProps[],
-						   int numElems, Vertex* vertexPtr, std::vector<Point3>& vertices, unsigned int numVertices);
+						   int numElems, Vertex* vertexPtr,
+						   std::shared_ptr<TriangleMesh> triangleMesh,
+						   unsigned int numVertices);
+	
+	static void SetUpFace(PlyFile* ply, char* elemName, PlyProperty faceProps[],
+						  int numElems, bool isSmooth, Face* facePtr,
+						  std::shared_ptr<TriangleMesh> triangleMesh,
+						  Scene* scene,
+						  std::shared_ptr<Material> material,
+						  std::string primName,
+						  bool reverseNormals);
 };
