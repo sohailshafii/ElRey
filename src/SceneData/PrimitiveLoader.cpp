@@ -263,7 +263,13 @@ void PrimitiveLoader::LoadPly(Scene* scene,
 	std::string objectName = CommonLoaderFunctions::SafeGetToken(jsonObj, "name");
 	bool reverseNormals = CommonLoaderFunctions::SafeGetToken(jsonObj, "reverse_normals");
 	
-	std::cout << "Loading PLY file: " << fileName << "...\n";
+#if __APPLE__
+	std::string scenePath = "../../" + fileName;
+#else
+	std::string scenePath = "../" + fileName;
+#endif
+	
+	std::cout << "Loading PLY file: " << scenePath << "...\n";
 	
 	const char *xName = "x";
 	const char *yName = "y";
@@ -287,9 +293,16 @@ void PrimitiveLoader::LoadPly(Scene* scene,
 	float version;
 	PlyProperty** plist;
 	
-	const char* fileNameStr = fileName.c_str();
+	const char* scenePathStr = scenePath.c_str();
 	int nelems;
-	ply = ply_open_for_reading((char*)fileNameStr, &nelems, &elist, &fileType, &version);
+	ply = ply_open_for_reading((char*)scenePathStr, &nelems, &elist, &fileType, &version);
+	
+	if (ply == nullptr) {
+		std::stringstream exceptionMsg;
+		exceptionMsg << "Could not open PLY path: " << scenePathStr
+			<< ".\n";
+		throw exceptionMsg;
+	}
 	
 	std::cout << "Version " << version << ", type " << fileType << ".\n";
 	
