@@ -47,7 +47,8 @@ target_include_directories(ElRey
 		"${PROJECT_SOURCE_DIR}/src/SceneData"
 		"${PROJECT_SOURCE_DIR}/src/AccelerationStructures"
 		"${PROJECT_SOURCE_DIR}/src/ThirdParty/nlohmann"
-		"${PROJECT_SOURCE_DIR}/src/ThirdParty/stb")
+		"${PROJECT_SOURCE_DIR}/src/ThirdParty/stb"
+		"${PROJECT_SOURCE_DIR}/src/ThirdParty/tinyobj")
 
 target_link_libraries(ElRey ${SDL2_LIBRARY})
 

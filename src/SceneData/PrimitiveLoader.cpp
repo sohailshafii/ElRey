@@ -15,6 +15,8 @@
 #include "SceneData/Scene.h"
 #include "SceneData/CommonLoaderFunctions.h"
 #include "Math/CommonMath.h"
+#define TINYOBJLOADER_IMPLEMENTATION
+#include <tiny_obj_loader.h>
 #include <sstream>
 
 void PrimitiveLoader::AddPrimitivesToScene(Scene* scene,
@@ -30,7 +32,7 @@ void PrimitiveLoader::AddPrimitivesToScene(Scene* scene,
 		if (typeName == "instance") {
 			instancePrimitiveJsonObjs.push_back(elementJson);
 		}
-		else if (typeName == "OBJ") {
+		else if (typeName == "obj_model") {
 			PrimitiveLoader::LoadModel(scene, elementJson);
 		}
 		else {
@@ -258,8 +260,19 @@ void PrimitiveLoader::LoadModel(Scene* scene,
 	std::string scenePath = "../" + fileName;
 #endif
 	
-	/*std::cout << "Loading PLY file: " << scenePath << "...\n";
+	tinyobj::attrib_t attrib;
+	std::vector<tinyobj::shape_t> shapes;
+	std::vector<tinyobj::material_t> materials;
+	std::string warn, err;
+
+	std::cout << "Loading obj file: " << scenePath << "...\n";
 	
+	if (!tinyobj::LoadObj(&attrib, &shapes, &materials, &warn, &err,
+						  scenePath.c_str())) {
+		throw std::runtime_error(warn + err);
+	}
+	
+	/*
 	const char *xName = "x";
 	const char *yName = "y";
 	const char *zName = "z";
