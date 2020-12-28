@@ -30,8 +30,8 @@ void PrimitiveLoader::AddPrimitivesToScene(Scene* scene,
 		if (typeName == "instance") {
 			instancePrimitiveJsonObjs.push_back(elementJson);
 		}
-		else if (typeName == "ply") {
-			PrimitiveLoader::LoadPly(scene, elementJson);
+		else if (typeName == "OBJ") {
+			PrimitiveLoader::LoadModel(scene, elementJson);
 		}
 		else {
 			Primitive* newPrimitive = PrimitiveLoader::CreatePrimitive(elementJson);
@@ -242,19 +242,8 @@ Primitive* PrimitiveLoader::CreatePrimitive(const nlohmann::json& jsonObj) {
 	return newPrimitive;
 }
 
-// borrowed from raytracing from the ground up text
-// originally from Greg Turk...pasted commented:
-// Most of this function was written by Greg Turk and is released under the licence agreement
-// at the start of the PLY.h and PLY.c files
-// The PLY.h file is #included at the start of this file
-// It still has some of his printf (now cout) statements for debugging
-// I've made changes to construct mesh triangles and store them in the grid
-// mesh_ptr is a data member of Grid
-// objects is a data member of Compound
-// triangle_type is either flat or smooth
-// Using the one function construct to flat and smooth triangles saves a lot of repeated code
-// The ply file is the same for flat and smooth triangles
-void PrimitiveLoader::LoadPly(Scene* scene,
+// TODO: gut damn PLY code
+void PrimitiveLoader::LoadModel(Scene* scene,
 							  const nlohmann::json& jsonObj) {
 	std::string fileName = CommonLoaderFunctions::SafeGetToken(jsonObj, "file_name");
 	bool isSmooth = CommonLoaderFunctions::SafeGetToken(jsonObj, "is_smooth");
@@ -269,7 +258,7 @@ void PrimitiveLoader::LoadPly(Scene* scene,
 	std::string scenePath = "../" + fileName;
 #endif
 	
-	std::cout << "Loading PLY file: " << scenePath << "...\n";
+	/*std::cout << "Loading PLY file: " << scenePath << "...\n";
 	
 	const char *xName = "x";
 	const char *yName = "y";
@@ -364,9 +353,11 @@ void PrimitiveLoader::LoadPly(Scene* scene,
 		std::cout << "Done computing normals!\n";
 	}
 	
-	scene->AddPrimitives(objects);
+	scene->AddPrimitives(objects);*/
+	// TODO
 }
 
+/*
 void PrimitiveLoader::SetUpVerts(PlyFile* ply, char* elemName, PlyProperty vertProps[],
 								 int numElems, Vertex* vertexPtr,
 								 std::shared_ptr<TriangleMesh> triangleMesh,
@@ -474,4 +465,4 @@ void PrimitiveLoader::ComputeSmoothMeshNormals(std::shared_ptr<TriangleMesh> tri
 	
 	triangleMesh->vertexFaces.erase(triangleMesh->vertexFaces.begin(),
 									triangleMesh->vertexFaces.end());
-}
+}*/

@@ -27,8 +27,7 @@ AUX_SOURCE_DIRECTORY(${PROJECT_SOURCE_DIR}/src/SceneData SOURCE_FILES)
 AUX_SOURCE_DIRECTORY(${PROJECT_SOURCE_DIR}/src/WorldData SOURCE_FILES)   
 AUX_SOURCE_DIRECTORY(${PROJECT_SOURCE_DIR}/src/Sampling SOURCE_FILES) 
 AUX_SOURCE_DIRECTORY(${PROJECT_SOURCE_DIR}/src/Cameras SOURCE_FILES) 
-AUX_SOURCE_DIRECTORY(${PROJECT_SOURCE_DIR}/src/AccelerationStructures SOURCE_FILES)  
-AUX_SOURCE_DIRECTORY(${PROJECT_SOURCE_DIR}/src/ThirdParty/ply SOURCE_FILES) 
+AUX_SOURCE_DIRECTORY(${PROJECT_SOURCE_DIR}/src/AccelerationStructures SOURCE_FILES)
 
 add_executable(ElRey ${SOURCE_FILES})
 
@@ -48,8 +47,7 @@ target_include_directories(ElRey
 		"${PROJECT_SOURCE_DIR}/src/SceneData"
 		"${PROJECT_SOURCE_DIR}/src/AccelerationStructures"
 		"${PROJECT_SOURCE_DIR}/src/ThirdParty/nlohmann"
-		"${PROJECT_SOURCE_DIR}/src/ThirdParty/stb"
-		"${PROJECT_SOURCE_DIR}/src/ThirdParty/ply")
+		"${PROJECT_SOURCE_DIR}/src/ThirdParty/stb")
 
 target_link_libraries(ElRey ${SDL2_LIBRARY})
 

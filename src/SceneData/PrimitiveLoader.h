@@ -1,7 +1,6 @@
 #pragma once
 
 #include "ThirdParty/nlohmann/json.hpp"
-#include "ThirdParty/ply/ply.h"
 #include "Point3.h"
 #include <vector>
 
@@ -21,11 +20,12 @@ public:
 											  const nlohmann::json& jsonObj);
 	static Primitive* CreatePrimitive(const nlohmann::json& jsonObj);
 	
-	static void LoadPly(Scene* scene,
-						const nlohmann::json& jsonObj);
+	// OBJ only for now
+	static void LoadModel(Scene* scene,
+						  const nlohmann::json& jsonObj);
 	
 private:
-	typedef struct Vertex {
+	/*typedef struct Vertex {
 		float x, y, z;
 	} Vertex;
 	
@@ -48,5 +48,5 @@ private:
 						  bool reverseNormals);
 	
 	static void ComputeSmoothMeshNormals(std::shared_ptr<TriangleMesh> triangleMesh,
-										 std::vector<Primitive*>& allPrimitives);
+										 std::vector<Primitive*>& allPrimitives);*/
 };
