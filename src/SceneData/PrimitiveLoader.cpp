@@ -277,7 +277,7 @@ void PrimitiveLoader::LoadPly(Scene* scene,
 	PlyProperty vertProps[] = {
 		{(char*)xName, PLY_FLOAT, PLY_FLOAT, offsetof(Vertex, x), 0, 0, 0, 0},
 		{(char*)yName, PLY_FLOAT, PLY_FLOAT, offsetof(Vertex, y), 0, 0, 0, 0},
-		{(char*)zName, PLY_FLOAT, PLY_FLOAT, offsetof(Vertex, x), 0, 0, 0, 0}
+		{(char*)zName, PLY_FLOAT, PLY_FLOAT, offsetof(Vertex, z), 0, 0, 0, 0}
 	};
 	
 	const char* vertIndicesName = "vertex_indices";
@@ -374,6 +374,9 @@ void PrimitiveLoader::SetUpVerts(PlyFile* ply, char* elemName, PlyProperty vertP
 {
 	// set up for getting vertex elements
 	// the three properties are the vertex coords
+	auto testPtr = &vertProps[0];
+	auto testPtr2 = &vertProps[1];
+	auto testPtr3 = &vertProps[2];
 	ply_get_property(ply, elemName, &vertProps[0]);
 	ply_get_property(ply, elemName, &vertProps[1]);
 	ply_get_property(ply, elemName, &vertProps[2]);
@@ -382,7 +385,7 @@ void PrimitiveLoader::SetUpVerts(PlyFile* ply, char* elemName, PlyProperty vertP
 	triangleMesh->vertices.clear();
 	numVertices = numElems;
 	triangleMesh->vertices.reserve(numElems);
-	
+	auto testPtr4 = (void*)vertexPtr;
 	for (int j = 0; j < numElems; j++) {
 		ply_get_element(ply, (void*)vertexPtr);
 		triangleMesh->vertices.push_back(Point3(vertexPtr->x, vertexPtr->y,

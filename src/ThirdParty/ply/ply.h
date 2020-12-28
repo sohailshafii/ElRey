@@ -1,4 +1,3 @@
-
 /*
 
 Header for PLY polygon files.
@@ -127,7 +126,6 @@ typedef struct PlyFile {        /* description of PLY file */
   PlyOtherElems *other_elems;   /* "other" elements from a PLY file */
 } PlyFile;
 
-
 /* memory allocation */
 extern char *my_alloc();
 #define myalloc(mem_size) my_alloc((mem_size), __LINE__, __FILE__)
@@ -139,14 +137,12 @@ extern PlyFile *ply_write(FILE *, int, char **, int);
 extern PlyFile *ply_open_for_writing(char *, int, char **, int, float *);
 extern void ply_describe_element(PlyFile *, char *, int, int, PlyProperty *);
 extern void ply_describe_property(PlyFile *, char *, PlyProperty *);
-extern void ply_describe_other_properties(PlyFile *, PlyOtherProp *, int);
 extern void ply_element_count(PlyFile *, char *, int);
 extern void ply_header_complete(PlyFile *);
 extern void ply_put_element_setup(PlyFile *, char *);
 extern void ply_put_element(PlyFile *, void *);
 extern void ply_put_comment(PlyFile *, char *);
 extern void ply_put_obj_info(PlyFile *, char *);
-extern void setup_other_props(PlyFile *, PlyElement *);
 extern PlyFile *ply_read(FILE *, int *, char ***);
 extern PlyFile *ply_open_for_reading( char *, int *, char ***, int *, float *);
 extern PlyProperty **ply_get_element_description(PlyFile *, char *, int*, int*);
@@ -166,14 +162,8 @@ extern void ply_free_other_elements (PlyOtherElems *);
 extern int equal_strings(char *, char *);
 
 
-// strdup.c --string duplicate function written by Rickard E. Faith
-
-extern char* strdup(const char* s);
-
-
 #ifdef __cplusplus
 }
 #endif
 #endif /* !__PLY_H__ */
-
 
