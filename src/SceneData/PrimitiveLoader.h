@@ -11,6 +11,26 @@ class TriangleMesh;
 class TriangleMeshPrimitive;
 class Material;
 
+// from https://vulkan-tutorial.com/Loading_models
+struct Vertex {
+	float pos[3];
+	float texCoord[2];
+
+	bool operator==(const Vertex& other) const {
+		return pos == other.pos && texCoord == other.texCoord;
+	}
+};
+
+namespace std {
+  template<> struct hash<Vertex> {
+	size_t operator()(Vertex const& v) const {
+		// oh boy, hope this is correct!
+		// https://stackoverflow.com/questions/20953390/what-is-the-fastest-hash-function-for-pointers
+		return size_t((((size_t)v.pos ^ (size_t)v.texCoord) << 1) >> 1);
+	}
+  };
+}
+
 class PrimitiveLoader {
 public:
 	static void AddPrimitivesToScene(Scene* scene,
@@ -25,6 +45,7 @@ public:
 						  const nlohmann::json& jsonObj);
 	
 private:
+	
 	/*typedef struct Vertex {
 		float x, y, z;
 	} Vertex;
@@ -45,8 +66,8 @@ private:
 						  std::vector<Primitive*>& allPrimitives,
 						  std::shared_ptr<Material> material,
 						  std::string primName,
-						  bool reverseNormals);
+						  bool reverseNormals);*/
 	
 	static void ComputeSmoothMeshNormals(std::shared_ptr<TriangleMesh> triangleMesh,
-										 std::vector<Primitive*>& allPrimitives);*/
+										 std::vector<Primitive*>& allPrimitives);
 };

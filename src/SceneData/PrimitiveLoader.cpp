@@ -18,6 +18,7 @@
 #define TINYOBJLOADER_IMPLEMENTATION
 #include <tiny_obj_loader.h>
 #include <sstream>
+#include <unordered_map>
 
 void PrimitiveLoader::AddPrimitivesToScene(Scene* scene,
 										   nlohmann::json const & objectsArray) {
@@ -272,6 +273,33 @@ void PrimitiveLoader::LoadModel(Scene* scene,
 		throw std::runtime_error(warn + err);
 	}
 	
+	std::unordered_map<Vertex, uint32_t> uniqueVertices{};
+	std::vector<Vertex> vertices;
+	std::vector<uint32_t> indices;
+	
+	for (const auto& shape : shapes) {
+		for (const auto& index : shape.mesh.indices) {
+			Vertex vertex{};
+
+			vertex.pos[0] = attrib.vertices[3 * index.vertex_index + 0];
+			vertex.pos[1] = attrib.vertices[3 * index.vertex_index + 1];
+			vertex.pos[2] = attrib.vertices[3 * index.vertex_index + 2];
+
+			vertex.texCoord[0] = attrib.texcoords[2 * index.texcoord_index + 0];
+			vertex.texCoord[1] = 1.0f - attrib.texcoords[2 * index.texcoord_index + 1];
+
+			if (uniqueVertices.count(vertex) == 0) {
+				uniqueVertices[vertex] = static_cast<uint32_t>(vertices.size());
+				vertices.push_back(vertex);
+			}
+			indices.push_back(uniqueVertices[vertex]);
+		}
+	}
+	
+	// TODO: create triangles outta indices.
+	// each triplet is a new triangle
+	// we need to know faces a vertex is adjacent to
+	
 	/*
 	const char *xName = "x";
 	const char *yName = "y";
@@ -438,7 +466,7 @@ void PrimitiveLoader::SetUpFace(PlyFile* ply, char* elemName, PlyProperty facePr
 		triangleMesh->vertexFaces.erase(triangleMesh->vertexFaces.begin(),
 										triangleMesh->vertexFaces.end());
 	}
-}
+}*/
 
 void PrimitiveLoader::ComputeSmoothMeshNormals(std::shared_ptr<TriangleMesh> triangleMesh,
 											   std::vector<Primitive*>& allPrimitives) {
@@ -478,4 +506,4 @@ void PrimitiveLoader::ComputeSmoothMeshNormals(std::shared_ptr<TriangleMesh> tri
 	
 	triangleMesh->vertexFaces.erase(triangleMesh->vertexFaces.begin(),
 									triangleMesh->vertexFaces.end());
-}*/
+}
