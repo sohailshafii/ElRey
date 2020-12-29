@@ -45,7 +45,6 @@ public:
 						  const nlohmann::json& jsonObj);
 	
 private:
-	
 	/*typedef struct Vertex {
 		float x, y, z;
 	} Vertex;

@@ -274,10 +274,12 @@ void PrimitiveLoader::LoadModel(Scene* scene,
 	}
 	
 	std::unordered_map<Vertex, uint32_t> uniqueVertices{};
-	std::vector<Vertex> vertices;
-	std::vector<uint32_t> indices;
+	std::shared_ptr<TriangleMesh> triangleMesh = std::make_shared<TriangleMesh>();
+	size_t triangleIndices[3];
+	std::vector<Primitive*> objects;
 	
 	for (const auto& shape : shapes) {
+		size_t triIndex = 0;
 		for (const auto& index : shape.mesh.indices) {
 			Vertex vertex{};
 
@@ -289,12 +291,46 @@ void PrimitiveLoader::LoadModel(Scene* scene,
 			vertex.texCoord[1] = 1.0f - attrib.texcoords[2 * index.texcoord_index + 1];
 
 			if (uniqueVertices.count(vertex) == 0) {
-				uniqueVertices[vertex] = static_cast<uint32_t>(vertices.size());
-				vertices.push_back(vertex);
+				uniqueVertices[vertex] = static_cast<uint32_t>(triangleMesh->vertices.size());
+				triangleMesh->vertices.push_back(Point3(vertex.pos[0],
+														vertex.pos[1],
+														vertex.pos[2]));
 			}
-			indices.push_back(uniqueVertices[vertex]);
+			triangleIndices[triIndex++] = uniqueVertices[vertex];
+			
+			if (triIndex == 3) {
+				TriangleMeshPrimitive* newTriangleMeshPrim =
+					new TriangleMeshPrimitive(objMaterial, objectName,
+											  triangleMesh,
+											  triangleIndices[0],
+											  triangleIndices[1],
+											  triangleIndices[2],
+											  isSmooth, reverseNormals);
+				objects.push_back(newTriangleMeshPrim);
+				
+				if (isSmooth) {
+					size_t faceIndex = objects.size()-1;
+					triangleMesh->vertexFaces[triangleIndices[0]].push_back(faceIndex);
+					triangleMesh->vertexFaces[triangleIndices[1]].push_back(faceIndex);
+					triangleMesh->vertexFaces[triangleIndices[2]].push_back(faceIndex);
+				}
+				triIndex = 0;
+			}
 		}
 	}
+	
+	if (!isSmooth) {
+		triangleMesh->vertexFaces.erase(triangleMesh->vertexFaces.begin(),
+										triangleMesh->vertexFaces.end());
+	}
+	
+	if (isSmooth) {
+		std::cout << "Computing smooth normals..n\n";
+		ComputeSmoothMeshNormals(triangleMesh, objects);
+		std::cout << "Done computing normals!\n";
+	}
+	
+	scene->AddPrimitives(objects);
 	
 	// TODO: create triangles outta indices.
 	// each triplet is a new triangle
