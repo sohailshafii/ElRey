@@ -254,6 +254,18 @@ void PrimitiveLoader::LoadModel(Scene* scene,
 	std::string objectName = CommonLoaderFunctions::SafeGetToken(jsonObj, "name");
 	bool reverseNormals = CommonLoaderFunctions::SafeGetToken(jsonObj, "reverse_normals");
 	
+	Matrix4x4 localToWorld;
+	if (CommonLoaderFunctions::HasKey(jsonObj, "local_to_world_matrix")) {
+		localToWorld =
+			CommonLoaderFunctions::ConstructMatrixFromJsonNode(jsonObj["local_to_world_matrix"]);
+	}
+	if (CommonLoaderFunctions::HasKey(jsonObj, "local_to_world_transform")) {
+		Matrix4x4 worldToLocal;
+		CommonLoaderFunctions::SetUpTransformFromJsonNode(
+		CommonLoaderFunctions::SafeGetToken(jsonObj, "local_to_world_transform"),
+											localToWorld, worldToLocal);
+	}
+	
 #if __APPLE__
 	std::string scenePath = "../../" + fileName;
 #else
@@ -294,9 +306,8 @@ void PrimitiveLoader::LoadModel(Scene* scene,
 
 			if (uniqueVertices.count(vertex) == 0) {
 				uniqueVertices[vertex] = static_cast<uint32_t>(triangleMesh->vertices.size());
-				triangleMesh->vertices.push_back(Point3(vertex.pos[0],
-														vertex.pos[1],
-														vertex.pos[2]));
+				Point3 newPoint(vertex.pos[0], vertex.pos[1], vertex.pos[2]);
+				triangleMesh->vertices.push_back(localToWorld * newPoint);
 			}
 			triangleIndices[triIndex++] = uniqueVertices[vertex];
 			
@@ -326,23 +337,6 @@ void PrimitiveLoader::LoadModel(Scene* scene,
 				triIndex = 0;
 			}
 		}
-	}
-	
-	Matrix4x4 localToWorld;
-	if (CommonLoaderFunctions::HasKey(jsonObj, "local_to_world_matrix")) {
-		localToWorld =
-			CommonLoaderFunctions::ConstructMatrixFromJsonNode(jsonObj["local_to_world_matrix"]);
-	}
-	if (CommonLoaderFunctions::HasKey(jsonObj, "local_to_world_transform")) {
-		Matrix4x4 worldToLocal;
-		CommonLoaderFunctions::SetUpTransformFromJsonNode(
-		CommonLoaderFunctions::SafeGetToken(jsonObj, "local_to_world_transform"),
-											localToWorld, worldToLocal);
-	}
-	// transform verts if transformation is available
-	auto numVerts = triangleMesh->vertices.size();
-	for(size_t i = 0; i < numVerts; i++) {
-		triangleMesh->vertices[i] = localToWorld * triangleMesh->vertices[i];
 	}
 	
 	if (!isSmooth) {

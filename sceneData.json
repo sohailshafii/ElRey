@@ -50,7 +50,9 @@
 			},
 			"local_to_world_transform":
 			[
-				{"translate":[0.0,0.0,-5.0]}
+				{"rotate_y":180.0},
+				{"scale":[0.02, 0.02, 0.02]},
+				{"translate":[0.0, 0.5,-0.6]}
 			]
 		}
 	],
