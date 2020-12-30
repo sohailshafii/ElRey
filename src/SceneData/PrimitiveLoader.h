@@ -17,7 +17,11 @@ struct Vertex {
 	float texCoord[2];
 
 	bool operator==(const Vertex& other) const {
-		return pos == other.pos && texCoord == other.texCoord;
+		return fabs(pos[0] - other.pos[0]) < 0.001f &&
+			fabs(pos[1] - other.pos[1]) < 0.001f &&
+			fabs(pos[2] - other.pos[2]) < 0.001f &&
+			fabs(texCoord[0] - other.texCoord[0]) < 0.001f &&
+			fabs(texCoord[1] - other.texCoord[1]) < 0.001f;
 	}
 };
 
@@ -25,8 +29,11 @@ namespace std {
   template<> struct hash<Vertex> {
 	size_t operator()(Vertex const& v) const {
 		// oh boy, hope this is correct!
-		// https://stackoverflow.com/questions/20953390/what-is-the-fastest-hash-function-for-pointers
-		return size_t((((size_t)v.pos ^ (size_t)v.texCoord) << 1) >> 1);
+		return ((hash<float>()(v.pos[0]) ^
+				 hash<float>()(v.pos[1]) ^
+				 hash<float>()(v.pos[2]) ^
+				 hash<float>()(v.texCoord[0]) ^
+				 hash<float>()(v.texCoord[1])) << 1) >> 1;
 	}
   };
 }

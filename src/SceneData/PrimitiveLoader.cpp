@@ -287,8 +287,10 @@ void PrimitiveLoader::LoadModel(Scene* scene,
 			vertex.pos[1] = attrib.vertices[3 * index.vertex_index + 1];
 			vertex.pos[2] = attrib.vertices[3 * index.vertex_index + 2];
 
-			vertex.texCoord[0] = attrib.texcoords[2 * index.texcoord_index + 0];
-			vertex.texCoord[1] = 1.0f - attrib.texcoords[2 * index.texcoord_index + 1];
+			if (attrib.texcoords.size() > 0) {
+				vertex.texCoord[0] = attrib.texcoords[2 * index.texcoord_index + 0];
+				vertex.texCoord[1] = 1.0f - attrib.texcoords[2 * index.texcoord_index + 1];
+			}
 
 			if (uniqueVertices.count(vertex) == 0) {
 				uniqueVertices[vertex] = static_cast<uint32_t>(triangleMesh->vertices.size());
@@ -299,8 +301,12 @@ void PrimitiveLoader::LoadModel(Scene* scene,
 			triangleIndices[triIndex++] = uniqueVertices[vertex];
 			
 			if (triIndex == 3) {
+				size_t primitiveIndex = objects.size();
+				std::ostringstream triangleMeshName;
+				triangleMeshName << objectName << "-" << primitiveIndex;
 				TriangleMeshPrimitive* newTriangleMeshPrim =
-					new TriangleMeshPrimitive(objMaterial, objectName,
+					new TriangleMeshPrimitive(objMaterial,
+											  triangleMeshName.str(),
 											  triangleMesh,
 											  triangleIndices[0],
 											  triangleIndices[1],
@@ -322,12 +328,28 @@ void PrimitiveLoader::LoadModel(Scene* scene,
 		}
 	}
 	
+	Matrix4x4 localToWorld;
+	if (CommonLoaderFunctions::HasKey(jsonObj, "local_to_world_matrix")) {
+		localToWorld =
+			CommonLoaderFunctions::ConstructMatrixFromJsonNode(jsonObj["local_to_world_matrix"]);
+	}
+	if (CommonLoaderFunctions::HasKey(jsonObj, "local_to_world_transform")) {
+		Matrix4x4 worldToLocal;
+		CommonLoaderFunctions::SetUpTransformFromJsonNode(
+		CommonLoaderFunctions::SafeGetToken(jsonObj, "local_to_world_transform"),
+											localToWorld, worldToLocal);
+	}
+	// transform verts if transformation is available
+	auto numVerts = triangleMesh->vertices.size();
+	for(size_t i = 0; i < numVerts; i++) {
+		triangleMesh->vertices[i] = localToWorld * triangleMesh->vertices[i];
+	}
+	
 	if (!isSmooth) {
 		triangleMesh->vertexFaces.erase(triangleMesh->vertexFaces.begin(),
 										triangleMesh->vertexFaces.end());
 	}
-	
-	if (isSmooth) {
+	else {
 		std::cout << "Computing smooth normals..n\n";
 		ComputeSmoothMeshNormals(triangleMesh, objects);
 		std::cout << "Done computing normals!\n";

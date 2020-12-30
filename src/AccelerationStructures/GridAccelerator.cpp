@@ -502,7 +502,7 @@ void GridAccelerator::SetupCells() {
 	float yConversionFactor = ny/(p1[1] - p0[1]);
 	float zConversionFactor = nz/(p1[2] - p0[2]);
 	int zSliceSize = nx*ny;
-	std::set<std::string> primitivesAdded;
+	unsigned int numPrimitivesAdded;
 	for (size_t primIndex = 0; primIndex < numPrimitives; primIndex++) {
 		Primitive* currPrimitive = primitives[primIndex];
 		// if used for instancing, skip primitive
@@ -534,7 +534,7 @@ void GridAccelerator::SetupCells() {
 				for (int xIndex = ixMin; xIndex <= ixMax; xIndex++) {
 					int oneDimIndex = xIndex + yOffset + zSliceSize*zIndex;
 					cells[oneDimIndex].primitives.push_back(currPrimitive);
-					primitivesAdded.insert(currPrimitive->GetName());
+					numPrimitivesAdded++;
 					counts[oneDimIndex] += 1;
 				}
 			}
@@ -571,8 +571,9 @@ void GridAccelerator::SetupCells() {
 	std::cout << "Num cells total = " << numCells << std::endl;
 	std::cout << "Num zeroes = " << numZeroes << ", num ones = " << numOnes << "  numTwos = " << numTwos << std::endl;
 	std::cout << "Num threes = " << numThrees << "  numGreater = " << numGreater << std::endl;
-	std::cout << "Num primitives in grid " << primitivesAdded.size() <<
-	" vs original " << numPrimitives << ".\n";
+	std::cout << "Num primitives in grid " << numPrimitivesAdded <<
+	" vs original " << numPrimitives << ". Num not in cells: "
+		<< primitivesNotInCells.size()  << ".\n";
 	
 	counts.erase(counts.begin(), counts.end());
 }
