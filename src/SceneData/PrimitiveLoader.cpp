@@ -344,7 +344,7 @@ void PrimitiveLoader::LoadModel(Scene* scene,
 										triangleMesh->vertexFaces.end());
 	}
 	else {
-		std::cout << "Computing smooth normals..n\n";
+		std::cout << "Computing smooth normals...\n";
 		ComputeSmoothMeshNormals(triangleMesh, objects);
 		std::cout << "Done computing normals!\n";
 	}
@@ -356,9 +356,11 @@ void PrimitiveLoader::LoadModel(Scene* scene,
 void PrimitiveLoader::AddFaceIndex(TriangleMesh *mesh,
 								   unsigned int vertIndex,
 								   unsigned int triIndex) {
-	if (mesh->vertexFaces.size()-1 < vertIndex) {
+	auto vertFacesSize = mesh->vertexFaces.size();
+	if (vertFacesSize == 0 || vertFacesSize < vertIndex+1) {
 		std::vector<unsigned int> faceList;
-		for (size_t i = mesh->vertexFaces.size()-1; i <= vertIndex; i++) {
+		auto startIndex = (vertFacesSize == 0) ? 0 : mesh->vertexFaces.size()-1;
+		for (size_t i = startIndex; i <= vertIndex; i++) {
 			mesh->vertexFaces.push_back(faceList);
 		}
 	}
@@ -397,8 +399,9 @@ void PrimitiveLoader::ComputeSmoothMeshNormals(std::shared_ptr<TriangleMesh> tri
 		std::vector<unsigned int>& vertexFaces = triangleMesh->vertexFaces[index];
 		size_t numFaces = vertexFaces.size();
 		for (size_t faceIndex = 0; faceIndex < numFaces; faceIndex++) {
-			triangleMesh->vertexFaces[faceIndex].erase(vertexFaces.begin(),
-													   vertexFaces.end());
+			auto begin = triangleMesh->vertexFaces[faceIndex].begin();
+			auto end = triangleMesh->vertexFaces[faceIndex].end();
+			triangleMesh->vertexFaces[faceIndex].erase(begin, end);
 		}
 	}
 	

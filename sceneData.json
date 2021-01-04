@@ -34,8 +34,8 @@
 		},
 		{
 			"type":"obj_model",
-			"name":"viking_room",
-			"is_smooth":false,
+			"name":"teddy_bear",
+			"is_smooth":true,
 			"reverse_normals":false,
 			"file_name":"./teddy.obj",
 			"material":

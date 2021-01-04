@@ -467,9 +467,8 @@ void GridAccelerator::SetupCells() {
 	float wx = p1[0] - p0[0];
 	float wy = p1[1] - p0[1];
 	float wz = p1[2] - p0[2];
-	// use a multiplier that results in about 8x
-	// more cells than objects
-	float multiplier = 2.0;
+	// use a multiplier to increase cell count
+	float multiplier = 1.0;
 	float s = pow(wx * wy * wz / numPrimitives,
 				  0.333333);
 	// s is like volume/object, and we do the
@@ -571,8 +570,8 @@ void GridAccelerator::SetupCells() {
 	std::cout << "Num cells total = " << numCells << std::endl;
 	std::cout << "Num zeroes = " << numZeroes << ", num ones = " << numOnes << "  numTwos = " << numTwos << std::endl;
 	std::cout << "Num threes = " << numThrees << "  numGreater = " << numGreater << std::endl;
-	std::cout << "Num primitives in grid " << numPrimitivesAdded <<
-	" vs original " << numPrimitives << ". Num not in cells: "
+	std::cout << "Num intersections with cells in grid " << numPrimitivesAdded <<
+	" vs original pimitives " << numPrimitives << ". Num not in cells: "
 		<< primitivesNotInCells.size()  << ".\n";
 	
 	counts.erase(counts.begin(), counts.end());
