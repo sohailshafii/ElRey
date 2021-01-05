@@ -307,7 +307,7 @@ Primitive* GridAccelerator::IntersectAgainstPrimitiveCollection(PrimitiveCollect
 	unsigned int numElements = primitivesInCollection.size();
 	
 	Primitive * closestPrimSoFar = nullptr;
-	
+	IntersectionResult tempRes;
 	for (unsigned int index = 0; index < numElements; index++) {
 		auto currPrimitive = primitivesInCollection[index];
 		
@@ -317,10 +317,12 @@ Primitive* GridAccelerator::IntersectAgainstPrimitiveCollection(PrimitiveCollect
 
 		// if we test against multiple compound objects in a row, reset primitive
 		// intersection data from previous tests that might have returned true
-		intersectionResult.ResetPrimIntersectionData();
+		tempRes.ResetPrimIntersectionData();
 
-		if (currPrimitive->Intersect(ray, tMin, tMax, intersectionResult)) {
+		if (currPrimitive->Intersect(ray, tMin, tMax, tempRes)) {
 			closestPrimSoFar = currPrimitive;
+			// TODO: try to avoid copy somehow, this is gross
+			intersectionResult = tempRes;
 		}
 	}
 	

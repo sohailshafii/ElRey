@@ -66,11 +66,14 @@ private:
 	Primitive* EvaluatePrimitiveCollectionCell(PrimitiveCollection & primitiveCollection, const Ray &ray, float tMin, float& tMax, IntersectionResult &intersectionResult, float tNext) {
 		// don't set intersection results and tMax until we are tested against tNext
 		float tMaxTest = tMax;
+		IntersectionResult intersecResTemp;
 		auto hitPrimitive = IntersectAgainstPrimitiveCollection(primitiveCollection,
 																ray, tMin, tMaxTest,
-																intersectionResult);
+																intersecResTemp);
 		if (hitPrimitive != nullptr && tMaxTest < tNext) {
 			tMax = tMaxTest;
+			// TODO: try to avoid copy somehow, this is gross (but necessary)
+			intersectionResult = intersecResTemp;
 			return hitPrimitive;
 		}
 		

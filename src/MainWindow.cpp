@@ -70,7 +70,6 @@ int main(int argc, char* argv[]) {
 			}
 		}
 	}
-
 	Scene *constructedScene = SceneLoader::DeserializeJSONFileIntoScene(
 								scenePath);
 	width = constructedScene->GetNumColumnsPixels();
