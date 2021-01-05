@@ -17,7 +17,7 @@ public:
 	GridAccelerator(Primitive **primitives,
 					unsigned int numPrimitives);
 	
-	virtual void SetUpAccelerator() override;
+	virtual void SetUpAccelerator(nlohmann::json const & jsonObj) override;
 	
 	virtual Primitive* Intersect(const Ray &ray, float tMin, float& tMax,
 								IntersectionResult &intersectionResult) override;
@@ -56,7 +56,7 @@ private:
 		bool txInvalid, tyInvalid, tzInvalid;
 	};
 	
-	void SetupCells();
+	void SetupCells(nlohmann::json const & jsonObj);
 	Point3 GetMinCoordinates();
 	Point3 GetMaxCoordinates();
 	

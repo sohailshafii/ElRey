@@ -2,6 +2,7 @@
 
 #include "Primitives/Primitive.h"
 #include "AccelerationStructures/BaseAccelerator.h"
+#include "ThirdParty/nlohmann/json.hpp"
 #include "SceneData/Light.h"
 #include "Cameras/Camera.h"
 #include <string>
@@ -54,8 +55,8 @@ public:
 		return baseAccelerator->GetNumPrimitives();
 	}
 	
-	void SetUpAccelerator() {
-		baseAccelerator->SetUpAccelerator();
+	void SetUpAccelerator(nlohmann::json const & jsonObj) {
+		baseAccelerator->SetUpAccelerator(jsonObj);
 	}
 	
 	unsigned int GetNumLights() const {

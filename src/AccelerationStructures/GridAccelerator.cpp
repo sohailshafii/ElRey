@@ -1,6 +1,7 @@
 #include "GridAccelerator.h"
 #include "CommonMath.h"
 #include "Primitive.h"
+#include "SceneData/CommonLoaderFunctions.h"
 #include <iostream>
 #include <set>
 #include <string>
@@ -444,13 +445,13 @@ bool GridAccelerator::BruteForceShadowFeelerIntersectsAnObject(const Ray& ray, f
 	
 }
 
-void GridAccelerator::SetUpAccelerator() {
+void GridAccelerator::SetUpAccelerator(nlohmann::json const & jsonObj) {
 	std::cout << "Setting up Grid...\n";
-	SetupCells();
+	SetupCells(jsonObj);
 	std::cout << "Done!\n";
 }
 
-void GridAccelerator::SetupCells() {
+void GridAccelerator::SetupCells(nlohmann::json const & jsonObj) {
 	// find min and max coordinates of the grid
 	Point3 p0 = GetMinCoordinates();
 	Point3 p1 = GetMaxCoordinates();
@@ -470,7 +471,13 @@ void GridAccelerator::SetupCells() {
 	float wy = p1[1] - p0[1];
 	float wz = p1[2] - p0[2];
 	// use a multiplier to increase cell count
-	float multiplier = 1.0;
+	
+	float multiplier = 1.0f;
+	if (CommonLoaderFunctions::HasKey(jsonObj, "accelerator_options")) {
+		auto optionsNode = CommonLoaderFunctions::SafeGetToken(jsonObj,
+															   "accelerator_options");
+		multiplier = CommonLoaderFunctions::SafeGetToken(optionsNode, "multiplier");
+	}
 	float s = pow(wx * wy * wz / numPrimitives,
 				  0.333333);
 	// s is like volume/object, and we do the

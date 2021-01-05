@@ -3,6 +3,10 @@
 	{
 		"navigation_type":"none",
 		"accelerator_type":"grid",
+		"accelerator_options":
+		{
+			"multiplier":1.0
+		},
 		"camera":
 		{		
 			"type":"pinhole",

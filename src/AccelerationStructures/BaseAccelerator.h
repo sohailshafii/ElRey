@@ -2,6 +2,7 @@
 
 #include <string>
 #include <vector>
+#include "ThirdParty/nlohmann/json.hpp"
 
 class Primitive;
 class Ray;
@@ -17,7 +18,7 @@ public:
 	virtual ~BaseAccelerator();
 	
 	// call to set accelerator after modifying primitives
-	virtual void SetUpAccelerator() = 0;
+	virtual void SetUpAccelerator(nlohmann::json const & jsonObj) = 0;
 
 	void AddPrimitive(Primitive *newPrimitive);
 	void AddPrimitives(Primitive **newPrimitives,

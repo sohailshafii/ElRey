@@ -52,7 +52,7 @@ Scene* SceneLoader::DeserializeJSONFileIntoScene(const std::string &jsonFilePath
 		scene->SetAllowNavigation(navigationToken == "fps");
 		
 		PrimitiveLoader::AddPrimitivesToScene(scene, jsonObj["objects"]);
-		scene->SetUpAccelerator();
+		scene->SetUpAccelerator(sceneSettings);
 
 		nlohmann::json lightsArray = jsonObj["lights"];
 		for (auto& element : lightsArray.items()) {

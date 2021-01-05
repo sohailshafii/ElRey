@@ -10,7 +10,7 @@ SimpleWorld::SimpleWorld(Primitive **primitives,
 	: BaseAccelerator(primitives, numPrimitives) {	
 }
 
-void SimpleWorld::SetUpAccelerator() {
+void SimpleWorld::SetUpAccelerator(nlohmann::json const & jsonObj) {
 	// nothing to see here for simple world
 }
 
