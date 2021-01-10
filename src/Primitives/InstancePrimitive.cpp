@@ -6,6 +6,10 @@ InstancePrimitive::InstancePrimitive(std::string const & iName,
 	Primitive(iName), instancePrimitive(primitive) {
 }
 
+InstancePrimitive::~InstancePrimitive() {
+	delete instancePrimitive;
+}
+
 void InstancePrimitive::SamplePrimitive(Point3& resultingSample, IntersectionResult const & intersectionResult) {
 	instancePrimitive->SamplePrimitive(resultingSample, intersectionResult);
 	resultingSample = GetLocalToWorldPos(resultingSample);

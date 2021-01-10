@@ -53,9 +53,15 @@ void PrimitiveLoader::AddPrimitivesToScene(Scene* scene,
 				Primitive* originalPrimitive = scene->FindPrimitiveByName(
 					instancePrim->GetOriginalPrimName());
 				if (originalPrimitive != nullptr) {
-					originalPrimitive->SetUsedForInstancing(true);
 					std::cout << originalPrimitive->GetName() << " used for instancing.\n";
 				}
+				else {
+					std::stringstream exceptionMsg;
+					exceptionMsg << "Could not remove primitive from scene after instancing: " <<
+						instancePrim->GetOriginalPrimName() << ".\n";
+					throw exceptionMsg;
+				}
+				scene->RemovePrimitive(originalPrimitive);
 			}
 			else {
 				std::stringstream exceptionMsg;

@@ -26,6 +26,7 @@ public:
 	void AddPrimitives(std::vector<Primitive*> newPrimitives);
 
 	void RemovePrimitive(Primitive* primitiveToRemove);
+	void RemovePrimitiveByName(std::string const & name);
 	Primitive* GetPrimitive(unsigned int index);
 	Primitive* FindPrimitiveByName(const std::string& name);
 

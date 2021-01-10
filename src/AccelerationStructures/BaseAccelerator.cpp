@@ -63,8 +63,12 @@ void BaseAccelerator::RemovePrimitive(Primitive* primitiveToRemove) {
 		throw std::runtime_error("Trying to remove invalid primitive!");
 	}
 	std::string const & primitiveName = primitiveToRemove->GetName();
+	RemovePrimitiveByName(primitiveName);
+}
+
+void BaseAccelerator::RemovePrimitiveByName(std::string const & name) {
 	for (auto it = primitives.begin(); it != primitives.end(); ) {
-		if ((*it)->GetName() == primitiveName) {
+		if ((*it)->GetName() == name) {
 			primitives.erase(it);
 			break;
 		} else {

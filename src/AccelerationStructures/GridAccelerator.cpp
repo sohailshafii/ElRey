@@ -22,9 +22,6 @@ Primitive* GridAccelerator::Intersect(const Ray &ray, float tMin, float& tMax,
 	Primitive* closestPrimitive = nullptr;
 	bool hitBefore = false;
 	for (auto currPrimitive : primitivesNotInCells) {
-		if (currPrimitive->UsedForInstancing()) {
-			continue;
-		}
 		if (currPrimitive->Intersect(ray, tMin, tMax,
 									 intersectionResult)) {
 			closestPrimitive = currPrimitive;
@@ -311,10 +308,6 @@ Primitive* GridAccelerator::IntersectAgainstPrimitiveCollection(PrimitiveCollect
 	IntersectionResult tempRes;
 	for (unsigned int index = 0; index < numElements; index++) {
 		auto currPrimitive = primitivesInCollection[index];
-		
-		if (currPrimitive->UsedForInstancing()) {
-			continue;
-		}
 
 		// if we test against multiple compound objects in a row, reset primitive
 		// intersection data from previous tests that might have returned true
@@ -338,8 +331,7 @@ bool GridAccelerator::IntersectAgainstPrimitiveCollectionShadow(PrimitiveCollect
 	for (unsigned int index = 0; index < numElements; index++) {
 		auto currPrimitive = primitivesInCollection[index];
 		
-		if (currPrimitive == primitiveToExclude ||
-			currPrimitive->UsedForInstancing()) {
+		if (currPrimitive == primitiveToExclude) {
 			continue;
 		}
 
@@ -355,8 +347,7 @@ bool GridAccelerator::ShadowFeelerIntersectsAnObject(const Ray& ray, float tMin,
 													 float tMax,
 													 const Primitive* primitiveToExclude) {
 	for (auto currPrimitive : primitivesNotInCells) {
-		if (currPrimitive == primitiveToExclude ||
-			currPrimitive->UsedForInstancing()) {
+		if (currPrimitive == primitiveToExclude) {
 			continue;
 		}
 		
@@ -513,11 +504,6 @@ void GridAccelerator::SetupCells(nlohmann::json const & jsonObj) {
 	unsigned int numPrimitivesAdded;
 	for (size_t primIndex = 0; primIndex < numPrimitives; primIndex++) {
 		Primitive* currPrimitive = primitives[primIndex];
-		// if used for instancing, skip primitive
-		// instanced primitive will refer to it
-		if (currPrimitive->UsedForInstancing()) {
-			continue;
-		}
 		
 		if (!currPrimitive->HasBoundingBox()) {
 			primitivesNotInCells.push_back(currPrimitive);
@@ -595,8 +581,7 @@ Point3 GridAccelerator::GetMinCoordinates() {
 	for (size_t index = 0; index < numPrimitives; index++) {
 		auto* currPrimitive = primitives[index];
 		// skip primitives that don't have a bounding box
-		if (!currPrimitive->HasBoundingBox() ||
-			currPrimitive->UsedForInstancing()) {
+		if (!currPrimitive->HasBoundingBox()) {
 			continue;
 		}
 		

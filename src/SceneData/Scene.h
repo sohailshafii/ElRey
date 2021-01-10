@@ -32,7 +32,11 @@ public:
 	}
 	
 	void RemovePrimitive(Primitive* primitiveToRemove) {
-		return baseAccelerator->RemovePrimitive(primitiveToRemove);
+		baseAccelerator->RemovePrimitive(primitiveToRemove);
+	}
+	
+	void RemovePrimitiveByName(std::string const & name) {
+		baseAccelerator->RemovePrimitiveByName(name);
 	}
 
 	virtual void AddLight(Light* newLight);

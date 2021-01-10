@@ -13,19 +13,17 @@
 
 class Primitive {
 public:
-	Primitive(std::string const & iName) : name(iName),
-		usedForInstancing(false) {
+	Primitive(std::string const & iName) : name(iName) {
 	}
 	
 	Primitive(std::shared_ptr<Material> const& iMaterial,
 			  const std::string& iName)
-		: material(iMaterial), name(iName), usedForInstancing(false)
+		: material(iMaterial), name(iName)
 	{ }
 	Primitive(std::shared_ptr<Material> const& iMaterial,
 			  std::shared_ptr<GenericSampler> const& iSampler,
 			  const std::string& iName)
-		: material(iMaterial), sampler(iSampler), name(iName),
-			usedForInstancing(false)
+		: material(iMaterial), sampler(iSampler), name(iName)
 	{ }
 
 	virtual ~Primitive() { }
@@ -67,14 +65,6 @@ public:
 	virtual bool HasBoundingBox() const = 0;
 	
 	virtual AABBox GetBoundingBox() const = 0;
-	
-	bool UsedForInstancing() const {
-		return usedForInstancing;
-	}
-	
-	void SetUsedForInstancing(bool setForInstancing) {
-		usedForInstancing = setForInstancing;
-	}
 
 	virtual Primitive* GetSubPrimitiveByName(std::string const & intersecPrimName) const {
 		return nullptr;
@@ -85,5 +75,4 @@ protected:
 	std::shared_ptr<GenericSampler> sampler;
 
 	std::string name;
-	bool usedForInstancing;
 };

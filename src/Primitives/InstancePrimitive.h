@@ -7,6 +7,7 @@ public:
 	InstancePrimitive(std::string const & iName,
 					  // don't own
 					  Primitive* primitive);
+	~InstancePrimitive();
 	
 	virtual bool Intersect(const Ray &ray, float tMin, float& tMax,
 						   IntersectionResult &intersectionResult) override;
@@ -73,7 +74,6 @@ public:
 	}
 	
 private:
-	// don't own
 	Primitive* instancePrimitive;
 	
 	Matrix4x4 worldToLocal, localToWorld;
