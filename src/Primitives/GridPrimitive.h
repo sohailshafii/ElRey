@@ -83,22 +83,14 @@ private:
 		return nullptr;
 	}
 	
-	bool EvaluatePrimitiveCollectionCellShadow(PrimitiveCollection & primitiveCollection, const Ray &ray, float tMin, float tMax, const Primitive* primitiveToExclude) {
-		return IntersectAgainstPrimitiveCollectionShadow(primitiveCollection,
-														 ray, tMin, tMax,
-														 primitiveToExclude);
-	}
-	
 	Primitive* IntersectAgainstPrimitiveCollection(PrimitiveCollection & primitiveCollection, const Ray &ray, float tMin, float& tMax, IntersectionResult &intersectionResult);
 	
-	bool IntersectAgainstPrimitiveCollectionShadow(PrimitiveCollection & primitiveCollection, const Ray &ray, float tMin, float tMax,
-		const Primitive* primitiveToExclude);
+	bool IntersectAgainstPrimitiveCollectionShadow(PrimitiveCollection & primitiveCollection, const Ray &ray, float tMin, float tMax);
 	
 	Primitive* BruteForceIntersect(const Ray &ray, float tMin, float& tMax,
 								   IntersectionResult &intersectionResult);
 	bool BruteForceShadowFeelerIntersectsAnObject(const Ray& ray, float tMin,
-												  float tMax,
-												  const Primitive* primitiveToExclude);
+												  float tMax);
 	
 	AABBox boundingBox;
 	// primitives that are not in cells, because they don't have

@@ -364,8 +364,8 @@ Primitive* GridAccelerator::ShadowFeelerIntersectsAnObject(const Ray& ray, float
 		if (!rayParams.txInvalid && rayParams.txNext < rayParams.tyNext
 			&& rayParams.txNext < rayParams.tzNext) {
 			auto hitPrimitive =
-				EvaluatePrimitiveCollectionCellShadow(currentCell, ray, tMin,
-													  rayParams.txNext);
+				IntersectAgainstPrimitiveCollectionShadow(currentCell, ray, tMin,
+														  rayParams.txNext);
 			
 			if (hitPrimitive) {
 				return hitPrimitive;
@@ -379,8 +379,8 @@ Primitive* GridAccelerator::ShadowFeelerIntersectsAnObject(const Ray& ray, float
 		}
 		else if (!rayParams.tyInvalid && rayParams.tyNext < rayParams.tzNext) {
 			auto hitPrimitive =
-				EvaluatePrimitiveCollectionCellShadow(currentCell, ray, tMin,
-													  rayParams.tyNext);
+				IntersectAgainstPrimitiveCollectionShadow(currentCell, ray, tMin,
+														  rayParams.tyNext);
 			if (hitPrimitive) {
 				return hitPrimitive;
 			}
@@ -393,8 +393,8 @@ Primitive* GridAccelerator::ShadowFeelerIntersectsAnObject(const Ray& ray, float
 		}
 		else {
 			auto hitPrimitive =
-				EvaluatePrimitiveCollectionCellShadow(currentCell, ray, tMin,
-													  rayParams.tzNext);
+				IntersectAgainstPrimitiveCollectionShadow(currentCell, ray, tMin,
+														  rayParams.tzNext);
 			if (hitPrimitive) {
 				return hitPrimitive;
 			}

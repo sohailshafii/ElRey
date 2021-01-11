@@ -79,12 +79,8 @@ private:
 		return nullptr;
 	}
 	
-	Primitive* EvaluatePrimitiveCollectionCellShadow(PrimitiveCollection & primitiveCollection, const Ray &ray, float tMin, float tMax) {
-		return IntersectAgainstPrimitiveCollectionShadow(primitiveCollection,
-														 ray, tMin, tMax);
-	}
-	
 	Primitive* IntersectAgainstPrimitiveCollection(PrimitiveCollection & primitiveCollection, const Ray &ray, float tMin, float& tMax, IntersectionResult &intersectionResult);
+	
 	Primitive* IntersectAgainstPrimitiveCollectionShadow(PrimitiveCollection & primitiveCollection, const Ray &ray, float tMin, float tMax);
 	
 	Primitive* BruteForceIntersect(const Ray &ray, float tMin, float& tMax,

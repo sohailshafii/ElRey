@@ -85,12 +85,10 @@ bool GridPrimitive::Intersect(const Ray &ray, float tMin, float& tMax,
 	return closestPrimitive;
 }
 
+// TODO: return what primitive was hit inside
+// would be good for compound objects too
 bool GridPrimitive::IntersectShadow(const Ray &ray, float tMin, float tMax) {
-	/*for (auto currPrimitive : primitivesNotInCells) {
-		if (currPrimitive == primitiveToExclude) {
-			continue;
-		}
-		
+	for (auto currPrimitive : primitivesNotInCells) {
 		if (currPrimitive->IntersectShadow(ray, tMin, tMax)) {
 			return true;
 		}
@@ -114,9 +112,8 @@ bool GridPrimitive::IntersectShadow(const Ray &ray, float tMin, float tMax) {
 		if (!rayParams.txInvalid && rayParams.txNext < rayParams.tyNext
 			&& rayParams.txNext < rayParams.tzNext) {
 			auto hitPrimitive =
-				EvaluatePrimitiveCollectionCellShadow(currentCell, ray, tMin,
-													  rayParams.txNext,
-													  primitiveToExclude);
+				IntersectAgainstPrimitiveCollectionShadow(currentCell, ray, tMin,
+														  rayParams.txNext);
 			
 			if (hitPrimitive) {
 				return true;
@@ -130,8 +127,8 @@ bool GridPrimitive::IntersectShadow(const Ray &ray, float tMin, float tMax) {
 		}
 		else if (!rayParams.tyInvalid && rayParams.tyNext < rayParams.tzNext) {
 			auto hitPrimitive =
-				EvaluatePrimitiveCollectionCellShadow(currentCell, ray, tMin,
-													  rayParams.tyNext, primitiveToExclude);
+				IntersectAgainstPrimitiveCollectionShadow(currentCell, ray, tMin,
+														  rayParams.tyNext);
 			if (hitPrimitive) {
 				return true;
 			}
@@ -144,8 +141,8 @@ bool GridPrimitive::IntersectShadow(const Ray &ray, float tMin, float tMax) {
 		}
 		else {
 			auto hitPrimitive =
-				EvaluatePrimitiveCollectionCellShadow(currentCell, ray, tMin,
-													  rayParams.tzNext, primitiveToExclude);
+				IntersectAgainstPrimitiveCollectionShadow(currentCell, ray, tMin,
+														  rayParams.tzNext);
 			if (hitPrimitive) {
 				return true;
 			}
@@ -156,7 +153,7 @@ bool GridPrimitive::IntersectShadow(const Ray &ray, float tMin, float tMax) {
 				break;
 			}
 		}
-	}*/
+	}
 	
 	return false;
 }
@@ -466,18 +463,13 @@ Primitive* GridPrimitive::IntersectAgainstPrimitiveCollection(PrimitiveCollectio
 }
 
 bool GridPrimitive::IntersectAgainstPrimitiveCollectionShadow(
-	PrimitiveCollection & primitiveCollection, const Ray &ray, float tMin, float tMax,
-	const Primitive* primitiveToExclude) {
+	PrimitiveCollection & primitiveCollection, const Ray &ray, float tMin, float tMax) {
 	auto & primitivesInCollection = primitiveCollection.primitives;
 	unsigned int numElements = primitivesInCollection.size();
 	
 	for (unsigned int index = 0; index < numElements; index++) {
 		auto currPrimitive = primitivesInCollection[index];
 		
-		if (currPrimitive == primitiveToExclude) {
-			continue;
-		}
-
 		if (currPrimitive->IntersectShadow(ray, tMin, tMax)) {
 			return true;
 		}
@@ -501,11 +493,10 @@ Primitive* GridPrimitive::BruteForceIntersect(const Ray &ray, float tMin, float&
 }
 
 bool GridPrimitive::BruteForceShadowFeelerIntersectsAnObject(const Ray& ray, float tMin,
-															   float tMax,
-															   const Primitive* primitiveToExclude) {
+															 float tMax) {
 	for(auto primitiveCollection : cells) {
 		auto didHitPrimitive =
-		IntersectAgainstPrimitiveCollectionShadow(primitiveCollection, ray, tMin, tMax, primitiveToExclude);
+		IntersectAgainstPrimitiveCollectionShadow(primitiveCollection, ray, tMin, tMax);
 		if (didHitPrimitive) {
 			return true;
 		}
