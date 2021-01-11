@@ -22,9 +22,8 @@ public:
 	virtual Primitive* Intersect(const Ray &ray, float tMin, float& tMax,
 								IntersectionResult &intersectionResult) override;
 	
-	virtual bool ShadowFeelerIntersectsAnObject(const Ray& ray, float tMin,
-												float tMax,
-												const Primitive* primitiveToExclude) override;
+	virtual Primitive* ShadowFeelerIntersectsAnObject(const Ray& ray, float tMin,
+													  float tMax) override;
 	
 protected:
 	
@@ -80,21 +79,19 @@ private:
 		return nullptr;
 	}
 	
-	bool EvaluatePrimitiveCollectionCellShadow(PrimitiveCollection & primitiveCollection, const Ray &ray, float tMin, float tMax, const Primitive* primitiveToExclude) {
+	Primitive* EvaluatePrimitiveCollectionCellShadow(PrimitiveCollection & primitiveCollection, const Ray &ray, float tMin, float tMax) {
 		return IntersectAgainstPrimitiveCollectionShadow(primitiveCollection,
-														 ray, tMin, tMax,
-														 primitiveToExclude);
+														 ray, tMin, tMax);
 	}
 	
 	Primitive* IntersectAgainstPrimitiveCollection(PrimitiveCollection & primitiveCollection, const Ray &ray, float tMin, float& tMax, IntersectionResult &intersectionResult);
-	bool IntersectAgainstPrimitiveCollectionShadow(PrimitiveCollection & primitiveCollection, const Ray &ray, float tMin, float tMax,
-		const Primitive* primitiveToExclude);
+	Primitive* IntersectAgainstPrimitiveCollectionShadow(PrimitiveCollection & primitiveCollection, const Ray &ray, float tMin, float tMax);
 	
 	Primitive* BruteForceIntersect(const Ray &ray, float tMin, float& tMax,
 							 IntersectionResult &intersectionResult);
-	bool BruteForceShadowFeelerIntersectsAnObject(const Ray& ray, float tMin,
-												  float tMax,
-												  const Primitive* primitiveToExclude);
+	Primitive* BruteForceShadowFeelerIntersectsAnObject(const Ray& ray, float tMin,
+														float tMax,
+														const Primitive* primitiveToExclude);
 	
 	AABBox boundingBox;
 	// primitives that are not in cells, because they don't have

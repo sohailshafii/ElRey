@@ -323,36 +323,26 @@ Primitive* GridAccelerator::IntersectAgainstPrimitiveCollection(PrimitiveCollect
 	return closestPrimSoFar;
 }
 
-bool GridAccelerator::IntersectAgainstPrimitiveCollectionShadow(PrimitiveCollection & primitiveCollection, const Ray &ray, float tMin, float tMax,
-	const Primitive* primitiveToExclude) {
+Primitive* GridAccelerator::IntersectAgainstPrimitiveCollectionShadow(PrimitiveCollection & primitiveCollection, const Ray &ray, float tMin, float tMax) {
 	auto & primitivesInCollection = primitiveCollection.primitives;
 	unsigned int numElements = primitivesInCollection.size();
 	
 	for (unsigned int index = 0; index < numElements; index++) {
 		auto currPrimitive = primitivesInCollection[index];
-		
-		if (currPrimitive == primitiveToExclude) {
-			continue;
-		}
 
 		if (currPrimitive->IntersectShadow(ray, tMin, tMax)) {
-			return true;
+			return currPrimitive;
 		}
 	}
 	
-	return false;
+	return nullptr;
 }
 
-bool GridAccelerator::ShadowFeelerIntersectsAnObject(const Ray& ray, float tMin,
-													 float tMax,
-													 const Primitive* primitiveToExclude) {
+Primitive* GridAccelerator::ShadowFeelerIntersectsAnObject(const Ray& ray, float tMin,
+														   float tMax) {
 	for (auto currPrimitive : primitivesNotInCells) {
-		if (currPrimitive == primitiveToExclude) {
-			continue;
-		}
-		
 		if (currPrimitive->IntersectShadow(ray, tMin, tMax)) {
-			return true;
+			return currPrimitive;
 		}
 	}
 	
@@ -365,7 +355,7 @@ bool GridAccelerator::ShadowFeelerIntersectsAnObject(const Ray& ray, float tMin,
 	// ported to Raytracing from the Ground Up
 	RayParameters rayParams;
 	if (!CheckBoundsOfRay(ray, tMin, tMax, rayParams)) {
-		return false;
+		return nullptr;
 	}
 	
 	while(true) {
@@ -375,11 +365,10 @@ bool GridAccelerator::ShadowFeelerIntersectsAnObject(const Ray& ray, float tMin,
 			&& rayParams.txNext < rayParams.tzNext) {
 			auto hitPrimitive =
 				EvaluatePrimitiveCollectionCellShadow(currentCell, ray, tMin,
-													  rayParams.txNext,
-													  primitiveToExclude);
+													  rayParams.txNext);
 			
 			if (hitPrimitive) {
-				return true;
+				return hitPrimitive;
 			}
 			
 			rayParams.txNext += rayParams.dtx;
@@ -391,9 +380,9 @@ bool GridAccelerator::ShadowFeelerIntersectsAnObject(const Ray& ray, float tMin,
 		else if (!rayParams.tyInvalid && rayParams.tyNext < rayParams.tzNext) {
 			auto hitPrimitive =
 				EvaluatePrimitiveCollectionCellShadow(currentCell, ray, tMin,
-													  rayParams.tyNext, primitiveToExclude);
+													  rayParams.tyNext);
 			if (hitPrimitive) {
-				return true;
+				return hitPrimitive;
 			}
 			
 			rayParams.tyNext += rayParams.dty;
@@ -405,9 +394,9 @@ bool GridAccelerator::ShadowFeelerIntersectsAnObject(const Ray& ray, float tMin,
 		else {
 			auto hitPrimitive =
 				EvaluatePrimitiveCollectionCellShadow(currentCell, ray, tMin,
-													  rayParams.tzNext, primitiveToExclude);
+													  rayParams.tzNext);
 			if (hitPrimitive) {
-				return true;
+				return hitPrimitive;
 			}
 			
 			rayParams.tzNext += rayParams.dtz;
@@ -418,22 +407,22 @@ bool GridAccelerator::ShadowFeelerIntersectsAnObject(const Ray& ray, float tMin,
 		}
 	}
 	
-	return false;
+	return nullptr;
 }
 
-bool GridAccelerator::BruteForceShadowFeelerIntersectsAnObject(const Ray& ray, float tMin,
-											  float tMax,
-											  const Primitive* primitiveToExclude) {
+Primitive* GridAccelerator::BruteForceShadowFeelerIntersectsAnObject(const Ray& ray,
+																	 float tMin,
+																	float tMax,
+																	 const Primitive* primitiveToExclude) {
 	for(auto primitiveCollection : cells) {
-		auto didHitPrimitive =
-		IntersectAgainstPrimitiveCollectionShadow(primitiveCollection, ray, tMin, tMax, primitiveToExclude);
-		if (didHitPrimitive) {
-			return true;
+		auto primitiveHit =
+		IntersectAgainstPrimitiveCollectionShadow(primitiveCollection, ray, tMin, tMax);
+		if (primitiveHit != nullptr) {
+			return primitiveHit;
 		}
 	}
 	
-	return false;
-	
+	return nullptr;
 }
 
 void GridAccelerator::SetUpAccelerator(nlohmann::json const & jsonObj) {

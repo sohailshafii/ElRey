@@ -155,7 +155,7 @@ bool Scene::Intersect(const Ray &ray, Color &newColor,
 			
 			if (projectionTerm > 0.0f) {
 				bool inShadow = false;
-				Ray shadowFeelerRay(intersectionPos+vectorToLight *SHADOW_FEELER_EPSILON, vectorToLight);
+				Ray shadowFeelerRay(intersectionPos+vectorToLight*SHADOW_FEELER_EPSILON, vectorToLight);
 				// test shadow feeler if light supports it!
 				if (currentLight->CastsShadows() &&
 					ShadowFeelerIntersectsAnObject(shadowFeelerRay, 0.0f, vectorMagn,
@@ -186,8 +186,8 @@ bool Scene::Intersect(const Ray &ray, Color &newColor,
 
 bool Scene::ShadowFeelerIntersectsAnObject(const Ray& ray, float tMin,
 	float tMax, const Primitive* primitiveToExclude) const {
-	return baseAccelerator->ShadowFeelerIntersectsAnObject(ray, tMin, tMax,
-														   primitiveToExclude);
+	auto* primitiveHit = baseAccelerator->ShadowFeelerIntersectsAnObject(ray, tMin, tMax);
+	return (primitiveHit != nullptr && primitiveHit != primitiveToExclude);
 }
 
 void Scene::TranslateAndRotate(const Vector3& translation, float rightRotationDegrees,

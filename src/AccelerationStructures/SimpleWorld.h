@@ -13,9 +13,8 @@ public:
 	virtual Primitive* Intersect(const Ray &ray, float tMin, float& tMax,
 								 IntersectionResult &intersectionResult) override;
 	
-	virtual bool ShadowFeelerIntersectsAnObject(const Ray& ray, float tMin,
-												float tMax,
-												const Primitive* primitiveToExclude) override;
+	virtual Primitive* ShadowFeelerIntersectsAnObject(const Ray& ray, float tMin,
+													  float tMax) override;
 	
 protected:
 	

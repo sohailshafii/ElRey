@@ -37,9 +37,8 @@ public:
 	virtual Primitive* Intersect(const Ray &ray, float tMin, float& tMax,
 						   IntersectionResult &intersectionResult) = 0;
 	
-	virtual bool ShadowFeelerIntersectsAnObject(const Ray& ray, float tMin,
-												float tMax,
-												const Primitive* primitiveToExclude) = 0;
+	virtual Primitive* ShadowFeelerIntersectsAnObject(const Ray& ray, float tMin,
+													  float tMax) = 0;
 
 protected:
 	std::vector<Primitive*> primitives;
