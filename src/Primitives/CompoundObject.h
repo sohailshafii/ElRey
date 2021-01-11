@@ -37,15 +37,11 @@ public:
 	
 	virtual AABBox GetBoundingBox() const override;
 	
-	virtual Material const * GetMaterial(IntersectionResult const & intersectionResult) override;
-	virtual const GenericSampler* GetSampler(IntersectionResult const & intersectionResult) override;
-	
 	void AddPrimitive(Primitive * primitive);
 	void RemovePrimitiveAtIndex(unsigned int index);
 	void RemovePrimitiveWithName(std::string const & name);
 	
 	void PrintBounds();
-	virtual Primitive* GetSubPrimitiveByName(std::string const & intersecPrimName) const override;
 	
 private:
 	std::vector<Primitive*> primitives;

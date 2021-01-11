@@ -95,8 +95,13 @@ Primitive* InstancePrimitive::Intersect(const Ray &rayWorld, float tMin,
 	// not
 	rayToCast.SetOrigin(GetWorldToLocalPos(originalOrigin));
 	rayToCast.SetDirection(GetWorldToLocalDir(originalDir));
-	return instancePrimitive->Intersect(rayToCast, tMin, tMax, intersectionResult) ?
-		this : nullptr;
+	auto hitPrim = instancePrimitive->Intersect(rayToCast, tMin, tMax, intersectionResult);
+	if (hitPrim != nullptr) {
+		intersectionResult.localToWorld = localToWorld*intersectionResult.localToWorld;
+		intersectionResult.worldToLocal = worldToLocal*intersectionResult.worldToLocal;
+		intersectionResult.worldToLocalTranspose = localToWorld*intersectionResult.worldToLocalTranspose;
+	}
+	return hitPrim;
 }
 
 Primitive* InstancePrimitive::IntersectShadow(const Ray &rayWorld,
@@ -106,8 +111,7 @@ Primitive* InstancePrimitive::IntersectShadow(const Ray &rayWorld,
 	Point3 originalOrigin = rayWorld.GetOrigin();
 	rayToCast.SetOrigin(GetWorldToLocalPos(originalOrigin));
 	rayToCast.SetDirection(GetWorldToLocalDir(originalDir));
-	return instancePrimitive->IntersectShadow(rayToCast, tMin, tMax) ?
-		this : nullptr;
+	return instancePrimitive->IntersectShadow(rayToCast, tMin, tMax);
 }
 
 Vector3 InstancePrimitive::GetNormal(ParamsForNormal const &paramsForNormal) const {

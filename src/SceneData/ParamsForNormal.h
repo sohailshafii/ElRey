@@ -5,20 +5,22 @@
 #include <cstdint>
 #include <string>
 
+class Primitive;
+
 class ParamsForNormal {
 public:
 	ParamsForNormal() {
 		
 	}
 	
-	ParamsForNormal(Vector3 const & rayDirection, Point3 const & 			intersectionPos, float metadata, float metadata2,
-					float metadata3, std::string const &primitiveName) {
+	ParamsForNormal(Vector3 const & rayDirection, Point3 const & intersectionPos,
+					float metadata, float metadata2,
+					float metadata3) {
 		this->rayDirection = rayDirection;
 		this->intersectionPos = intersectionPos;
 		this->genericMetadata1 = metadata;
 		this->genericMetadata2 = metadata2;
 		this->genericMetadata3 = metadata3;
-		this->primitiveName = primitiveName;
 	}
 	
 	void SetRayDirection(Vector3 const & rayDirection) {
@@ -44,10 +46,6 @@ public:
 		genericMetadata3 = metadata3;
 	}
 	
-	void SetPrimitiveName(std::string const & primitiveName) {
-		this->primitiveName = primitiveName;
-	}
-	
 	float GetGenericMetadata1() const {
 		return genericMetadata1;
 	}
@@ -59,10 +57,6 @@ public:
 	float GetGenericMetadata3() const {
 		return genericMetadata3;
 	}
-	
-	std::string GetPrimitiveName() const {
-		return primitiveName;
-	}
 
 private:
 	Vector3 rayDirection;
@@ -70,5 +64,4 @@ private:
 	float genericMetadata1;
 	float genericMetadata2;
 	float genericMetadata3;
-	std::string primitiveName;
 };

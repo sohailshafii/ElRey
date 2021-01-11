@@ -1,8 +1,11 @@
 #pragma once
 
 #include "Math/Ray.h"
+#include "Math/Matrix4x4.h"
 #include <cstdint>
 #include <string>
+
+class Primitive;
 
 class IntersectionResult {
 public:
@@ -59,10 +62,6 @@ public:
 		genericMetadata2 = metadata2;
 		genericMetadata3 = metadata3;
 	}
-	
-	void SetPrimitiveName(std::string const & primitiveName) {
-		this->primitiveName = primitiveName;
-	}
 
 	Ray const & GetIncomingRay() const {
 		return incomingRay;
@@ -112,10 +111,6 @@ public:
 		return genericMetadata3;
 	}
 	
-	std::string GetPrimitiveName() const {
-		return primitiveName;
-	}
-	
 	bool operator< (const IntersectionResult& other) const {
 		float intersectSum1 = intersectionPosition[0] +
 			intersectionPosition[1] + intersectionPosition[2];
@@ -130,8 +125,14 @@ public:
 		genericMetadata1 = 0.0f;
 		genericMetadata2 = 0.0f;
 		genericMetadata3 = 0.0f;
-		primitiveName = "";
+		localToWorld.MakeIdentity();
+		worldToLocal.MakeIdentity();
+		worldToLocalTranspose.MakeIdentity();
 	}
+	
+	Matrix4x4 localToWorld;
+	Matrix4x4 worldToLocal;
+	Matrix4x4 worldToLocalTranspose;
 
 private:
 	// All items are in world space unless specified otherwise
@@ -149,6 +150,4 @@ private:
 	Point3 samplePointOnLight;
 	float genericMetadata1, genericMetadata2,
 		genericMetadata3;
-	// useful for compound objects
-	std::string primitiveName;
 };

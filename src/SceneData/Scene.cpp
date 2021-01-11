@@ -97,11 +97,14 @@ bool Scene::Intersect(const Ray &ray, Color &newColor,
 		auto intersectionPos = ray.GetPositionAtParam(tMax);
 		intersectionResult.SetIntersectionT(tMax);
 		intersectionResult.SetIntersectionPosition(intersectionPos);
-		ParamsForNormal paramsForNormal(ray.GetDirection().Normalized(),
-										intersectionPos, intersectionResult.GetGenericMetadata1(),
+		
+		// TODO: should not know about transforms here
+		auto rayDirTrans = intersectionResult.worldToLocal*ray.GetDirection();
+		ParamsForNormal paramsForNormal(rayDirTrans.Normalized(),
+										intersectionResult.worldToLocal*intersectionPos,
+										intersectionResult.GetGenericMetadata1(),
 										intersectionResult.GetGenericMetadata2(),
-										intersectionResult.GetGenericMetadata3(),
-										intersectionResult.GetPrimitiveName());
+										intersectionResult.GetGenericMetadata3());
 		Vector3 normalVec = closestPrimitive->GetNormal(paramsForNormal);
 		intersectionResult.SetIntersectionNormal(normalVec);
 		
