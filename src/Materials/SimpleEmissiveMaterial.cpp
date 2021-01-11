@@ -16,7 +16,7 @@ Color SimpleEmissiveMaterial::GetDirectColor(const IntersectionResult &intersect
 }
 
 Color SimpleEmissiveMaterial::GetColorForAreaLight(const IntersectionResult& intersectionResult) const {
-	if (intersectionResult.GetNormalVector() * intersectionResult.GetIncomingDirInverse()
+	if (intersectionResult.normalVector * intersectionResult.incomingDirInverse
 		> 0.0) {
 		return directColor;
 	}

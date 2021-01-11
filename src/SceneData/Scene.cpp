@@ -102,9 +102,9 @@ bool Scene::Intersect(const Ray &ray, Color &newColor,
 		auto rayDirTrans = intersectionResult.worldToLocal*ray.GetDirection();
 		ParamsForNormal paramsForNormal(rayDirTrans.Normalized(),
 										intersectionResult.worldToLocal*intersectionPos,
-										intersectionResult.GetGenericMetadata1(),
-										intersectionResult.GetGenericMetadata2(),
-										intersectionResult.GetGenericMetadata3());
+										intersectionResult.genericMetadata1,
+										intersectionResult.genericMetadata2,
+										intersectionResult.genericMetadata3);
 		Vector3 normalVec = closestPrimitive->GetNormal(paramsForNormal);
 		intersectionResult.SetIntersectionNormal(normalVec);
 		
@@ -126,8 +126,8 @@ bool Scene::Intersect(const Ray &ray, Color &newColor,
 			if (isAreaLight) {
 				primitiveToExclude = currentLight->GetPrimitive();
 				currentLight->ComputeAndStoreAreaLightInformation(intersectionResult, paramsForNormal);
-				vectorToLight = intersectionResult.GetVectorToLight();
-				vectorMagn = intersectionResult.GetVectorToLightScaled().Norm();
+				vectorToLight = intersectionResult.vectorToLight;
+				vectorMagn = intersectionResult.vectorToLightScaled.Norm();
 				projectionTerm = vectorToLight * normalVec;
 
 				// if primitive we struck is area light itself, no need to test light visibility

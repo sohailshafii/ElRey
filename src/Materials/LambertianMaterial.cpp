@@ -20,7 +20,7 @@ Color LambertianMaterial::GetDirectColor(const IntersectionResult &intersectionR
 }
 
 Color LambertianMaterial::GetColorForAreaLight(const IntersectionResult& intersectionResult) const {
-	if (intersectionResult.GetNormalVector() * intersectionResult.GetIncomingDirInverse()
+	if (intersectionResult.normalVector * intersectionResult.incomingDirInverse
 		> 0.0) {
 		Color3 directColor = diffuseBRDF.GetRadiance(intersectionResult);
 		return Color(directColor[0], directColor[1], directColor[2], 1.0f);

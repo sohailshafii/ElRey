@@ -177,8 +177,9 @@ Primitive* AABBoxPrim::Intersect(const Ray &ray, float tMin, float& tMax,
 			}
 		}
 		intersectionResult.SetIntersectionT(tMax);
-		intersectionResult.SetGenericMetadata(tempNorm[0], tempNorm[1],
-											  tempNorm[2]);
+		intersectionResult.genericMetadata1 = tempNorm[0];
+		intersectionResult.genericMetadata2 = tempNorm[1];
+		intersectionResult.genericMetadata3 = tempNorm[2];
 		return this;
 	}
 	else {
@@ -267,10 +268,8 @@ Primitive* AABBoxPrim::IntersectShadow(const Ray &ray, float tMin, float tMax) {
 }
 
 Vector3 AABBoxPrim::GetNormal(ParamsForNormal const &paramsForNormal) const {
-	float meta1 = paramsForNormal.GetGenericMetadata1();
-	float meta2 = paramsForNormal.GetGenericMetadata2();
-	float meta3 = paramsForNormal.GetGenericMetadata3();
-	return Vector3(meta1, meta2, meta3);
+	return Vector3(paramsForNormal.genericMetadata1, paramsForNormal.genericMetadata2,
+				   paramsForNormal.genericMetadata3);
 }
 
 Vector3 AABBoxPrim::ComputeHardNormal(Point3 const &position) const {

@@ -13,11 +13,11 @@ GlossySpecularBRDF::GlossySpecularBRDF(float ks, Color3 cs, float exponent) {
 
 Color3 GlossySpecularBRDF::GetRadiance(const IntersectionResult& intersectionResult) const {
 	Color3 	finalColor;
-	Vector3 intersectionNormal = intersectionResult.GetNormalVector();
-	Vector3 incomingDirReverse = intersectionResult.GetIncomingDirInverse();
+	Vector3 const & intersectionNormal = intersectionResult.normalVector;
+	Vector3 const & incomingDirReverse = intersectionResult.incomingDirInverse;
 	float 		nDotIncomingDirection = intersectionNormal * incomingDirReverse;
 	Vector3 	reflectedVector(-incomingDirReverse + intersectionNormal * nDotIncomingDirection * 2.0f);
-	Vector3 outgoingDir = intersectionResult.GetVectorToLight();
+	Vector3 const & outgoingDir = intersectionResult.vectorToLight;
 	float 		rDotOutgoing = reflectedVector * outgoingDir;
 		
 	if (rDotOutgoing > 0.0) {

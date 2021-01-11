@@ -72,7 +72,7 @@ Primitive* Sphere::IntersectShadow(const Ray &ray, float tMin, float tMax) {
 }
 
 Vector3 Sphere::GetNormal(ParamsForNormal const &paramsForNormal) const {
-	return ComputeHardNormal(paramsForNormal.GetIntersectionPos());
+	return ComputeHardNormal(paramsForNormal.intersectionPos);
 }
 
 Vector3 Sphere::ComputeHardNormal(Point3 const &position) const {

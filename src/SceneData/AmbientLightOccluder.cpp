@@ -27,7 +27,7 @@ const IntersectionResult& intersectionRes) const {
 	Point3 sp = ambientSampler->GetSampleOnHemisphere();
 	Vector3 right;
 	Vector3 up = Vector3::Up();
-	Vector3 forward = intersectionRes.GetNormalVector();
+	Vector3 forward = intersectionRes.normalVector;
 	CommonMath::ComputeUVWFromWandU(right, up, forward);
 	return right*sp[0] + up*sp[1] + forward*sp[2];
 }
@@ -36,7 +36,7 @@ Color3 AmbientLightOccluder::GetRadiance(const IntersectionResult& intersectionR
 										 const Scene& scene) const {
 	Vector3 castVec = GetDirectionFromPositionScaled(intersectionRes);
 	castVec.Normalize();
-	Point3 castPoint = intersectionRes.GetIntersectionPos()+
+	Point3 castPoint = intersectionRes.intersectionPosition +
 		castVec*SHADOW_FEELER_EPSILON;
 	bool shadowFeelerIntersects = scene.ShadowFeelerIntersectsAnObject(Ray(castPoint, castVec), 0.0f, std::numeric_limits<float>::max());
 	

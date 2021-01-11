@@ -20,7 +20,7 @@ Vector3 AreaLight::GetDirectionFromPositionScaled(
 	Point3 primitiveSample;
 	primitive->SamplePrimitive(primitiveSample, intersectionRes);
 	primitiveSample = intersectionRes.localToWorld*primitiveSample;
-	Vector3 lightDirection = intersectionRes.GetIntersectionPos() -
+	Vector3 lightDirection = intersectionRes.intersectionPosition -
 		primitiveSample;
 	return lightDirection;
 }
@@ -32,11 +32,11 @@ void AreaLight::ComputeAndStoreAreaLightInformation(
 	primitive->SamplePrimitive(lightPrimitiveSample, intersectionRes);
 	lightPrimitiveSample = intersectionRes.localToWorld*lightPrimitiveSample;
 	ParamsForNormal newParams = paramsForNormal;
-	newParams.SetIntersectionPosition(lightPrimitiveSample);
+	newParams.intersectionPos = lightPrimitiveSample;
 	Vector3 lightPrimitiveNormal = primitive->GetNormal(newParams);
 	
 	Vector3 vectorToLight = lightPrimitiveSample -
-		intersectionRes.GetIntersectionPos();
+		intersectionRes.intersectionPosition;
 	intersectionRes.SetAreaLightNormal(lightPrimitiveNormal);
 	intersectionRes.SetLightVectorScaled(vectorToLight);
 	vectorToLight.Normalize();
@@ -46,8 +46,8 @@ void AreaLight::ComputeAndStoreAreaLightInformation(
 
 Color3 AreaLight::GetRadiance(const IntersectionResult& intersectionRes,
 							  const Scene& scene) const {
-	float nDotVectorToLight = -intersectionRes.GetAreaLightNormal()
-		* intersectionRes.GetVectorToLight();
+	float nDotVectorToLight = -intersectionRes.areaLightNormalVector
+		* intersectionRes.vectorToLight;
 	if (nDotVectorToLight > 0.0f) {
 		Color primitiveColor = primitive->GetMaterial(intersectionRes)
 			->GetDirectColor(intersectionRes);
@@ -60,9 +60,9 @@ Color3 AreaLight::GetRadiance(const IntersectionResult& intersectionRes,
 float AreaLight::GeometricTerm(
 	const IntersectionResult& intersectionRes)
 	const {
-	float nDotVectorToLight = -intersectionRes.GetAreaLightNormal()
-		* intersectionRes.GetVectorToLight();
-	float d2 = intersectionRes.GetIntersectionPos().
-		GetDistanceSquared(intersectionRes.GetSamplePointOnLight());
+	float nDotVectorToLight = -intersectionRes.areaLightNormalVector
+		* intersectionRes.vectorToLight;
+	float d2 = intersectionRes.intersectionPosition.
+		GetDistanceSquared(intersectionRes.samplePointOnLight);
 	return nDotVectorToLight / d2;
 }

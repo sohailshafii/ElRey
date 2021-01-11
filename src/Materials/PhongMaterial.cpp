@@ -28,7 +28,7 @@ Color PhongMaterial::GetDirectColor(const IntersectionResult &intersectionResult
 }
 
 Color PhongMaterial::GetColorForAreaLight(const IntersectionResult& intersectionResult) const  {
-	if (intersectionResult.GetNormalVector() * intersectionResult.GetIncomingDirInverse()
+	if (intersectionResult.normalVector * intersectionResult.incomingDirInverse
 		> 0.0) {
 		Color3 directColor = diffuseBRDF.GetRadiance(intersectionResult);
 		Color3 specularColor = glossySpecularBRDF.GetRadiance(intersectionResult);

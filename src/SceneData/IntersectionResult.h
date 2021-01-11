@@ -56,69 +56,6 @@ public:
 		samplePointOnLight = samplePoint;
 	}
 	
-	void SetGenericMetadata(float metadata, float metadata2,
-							float metadata3) {
-		genericMetadata1 = metadata;
-		genericMetadata2 = metadata2;
-		genericMetadata3 = metadata3;
-	}
-
-	Ray const & GetIncomingRay() const {
-		return incomingRay;
-	}
-
-	Vector3 GetIncomingDirInverse() const {
-		return incomingDirInverse;
-	}
-	
-	Vector3 GetVectorToLight() const {
-		return vectorToLight;
-	}
-
-	Vector3 GetVectorToLightScaled() const {
-		return vectorToLightScaled;
-	}
-	
-	Vector3 GetNormalVector() const {
-		return normalVector;
-	}
-
-	Vector3 GetAreaLightNormal() const {
-		return areaLightNormalVector;
-	}
-	
-	Point3 GetIntersectionPos() const {
-		return intersectionPosition;
-	}
-	
-	float GetRayIntersectT() const {
-		return rayIntersectT;
-	}
-
-	Point3 GetSamplePointOnLight() const {
-		return samplePointOnLight;
-	}
-	
-	float GetGenericMetadata1() const {
-		return genericMetadata1;
-	}
-	
-	float GetGenericMetadata2() const {
-		return genericMetadata2;
-	}
-	
-	float GetGenericMetadata3() const {
-		return genericMetadata3;
-	}
-	
-	bool operator< (const IntersectionResult& other) const {
-		float intersectSum1 = intersectionPosition[0] +
-			intersectionPosition[1] + intersectionPosition[2];
-		auto& otherPos = other.intersectionPosition;
-		float intersectSum2 = otherPos[0] + otherPos[1] + otherPos[2];
-		return intersectSum1 < intersectSum2;
-	}
-	
 	// TODO: necessary for grid to intersect against same object multiple times
 	// is there an alternative?
 	void ResetPrimIntersectionData() {
@@ -134,7 +71,6 @@ public:
 	Matrix4x4 worldToLocal;
 	Matrix4x4 worldToLocalTranspose;
 
-private:
 	// All items are in world space unless specified otherwise
 	// usually lighting deals with incoming ray facing away from surface
 	Ray incomingRay;
