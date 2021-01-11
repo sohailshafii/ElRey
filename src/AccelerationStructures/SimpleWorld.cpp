@@ -20,8 +20,8 @@ Primitive* SimpleWorld::Intersect(const Ray &ray, float tMin, float& tMax,
 	for (auto currentPrimitive : primitives) {
 		auto hitPrimitive = currentPrimitive->Intersect(ray, tMin, tMax,
 														intersectionResult);
-		if (hitPrimitive) {
-			closestPrimitive = currentPrimitive;
+		if (hitPrimitive != nullptr) {
+			closestPrimitive = hitPrimitive;
 		}
 	}
 
@@ -34,9 +34,10 @@ Primitive* SimpleWorld::ShadowFeelerIntersectsAnObject(const Ray& ray, float tMi
 	Vector3 originalDir = ray.GetDirection();
 	Point3 originalOrigin = ray.GetOrigin();
 	for (auto currentPrimitive : primitives) {
-		if (currentPrimitive->IntersectShadow(ray, tMin, tMax))
+		auto hitPrimitive = currentPrimitive->IntersectShadow(ray, tMin, tMax);
+		if (hitPrimitive != nullptr)
 		{
-			return currentPrimitive;
+			return hitPrimitive;
 		}
 	}
 	return nullptr;

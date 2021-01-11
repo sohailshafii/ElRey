@@ -18,13 +18,14 @@ GridAccelerator::GridAccelerator(Primitive **primitives,
 }
 
 Primitive* GridAccelerator::Intersect(const Ray &ray, float tMin, float& tMax,
-								IntersectionResult &intersectionResult) {
+									  IntersectionResult &intersectionResult) {
 	Primitive* closestPrimitive = nullptr;
 	bool hitBefore = false;
 	for (auto currPrimitive : primitivesNotInCells) {
-		if (currPrimitive->Intersect(ray, tMin, tMax,
-									 intersectionResult)) {
-			closestPrimitive = currPrimitive;
+		auto hitPrim = currPrimitive->Intersect(ray, tMin, tMax,
+												intersectionResult);
+		if (hitPrim != nullptr) {
+			closestPrimitive = hitPrim;
 			hitBefore = true;
 		}
 	}
@@ -106,7 +107,8 @@ Primitive* GridAccelerator::BruteForceIntersect(const Ray &ray, float tMin, floa
 	Primitive* primitiveHit = nullptr;
 	for(auto primitiveCollection : cells) {
 		auto currPrimitiveHit =
-		IntersectAgainstPrimitiveCollection(primitiveCollection, ray, tMin, tMax, intersectionResult);
+			IntersectAgainstPrimitiveCollection(primitiveCollection, ray, tMin, tMax,
+												intersectionResult);
 		if (currPrimitiveHit != nullptr) {
 			primitiveHit = currPrimitiveHit;
 		}
@@ -312,9 +314,9 @@ Primitive* GridAccelerator::IntersectAgainstPrimitiveCollection(PrimitiveCollect
 		// if we test against multiple compound objects in a row, reset primitive
 		// intersection data from previous tests that might have returned true
 		tempRes.ResetPrimIntersectionData();
-
-		if (currPrimitive->Intersect(ray, tMin, tMax, tempRes)) {
-			closestPrimSoFar = currPrimitive;
+		auto hitTest = currPrimitive->Intersect(ray, tMin, tMax, tempRes);
+		if (hitTest != nullptr) {
+			closestPrimSoFar = hitTest;
 			// TODO: try to avoid copy somehow, this is gross
 			intersectionResult = tempRes;
 		}
@@ -329,9 +331,9 @@ Primitive* GridAccelerator::IntersectAgainstPrimitiveCollectionShadow(PrimitiveC
 	
 	for (unsigned int index = 0; index < numElements; index++) {
 		auto currPrimitive = primitivesInCollection[index];
-
-		if (currPrimitive->IntersectShadow(ray, tMin, tMax)) {
-			return currPrimitive;
+		auto shadowPrimHit = currPrimitive->IntersectShadow(ray, tMin, tMax);
+		if (shadowPrimHit != nullptr) {
+			return shadowPrimHit;
 		}
 	}
 	
@@ -341,8 +343,9 @@ Primitive* GridAccelerator::IntersectAgainstPrimitiveCollectionShadow(PrimitiveC
 Primitive* GridAccelerator::ShadowFeelerIntersectsAnObject(const Ray& ray, float tMin,
 														   float tMax) {
 	for (auto currPrimitive : primitivesNotInCells) {
-		if (currPrimitive->IntersectShadow(ray, tMin, tMax)) {
-			return currPrimitive;
+		auto hitPrim = currPrimitive->IntersectShadow(ray, tMin, tMax);
+		if (hitPrim != nullptr) {
+			return hitPrim;
 		}
 	}
 	
@@ -366,8 +369,7 @@ Primitive* GridAccelerator::ShadowFeelerIntersectsAnObject(const Ray& ray, float
 			auto hitPrimitive =
 				IntersectAgainstPrimitiveCollectionShadow(currentCell, ray, tMin,
 														  rayParams.txNext);
-			
-			if (hitPrimitive) {
+			if (hitPrimitive != nullptr) {
 				return hitPrimitive;
 			}
 			
@@ -381,7 +383,7 @@ Primitive* GridAccelerator::ShadowFeelerIntersectsAnObject(const Ray& ray, float
 			auto hitPrimitive =
 				IntersectAgainstPrimitiveCollectionShadow(currentCell, ray, tMin,
 														  rayParams.tyNext);
-			if (hitPrimitive) {
+			if (hitPrimitive != nullptr) {
 				return hitPrimitive;
 			}
 			
@@ -395,7 +397,7 @@ Primitive* GridAccelerator::ShadowFeelerIntersectsAnObject(const Ray& ray, float
 			auto hitPrimitive =
 				IntersectAgainstPrimitiveCollectionShadow(currentCell, ray, tMin,
 														  rayParams.tzNext);
-			if (hitPrimitive) {
+			if (hitPrimitive != nullptr) {
 				return hitPrimitive;
 			}
 			
@@ -416,7 +418,7 @@ Primitive* GridAccelerator::BruteForceShadowFeelerIntersectsAnObject(const Ray& 
 																	 const Primitive* primitiveToExclude) {
 	for(auto primitiveCollection : cells) {
 		auto primitiveHit =
-		IntersectAgainstPrimitiveCollectionShadow(primitiveCollection, ray, tMin, tMax);
+			IntersectAgainstPrimitiveCollectionShadow(primitiveCollection, ray, tMin, tMax);
 		if (primitiveHit != nullptr) {
 			return primitiveHit;
 		}

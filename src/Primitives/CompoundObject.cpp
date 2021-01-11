@@ -3,7 +3,7 @@
 #include <cassert>
 
 Primitive* CompoundObject::Intersect(const Ray &ray, float tMin, float& tMax,
-									IntersectionResult &intersectionResult) {
+									 IntersectionResult &intersectionResult) {
 	unsigned int numElements = primitives.size();
 	Primitive* closestPrimSoFar = nullptr;
 	std::string primNameBeforeTestsForUs = intersectionResult.GetPrimitiveName();
