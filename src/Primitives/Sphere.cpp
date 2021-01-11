@@ -5,8 +5,8 @@
 #include <cmath>
 #include <iostream>
 
-bool Sphere::Intersect(const Ray &ray, float tMin, float& tMax,
-					   IntersectionResult &intersectionResult) {
+Primitive* Sphere::Intersect(const Ray &ray, float tMin, float& tMax,
+							 IntersectionResult &intersectionResult) {
 	const Point3& rayOrigin = ray.GetOrigin();
 	const Vector3& rayDirection = ray.GetDirection();
 
@@ -17,7 +17,7 @@ bool Sphere::Intersect(const Ray &ray, float tMin, float& tMax,
 	float discr = b*b - 4.0f*a*c;
 
 	if (discr < 0.0f) {
-		return false;
+		return nullptr;
 	}
 
 	float e = sqrt(discr);
@@ -27,21 +27,21 @@ bool Sphere::Intersect(const Ray &ray, float tMin, float& tMax,
 	if (t > EPSILON && t > tMin && t < tMax) {
 		tMax = t;
 		intersectionResult.SetIntersectionT(tMax);
-		return true;
+		return this;
 	}
 
 	t = (-b+e)/denom;
 	if (t > EPSILON && t > tMin && t < tMax) {
 		tMax = t;
 		intersectionResult.SetIntersectionT(tMax);
-		return true;
+		return this;
 	}
 
 	// all tests failed so far
-	return false;
+	return nullptr;
 }
 
-bool Sphere::IntersectShadow(const Ray &ray, float tMin, float tMax) {
+Primitive* Sphere::IntersectShadow(const Ray &ray, float tMin, float tMax) {
 	const Point3& rayOrigin = ray.GetOrigin();
 	const Vector3& rayDirection = ray.GetDirection();
 
@@ -52,7 +52,7 @@ bool Sphere::IntersectShadow(const Ray &ray, float tMin, float tMax) {
 	float discr = b*b - 4.0f*a*c;
 
 	if (discr < 0.0f) {
-		return false;
+		return nullptr;
 	}
 
 	float e = sqrt(discr);
@@ -60,15 +60,15 @@ bool Sphere::IntersectShadow(const Ray &ray, float tMin, float tMax) {
 	float t = (-b-e)/denom;
 	// smaller root
 	if (t > EPSILON && t > tMin && t < tMax) {
-		return true;
+		return this;
 	}
 
 	t = (-b+e)/denom;
 	if (t > EPSILON && t > tMin && t < tMax) {
-		return true;
+		return this;
 	}
 	
-	return false;
+	return nullptr;
 }
 
 Vector3 Sphere::GetNormal(ParamsForNormal const &paramsForNormal) const {

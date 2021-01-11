@@ -21,9 +21,9 @@ public:
 			ComputeBoundingBox();
 	}
 	
-	virtual bool Intersect(const Ray &ray, float tMin, float& tMax,
-						   IntersectionResult &intersectionResult) override;
-	virtual bool IntersectShadow(const Ray &ray, float tMin, float tMax) override;
+	virtual Primitive* Intersect(const Ray &ray, float tMin, float& tMax,
+								 IntersectionResult &intersectionResult) override;
+	virtual Primitive* IntersectShadow(const Ray &ray, float tMin, float tMax) override;
 	
 	virtual Vector3 ComputeHardNormal(Point3 const &position) const override;
 	

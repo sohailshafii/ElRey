@@ -4,10 +4,10 @@
 #include <limits>
 
 // use doubles for accuracy
-bool Torus::Intersect(const Ray &ray, float tMin, float& tMax,
-					  IntersectionResult &intersectionResult) {
+Primitive* Torus::Intersect(const Ray &ray, float tMin, float& tMax,
+							IntersectionResult &intersectionResult) {
 	if (!boundingBox.RayHit(ray)) {
-		return false;
+		return nullptr;
 	}
 	
 	const Point3& rayOrigin = ray.GetOrigin();
@@ -47,7 +47,7 @@ bool Torus::Intersect(const Ray &ray, float tMin, float& tMax,
 	
 	// ray misses the torus
 	if (numRealRoots == 0) {
-		return false;
+		return nullptr;
 	}
 	
 	// find the smallest root greater than kEpsilon, if any
@@ -60,18 +60,18 @@ bool Torus::Intersect(const Ray &ray, float tMin, float& tMax,
 	}
 		
 	if(!intersected) {
-		return false;
+		return nullptr;
 	}
 		
 	tMax = t;
 	intersectionResult.SetIntersectionT(tMax);
 	
-	return true;
+	return this;
 }
 
-bool Torus::IntersectShadow(const Ray &ray, float tMin, float tMax) {
+Primitive* Torus::IntersectShadow(const Ray &ray, float tMin, float tMax) {
 	if (!boundingBox.RayHit(ray)) {
-		return false;
+		return nullptr;
 	}
 	
 	const Point3& rayOrigin = ray.GetOrigin();
@@ -110,7 +110,7 @@ bool Torus::IntersectShadow(const Ray &ray, float tMin, float tMax) {
 	float 	t 		 	= std::numeric_limits<float>::max();
 	// ray misses the torus
 	if (numRealRoots == 0) {
-		return false;
+		return nullptr;
 	}
 	
 	// find the smallest root greater than kEpsilon, if any
@@ -123,10 +123,10 @@ bool Torus::IntersectShadow(const Ray &ray, float tMin, float tMax) {
 	}
 		
 	if (!intersected) {
-		return false;
+		return nullptr;
 	}
 	
-	return true;
+	return this;
 }
 
 Vector3 Torus::GetNormal(ParamsForNormal const &paramsForNormal) const {

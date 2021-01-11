@@ -29,9 +29,11 @@ public:
 	virtual ~Primitive() { }
 
 	// TODO: make it obvious that the last two arguments are modified upon succesful intersection
-	virtual bool Intersect(const Ray &ray, float tMin, float& tMax,
-						   IntersectionResult &intersectionResult) = 0;
-	virtual bool IntersectShadow(const Ray &ray, float tMin, float tMax) = 0;
+	// if intersection is succesful, return primitive hit. this is useful for compound objects,
+	// which might have multiple objects inside of them
+	virtual Primitive* Intersect(const Ray &ray, float tMin, float& tMax,
+								 IntersectionResult &intersectionResult) = 0;
+	virtual Primitive* IntersectShadow(const Ray &ray, float tMin, float tMax) = 0;
 	
 	virtual Vector3 ComputeHardNormal(Point3 const & position) const = 0;
 	virtual Vector3 GetNormal(ParamsForNormal const &paramsForNormal) const = 0;

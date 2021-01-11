@@ -29,10 +29,10 @@ public:
 			   std::shared_ptr<GenericSampler> const & iSampler,
 			   const std::string& iName);
 	
-	virtual bool Intersect(const Ray &ray, float tMin, float& tMax,
-								IntersectionResult &intersectionResult) override;
+	virtual Primitive* Intersect(const Ray &ray, float tMin, float& tMax,
+								 IntersectionResult &intersectionResult) override;
 	
-	virtual bool IntersectShadow(const Ray &ray, float tMin, float tMax) override;
+	virtual Primitive* IntersectShadow(const Ray &ray, float tMin, float tMax) override;
 	virtual Vector3 GetNormal(ParamsForNormal const &paramsForNormal) const override;
 	
 	virtual Vector3 ComputeHardNormal(Point3 const &position) const override;

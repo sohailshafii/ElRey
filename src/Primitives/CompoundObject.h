@@ -18,9 +18,9 @@ public:
 		primitives.clear();
 	}
 	
-	virtual bool Intersect(const Ray &ray, float tMin, float& tMax,
-						   IntersectionResult &intersectionResult) override;
-	virtual bool IntersectShadow(const Ray &ray, float tMin, float tMax) override;
+	virtual Primitive* Intersect(const Ray &ray, float tMin, float& tMax,
+								 IntersectionResult &intersectionResult) override;
+	virtual Primitive* IntersectShadow(const Ray &ray, float tMin, float tMax) override;
 	
 	virtual Vector3 GetNormal(ParamsForNormal const &paramsForNormal) const override;
 	

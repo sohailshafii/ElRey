@@ -412,7 +412,7 @@ Primitive* GridAccelerator::ShadowFeelerIntersectsAnObject(const Ray& ray, float
 
 Primitive* GridAccelerator::BruteForceShadowFeelerIntersectsAnObject(const Ray& ray,
 																	 float tMin,
-																	float tMax,
+																	 float tMax,
 																	 const Primitive* primitiveToExclude) {
 	for(auto primitiveCollection : cells) {
 		auto primitiveHit =

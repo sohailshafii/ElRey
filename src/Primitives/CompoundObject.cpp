@@ -2,8 +2,8 @@
 #include "OpenCylinder.h"
 #include <cassert>
 
-bool CompoundObject::Intersect(const Ray &ray, float tMin, float& tMax,
-							   IntersectionResult &intersectionResult) {
+Primitive* CompoundObject::Intersect(const Ray &ray, float tMin, float& tMax,
+									IntersectionResult &intersectionResult) {
 	unsigned int numElements = primitives.size();
 	Primitive* closestPrimSoFar = nullptr;
 	std::string primNameBeforeTestsForUs = intersectionResult.GetPrimitiveName();
@@ -25,27 +25,26 @@ bool CompoundObject::Intersect(const Ray &ray, float tMin, float& tMax,
 		if (childrenDidNotSetPrimName) {
 			intersectionResult.SetPrimitiveName(closestPrimSoFar->GetName());
 		}
-		return true;
+		return this;
 	}
 	
-	return false;
+	return nullptr;
 }
 
-bool CompoundObject::IntersectShadow(const Ray &ray, float tMin,
-									 float tMax) {
+Primitive* CompoundObject::IntersectShadow(const Ray &ray, float tMin,
+										   float tMax) {
 	unsigned int numElements = primitives.size();
-	bool hitSomething = false;
+	Primitive* hitPrimitive = nullptr;
 	
 	for (unsigned int index = 0; index < numElements; index++) {
 		auto currPrimitive = primitives[index];
-		hitSomething =
-			currPrimitive->IntersectShadow(ray, tMin, tMax);
-		if (hitSomething) {
+		hitPrimitive = currPrimitive->IntersectShadow(ray, tMin, tMax);
+		if (hitPrimitive != nullptr) {
 			break;
 		}
 	}
 	
-	return hitSomething;
+	return hitPrimitive;
 }
 
 Vector3 CompoundObject::GetNormal(ParamsForNormal const &paramsForNormal) const {

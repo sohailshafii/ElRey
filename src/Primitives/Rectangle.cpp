@@ -2,19 +2,19 @@
 #include "CommonMath.h"
 #include <algorithm>
 
-bool Rectangle::Intersect(const Ray &ray, float tMin, float& tMax,
-						  IntersectionResult &intersectionResult) {
+Primitive* Rectangle::Intersect(const Ray &ray, float tMin, float& tMax,
+								IntersectionResult &intersectionResult) {
 	const Point3& rayOrigin = ray.GetOrigin();
 	const Vector3& rayDirection = ray.GetDirection();
 	float t = (origin - rayOrigin) * normal / (rayDirection * normal);
 
 	if (t < EPSILON)
 	{
-		return false;
+		return nullptr;
 	}
 
 	if (t < tMin || t > tMax) {
-		return false;
+		return nullptr;
 	}
 
 	Point3 intersectionPoint = ray.GetPositionAtParam(t);
@@ -23,22 +23,22 @@ bool Rectangle::Intersect(const Ray &ray, float tMin, float& tMax,
 	float projectionSide1 = vectorAlongPlane * side1Vec;
 	if (projectionSide1 < 0.0 || projectionSide1 > side1LengthSqr)
 	{
-		return false;
+		return nullptr;
 	}
 
 	float projectionSide2 = vectorAlongPlane * side2Vec;
 	if (projectionSide2 < 0.0 || projectionSide2 > side2LengthSqr)
 	{
-		return false;
+		return nullptr;
 	}
 
 	tMax = t;
 	intersectionResult.SetIntersectionT(tMax);
 
-	return true;
+	return this;
 }
 
-bool Rectangle::IntersectShadow(const Ray &ray, float tMin, float tMax)
+Primitive* Rectangle::IntersectShadow(const Ray &ray, float tMin, float tMax)
 {
 	const Point3& rayOrigin = ray.GetOrigin();
 	const Vector3& rayDirection = ray.GetDirection();
@@ -46,11 +46,11 @@ bool Rectangle::IntersectShadow(const Ray &ray, float tMin, float tMax)
 
 	if (t < EPSILON)
 	{
-		return false;
+		return nullptr;
 	}
 
 	if (t < tMin || t > tMax) {
-		return false;
+		return nullptr;
 	}
 
 	Point3 intersectionPoint = ray.GetPositionAtParam(t);
@@ -59,16 +59,16 @@ bool Rectangle::IntersectShadow(const Ray &ray, float tMin, float tMax)
 	float projectionSide1 = vectorAlongPlane * side1Vec;
 	if (projectionSide1 < 0.0 || projectionSide1 > side1LengthSqr)
 	{
-		return false;
+		return nullptr;
 	}
 
 	float projectionSide2 = vectorAlongPlane * side2Vec;
 	if (projectionSide2 < 0.0 || projectionSide2 > side2LengthSqr)
 	{
-		return false;
+		return nullptr;
 	}
 
-	return true;
+	return this;
 }
 
 void Rectangle::SamplePrimitive(Point3& resultingSample,

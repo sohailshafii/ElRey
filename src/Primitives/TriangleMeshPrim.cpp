@@ -1,8 +1,8 @@
 #include "TriangleMeshPrim.h"
 #include "Primitives/TriangleMesh.h"
 
-bool TriangleMeshPrimitive::Intersect(const Ray &ray, float tMin, float& tMax,
-			   IntersectionResult &intersectionResult) {
+Primitive* TriangleMeshPrimitive::Intersect(const Ray &ray, float tMin, float& tMax,
+											IntersectionResult &intersectionResult) {
 	const Point3& rayOrigin = ray.GetOrigin();
 	const Vector3& rayDirection = ray.GetDirection();
 	
@@ -27,7 +27,7 @@ bool TriangleMeshPrimitive::Intersect(const Ray &ray, float tMin, float& tMax,
 	float beta = e1 * invDenom;
 	
 	if (beta < 0.0f) {
-		return false;
+		return nullptr;
 	}
 	
 	float r = e * l - h * i;
@@ -35,18 +35,18 @@ bool TriangleMeshPrimitive::Intersect(const Ray &ray, float tMin, float& tMax,
 	float gamma = e2 * invDenom;
 	
 	if (gamma < 0.0f) {
-		return false;
+		return nullptr;
 	}
 	
 	if ((beta + gamma) > 1.0f) {
-		return false;
+		return nullptr;
 	}
 	
 	float e3 = a * p - b * r + d * s;
 	float t = e3 * invDenom;
 	
 	if (t < tMin || t > tMax) {
-		return false;
+		return nullptr;
 	}
 	
 	tMax = t;
@@ -55,10 +55,10 @@ bool TriangleMeshPrimitive::Intersect(const Ray &ray, float tMin, float& tMax,
 		intersectionResult.SetGenericMetadata(beta, gamma, 0.0f);
 	}
 	
-	return true;
+	return this;
 }
 
-bool TriangleMeshPrimitive::IntersectShadow(const Ray &ray, float tMin, float tMax) {
+Primitive* TriangleMeshPrimitive::IntersectShadow(const Ray &ray, float tMin, float tMax) {
 	const Point3& rayOrigin = ray.GetOrigin();
 	const Vector3& rayDirection = ray.GetDirection();
 	
@@ -83,7 +83,7 @@ bool TriangleMeshPrimitive::IntersectShadow(const Ray &ray, float tMin, float tM
 	float beta = e1 * invDenom;
 	
 	if (beta < 0.0f) {
-		return false;
+		return nullptr;
 	}
 	
 	float r = e * l - h * i;
@@ -91,21 +91,21 @@ bool TriangleMeshPrimitive::IntersectShadow(const Ray &ray, float tMin, float tM
 	float gamma = e2 * invDenom;
 	
 	if (gamma < 0.0f) {
-		return false;
+		return nullptr;
 	}
 	
 	if ((beta + gamma) > 1.0f) {
-		return false;
+		return nullptr;
 	}
 	
 	float e3 = a * p - b * r + d * s;
 	float t = e3 * invDenom;
 	
 	if (t < tMin || t > tMax) {
-		return false;
+		return nullptr;
 	}
 	
-	return true;
+	return this;
 }
 
 Vector3 TriangleMeshPrimitive::ComputeHardNormal(Point3 const &position) const {

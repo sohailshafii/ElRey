@@ -47,8 +47,8 @@ AABBoxPrim::AABBoxPrim(Point4 const & min, Point4 const & max,
 	CalculateCenter();
 }
 
-bool AABBoxPrim::Intersect(const Ray &ray, float tMin, float& tMax,
-						   IntersectionResult &intersectionResult) {
+Primitive* AABBoxPrim::Intersect(const Ray &ray, float tMin, float& tMax,
+								 IntersectionResult &intersectionResult) {
 	auto const & rayOrigin = ray.GetOrigin();
 	auto const & rayDirection = ray.GetDirection();
 	
@@ -128,7 +128,7 @@ bool AABBoxPrim::Intersect(const Ray &ray, float tMin, float& tMax,
 	if (t0 < t1 && t1 > tMin) {
 		if (t0 > tMin) {
 			if (t0 > tMax) {
-				return false;
+				return nullptr;
 			}
 			tMax = t0;
 			switch (faceIn) {
@@ -153,7 +153,7 @@ bool AABBoxPrim::Intersect(const Ray &ray, float tMin, float& tMax,
 		}
 		else {
 			if (t1 > tMax) {
-				return false;
+				return nullptr;
 			}
 			tMax = t1;
 			switch (faceOut) {
@@ -179,14 +179,14 @@ bool AABBoxPrim::Intersect(const Ray &ray, float tMin, float& tMax,
 		intersectionResult.SetIntersectionT(tMax);
 		intersectionResult.SetGenericMetadata(tempNorm[0], tempNorm[1],
 											  tempNorm[2]);
-		return true;
+		return this;
 	}
 	else {
-		return false;
+		return nullptr;
 	}
 }
 
-bool AABBoxPrim::IntersectShadow(const Ray &ray, float tMin, float tMax) {
+Primitive* AABBoxPrim::IntersectShadow(const Ray &ray, float tMin, float tMax) {
 	auto const & rayOrigin = ray.GetOrigin();
 	auto const & rayDirection = ray.GetDirection();
 	
@@ -256,14 +256,14 @@ bool AABBoxPrim::IntersectShadow(const Ray &ray, float tMin, float tMax) {
 	if (t0 < t1 && t1 > tMin) {
 		bool faceIn = t0 > tMin;
 		if (faceIn) {
-			return t0 < tMax;
+			return t0 < tMax ? this : nullptr;
 		}
 		else {
-			return t1 < tMax;
+			return t1 < tMax ? this : nullptr;
 		}
 	}
 	
-	return false;
+	return nullptr;
 }
 
 Vector3 AABBoxPrim::GetNormal(ParamsForNormal const &paramsForNormal) const {

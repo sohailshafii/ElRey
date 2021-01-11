@@ -1,29 +1,29 @@
 #include "Plane.h"
 #include "CommonMath.h"
 
-bool Plane::Intersect(const Ray &ray, float tMin, float& tMax,
-					  IntersectionResult &intersectionResult) {
+Primitive* Plane::Intersect(const Ray &ray, float tMin, float& tMax,
+							IntersectionResult &intersectionResult) {
 	const Point3& rayOrigin = ray.GetOrigin();
 	const Vector3& rayDirection = ray.GetDirection();
 
 	float vDotNormal = rayDirection*normal;
 	if (vDotNormal > -EPSILON && vDotNormal <
 		EPSILON) {
-		return false;
+		return nullptr;
 	}
 
 	float t = -(rayOrigin*normal + distance)/vDotNormal;
 
 	if (t < tMin || t > tMax) {
-		return false;
+		return nullptr;
 	}
 	
 	tMax = t;
 	intersectionResult.SetIntersectionT(tMax);
-	return true;
+	return this;
 }
 
-bool Plane::IntersectShadow(const Ray &ray, float tMin, float tMax)
+Primitive* Plane::IntersectShadow(const Ray &ray, float tMin, float tMax)
 {
 	const Point3& rayOrigin = ray.GetOrigin();
 	const Vector3& rayDirection = ray.GetDirection();
@@ -31,16 +31,16 @@ bool Plane::IntersectShadow(const Ray &ray, float tMin, float tMax)
 	float vDotNormal = rayDirection*normal;
 	if (vDotNormal > -EPSILON && vDotNormal <
 		EPSILON) {
-		return false;
+		return nullptr;
 	}
 
 	float t = -(rayOrigin*normal + distance)/vDotNormal;
 
 	if (t < tMin || t > tMax) {
-		return false;
+		return nullptr;
 	}
 	
-	return true;
+	return this;
 }
 
 Vector3 Plane::GetNormal(ParamsForNormal const &paramsForNormal) const {

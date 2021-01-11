@@ -80,9 +80,9 @@ AABBox InstancePrimitive::GetBoundingBox() const {
 	return AABBox(x0, y0, z0, x1, y1, z1);
 }
 
-bool InstancePrimitive::Intersect(const Ray &rayWorld, float tMin,
-								  float& tMax,
-								  IntersectionResult &intersectionResult) {
+Primitive* InstancePrimitive::Intersect(const Ray &rayWorld, float tMin,
+										float& tMax,
+										IntersectionResult &intersectionResult) {
 	Ray rayToCast = rayWorld;
 	Vector3 originalDir = rayWorld.GetDirection();
 	Point3 originalOrigin = rayWorld.GetOrigin();
@@ -98,8 +98,8 @@ bool InstancePrimitive::Intersect(const Ray &rayWorld, float tMin,
 	return instancePrimitive->Intersect(rayToCast, tMin, tMax, intersectionResult);
 }
 
-bool InstancePrimitive::IntersectShadow(const Ray &rayWorld,
-										float tMin, float tMax) {
+Primitive* InstancePrimitive::IntersectShadow(const Ray &rayWorld,
+											  float tMin, float tMax) {
 	Ray rayToCast = rayWorld;
 	Vector3 originalDir = rayWorld.GetDirection();
 	Point3 originalOrigin = rayWorld.GetOrigin();

@@ -10,22 +10,23 @@ void OpenCylinder::GenerateBoundingBox() {
 						 radius, y1, radius);
 }
 
-bool OpenCylinder::Intersect(const Ray &ray, float tMin, float& tMax,
-							 IntersectionResult &intersectionResult) {
+Primitive* OpenCylinder::Intersect(const Ray &ray, float tMin, float& tMax,
+								   IntersectionResult &intersectionResult) {
 	if (!boundingBox.RayHit(ray)) {
-		return false;
+		return nullptr;
 	}
 	
 	if (TestRayAndSetTMax(ray, tMin, tMax)) {
 		intersectionResult.SetIntersectionT(tMax);
-		return true;
+		return this;
 	}
 	
-	return false;
+	return nullptr;
 }
 
-bool OpenCylinder::IntersectShadow(const Ray &ray, float tMin, float tMax) {
-	return boundingBox.RayHit(ray) && TestRayAndSetTMax(ray, tMin, tMax);
+Primitive* OpenCylinder::IntersectShadow(const Ray &ray, float tMin, float tMax) {
+	return boundingBox.RayHit(ray) && TestRayAndSetTMax(ray, tMin, tMax) ?
+		this : nullptr;
 }
 
 Vector3 OpenCylinder::GetNormal(ParamsForNormal const &paramsForNormal) const {
