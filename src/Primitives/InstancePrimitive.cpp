@@ -80,6 +80,10 @@ AABBox InstancePrimitive::GetBoundingBox() const {
 	return AABBox(x0, y0, z0, x1, y1, z1);
 }
 
+// TODO: instead of computing these matrices on the fly, we should pre-compute them
+// this means when creating instance, compute all accum matrices up to this primitive
+// from children. then when intersecting, store reference to actual geom primitive struck
+// and apply proper transforms. calling code should not do this
 Primitive* InstancePrimitive::Intersect(const Ray &rayWorld, float tMin,
 										float& tMax,
 										IntersectionResult &intersectionResult) {

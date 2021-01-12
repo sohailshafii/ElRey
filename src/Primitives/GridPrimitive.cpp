@@ -159,22 +159,22 @@ Primitive* GridPrimitive::IntersectShadow(const Ray &ray, float tMin, float tMax
 }
 
 Vector3 GridPrimitive::GetNormal(ParamsForNormal const &paramsForNormal) const {
-	// TODO
+	// nothing to see here; this primitive returns closest during intersections
 	return Vector3();
 }
 
 Vector3 GridPrimitive::ComputeHardNormal(Point3 const &position) const {
-	// TODO
+	// nothing to see here; this primitive returns closest during intersections
 	return Vector3();
 }
 
 void GridPrimitive::SamplePrimitive(Point3& resultingSample,
 									IntersectionResult const & intersectionResult) {
-	// TODO sample last primitive found
+	// nothing to see here; this primitive returns closest during intersections
 }
 
 float GridPrimitive::PDF(ParamsForNormal const &paramsForNormal) const {
-	// TODO sample last primitive found
+	// nothing to see here; this primitive returns closest during intersections
 	return 1.0f;
 }
 

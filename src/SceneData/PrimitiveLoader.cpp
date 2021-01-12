@@ -42,6 +42,7 @@ void PrimitiveLoader::AddPrimitivesToScene(Scene* scene,
 		}
 	}
 	
+	// TODO: support instance of instance, or nested instances
 	if (instancePrimitiveJsonObjs.size() > 0) {
 		for(auto & instancePrimObj : instancePrimitiveJsonObjs) {
 			InstancePrimitive* instancePrim = CreateInstancePrimitive(scene,
