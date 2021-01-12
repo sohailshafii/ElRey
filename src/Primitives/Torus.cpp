@@ -130,7 +130,7 @@ Primitive* Torus::IntersectShadow(const Ray &ray, float tMin, float tMax) {
 }
 
 Vector3 Torus::GetNormal(ParamsForNormal const &paramsForNormal) const {
-	return ComputeHardNormal(paramsForNormal.intersectionPos);
+	return ComputeHardNormal(paramsForNormal.intersectionPosPrimSpace);
 }
 
 Vector3 Torus::ComputeHardNormal(Point3 const &position) const {

@@ -100,6 +100,7 @@ Primitive* InstancePrimitive::Intersect(const Ray &rayWorld, float tMin,
 		intersectionResult.localToWorld = localToWorld*intersectionResult.localToWorld;
 		intersectionResult.worldToLocal = worldToLocal*intersectionResult.worldToLocal;
 		intersectionResult.worldToLocalTranspose = localToWorld*intersectionResult.worldToLocalTranspose;
+		intersectionResult.requireTransform = true;
 	}
 	return hitPrim;
 }
@@ -117,7 +118,7 @@ Primitive* InstancePrimitive::IntersectShadow(const Ray &rayWorld,
 Vector3 InstancePrimitive::GetNormal(ParamsForNormal const &paramsForNormal) const {
 	// hack; modify intersection position so that primitive thinks it's in local space
 	ParamsForNormal resModified = paramsForNormal;
-	resModified.intersectionPos = GetWorldToLocalPos(resModified.intersectionPos);
+	resModified.intersectionPosPrimSpace = GetWorldToLocalPos(resModified.intersectionPosPrimSpace);
 	resModified.rayDirection = GetWorldToLocalDir(resModified.rayDirection);
 	Vector3 normalLocal = instancePrimitive->GetNormal(resModified);
 	

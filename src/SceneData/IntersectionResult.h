@@ -65,11 +65,13 @@ public:
 		localToWorld.MakeIdentity();
 		worldToLocal.MakeIdentity();
 		worldToLocalTranspose.MakeIdentity();
+		requireTransform = false;
 	}
 	
 	Matrix4x4 localToWorld;
 	Matrix4x4 worldToLocal;
 	Matrix4x4 worldToLocalTranspose;
+	bool requireTransform;
 
 	// All items are in world space unless specified otherwise
 	// usually lighting deals with incoming ray facing away from surface

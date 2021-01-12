@@ -101,7 +101,9 @@ bool Scene::Intersect(const Ray &ray, Color &newColor,
 		// TODO: should not know about transforms here
 		auto rayDirTrans = intersectionResult.worldToLocal*ray.GetDirection();
 		ParamsForNormal paramsForNormal(rayDirTrans.Normalized(),
-										intersectionResult.worldToLocal*intersectionPos,
+										intersectionResult.requireTransform ?
+										intersectionResult.worldToLocal*intersectionPos :
+										intersectionPos,
 										intersectionResult.genericMetadata1,
 										intersectionResult.genericMetadata2,
 										intersectionResult.genericMetadata3);
