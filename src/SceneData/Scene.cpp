@@ -108,6 +108,10 @@ bool Scene::Intersect(const Ray &ray, Color &newColor,
 										intersectionResult.genericMetadata2,
 										intersectionResult.genericMetadata3);
 		Vector3 normalVec = closestPrimitive->GetNormal(paramsForNormal);
+		if (intersectionResult.requireTransform) {
+			normalVec = intersectionResult.worldToLocalTranspose*normalVec;
+			normalVec.Normalize();
+		}
 		intersectionResult.SetIntersectionNormal(normalVec);
 		
 		// ambient light if available
