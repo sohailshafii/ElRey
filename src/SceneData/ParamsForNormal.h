@@ -12,12 +12,14 @@ public:
 	ParamsForNormal(Vector3 const & rayDirection,
 					Point3 const & intersectionPosPrimSpace,
 					float metadata, float metadata2,
-					float metadata3) {
+					float metadata3,
+					Primitive* childPrimHit) {
 		this->rayDirection = rayDirection;
 		this->intersectionPosPrimSpace = intersectionPosPrimSpace;
 		this->genericMetadata1 = metadata;
 		this->genericMetadata2 = metadata2;
 		this->genericMetadata3 = metadata3;
+		this->childPrimHit = childPrimHit;
 	}
 
 	Vector3 rayDirection;
@@ -25,4 +27,5 @@ public:
 	float genericMetadata1;
 	float genericMetadata2;
 	float genericMetadata3;
+	Primitive* childPrimHit;
 };

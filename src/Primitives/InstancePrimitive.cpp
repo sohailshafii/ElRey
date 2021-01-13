@@ -11,6 +11,8 @@ InstancePrimitive::~InstancePrimitive() {
 }
 
 void InstancePrimitive::SamplePrimitive(Point3& resultingSample, IntersectionResult const & intersectionResult) {
+	// if our child is an instance primitive, then that one will apply its
+	// own transform too
 	instancePrimitive->SamplePrimitive(resultingSample, intersectionResult);
 	resultingSample = GetLocalToWorldPos(resultingSample);
 }
@@ -80,10 +82,6 @@ AABBox InstancePrimitive::GetBoundingBox() const {
 	return AABBox(x0, y0, z0, x1, y1, z1);
 }
 
-// TODO: instead of computing these matrices on the fly, we should pre-compute them
-// this means when creating instance, compute all accum matrices up to this primitive
-// from children. then when intersecting, store reference to actual geom primitive struck
-// and apply proper transforms. calling code should not do this
 Primitive* InstancePrimitive::Intersect(const Ray &rayWorld, float tMin,
 										float& tMax,
 										IntersectionResult &intersectionResult) {
@@ -100,13 +98,7 @@ Primitive* InstancePrimitive::Intersect(const Ray &rayWorld, float tMin,
 	rayToCast.SetOrigin(GetWorldToLocalPos(originalOrigin));
 	rayToCast.SetDirection(GetWorldToLocalDir(originalDir));
 	auto hitPrim = instancePrimitive->Intersect(rayToCast, tMin, tMax, intersectionResult);
-	if (hitPrim != nullptr) {
-		intersectionResult.localToWorld = localToWorld*intersectionResult.localToWorld;
-		intersectionResult.worldToLocal = worldToLocal*intersectionResult.worldToLocal;
-		intersectionResult.worldToLocalTranspose = localToWorld*intersectionResult.worldToLocalTranspose;
-		intersectionResult.requireTransform = true;
-	}
-	return hitPrim;
+	return hitPrim != nullptr ? this : nullptr;
 }
 
 Primitive* InstancePrimitive::IntersectShadow(const Ray &rayWorld,
@@ -116,7 +108,10 @@ Primitive* InstancePrimitive::IntersectShadow(const Ray &rayWorld,
 	Point3 originalOrigin = rayWorld.GetOrigin();
 	rayToCast.SetOrigin(GetWorldToLocalPos(originalOrigin));
 	rayToCast.SetDirection(GetWorldToLocalDir(originalDir));
-	return instancePrimitive->IntersectShadow(rayToCast, tMin, tMax);
+	// if our child is an instance primitive, then that one will apply its
+	// own transform too
+	return instancePrimitive->IntersectShadow(rayToCast, tMin, tMax) ?
+	this : nullptr;
 }
 
 Vector3 InstancePrimitive::GetNormal(ParamsForNormal const &paramsForNormal) const {
@@ -124,12 +119,16 @@ Vector3 InstancePrimitive::GetNormal(ParamsForNormal const &paramsForNormal) con
 	ParamsForNormal resModified = paramsForNormal;
 	resModified.intersectionPosPrimSpace = GetWorldToLocalPos(resModified.intersectionPosPrimSpace);
 	resModified.rayDirection = GetWorldToLocalDir(resModified.rayDirection);
+	// if our child is an instance primitive, then that one will apply its
+	// own transform too
 	Vector3 normalLocal = instancePrimitive->GetNormal(resModified);
 	
 	return GetWorldToLocalTransposeDir(normalLocal).Normalized();
 }
 
 Vector3 InstancePrimitive::ComputeHardNormal(Point3 const &position) const {
+	// if our child is an instance primitive, then that one will apply its
+	// own transform too
 	Vector3 normalLocal = instancePrimitive->ComputeHardNormal(GetWorldToLocalPos(position));
 	return GetWorldToLocalTransposeDir(normalLocal).Normalized();
 }

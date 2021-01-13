@@ -19,9 +19,6 @@ Vector3 AreaLight::GetDirectionFromPositionScaled(
 	const IntersectionResult& intersectionRes) const {
 	Point3 primitiveSample;
 	primitive->SamplePrimitive(primitiveSample, intersectionRes);
-	if (intersectionRes.requireTransform) {
-		primitiveSample = intersectionRes.localToWorld*primitiveSample;
-	}
 	Vector3 lightDirection = intersectionRes.intersectionPosition -
 		primitiveSample;
 	return lightDirection;
@@ -32,9 +29,6 @@ void AreaLight::ComputeAndStoreAreaLightInformation(
 	ParamsForNormal const &paramsForNormal) const {
 	Point3 lightPrimitiveSample;
 	primitive->SamplePrimitive(lightPrimitiveSample, intersectionRes);
-	if (intersectionRes.requireTransform) {
-		lightPrimitiveSample = intersectionRes.localToWorld*lightPrimitiveSample;
-	}
 	ParamsForNormal newParams = paramsForNormal;
 	newParams.intersectionPosPrimSpace = lightPrimitiveSample;
 	Vector3 lightPrimitiveNormal = primitive->GetNormal(newParams);

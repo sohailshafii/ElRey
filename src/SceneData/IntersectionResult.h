@@ -57,21 +57,12 @@ public:
 	}
 	
 	// TODO: necessary for grid to intersect against same object multiple times
-	// is there an alternative?
+	// is there an alternative? do we need this for simple world class too?
 	void ResetPrimIntersectionData() {
 		genericMetadata1 = 0.0f;
 		genericMetadata2 = 0.0f;
 		genericMetadata3 = 0.0f;
-		localToWorld.MakeIdentity();
-		worldToLocal.MakeIdentity();
-		worldToLocalTranspose.MakeIdentity();
-		requireTransform = false;
 	}
-	
-	Matrix4x4 localToWorld;
-	Matrix4x4 worldToLocal;
-	Matrix4x4 worldToLocalTranspose;
-	bool requireTransform;
 
 	// All items are in world space unless specified otherwise
 	// usually lighting deals with incoming ray facing away from surface
@@ -88,4 +79,7 @@ public:
 	Point3 samplePointOnLight;
 	float genericMetadata1, genericMetadata2,
 		genericMetadata3;
+	
+	// useful for instance primitives
+	Primitive* childPrimitiveHit;
 };

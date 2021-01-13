@@ -6,13 +6,22 @@ Primitive* CompoundObject::Intersect(const Ray &ray, float tMin, float& tMax,
 									 IntersectionResult &intersectionResult) {
 	unsigned int numElements = primitives.size();
 	Primitive* closestPrimSoFar = nullptr;
+
+	IntersectionResult tempResult;
 	
+	// if we have instance objects sitting between compound objects, this
+	// may not work. TODO: find out how to resolve this
 	for (unsigned int index = 0; index < numElements; index++) {
 		auto currPrimitive = primitives[index];
-		auto hitPrim = currPrimitive->Intersect(ray, tMin, tMax, intersectionResult);
+		auto hitPrim = currPrimitive->Intersect(ray, tMin, tMax, tempResult);
 		if (hitPrim != nullptr) {
 			closestPrimSoFar = hitPrim;
+			tempResult.childPrimitiveHit = hitPrim;
 		}
+	}
+	
+	if (closestPrimSoFar != nullptr) {
+		intersectionResult = tempResult;
 	}
 	
 	return closestPrimSoFar;
@@ -35,23 +44,31 @@ Primitive* CompoundObject::IntersectShadow(const Ray &ray, float tMin,
 }
 
 Vector3 CompoundObject::GetNormal(ParamsForNormal const &paramsForNormal) const {
-	// not called directly
-	return Vector3(0.0f, 0.0f, 0.0f);
+	return paramsForNormal.childPrimHit != nullptr ?
+		paramsForNormal.childPrimHit->GetNormal(paramsForNormal) : Vector3::Zero();
 }
 
 // not valid for this primitive
 Vector3 CompoundObject::ComputeHardNormal(Point3 const &position) const {
-	return Vector3(0.0f, 0.0f, 0.0f);
+	return Vector3::Zero();
 }
 
 void CompoundObject::SamplePrimitive(Point3& resultingSample,
 									 IntersectionResult const & intersectionResult) {
-	// not called directly
+	auto childPrim = intersectionResult.childPrimitiveHit;
+	if (childPrim != nullptr) {
+		childPrim->SamplePrimitive(resultingSample, intersectionResult);
+	}
+}
+
+const GenericSampler* CompoundObject::GetSampler(IntersectionResult const & intersectionResult) {
+	return intersectionResult.childPrimitiveHit != nullptr ?
+		intersectionResult.childPrimitiveHit->GetSampler(intersectionResult) : nullptr;
 }
 
 float CompoundObject::PDF(ParamsForNormal const &paramsForNormal) const {
-	// not called directly
-	return 0.0;
+	return paramsForNormal.childPrimHit != nullptr ?
+		paramsForNormal.childPrimHit->PDF(paramsForNormal) : 0.0f;
 }
 
 AABBox CompoundObject::GetBoundingBox() const {

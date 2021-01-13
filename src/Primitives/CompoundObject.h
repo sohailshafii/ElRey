@@ -28,7 +28,10 @@ public:
 	
 	virtual void SamplePrimitive(Point3& resultingSample,
 								 IntersectionResult const & intersectionResult) override;
-		
+	
+	// a compound object might have a different sampler per-subbject
+	virtual const GenericSampler* GetSampler(IntersectionResult const & intersectionResult) override;
+	
 	virtual float PDF(ParamsForNormal const &paramsForNormal) const override;
 	
 	virtual bool HasBoundingBox() const override {

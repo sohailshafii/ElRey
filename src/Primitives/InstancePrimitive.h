@@ -5,7 +5,6 @@
 class InstancePrimitive : public Primitive {
 public:
 	InstancePrimitive(std::string const & iName,
-					  // don't own
 					  Primitive* primitive);
 	~InstancePrimitive();
 	
@@ -16,6 +15,23 @@ public:
 	virtual Vector3 GetNormal(ParamsForNormal const &paramsForNormal) const override;
 	
 	virtual Vector3 ComputeHardNormal(Point3 const &position) const override;
+	
+	virtual Material const * GetMaterial(IntersectionResult const & intersectionResult) override {
+		return instancePrimitive->GetMaterial(intersectionResult);
+	}
+
+	virtual void SetSampler(std::shared_ptr<GenericSampler> const & sampler) override {
+		instancePrimitive->SetSampler(sampler);
+	}
+
+	// a compound object might have a different sampler per-subbject
+	virtual const GenericSampler* GetSampler(IntersectionResult const & intersectionResult) override {
+		return instancePrimitive->GetSampler(intersectionResult);
+	}
+
+	virtual float PDF(ParamsForNormal const &paramsForNormal) const override {
+		return instancePrimitive->PDF(paramsForNormal);
+	}
 	
 	virtual void SamplePrimitive(Point3& resultingSample,
 								 IntersectionResult const & intersectionResult) override;
