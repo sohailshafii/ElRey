@@ -98,6 +98,8 @@ Primitive* InstancePrimitive::Intersect(const Ray &rayWorld, float tMin,
 	rayToCast.SetOrigin(GetWorldToLocalPos(originalOrigin));
 	rayToCast.SetDirection(GetWorldToLocalDir(originalDir));
 	auto hitPrim = instancePrimitive->Intersect(rayToCast, tMin, tMax, intersectionResult);
+	// if we hit something, return US as we need to apply transformations for
+	// further processing (like calculating normals, etc)
 	return hitPrim != nullptr ? this : nullptr;
 }
 
@@ -111,7 +113,7 @@ Primitive* InstancePrimitive::IntersectShadow(const Ray &rayWorld,
 	// if our child is an instance primitive, then that one will apply its
 	// own transform too
 	return instancePrimitive->IntersectShadow(rayToCast, tMin, tMax) ?
-	this : nullptr;
+		this : nullptr;
 }
 
 Vector3 InstancePrimitive::GetNormal(ParamsForNormal const &paramsForNormal) const {

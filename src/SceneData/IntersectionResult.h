@@ -56,12 +56,15 @@ public:
 		samplePointOnLight = samplePoint;
 	}
 	
-	// TODO: necessary for grid to intersect against same object multiple times
 	// is there an alternative? do we need this for simple world class too?
+	// seems to be necessary for compound objects as well...if the same intersection
+	// results are used over and over then the previous tests will interfere with future ones
+	// TODO: clean-up implementation
 	void ResetPrimIntersectionData() {
 		genericMetadata1 = 0.0f;
 		genericMetadata2 = 0.0f;
 		genericMetadata3 = 0.0f;
+		childPrimitiveHit = nullptr;
 	}
 
 	// All items are in world space unless specified otherwise

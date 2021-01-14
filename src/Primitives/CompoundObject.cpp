@@ -7,21 +7,32 @@ Primitive* CompoundObject::Intersect(const Ray &ray, float tMin, float& tMax,
 	unsigned int numElements = primitives.size();
 	Primitive* closestPrimSoFar = nullptr;
 
-	IntersectionResult tempResult;
+	Primitive *closestChildBeforeTests = intersectionResult.childPrimitiveHit;
+	IntersectionResult intersectionResSoFar;
 	
-	// if we have instance objects sitting between compound objects, this
-	// may not work. TODO: find out how to resolve this
 	for (unsigned int index = 0; index < numElements; index++) {
 		auto currPrimitive = primitives[index];
-		auto hitPrim = currPrimitive->Intersect(ray, tMin, tMax, tempResult);
+		// reset intersection data in-between tests
+		intersectionResSoFar.ResetPrimIntersectionData();
+		auto hitPrim = currPrimitive->Intersect(ray, tMin, tMax, intersectionResSoFar);
 		if (hitPrim != nullptr) {
 			closestPrimSoFar = hitPrim;
-			tempResult.childPrimitiveHit = hitPrim;
 		}
 	}
 	
 	if (closestPrimSoFar != nullptr) {
-		intersectionResult = tempResult;
+		// if any compound objects did not set a child primitive that
+		// return an intersection, set it. this means if we have a tree of
+		// of compound objects, we store the intersection with the deepest one
+		// we need this because if we have instance objects in the tree, instance
+		// primitives will return themselves as the closest intersection hit (so that
+		// they can apply transformations for lighting after the fact, etc). an instance
+		// when call our sampler, normal, etc functions and we need to know
+		// which part of compound object was originally hit
+		if (closestChildBeforeTests == intersectionResSoFar.childPrimitiveHit) {
+			intersectionResSoFar.childPrimitiveHit = closestPrimSoFar;
+		}
+		intersectionResult = intersectionResSoFar;
 	}
 	
 	return closestPrimSoFar;
@@ -40,6 +51,10 @@ Primitive* CompoundObject::IntersectShadow(const Ray &ray, float tMin,
 		}
 	}
 	
+	// if there is an instance primitive above us it will effectively tell calling
+	// code that it was the object that was hit. that's ok, because shadows
+	// only care if a primitive was hit, and don't use that primitive for additional
+	// processing
 	return hitPrimitive;
 }
 
