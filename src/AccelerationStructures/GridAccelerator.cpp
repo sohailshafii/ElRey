@@ -196,6 +196,11 @@ bool GridAccelerator::CheckBoundsOfRay(Ray const &ray, float tMin, float tMax,
 		t1 = tzMax;
 	}
 	
+	// constrict max based on max of the current limits of ray
+	if (t1 > tMax) {
+		t1 = tMax;
+	}
+	
 	// if entry is larger than exit, return false
 	if (t0 > t1) {
 		return false;
@@ -205,11 +210,6 @@ bool GridAccelerator::CheckBoundsOfRay(Ray const &ray, float tMin, float tMax,
 	// entry cannot be greater than max of ray
 	if (t0 > tMax) {
 		return false;
-	}
-	
-	// constrict max
-	if (t1 > tMax) {
-		t1 = tMax;
 	}
 	
 	// find cell coordinates of initial point
@@ -301,24 +301,31 @@ bool GridAccelerator::CheckBoundsOfRay(Ray const &ray, float tMin, float tMax,
 	return true;
 }
 
+Primitive* GridAccelerator::EvaluatePrimitiveCollectionCell(PrimitiveCollection & primitiveCollection, const Ray &ray, float tMin, float& tMax, IntersectionResult &intersectionResult, float tNext) {
+	float tMaxToTest = tNext;
+	auto hitPrimitive = IntersectAgainstPrimitiveCollection(primitiveCollection,
+															ray, tMin, tMaxToTest,
+															intersectionResult);
+	// set tMax only if hit found (and passes against tNext)
+	if (hitPrimitive != nullptr) {
+		tMax = tMaxToTest;
+		return hitPrimitive;
+	}
+	
+	return nullptr;
+}
+
 Primitive* GridAccelerator::IntersectAgainstPrimitiveCollection(PrimitiveCollection & primitiveCollection, const Ray &ray, float tMin, float& tMax,
 	IntersectionResult &intersectionResult) {
 	auto & primitivesInCollection = primitiveCollection.primitives;
 	unsigned int numElements = primitivesInCollection.size();
 	
 	Primitive * closestPrimSoFar = nullptr;
-	IntersectionResult tempRes;
 	for (unsigned int index = 0; index < numElements; index++) {
 		auto currPrimitive = primitivesInCollection[index];
-
-		// if we test against multiple compound objects in a row, reset primitive
-		// intersection data from previous tests that might have returned true
-		tempRes.ResetPrimIntersectionData();
-		auto hitTest = currPrimitive->Intersect(ray, tMin, tMax, tempRes);
+		auto hitTest = currPrimitive->Intersect(ray, tMin, tMax, intersectionResult);
 		if (hitTest != nullptr) {
 			closestPrimSoFar = hitTest;
-			// TODO: try to avoid copy somehow, this is gross
-			intersectionResult = tempRes;
 		}
 	}
 	
