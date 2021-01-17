@@ -46,6 +46,7 @@ private:
 		std::string name;
 	};
 public:
+	static void CreateGridOfGrids(Scene *scene, const nlohmann::json& jsonObj);
 	static void CreateGridOfGrids(Scene* scene,
 								  int numLevels,
 								  int gridRes,
@@ -54,6 +55,11 @@ public:
 	
 	static void AddPrimitivesToScene(Scene* scene,
 									 nlohmann::json const & objectsArray);
+	static void AddInstancePrimitives(Scene* scene,
+									  std::vector<nlohmann::json> const & instancePrimitiveJsonObjs);
+	static void AddGridPrimitives(Scene* scene,
+								  std::vector<nlohmann::json> const & gridPrimitives,
+								  std::vector<ModelPrimitiveInfo*> & modelPrimitiveInfos);
 	
 	static std::shared_ptr<InstancePrimitive> CreateInstancePrimitive(std::string const & objectName,
 													  std::shared_ptr<Primitive> originalPrimitive,

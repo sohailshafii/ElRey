@@ -22,6 +22,14 @@
 #include <sstream>
 #include <unordered_map>
 
+void PrimitiveLoader::CreateGridOfGrids(Scene *scene, const nlohmann::json& jsonObj) {
+	int numLevels = CommonLoaderFunctions::SafeGetToken(jsonObj, "num_levels");
+	int gridRes = CommonLoaderFunctions::SafeGetToken(jsonObj, "grid_res");
+	float gap = CommonLoaderFunctions::SafeGetToken(jsonObj, "gap");
+	float bunnySize = CommonLoaderFunctions::SafeGetToken(jsonObj, "bunny_size");
+	CreateGridOfGrids(scene, numLevels, gridRes, gap, bunnySize);
+}
+
 void PrimitiveLoader::CreateGridOfGrids(Scene* scene,
 										int numLevels,
 										int gridRes,
@@ -102,12 +110,33 @@ void PrimitiveLoader::AddPrimitivesToScene(Scene* scene,
 			PrimitiveLoader::LoadModelFromJSON(primInfo, elementJson);
 			modelPrimitiveInfos.push_back(primInfo);
 		}
+		else if (typeName == "grid_of_grids") {
+			PrimitiveLoader::CreateGridOfGrids(scene, elementJson);
+		}
 		else {
 			std::shared_ptr<Primitive> newPrimitive = PrimitiveLoader::CreatePrimitive(elementJson);
 			scene->AddPrimitive(newPrimitive);
 		}
 	}
 	
+	AddInstancePrimitives(scene, instancePrimitiveJsonObjs);
+	
+	AddGridPrimitives(scene, gridPrimitives, modelPrimitiveInfos);
+	
+	// add leftover models to main scene, if not part of any accelerators
+	for (size_t i = 0; i < modelPrimitiveInfos.size(); i++) {
+		auto modelPrim = modelPrimitiveInfos[i];
+		auto modelPrimitives = modelPrim->primitives;
+		for(auto object : modelPrimitives) {
+			scene->AddPrimitive(object);
+		}
+		delete modelPrim;
+	}
+}
+
+void PrimitiveLoader::AddInstancePrimitives(Scene* scene,
+						   std::vector<nlohmann::json> const & instancePrimitiveJsonObjs)
+{
 	for(auto & instancePrimObj : instancePrimitiveJsonObjs) {
 		std::shared_ptr<InstancePrimitive> instancePrim = CreateInstancePrimitive(scene,
 																  instancePrimObj);
@@ -135,7 +164,11 @@ void PrimitiveLoader::AddPrimitivesToScene(Scene* scene,
 			throw exceptionMsg;
 		}
 	}
-	
+}
+
+void PrimitiveLoader::AddGridPrimitives(Scene* scene,
+		 std::vector<nlohmann::json> const & gridPrimitives,
+		 std::vector<ModelPrimitiveInfo*> & modelPrimitiveInfos) {
 	// load in any grids and add children to them from scene
 	for(auto & gridPrimJson : gridPrimitives) {
 		std::string objectName = CommonLoaderFunctions::SafeGetToken(gridPrimJson, "name");
@@ -184,16 +217,6 @@ void PrimitiveLoader::AddPrimitivesToScene(Scene* scene,
 		std::shared_ptr<GridPrimitive> newPrim = std::make_shared<GridPrimitive>(
 												objectName, primitives, multipier);
 		scene->AddPrimitive(newPrim);
-	}
-	
-	// add leftover models to main scene, if not part of any accelerators
-	for (size_t i = 0; i < modelPrimitiveInfos.size(); i++) {
-		auto modelPrim = modelPrimitiveInfos[i];
-		auto modelPrimitives = modelPrim->primitives;
-		for(auto object : modelPrimitives) {
-			scene->AddPrimitive(object);
-		}
-		delete modelPrim;
 	}
 }
 
