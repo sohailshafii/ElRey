@@ -25,10 +25,14 @@ Primitive* CompoundObject::Intersect(const Ray &ray, float tMin, float& tMax,
 		// return an intersection, set it. this means if we have a tree of
 		// of compound objects, we store the intersection with the deepest one
 		// we need this because if we have instance objects in the tree, instance
-		// primitives will return themselves as the closest intersection hit (so that
+		// primitive compound will return themselves as the closest intersection hit (so that
 		// they can apply transformations for lighting after the fact, etc). an instance
-		// when call our sampler, normal, etc functions and we need to know
+		// will call our sampler, normal, etc functions and we need to know
 		// which part of compound object was originally hit
+		
+		// if childprimhit is not initialized, it's some random pointer value
+		// this means closestchildbeforetests will never match parameter
+		// and is not set in the conditional block
 		if (closestChildBeforeTests == intersectionResSoFar.childPrimitiveHit) {
 			intersectionResSoFar.childPrimitiveHit = closestPrimSoFar;
 		}

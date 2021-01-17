@@ -9,18 +9,21 @@ class Primitive;
 
 class IntersectionResult {
 public:
-	IntersectionResult() {
+	IntersectionResult()
+	{
+		childPrimitiveHit = nullptr;
 	}
 	
 	IntersectionResult(const Ray& incomingRay, const Vector3& lightVector,
 					   const Vector3& normalVector, const Point3& intersectionPosition,
-					   float rayIntersectT) {
+					   float rayIntersectT){
 		this->incomingRay = incomingRay;
 		this->vectorToLight = lightVector;
 		this->normalVector = normalVector;
 		this->intersectionPosition = intersectionPosition;
 		this->incomingDirInverse = -incomingRay.GetDirection();
 		this->rayIntersectT = rayIntersectT;
+		childPrimitiveHit = nullptr;
 	}
 	
 	void SetIncomingRay(const Ray& incomingRay) {
