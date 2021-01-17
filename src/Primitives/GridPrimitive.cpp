@@ -4,14 +4,26 @@
 #include "SceneData/CommonLoaderFunctions.h"
 #include <iostream>
 
-void GridPrimitive::SetUpAccelerator(nlohmann::json const & jsonObj,
+//#define BRUTE_FORCE_TEST
+
+GridPrimitive::~GridPrimitive() {
+	for (auto primitive : allPrimRefs) {
+		delete primitive;
+	}
+	allPrimRefs.clear();
+}
+
+void GridPrimitive::SetUpAccelerator(float multipier,
 									 const std::vector<Primitive*> & primitives) {
+	for(auto& prim : primitives) {
+		allPrimRefs.push_back(prim);
+	}
 	std::cout << "Setting up Grid...\n";
-	SetupCells(jsonObj, primitives);
+	SetupCells(multipier, primitives);
 	std::cout << "Done!\n";
 }
 
-void GridPrimitive::SetupCells(nlohmann::json const & jsonObj,
+void GridPrimitive::SetupCells(float multipier,
 							   const std::vector<Primitive*> & primitives) {
 	// find min and max coordinates of the grid
 	Point3 p0 = ComputeMinCoordinates(primitives);
@@ -34,11 +46,6 @@ void GridPrimitive::SetupCells(nlohmann::json const & jsonObj,
 	// use a multiplier to increase cell count
 	
 	float multiplier = 1.0f;
-	if (CommonLoaderFunctions::HasKey(jsonObj, "accelerator_options")) {
-		auto optionsNode = CommonLoaderFunctions::SafeGetToken(jsonObj,
-															   "accelerator_options");
-		multiplier = CommonLoaderFunctions::SafeGetToken(optionsNode, "multiplier");
-	}
 	float s = pow(wx * wy * wz / numPrimitives,
 				  0.333333);
 	// s is like volume/object, and we do the
@@ -222,9 +229,7 @@ Primitive* GridPrimitive::Intersect(const Ray &ray, float tMin, float& tMax,
 			}
 		}
 	}
-	
-	intersectionResult.childPrimitiveHit = closestPrimitive;
-	
+		
 	return closestPrimitive;
 }
 
@@ -237,7 +242,7 @@ Primitive* GridPrimitive::IntersectShadow(const Ray &ray, float tMin, float tMax
 	}
 	
 #ifdef BRUTE_FORCE_TEST
-	return BruteForceShadowFeelerIntersectsAnObject(ray, tMin, tMax, primitiveToExclude);
+	return BruteForceShadowFeelerIntersectsAnObject(ray, tMin, tMax);
 #endif
 	
 	// the following code includes modifications
@@ -301,27 +306,23 @@ Primitive* GridPrimitive::IntersectShadow(const Ray &ray, float tMin, float tMax
 }
 
 Vector3 GridPrimitive::GetNormal(const ShadingInfo& shadingInfo) const {
-	return shadingInfo.childPrimitiveHit != nullptr ?
-		shadingInfo.childPrimitiveHit->GetNormal(shadingInfo) :
-		Vector3();
+	// we don't get tested against directly, we are only an accelerator
+	return Vector3();
 }
 
 Vector3 GridPrimitive::ComputeHardNormal(Point3 const &position) const {
-	// nothing to see here; this primitive returns closest during intersections
+	// we don't get tested against directly, we are only an accelerator
 	return Vector3();
 }
 
 void GridPrimitive::SamplePrimitive(Point3& resultingSample,
 									const ShadingInfo& shadingInfo) {
-	if (shadingInfo.childPrimitiveHit != nullptr) {
-		shadingInfo.childPrimitiveHit->SamplePrimitive(resultingSample,
-															  shadingInfo);
-	}
+	// we don't get tested against directly, we are only an accelerator
 }
 
 float GridPrimitive::PDF(const ShadingInfo& shadingInfo) const {
-	return shadingInfo.childPrimitiveHit != nullptr ?
-		shadingInfo.childPrimitiveHit->PDF(shadingInfo) : 0.0f;
+	// we don't get tested against directly, we are only an accelerator
+	return 0.0f;
 }
 
 AABBox GridPrimitive::GetBoundingBox() const {
@@ -452,6 +453,16 @@ bool GridPrimitive::CheckBoundsOfRay(Ray const &ray, float tMin, float tMax,
 		tzMax = (z0 - oz) * c;
 	}
 	
+	// check bounds
+	if (txMin > tMax || tyMin > tMax ||
+		tzMin > tMax) {
+		return false;
+	}
+	if (txMax < tMin || tyMax < tMin ||
+		tzMax < tMin) {
+		return false;
+	}
+	
 	float t0, t1;
 	
 	// find largest entry
@@ -478,19 +489,8 @@ bool GridPrimitive::CheckBoundsOfRay(Ray const &ray, float tMin, float tMax,
 		t1 = tzMax;
 	}
 	
-	// constrict max based on max of the current limits of ray
-	if (t1 > tMax) {
-		t1 = tMax;
-	}
-	
 	// if entry is larger than exit, return false
 	if (t0 > t1) {
-		return false;
-	}
-	
-	// check against bounds of ray
-	// entry cannot be greater than max of ray
-	if (t0 > tMax) {
 		return false;
 	}
 	
@@ -584,7 +584,7 @@ bool GridPrimitive::CheckBoundsOfRay(Ray const &ray, float tMin, float tMax,
 }
 
 Primitive* GridPrimitive::EvaluatePrimitiveCollectionCell(PrimitiveCollection & primitiveCollection, const Ray &ray, float tMin, float& tMax, IntersectionResult &intersectionResult, float tNext) {
-	float tMaxTest = tNext;
+	float tMaxTest = tMax;
 	IntersectionResult intersecResTemp;
 	auto hitPrimitive = IntersectAgainstPrimitiveCollection(primitiveCollection,
 															ray, tMin, tMaxTest,
@@ -656,6 +656,18 @@ Primitive* GridPrimitive::BruteForceShadowFeelerIntersectsAnObject(const Ray& ra
 			IntersectAgainstPrimitiveCollectionShadow(primitiveCollection, ray, tMin, tMax);
 		if (primitiveHit != nullptr) {
 			return primitiveHit;
+		}
+	}
+	
+	return nullptr;
+}
+
+Primitive* GridPrimitive::GetSubPrimitiveByName(std::string const & intersecPrimName) const {
+	for(auto primitiveCollection : cells) {
+		for (auto primitive : primitiveCollection.primitives) {
+			if (primitive->GetName() == intersecPrimName) {
+				return primitive;
+			}
 		}
 	}
 	

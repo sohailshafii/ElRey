@@ -46,6 +46,8 @@ public:
 	
 	void PrintBounds();
 	
+	virtual Primitive* GetSubPrimitiveByName(std::string const & intersecPrimName) const override;
+	
 private:
 	std::vector<Primitive*> primitives;
 	AABBox boundingBox;

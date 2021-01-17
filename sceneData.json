@@ -2,7 +2,6 @@
 	"scene_settings":
 	{
 		"navigation_type":"none",
-		"accelerator_type":"grid",
 		"camera":
 		{		
 			"type":"pinhole",
@@ -19,6 +18,17 @@
 	},
 	"objects":
 	[
+		{
+			"type":"grid",
+			"name":"main_grid",
+			"children": [
+				"ground_plane",
+				"sphere_instance1",
+				"area_light_rectangle",
+				"closed_cylinder_instance1"
+			],
+			"multiplier":1.0
+		},
 		{
 			"type":"plane",
 			"position":[0.0,-1.0,0.0],

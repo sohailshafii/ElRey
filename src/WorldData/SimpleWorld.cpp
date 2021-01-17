@@ -1,23 +1,28 @@
-#include "BaseAccelerator.h"
+#include "SimpleWorld.h"
+#include "SceneData/IntersectionResult.h"
 #include "Primitives/Primitive.h"
 #include <sstream>
 #include <stdexcept>
 
-BaseAccelerator::BaseAccelerator(Primitive **primitives,
-								 unsigned int numPrimitives) {
+SimpleWorld::SimpleWorld() {
+	
+}
+
+SimpleWorld::SimpleWorld(Primitive **primitives,
+						 unsigned int numPrimitives) {
 	for (unsigned int i = 0; i < numPrimitives; i++) {
 		this->primitives.push_back(primitives[i]);
 	}
 }
 
-BaseAccelerator::~BaseAccelerator() {
+SimpleWorld::~SimpleWorld() {
 	for(auto primitive : primitives) {
 		delete primitive;
 	}
 	primitives.clear();
 }
 
-void BaseAccelerator::AddPrimitive(Primitive *newPrimitive) {
+void SimpleWorld::AddPrimitive(Primitive *newPrimitive) {
 	if (newPrimitive == nullptr) {
 		throw std::runtime_error("Trying to add invalid primitive!");
 	}
@@ -37,7 +42,7 @@ void BaseAccelerator::AddPrimitive(Primitive *newPrimitive) {
 	primitives.push_back(newPrimitive);
 }
 
-void BaseAccelerator::AddPrimitives(Primitive **newPrimitives, unsigned int numNewPrimitives) {
+void SimpleWorld::AddPrimitives(Primitive **newPrimitives, unsigned int numNewPrimitives) {
 	if (newPrimitives == nullptr || numNewPrimitives == 0) {
 		throw std::runtime_error("Trying to add invalid primitives!");
 	}
@@ -47,7 +52,7 @@ void BaseAccelerator::AddPrimitives(Primitive **newPrimitives, unsigned int numN
 	}
 }
 
-void BaseAccelerator::AddPrimitives(std::vector<Primitive*> newPrimitives) {
+void SimpleWorld::AddPrimitives(std::vector<Primitive*> newPrimitives) {
 	size_t numNewPrimitives = newPrimitives.size();
 	if (numNewPrimitives == 0) {
 		throw std::runtime_error("Trying to add invalid primitives!");
@@ -58,7 +63,7 @@ void BaseAccelerator::AddPrimitives(std::vector<Primitive*> newPrimitives) {
 	}
 }
 
-void BaseAccelerator::RemovePrimitive(Primitive* primitiveToRemove) {
+void SimpleWorld::RemovePrimitive(Primitive* primitiveToRemove) {
 	if (primitiveToRemove == nullptr) {
 		throw std::runtime_error("Trying to remove invalid primitive!");
 	}
@@ -66,7 +71,7 @@ void BaseAccelerator::RemovePrimitive(Primitive* primitiveToRemove) {
 	RemovePrimitiveByName(primitiveName);
 }
 
-void BaseAccelerator::RemovePrimitiveByName(std::string const & name) {
+void SimpleWorld::RemovePrimitiveByName(std::string const & name) {
 	for (auto it = primitives.begin(); it != primitives.end(); ) {
 		if ((*it)->GetName() == name) {
 			primitives.erase(it);
@@ -77,16 +82,50 @@ void BaseAccelerator::RemovePrimitiveByName(std::string const & name) {
 	}
 }
 
-Primitive* BaseAccelerator::FindPrimitiveByName(const std::string& name) {
+Primitive* SimpleWorld::FindPrimitiveByName(const std::string& name) {
 	Primitive* foundPrimitive = nullptr;
 
 	for (auto currentPrimitive : primitives) {
 		if (currentPrimitive->GetName() == name) {
 			foundPrimitive = currentPrimitive;
+			break;
+		}
+		// also search primitive itself, it might have children
+		auto foundPrim = currentPrimitive->GetSubPrimitiveByName(name);
+		if (foundPrim != nullptr) {
+			foundPrimitive = foundPrim;
+			break;
 		}
 	}
 
 	return foundPrimitive;
 }
 
+Primitive* SimpleWorld::Intersect(const Ray &ray, float tMin, float& tMax,
+							IntersectionResult &intersectionResult) {
+	Primitive* closestPrimitive = nullptr;
+	for (auto currentPrimitive : primitives) {
+		auto hitPrimitive = currentPrimitive->Intersect(ray, tMin, tMax,
+														intersectionResult);
+		if (hitPrimitive != nullptr) {
+			closestPrimitive = hitPrimitive;
+		}
+	}
 
+	return closestPrimitive;
+}
+
+Primitive* SimpleWorld::ShadowFeelerIntersectsAnObject(const Ray& ray, float tMin,
+													   float tMax) {
+	Ray rayToCast = ray;
+	Vector3 originalDir = ray.GetDirection();
+	Point3 originalOrigin = ray.GetOrigin();
+	for (auto currentPrimitive : primitives) {
+		auto hitPrimitive = currentPrimitive->IntersectShadow(ray, tMin, tMax);
+		if (hitPrimitive != nullptr)
+		{
+			return hitPrimitive;
+		}
+	}
+	return nullptr;
+}

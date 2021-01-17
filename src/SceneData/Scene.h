@@ -1,9 +1,9 @@
 #pragma once
 
 #include "Primitives/Primitive.h"
-#include "AccelerationStructures/BaseAccelerator.h"
 #include "ThirdParty/nlohmann/json.hpp"
 #include "SceneData/Light.h"
+#include "WorldData/SimpleWorld.h"
 #include "Cameras/Camera.h"
 #include <string>
 #include <vector>
@@ -12,31 +12,30 @@
 // that represents our world.
 class Scene {
 public:
-	Scene(BaseAccelerator::AcceleratorType acceleratorType);
-	Scene(Primitive **primitives, unsigned int numPrimitives,
-		  BaseAccelerator::AcceleratorType acceleratorType);
+	Scene();
+	Scene(Primitive **primitives, unsigned int numPrimitives);
 	virtual ~Scene();
 
 	void AddPrimitive(Primitive *newPrimitive) {
-		return baseAccelerator->AddPrimitive(newPrimitive);
+		return simpleWorld->AddPrimitive(newPrimitive);
 	}
 	
 	void AddPrimitives(Primitive **newPrimitives,
 					   unsigned int numNewPrimitives) {
-		return baseAccelerator->AddPrimitives(newPrimitives,
+		return simpleWorld->AddPrimitives(newPrimitives,
 											  numNewPrimitives);
 	}
 	
 	void AddPrimitives(std::vector<Primitive*> newPrimitives) {
-		return baseAccelerator->AddPrimitives(newPrimitives);
+		return simpleWorld->AddPrimitives(newPrimitives);
 	}
 	
 	void RemovePrimitive(Primitive* primitiveToRemove) {
-		baseAccelerator->RemovePrimitive(primitiveToRemove);
+		simpleWorld->RemovePrimitive(primitiveToRemove);
 	}
 	
 	void RemovePrimitiveByName(std::string const & name) {
-		baseAccelerator->RemovePrimitiveByName(name);
+		simpleWorld->RemovePrimitiveByName(name);
 	}
 
 	virtual void AddLight(Light* newLight);
@@ -48,19 +47,15 @@ public:
 		float tMin, float& tMax) const;
 
 	Primitive* GetPrimitive(unsigned int index) {
-		return baseAccelerator->GetPrimitive(index);
+		return simpleWorld->GetPrimitive(index);
 	}
 
 	Primitive* FindPrimitiveByName(const std::string& name) {
-		return baseAccelerator->FindPrimitiveByName(name);
+		return simpleWorld->FindPrimitiveByName(name);
 	}
 
 	unsigned int GetNumPrimitives() const {
-		return baseAccelerator->GetNumPrimitives();
-	}
-	
-	void SetUpAccelerator(nlohmann::json const & jsonObj) {
-		baseAccelerator->SetUpAccelerator(jsonObj);
+		return simpleWorld->GetNumPrimitives();
 	}
 	
 	unsigned int GetNumLights() const {
@@ -107,7 +102,7 @@ private:
 	void CleanUpLights();
 
 protected:
-	BaseAccelerator *baseAccelerator;
+	SimpleWorld *simpleWorld;
 	std::vector<Light*> lights;
 	Light* ambientLight;
 	

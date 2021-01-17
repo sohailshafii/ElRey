@@ -12,6 +12,7 @@
 #include "Primitives/CompoundObject.h"
 #include "Primitives/TriangleMeshPrim.h"
 #include "Primitives/TriangleMesh.h"
+#include "Primitives/GridPrimitive.h"
 #include "SceneData/Scene.h"
 #include "SceneData/CommonLoaderFunctions.h"
 #include "Math/CommonMath.h"
@@ -23,18 +24,24 @@
 void PrimitiveLoader::AddPrimitivesToScene(Scene* scene,
 										   nlohmann::json const & objectsArray) {
 	std::vector<nlohmann::json> instancePrimitiveJsonObjs;
+	std::vector<nlohmann::json> gridPrimitives;
+	std::vector<ModelPrimitiveInfo*> modelPrimitives;
 	
 	for(auto& element : objectsArray.items()) {
 		nlohmann::json elementJson = element.value();
-		std::string typeName = CommonLoaderFunctions::SafeGetToken(
-																   elementJson, "type");
+		std::string typeName = CommonLoaderFunctions::SafeGetToken(elementJson, "type");
 		// create instances after the rest have been assembled,
 		// because instance reference normal primitives by name
 		if (typeName == "instance") {
 			instancePrimitiveJsonObjs.push_back(elementJson);
 		}
+		else if (typeName == "grid") {
+			gridPrimitives.push_back(elementJson);
+		}
 		else if (typeName == "obj_model") {
-			PrimitiveLoader::LoadModel(scene, elementJson);
+			ModelPrimitiveInfo *primInfo = new ModelPrimitiveInfo();
+			PrimitiveLoader::LoadModel(primInfo, elementJson);
+			modelPrimitives.push_back(primInfo);
 		}
 		else {
 			Primitive* newPrimitive = PrimitiveLoader::CreatePrimitive(elementJson);
@@ -42,34 +49,89 @@ void PrimitiveLoader::AddPrimitivesToScene(Scene* scene,
 		}
 	}
 	
-	// TODO: support instance of instance, or nested instances
-	if (instancePrimitiveJsonObjs.size() > 0) {
-		for(auto & instancePrimObj : instancePrimitiveJsonObjs) {
-			InstancePrimitive* instancePrim = CreateInstancePrimitive(scene,
-																	  instancePrimObj);
-			if (instancePrim != nullptr) {
-				scene->AddPrimitive(instancePrim);
-				// original primitive cannot be used for intersections
-				// that's because the instance will be used for intersections instead
-				Primitive* originalPrimitive = scene->FindPrimitiveByName(
-					instancePrim->GetOriginalPrimName());
-				if (originalPrimitive != nullptr) {
-					std::cout << originalPrimitive->GetName() << " used for instancing.\n";
-				}
-				else {
-					std::stringstream exceptionMsg;
-					exceptionMsg << "Could not remove primitive from scene after instancing: " <<
-						instancePrim->GetOriginalPrimName() << ".\n";
-					throw exceptionMsg;
-				}
-				scene->RemovePrimitive(originalPrimitive);
+	for(auto & instancePrimObj : instancePrimitiveJsonObjs) {
+		InstancePrimitive* instancePrim = CreateInstancePrimitive(scene,
+																  instancePrimObj);
+		if (instancePrim != nullptr) {
+			scene->AddPrimitive(instancePrim);
+			// original primitive cannot be used for intersections
+			// that's because the instance will be used for intersections instead
+			Primitive* originalPrimitive = scene->FindPrimitiveByName(
+				instancePrim->GetOriginalPrimName());
+			if (originalPrimitive != nullptr) {
+				std::cout << originalPrimitive->GetName() << " used for instancing.\n";
 			}
 			else {
 				std::stringstream exceptionMsg;
-				exceptionMsg << "Could not find original primitive for instance: " <<
-					instancePrim->GetName() << ".\n";
+				exceptionMsg << "Could not remove primitive from scene after instancing: " <<
+					instancePrim->GetOriginalPrimName() << ".\n";
 				throw exceptionMsg;
 			}
+			scene->RemovePrimitive(originalPrimitive);
+		}
+		else {
+			std::stringstream exceptionMsg;
+			exceptionMsg << "Could not find original primitive for instance: " <<
+				instancePrim->GetName() << ".\n";
+			throw exceptionMsg;
+		}
+	}
+	
+	// load in any grids and add children to them from scene
+	for(auto & gridPrimJson : gridPrimitives) {
+		std::string objectName = CommonLoaderFunctions::SafeGetToken(gridPrimJson, "name");
+		float multipier = 1.0f;
+		if (CommonLoaderFunctions::HasKey(gridPrimJson, "multipier")) {
+			multipier = CommonLoaderFunctions::SafeGetToken(gridPrimJson, "multipier");
+		}
+		nlohmann::json childrenArray = gridPrimJson["children"];
+		std::vector<Primitive*> primitives;
+		for(auto & child : childrenArray) {
+			std::string primName = child;
+			Primitive* originalPrimitive = scene->FindPrimitiveByName(primName);
+			if (originalPrimitive != nullptr) {
+				std::cout << originalPrimitive->GetName() << " used for grid.\n";
+				
+				scene->RemovePrimitive(originalPrimitive);
+				primitives.push_back(originalPrimitive);
+			}
+			else {
+				std::cerr << "Could not remove primitive due to grid: " <<
+					primName << ". Trying models...\n";
+				int foundModelIndex = -1;
+				for (size_t i = 0; i < modelPrimitives.size(); i++) {
+					auto modelPrim = modelPrimitives[i];
+					if (modelPrim->name == primName) {
+						foundModelIndex = i;
+						break;
+					}
+				}
+				// add to grid, and erase from normal models list
+				// remainder goes into normal scene
+				if (foundModelIndex != -1) {
+					auto modelPrim = modelPrimitives[foundModelIndex];
+					auto objectsToAdd = modelPrim->primitives;
+					for(auto object : objectsToAdd) {
+						primitives.push_back(object);
+					}
+					modelPrimitives.erase(modelPrimitives.begin() + foundModelIndex);
+				}
+				else {
+					std::cerr << "Could not add model " << primName << " to grid.\n";
+				}
+			}
+		}
+		GridPrimitive* newPrim = new GridPrimitive(objectName, primitives,
+												   multipier);
+		scene->AddPrimitive(newPrim);
+	}
+	
+	// add leftover models to main scene, if not part of any accelerators
+	for (size_t i = 0; i < modelPrimitives.size(); i++) {
+		auto modelPrim = modelPrimitives[i];
+		auto modelPrimitives = modelPrim->primitives;
+		for(auto object : modelPrimitives) {
+			scene->AddPrimitive(object);
 		}
 	}
 }
@@ -252,7 +314,7 @@ Primitive* PrimitiveLoader::CreatePrimitive(const nlohmann::json& jsonObj) {
 	return newPrimitive;
 }
 
-void PrimitiveLoader::LoadModel(Scene* scene,
+void PrimitiveLoader::LoadModel(ModelPrimitiveInfo* primInfo,
 							  const nlohmann::json& jsonObj) {
 	std::string fileName = CommonLoaderFunctions::SafeGetToken(jsonObj, "file_name");
 	bool isSmooth = CommonLoaderFunctions::SafeGetToken(jsonObj, "is_smooth");
@@ -260,6 +322,7 @@ void PrimitiveLoader::LoadModel(Scene* scene,
 	std::shared_ptr<Material> objMaterial = CommonLoaderFunctions::CreateMaterial(materialNode);
 	std::string objectName = CommonLoaderFunctions::SafeGetToken(jsonObj, "name");
 	bool reverseNormals = CommonLoaderFunctions::SafeGetToken(jsonObj, "reverse_normals");
+	primInfo->name = objectName;
 	
 	Matrix4x4 localToWorld;
 	if (CommonLoaderFunctions::HasKey(jsonObj, "local_to_world_matrix")) {
@@ -294,7 +357,6 @@ void PrimitiveLoader::LoadModel(Scene* scene,
 	std::unordered_map<Vertex, uint32_t> uniqueVertices{};
 	std::shared_ptr<TriangleMesh> triangleMesh = std::make_shared<TriangleMesh>();
 	size_t triangleIndices[3];
-	std::vector<Primitive*> objects;
 	int numTrianglesTotal = 0;
 	
 	for (const auto& shape : shapes) {
@@ -319,7 +381,7 @@ void PrimitiveLoader::LoadModel(Scene* scene,
 			triangleIndices[triIndex++] = uniqueVertices[vertex];
 			
 			if (triIndex == 3) {
-				size_t primitiveIndex = objects.size();
+				size_t primitiveIndex = primInfo->primitives.size();
 				std::ostringstream triangleMeshName;
 				triangleMeshName << objectName << "-" << primitiveIndex;
 				TriangleMeshPrimitive* newTriangleMeshPrim =
@@ -330,10 +392,10 @@ void PrimitiveLoader::LoadModel(Scene* scene,
 											  triangleIndices[1],
 											  triangleIndices[2],
 											  isSmooth, reverseNormals);
-				objects.push_back(newTriangleMeshPrim);
+				primInfo->primitives.push_back(newTriangleMeshPrim);
 				numTrianglesTotal++;
 				if (isSmooth) {
-					size_t faceIndex = objects.size()-1;
+					size_t faceIndex = primInfo->primitives.size()-1;
 					AddFaceIndex(triangleMesh.get(), triangleIndices[0],
 								 faceIndex);
 					AddFaceIndex(triangleMesh.get(), triangleIndices[1],
@@ -352,12 +414,11 @@ void PrimitiveLoader::LoadModel(Scene* scene,
 	}
 	else {
 		std::cout << "Computing smooth normals...\n";
-		ComputeSmoothMeshNormals(triangleMesh, objects);
+		ComputeSmoothMeshNormals(triangleMesh, primInfo->primitives);
 		std::cout << "Done computing normals!\n";
 	}
 	std::cout << "Generated " << numTrianglesTotal << " for "
 		<< fileName << ".\n";
-	scene->AddPrimitives(objects);
 }
 
 void PrimitiveLoader::AddFaceIndex(TriangleMesh *mesh,

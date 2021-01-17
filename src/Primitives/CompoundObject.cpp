@@ -51,10 +51,6 @@ Primitive* CompoundObject::IntersectShadow(const Ray &ray, float tMin,
 }
 
 Vector3 CompoundObject::GetNormal(const ShadingInfo& shadingInfo) const {
-	if (shadingInfo.childPrimitiveHit == nullptr) {
-		int breakVar;
-		breakVar = 1;
-	}
 	return shadingInfo.childPrimitiveHit != nullptr ?
 		shadingInfo.childPrimitiveHit->GetNormal(shadingInfo) : Vector3::Zero();
 }
@@ -124,4 +120,14 @@ void CompoundObject::RecomputeBoundingBox() {
 
 void CompoundObject::PrintBounds() {
 	boundingBox.PrintBounds();
+}
+
+Primitive* CompoundObject::GetSubPrimitiveByName(std::string const & intersecPrimName) const {
+	for (auto primitive : primitives) {
+		if (primitive->GetName() == intersecPrimName) {
+			return primitive;
+		}
+	}
+	
+	return nullptr;
 }

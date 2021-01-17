@@ -7,37 +7,24 @@
 #include "SceneData/DirectionalLight.h"
 #include "SceneData/AmbientLight.h"
 #include "Primitives/CompoundObject.h"
-#include "AccelerationStructures/GridAccelerator.h"
-#include "AccelerationStructures/SimpleWorld.h"
+#include "WorldData/SimpleWorld.h"
 
-Scene::Scene(BaseAccelerator::AcceleratorType acceleratorType) {
-	if (acceleratorType == BaseAccelerator::AcceleratorType::SimpleWorld) {
-		baseAccelerator = new SimpleWorld();
-	}
-	else {
-		baseAccelerator = new GridAccelerator();
-	}
+Scene::Scene() {
+	simpleWorld = new SimpleWorld();
 	
 	ambientLight = nullptr;
 	mainCamera = nullptr;
 }
 
-Scene::Scene(Primitive **primitives, unsigned int numPrimitives,
-			 BaseAccelerator::AcceleratorType acceleratorType) {
-	if (acceleratorType == BaseAccelerator::AcceleratorType::SimpleWorld) {
-		baseAccelerator = new SimpleWorld(primitives, numPrimitives);
-	}
-	else {
-		baseAccelerator = new GridAccelerator(primitives, numPrimitives);
-	}
-	
+Scene::Scene(Primitive **primitives, unsigned int numPrimitives) {
+	simpleWorld = new SimpleWorld(primitives, numPrimitives);
 	ambientLight = nullptr;
 	mainCamera = nullptr;
 }
 
 Scene::~Scene() {
-	if (baseAccelerator != nullptr) {
-		delete baseAccelerator;
+	if (simpleWorld != nullptr) {
+		delete simpleWorld;
 	}
 	CleanUpLights();
 	if (mainCamera != nullptr) {
@@ -89,7 +76,7 @@ bool Scene::Intersect(const Ray &ray, Color &newColor,
 	float tMin, float& tMax) const {
 	IntersectionResult intersectionResult;
 	
-	Primitive* closestPrimitive = baseAccelerator->Intersect(ray, tMin, tMax, intersectionResult);
+	Primitive* closestPrimitive = simpleWorld->Intersect(ray, tMin, tMax, intersectionResult);
 	
 	if (closestPrimitive != nullptr) {
 		ShadingInfo shadingInfo(intersectionResult.genericMetadata1,
@@ -183,7 +170,7 @@ bool Scene::Intersect(const Ray &ray, Color &newColor,
 
 bool Scene::ShadowFeelerIntersectsAnObject(const Ray& ray, float tMin,
 	float tMax, const Primitive* primitiveToExclude) const {
-	auto* primitiveHit = baseAccelerator->ShadowFeelerIntersectsAnObject(ray, tMin, tMax);
+	auto* primitiveHit = simpleWorld->ShadowFeelerIntersectsAnObject(ray, tMin, tMax);
 	return (primitiveHit != nullptr && primitiveHit != primitiveToExclude);
 }
 

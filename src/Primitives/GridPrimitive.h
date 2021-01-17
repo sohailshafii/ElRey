@@ -3,18 +3,21 @@
 #include "Primitive.h"
 #include "Math/Point3.h"
 #include "Math/Vector3.h"
-#include "ThirdParty/nlohmann/json.hpp"
 
 #include <vector>
 
 class GridPrimitive : public Primitive {
 public:
 	GridPrimitive(const std::string& iName,
-				  const std::vector<Primitive*> & primitives) :
+				  const std::vector<Primitive*> & primitives,
+				  float multipier) :
 		Primitive(iName) {
+		SetUpAccelerator(multipier, primitives);
 	}
 	
-	void SetUpAccelerator(nlohmann::json const & jsonObj,
+	~GridPrimitive();
+	
+	void SetUpAccelerator(float multipier,
 						  const std::vector<Primitive*> & primitives);
 	
 	virtual Primitive* Intersect(const Ray &ray, float tMin, float& tMax,
@@ -35,6 +38,8 @@ public:
 	}
 	
 	virtual AABBox GetBoundingBox() const override;
+	
+	virtual Primitive* GetSubPrimitiveByName(std::string const & intersecPrimName) const override;
 	
 private:
 	class PrimitiveCollection {
@@ -64,7 +69,7 @@ private:
 		bool txInvalid, tyInvalid, tzInvalid;
 	};
 	
-	void SetupCells(nlohmann::json const & jsonObj,
+	void SetupCells(float multipier,
 					const std::vector<Primitive*> & primitives);
 	
 	Point3 ComputeMinCoordinates(std::vector<Primitive*> const & primitives);
@@ -88,6 +93,7 @@ private:
 	AABBox boundingBox;
 	// primitives that are not in cells, because they don't have
 	// bounding boxes, like planes
+	std::vector<Primitive*> allPrimRefs;
 	std::vector<Primitive*> primitivesNotInCells;
 	std::vector<PrimitiveCollection> cells;
 	int nx, ny, nz;

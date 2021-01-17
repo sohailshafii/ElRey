@@ -39,20 +39,11 @@ Scene* SceneLoader::DeserializeJSONFileIntoScene(const std::string &jsonFilePath
 		nlohmann::json cameraSettings = sceneSettings["camera"];
 		Camera* mainCamera = CreateCamera(cameraSettings);
 		
-		auto acceleratorType = BaseAccelerator::SimpleWorld;
-		if (CommonLoaderFunctions::HasKey(sceneSettings, "accelerator_type")) {
-			std::string acceleratorSpecified =
-				CommonLoaderFunctions::SafeGetToken(sceneSettings, "accelerator_type");
-			if (acceleratorSpecified == "grid") {
-				acceleratorType = BaseAccelerator::Grid;
-			}
-		}
-		scene = new Scene(acceleratorType);
+		scene = new Scene();
 		scene->SetCamera(mainCamera);
 		scene->SetAllowNavigation(navigationToken == "fps");
 		
 		PrimitiveLoader::AddPrimitivesToScene(scene, jsonObj["objects"]);
-		scene->SetUpAccelerator(sceneSettings);
 
 		nlohmann::json lightsArray = jsonObj["lights"];
 		for (auto& element : lightsArray.items()) {

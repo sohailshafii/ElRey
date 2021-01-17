@@ -39,6 +39,11 @@ namespace std {
 }
 
 class PrimitiveLoader {
+private:
+	struct ModelPrimitiveInfo {
+		std::vector<Primitive*> primitives;
+		std::string name;
+	};
 public:
 	static void AddPrimitivesToScene(Scene* scene,
 									 nlohmann::json const & objectsArray);
@@ -48,7 +53,7 @@ public:
 	static Primitive* CreatePrimitive(const nlohmann::json& jsonObj);
 	
 	// OBJ only for now
-	static void LoadModel(Scene* scene,
+	static void LoadModel(ModelPrimitiveInfo* primInfo,
 						  const nlohmann::json& jsonObj);
 	
 private:
