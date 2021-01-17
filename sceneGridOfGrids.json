@@ -24,7 +24,8 @@
 			"num_levels":1,
 			"grid_res":2,
 			"gap":0.05,
-			"size":0.1
+			"bunny_size":0.02,
+			"origin":[0.0, 0.5,-0.6]
 		}
 	],
 	"lights":

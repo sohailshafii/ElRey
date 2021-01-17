@@ -27,21 +27,24 @@ void PrimitiveLoader::CreateGridOfGrids(Scene *scene, const nlohmann::json& json
 	int gridRes = CommonLoaderFunctions::SafeGetToken(jsonObj, "grid_res");
 	float gap = CommonLoaderFunctions::SafeGetToken(jsonObj, "gap");
 	float bunnySize = CommonLoaderFunctions::SafeGetToken(jsonObj, "bunny_size");
-	CreateGridOfGrids(scene, numLevels, gridRes, gap, bunnySize);
+	auto origin = CommonLoaderFunctions::SafeGetToken(jsonObj, "origin");
+	CreateGridOfGrids(scene, numLevels, gridRes, gap, bunnySize,
+					  Vector3((float)origin[0], (float)origin[1], (float)origin[2]));
 }
 
 void PrimitiveLoader::CreateGridOfGrids(Scene* scene,
 										int numLevels,
 										int gridRes,
 										float gap,
-										float bunnySize) {
+										float bunnySize,
+										Vector3 const & origin) {
 	ModelPrimitiveInfo *primInfo = new ModelPrimitiveInfo();
 	auto newMaterial = std::make_shared<LambertianMaterial>(0.1f, 0.7f,
 		Color3(0.68f, 0.85f, 0.91f));
 	Matrix4x4 localToWorldScale;
-	localToWorldScale.ScaleMatrix(Vector3(0.02f, 0.02f, 0.02f));
+	localToWorldScale.ScaleMatrix(Vector3(bunnySize, bunnySize, bunnySize));
 	Matrix4x4 worldToLocalScale;
-	worldToLocalScale.InvScaleMatrix(Vector3(0.02f, 0.02f, 0.02f));
+	worldToLocalScale.InvScaleMatrix(Vector3(bunnySize, bunnySize, bunnySize));
 	std::string originalTeddyName = "teddy";
 	LoadModel(primInfo,"./teddy.obj", true, newMaterial,
 			  originalTeddyName, false, localToWorldScale);
@@ -69,8 +72,10 @@ void PrimitiveLoader::CreateGridOfGrids(Scene* scene,
 			for(int j = 0; j < gridRes; j++, primIndex++) {
 				std::ostringstream instanceName;
 				instanceName << "instance-" << primIndex;
-				localToWorldGrid = Matrix4x4::TranslationMatrix(Vector3(i*(bunnySize+gap), 0.0f, j*(bunnySize + gap))) * localToWorldScale;
-				worldToLocalGrid = worldToLocalScale * Matrix4x4::InvTranslationMatrix(Vector3(i*(bunnySize+gap), 0.0f, j*(bunnySize + gap)));
+				Vector3 translationAmount = origin +
+					Vector3(i*(bunnySize+gap), 0.0f, j*(bunnySize + gap));
+				localToWorldGrid = Matrix4x4::TranslationMatrix(translationAmount) * localToWorldScale;
+				worldToLocalGrid = worldToLocalScale * Matrix4x4::InvTranslationMatrix(translationAmount);
 				std::shared_ptr<InstancePrimitive> newInstance = CreateInstancePrimitive(instanceName.str(),
 										currentGridPtr,
 										localToWorldGrid,

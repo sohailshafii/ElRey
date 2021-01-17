@@ -50,8 +50,9 @@ public:
 	static void CreateGridOfGrids(Scene* scene,
 								  int numLevels,
 								  int gridRes,
-								  float gap = 0.05f,
-								  float bunnySize = 0.1f);
+								  float gap,
+								  float bunnySize,
+								  Vector3 const & origin);
 	
 	static void AddPrimitivesToScene(Scene* scene,
 									 nlohmann::json const & objectsArray);
