@@ -15,52 +15,47 @@ AreaLight::~AreaLight() {
 
 // when tracing to area light, need to get position
 // via sampling. same goes with normal values
-Vector3 AreaLight::GetDirectionFromPositionScaled(
-	const IntersectionResult& intersectionRes) const {
+Vector3 AreaLight::GetDirectionFromPositionScaled(const ShadingInfo& shadingInfo) const {
 	Point3 primitiveSample;
-	primitive->SamplePrimitive(primitiveSample, intersectionRes);
-	Vector3 lightDirection = intersectionRes.intersectionPosition -
+	primitive->SamplePrimitive(primitiveSample, shadingInfo);
+	Vector3 lightDirection = shadingInfo.intersectionPosition -
 		primitiveSample;
 	return lightDirection;
 }
 
-void AreaLight::ComputeAndStoreAreaLightInformation(
-	IntersectionResult& intersectionRes,
-	ParamsForNormal const &paramsForNormal) const {
+void AreaLight::ComputeAndStoreAreaLightInformation(ShadingInfo& shadingInfo) const {
 	Point3 lightPrimitiveSample;
-	primitive->SamplePrimitive(lightPrimitiveSample, intersectionRes);
-	ParamsForNormal newParams = paramsForNormal;
-	newParams.intersectionPosPrimSpace = lightPrimitiveSample;
-	Vector3 lightPrimitiveNormal = primitive->GetNormal(newParams);
+	primitive->SamplePrimitive(lightPrimitiveSample, shadingInfo);
+	ShadingInfo newShadingInfo = shadingInfo;
+	newShadingInfo.intersectionPosition = lightPrimitiveSample;
+	Vector3 lightPrimitiveNormal = primitive->GetNormal(newShadingInfo);
 	
 	Vector3 vectorToLight = lightPrimitiveSample -
-		intersectionRes.intersectionPosition;
-	intersectionRes.areaLightNormalVector = lightPrimitiveNormal;
-	intersectionRes.vectorToLightScaled = vectorToLight;
+	shadingInfo.intersectionPosition;
+	shadingInfo.areaLightNormalVector = lightPrimitiveNormal;
+	shadingInfo.vectorToLightScaled = vectorToLight;
 	vectorToLight.Normalize();
-	intersectionRes.vectorToLight = vectorToLight;
-	intersectionRes.samplePointOnLight = lightPrimitiveSample;
+	shadingInfo.vectorToLight = vectorToLight;
+	shadingInfo.samplePointOnLight = lightPrimitiveSample;
 }
 
-Color3 AreaLight::GetRadiance(const IntersectionResult& intersectionRes,
+Color3 AreaLight::GetRadiance(const ShadingInfo& shadingInfo,
 							  const Scene& scene) const {
-	float nDotVectorToLight = -intersectionRes.areaLightNormalVector
-		* intersectionRes.vectorToLight;
+	float nDotVectorToLight = -shadingInfo.areaLightNormalVector
+		* shadingInfo.vectorToLight;
 	if (nDotVectorToLight > 0.0f) {
-		Color primitiveColor = primitive->GetMaterial(intersectionRes)
-			->GetDirectColor(intersectionRes);
+		Color primitiveColor = primitive->GetMaterial(shadingInfo)
+			->GetDirectColor(shadingInfo);
 		return Color3(primitiveColor[0], primitiveColor[1],
 			primitiveColor[2]);
 	}
 	return Color3::Black();
 }
 
-float AreaLight::GeometricTerm(
-	const IntersectionResult& intersectionRes)
-	const {
-	float nDotVectorToLight = -intersectionRes.areaLightNormalVector
-		* intersectionRes.vectorToLight;
-	float d2 = intersectionRes.intersectionPosition.
-		GetDistanceSquared(intersectionRes.samplePointOnLight);
+float AreaLight::GeometricTerm(const ShadingInfo& shadingInfo) const {
+	float nDotVectorToLight = -shadingInfo.areaLightNormalVector
+		* shadingInfo.vectorToLight;
+	float d2 = shadingInfo.intersectionPosition.
+		GetDistanceSquared(shadingInfo.samplePointOnLight);
 	return nDotVectorToLight / d2;
 }

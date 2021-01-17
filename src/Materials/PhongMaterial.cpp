@@ -14,24 +14,24 @@ const Color3& ksColor) {
 	deadColor = Color::Black();
 }
 
-Color PhongMaterial::GetAmbientColor(const IntersectionResult &intersectionResult) const  {
-	Color3 ambientColor = ambientBRDF.GetRho(intersectionResult);
+Color PhongMaterial::GetAmbientColor(const ShadingInfo& shadingInfo) const  {
+	Color3 ambientColor = ambientBRDF.GetRho(shadingInfo);
 	return Color(ambientColor[0], ambientColor[1], ambientColor[2], 1.0f);
 }
 
-Color PhongMaterial::GetDirectColor(const IntersectionResult &intersectionResult) const  {
-	Color3 directColor = diffuseBRDF.GetRadiance(intersectionResult);
-	Color3 specularColor = glossySpecularBRDF.GetRadiance(intersectionResult);
+Color PhongMaterial::GetDirectColor(const ShadingInfo& shadingInfo) const  {
+	Color3 directColor = diffuseBRDF.GetRadiance(shadingInfo);
+	Color3 specularColor = glossySpecularBRDF.GetRadiance(shadingInfo);
 	Color resultColor = Color(directColor[0]+specularColor[0], directColor[1]+specularColor[1], directColor[2]+specularColor[2], 1.0f);
 
 	return resultColor;
 }
 
-Color PhongMaterial::GetColorForAreaLight(const IntersectionResult& intersectionResult) const  {
-	if (intersectionResult.normalVector * intersectionResult.incomingDirInverse
+Color PhongMaterial::GetColorForAreaLight(const ShadingInfo& shadingInfo) const  {
+	if (shadingInfo.normalVector * shadingInfo.incomingDirInverse
 		> 0.0) {
-		Color3 directColor = diffuseBRDF.GetRadiance(intersectionResult);
-		Color3 specularColor = glossySpecularBRDF.GetRadiance(intersectionResult);
+		Color3 directColor = diffuseBRDF.GetRadiance(shadingInfo);
+		Color3 specularColor = glossySpecularBRDF.GetRadiance(shadingInfo);
 		return Color(directColor[0] + specularColor[0], directColor[1] + specularColor[1],
 			directColor[2] + specularColor[2], 1.0f);
 	}

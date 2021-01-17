@@ -8,12 +8,11 @@ AmbientLight::AmbientLight(const Color3& radiance, float radianceScale) :
 AmbientLight::~AmbientLight() {
 }
 
-Vector3 AmbientLight::GetDirectionFromPositionScaled(
-	const IntersectionResult& intersectionRes) const {
+Vector3 AmbientLight::GetDirectionFromPositionScaled(const ShadingInfo &shadingInfo) const {
 	return Vector3::Zero();
 }
 
-Color3 AmbientLight::GetRadiance(const IntersectionResult& intersectionRes,
+Color3 AmbientLight::GetRadiance(const ShadingInfo &shadingInfo,
 								 const Scene& scene) const {
 	return radiancePreScaled;
 }

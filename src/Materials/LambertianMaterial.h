@@ -9,9 +9,9 @@ public:
 	// TODO: mismatch between COlor4 and Color3 -- should we deal with transparency in BRDFs?
 	LambertianMaterial(float ka, float kd, const Color3& color);
 
-	virtual Color GetAmbientColor(const IntersectionResult &intersectionResult) const override;
-	virtual Color GetDirectColor(const IntersectionResult &intersectionResult) const override;
-	virtual Color GetColorForAreaLight(const IntersectionResult& intersectionResult) const override;
+	virtual Color GetAmbientColor(const ShadingInfo& shadingInfo) const override;
+	virtual Color GetDirectColor(const ShadingInfo& shadingInfo) const override;
+	virtual Color GetColorForAreaLight(const ShadingInfo& shadingInfo) const override;
 private:
 	LambertianBRDF ambientBRDF;
 	LambertianBRDF diffuseBRDF;

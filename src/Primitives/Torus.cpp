@@ -129,8 +129,8 @@ Primitive* Torus::IntersectShadow(const Ray &ray, float tMin, float tMax) {
 	return this;
 }
 
-Vector3 Torus::GetNormal(ParamsForNormal const &paramsForNormal) const {
-	return ComputeHardNormal(paramsForNormal.intersectionPosPrimSpace);
+Vector3 Torus::GetNormal(const ShadingInfo &shadingInfo) const {
+	return ComputeHardNormal(shadingInfo.intersectionPosition);
 }
 
 Vector3 Torus::ComputeHardNormal(Point3 const &position) const {
@@ -150,12 +150,12 @@ Vector3 Torus::ComputeHardNormal(Point3 const &position) const {
 }
 
 void Torus::SamplePrimitive(Point3& resultingSample,
-							IntersectionResult const & intersectionResult) {
+							const ShadingInfo &shadingInfo) {
 	// nothing to see here for now
 }
 
 // each sample's probability is 1.0/inverseArea
-float Torus::PDF(ParamsForNormal const &paramsForNormal) const {
+float Torus::PDF(const ShadingInfo &shadingInfo) const {
 	return 1.0f;
 }
 

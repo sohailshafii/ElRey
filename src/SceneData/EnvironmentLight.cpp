@@ -20,19 +20,18 @@ EnvironmentLight::~EnvironmentLight() {
 
 // when tracing to area light, need to get position
 // via sampling. same goes with normal values
-Vector3 EnvironmentLight::GetDirectionFromPositionScaled(
-	const IntersectionResult& intersectionRes) const {
+Vector3 EnvironmentLight::GetDirectionFromPositionScaled(const ShadingInfo& shadingInfo) const {
 	Point3 sp = sampler->GetSampleOnHemisphere();
 	Vector3 right;
 	Vector3 up(0.0034f, 1.0f, 0.0071f);
-	Vector3 forward = intersectionRes.normalVector;
+	Vector3 forward = shadingInfo.normalVector;
 	CommonMath::ComputeUVWFromWandU(right, up, forward);
 	// negate because this is light coming inwards, not out
 	return -right*sp[0] - up*sp[1] - forward*sp[2];
 }
 
-Color3 EnvironmentLight::GetRadiance(const IntersectionResult& intersectionRes, const Scene& scene) const {
-	Color areaLightColor = material->GetColorForAreaLight(intersectionRes);
+Color3 EnvironmentLight::GetRadiance(const ShadingInfo& shadingInfo, const Scene& scene) const {
+	Color areaLightColor = material->GetColorForAreaLight(shadingInfo);
 	return Color3(areaLightColor[0], areaLightColor[1],
 				  areaLightColor[2]);
 }

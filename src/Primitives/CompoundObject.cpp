@@ -50,9 +50,9 @@ Primitive* CompoundObject::IntersectShadow(const Ray &ray, float tMin,
 	return hitPrimitive;
 }
 
-Vector3 CompoundObject::GetNormal(ParamsForNormal const &paramsForNormal) const {
-	return paramsForNormal.childPrimHit != nullptr ?
-		paramsForNormal.childPrimHit->GetNormal(paramsForNormal) : Vector3::Zero();
+Vector3 CompoundObject::GetNormal(const ShadingInfo& shadingInfo) const {
+	return shadingInfo.childPrimitiveHit != nullptr ?
+		shadingInfo.childPrimitiveHit->GetNormal(shadingInfo) : Vector3::Zero();
 }
 
 // not valid for this primitive
@@ -61,21 +61,21 @@ Vector3 CompoundObject::ComputeHardNormal(Point3 const &position) const {
 }
 
 void CompoundObject::SamplePrimitive(Point3& resultingSample,
-									 IntersectionResult const & intersectionResult) {
-	auto childPrim = intersectionResult.childPrimitiveHit;
+									 const ShadingInfo& shadingInfo) {
+	auto childPrim = shadingInfo.childPrimitiveHit;
 	if (childPrim != nullptr) {
-		childPrim->SamplePrimitive(resultingSample, intersectionResult);
+		childPrim->SamplePrimitive(resultingSample, shadingInfo);
 	}
 }
 
-const GenericSampler* CompoundObject::GetSampler(IntersectionResult const & intersectionResult) {
-	return intersectionResult.childPrimitiveHit != nullptr ?
-		intersectionResult.childPrimitiveHit->GetSampler(intersectionResult) : nullptr;
+const GenericSampler* CompoundObject::GetSampler(const ShadingInfo& shadingInfo) {
+	return shadingInfo.childPrimitiveHit != nullptr ?
+		shadingInfo.childPrimitiveHit->GetSampler(shadingInfo) : nullptr;
 }
 
-float CompoundObject::PDF(ParamsForNormal const &paramsForNormal) const {
-	return paramsForNormal.childPrimHit != nullptr ?
-		paramsForNormal.childPrimHit->PDF(paramsForNormal) : 0.0f;
+float CompoundObject::PDF(const ShadingInfo& shadingInfo) const {
+	return shadingInfo.childPrimitiveHit != nullptr ?
+		shadingInfo.childPrimitiveHit->PDF(shadingInfo) : 0.0f;
 }
 
 AABBox CompoundObject::GetBoundingBox() const {

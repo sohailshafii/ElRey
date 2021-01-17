@@ -11,12 +11,11 @@ DirectionalLight::DirectionalLight(bool castsShadows,
 DirectionalLight::~DirectionalLight() {
 }
 
-Vector3 DirectionalLight::GetDirectionFromPositionScaled(
-	const IntersectionResult& intersectionRes) const {
+Vector3 DirectionalLight::GetDirectionFromPositionScaled(const ShadingInfo& shadingInfo) const {
 	return lightDirection;
 }
 
-Color3 DirectionalLight::GetRadiance(const IntersectionResult& intersectionRes, const Scene& scene) const {
+Color3 DirectionalLight::GetRadiance(const ShadingInfo& shadingInfo, const Scene& scene) const {
 	return radiancePreScaled;
 }
 

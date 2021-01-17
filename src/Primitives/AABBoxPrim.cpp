@@ -267,9 +267,10 @@ Primitive* AABBoxPrim::IntersectShadow(const Ray &ray, float tMin, float tMax) {
 	return nullptr;
 }
 
-Vector3 AABBoxPrim::GetNormal(ParamsForNormal const &paramsForNormal) const {
-	return Vector3(paramsForNormal.genericMetadata1, paramsForNormal.genericMetadata2,
-				   paramsForNormal.genericMetadata3);
+Vector3 AABBoxPrim::GetNormal(const ShadingInfo &shadingInfo) const {
+	return Vector3(shadingInfo.intGenericMetadata1,
+				   shadingInfo.intGenericMetadata2,
+				   shadingInfo.intGenericMetadata3);
 }
 
 Vector3 AABBoxPrim::ComputeHardNormal(Point3 const &position) const {
@@ -293,11 +294,11 @@ Vector3 AABBoxPrim::ComputeHardNormal(Point3 const &position) const {
 }
 
 void AABBoxPrim::SamplePrimitive(Point3& resultingSample,
-								 IntersectionResult const & intersectionResult) {
+								 const ShadingInfo &shadingInfo) {
 	// we have to sample to unit cube; leave out unless we need it
 }
 
-float AABBoxPrim::PDF(ParamsForNormal const &paramsForNormal) const {
+float AABBoxPrim::PDF(const ShadingInfo &shadingInfo) const {
 	return invVolume;
 }
 

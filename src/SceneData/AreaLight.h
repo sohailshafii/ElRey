@@ -28,9 +28,8 @@ public:
 		return primitiveName;
 	}
 	
-	virtual Vector3 GetDirectionFromPositionScaled(
-		const IntersectionResult& intersectionRes) const override;
-	virtual Color3 GetRadiance(const IntersectionResult& intersectionRes,
+	virtual Vector3 GetDirectionFromPositionScaled(const ShadingInfo& shadingInfo) const override;
+	virtual Color3 GetRadiance(const ShadingInfo& shadingInfo,
 							   const Scene& scene) const override;
 	
 	virtual bool IsAmbient() const override {
@@ -45,16 +44,13 @@ public:
 		return true;
 	}
 
-	virtual void ComputeAndStoreAreaLightInformation(
-		IntersectionResult& intersectionRes,
-		ParamsForNormal const &paramsForNormal) const override;
+	virtual void ComputeAndStoreAreaLightInformation(ShadingInfo& shadingInfo) const override;
 
-	virtual float GeometricTerm(
-		const IntersectionResult& intersectionRes)
+	virtual float GeometricTerm(const ShadingInfo& shadingInfo)
 		const override;
 
-	virtual float PDF(ParamsForNormal const &paramsForNormal) const override {
-		return primitive->PDF(paramsForNormal);
+	virtual float PDF(const ShadingInfo& shadingInfo) const override {
+		return primitive->PDF(shadingInfo);
 	}
 
 private:

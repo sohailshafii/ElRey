@@ -85,7 +85,7 @@ Primitive* Disk::IntersectShadow(const Ray &ray, float tMin, float tMax) {
 	return nullptr;
 }
 
-Vector3 Disk::GetNormal(ParamsForNormal const &paramsForNormal) const {
+Vector3 Disk::GetNormal(const ShadingInfo& shadingInfo) const {
 	return normalVec;
 }
 
@@ -94,11 +94,11 @@ Vector3 Disk::ComputeHardNormal(Point3 const &position) const {
 }
 
 void Disk::SamplePrimitive(Point3& resultingSample,
-						   IntersectionResult const & intersectionResult) {
+						   const ShadingInfo& shadingInfo) {
 	// Leave out for now
 }
 
-float Disk::PDF(ParamsForNormal const &paramsForNormal) const {
+float Disk::PDF(const ShadingInfo& shadingInfo) const {
 	return 1.0f; // Doesn't return a valid value because we don't use it for sampling
 }
 

@@ -12,12 +12,12 @@ public:
 								 IntersectionResult &intersectionResult) override;
 	virtual Primitive* IntersectShadow(const Ray &ray, float tMin, float tMax) override;
 	
-	virtual Vector3 GetNormal(ParamsForNormal const &paramsForNormal) const override;
+	virtual Vector3 GetNormal(const ShadingInfo& shadingInfo) const override;
 	
 	virtual Vector3 ComputeHardNormal(Point3 const &position) const override;
 	
-	virtual Material const * GetMaterial(IntersectionResult const & intersectionResult) override {
-		return instancePrimitive->GetMaterial(intersectionResult);
+	virtual Material const * GetMaterial(const ShadingInfo& shadingInfo) override {
+		return instancePrimitive->GetMaterial(shadingInfo);
 	}
 
 	virtual void SetSampler(std::shared_ptr<GenericSampler> const & sampler) override {
@@ -25,16 +25,16 @@ public:
 	}
 
 	// a compound object might have a different sampler per-subbject
-	virtual const GenericSampler* GetSampler(IntersectionResult const & intersectionResult) override {
-		return instancePrimitive->GetSampler(intersectionResult);
+	virtual const GenericSampler* GetSampler(const ShadingInfo& shadingInfo) override {
+		return instancePrimitive->GetSampler(shadingInfo);
 	}
 
-	virtual float PDF(ParamsForNormal const &paramsForNormal) const override {
-		return instancePrimitive->PDF(paramsForNormal);
+	virtual float PDF(const ShadingInfo& shadingInfo) const override {
+		return instancePrimitive->PDF(shadingInfo);
 	}
 	
 	virtual void SamplePrimitive(Point3& resultingSample,
-								 IntersectionResult const & intersectionResult) override;
+								 const ShadingInfo& shadingInfo) override;
 	virtual bool HasBoundingBox() const override;
 	
 	virtual AABBox GetBoundingBox() const override;

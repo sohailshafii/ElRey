@@ -9,20 +9,20 @@ LambertianMaterial::LambertianMaterial(float ka, float kd, const Color3& color) 
 	deadColor = Color::Black();
 }
 
-Color LambertianMaterial::GetAmbientColor(const IntersectionResult &intersectionResult) const {
-	Color3 ambientColor = ambientBRDF.GetRho(intersectionResult);
+Color LambertianMaterial::GetAmbientColor(const ShadingInfo& shadingInfo) const {
+	Color3 ambientColor = ambientBRDF.GetRho(shadingInfo);
 	return Color(ambientColor[0], ambientColor[1], ambientColor[2], 1.0f);
 }
 
-Color LambertianMaterial::GetDirectColor(const IntersectionResult &intersectionResult) const {
-	Color3 directColor =  diffuseBRDF.GetRadiance(intersectionResult);
+Color LambertianMaterial::GetDirectColor(const ShadingInfo& shadingInfo) const {
+	Color3 directColor =  diffuseBRDF.GetRadiance(shadingInfo);
 	return Color(directColor[0], directColor[1], directColor[2], 1.0f);
 }
 
-Color LambertianMaterial::GetColorForAreaLight(const IntersectionResult& intersectionResult) const {
-	if (intersectionResult.normalVector * intersectionResult.incomingDirInverse
+Color LambertianMaterial::GetColorForAreaLight(const ShadingInfo& shadingInfo) const {
+	if (shadingInfo.normalVector * shadingInfo.incomingDirInverse
 		> 0.0) {
-		Color3 directColor = diffuseBRDF.GetRadiance(intersectionResult);
+		Color3 directColor = diffuseBRDF.GetRadiance(shadingInfo);
 		return Color(directColor[0], directColor[1], directColor[2], 1.0f);
 	}
 	return deadColor;

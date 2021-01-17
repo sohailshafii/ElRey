@@ -10,10 +10,10 @@ InstancePrimitive::~InstancePrimitive() {
 	delete instancePrimitive;
 }
 
-void InstancePrimitive::SamplePrimitive(Point3& resultingSample, IntersectionResult const & intersectionResult) {
+void InstancePrimitive::SamplePrimitive(Point3& resultingSample, const ShadingInfo& shadingInfo) {
 	// if our child is an instance primitive, then that one will apply its
 	// own transform too
-	instancePrimitive->SamplePrimitive(resultingSample, intersectionResult);
+	instancePrimitive->SamplePrimitive(resultingSample, shadingInfo);
 	resultingSample = GetLocalToWorldPos(resultingSample);
 }
 
@@ -116,10 +116,10 @@ Primitive* InstancePrimitive::IntersectShadow(const Ray &rayWorld,
 		this : nullptr;
 }
 
-Vector3 InstancePrimitive::GetNormal(ParamsForNormal const &paramsForNormal) const {
+Vector3 InstancePrimitive::GetNormal(const ShadingInfo& shadingInfo) const {
 	// hack; modify intersection position so that primitive thinks it's in local space
-	ParamsForNormal resModified = paramsForNormal;
-	resModified.intersectionPosPrimSpace = GetWorldToLocalPos(resModified.intersectionPosPrimSpace);
+	ShadingInfo resModified = shadingInfo;
+	resModified.intersectionPosition = GetWorldToLocalPos(resModified.intersectionPosition);
 	resModified.rayDirection = GetWorldToLocalDir(resModified.rayDirection);
 	// if our child is an instance primitive, then that one will apply its
 	// own transform too

@@ -19,16 +19,16 @@ public:
 								 IntersectionResult &intersectionResult) override;
 	virtual Primitive* IntersectShadow(const Ray &ray, float tMin, float tMax) override;
 	
-	virtual Vector3 GetNormal(ParamsForNormal const &paramsForNormal) const override;
+	virtual Vector3 GetNormal(const ShadingInfo& shadingInfo) const override;
 	
 	virtual Vector3 ComputeHardNormal(Point3 const &position) const override;
 	
 	void GenerateBoundingBox();
 	
 	virtual void SamplePrimitive(Point3& resultingSample,
-								 IntersectionResult const & intersectionResult) override;
+								 const ShadingInfo& shadingInfo) override;
 	
-	virtual float PDF(ParamsForNormal const &paramsForNormal) const override;
+	virtual float PDF(const ShadingInfo& shadingInfo) const override;
 	
 	virtual bool HasBoundingBox() const override {
 		return true;

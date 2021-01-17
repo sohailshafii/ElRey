@@ -113,25 +113,25 @@ Vector3 TriangleMeshPrimitive::ComputeHardNormal(Point3 const &position) const {
 	return normal;
 }
 
-Vector3 TriangleMeshPrimitive::GetNormal(ParamsForNormal const &paramsForNormal) const {
+Vector3 TriangleMeshPrimitive::GetNormal(const ShadingInfo &shadingInfo) const {
 	if (!isSmooth) {
 		return normal;
 	}
 		
 	Vector3 normal(triangleMesh->normals[index0]*
-				   (1 - paramsForNormal.genericMetadata1 - paramsForNormal.genericMetadata2)
-				   + triangleMesh->normals[index1] * paramsForNormal.genericMetadata1
-				   + triangleMesh->normals[index2] * paramsForNormal.genericMetadata2);
+				   (1 - shadingInfo.intGenericMetadata1 - shadingInfo.intGenericMetadata2)
+				   + triangleMesh->normals[index1] * shadingInfo.intGenericMetadata1
+				   + triangleMesh->normals[index2] * shadingInfo.intGenericMetadata2);
 	normal.Normalize();
 	return normal;
 }
 
 void TriangleMeshPrimitive::SamplePrimitive(Point3& resultingSample,
-											IntersectionResult const & intersectionResult) {
+											const ShadingInfo &shadingInfo) {
 	// Not valid yet
 }
 
-float TriangleMeshPrimitive::PDF(ParamsForNormal const &paramsForNormal) const {
+float TriangleMeshPrimitive::PDF(const ShadingInfo &shadingInfo) const {
 	return 1.0f; // not used yet
 }
 

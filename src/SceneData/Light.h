@@ -27,7 +27,7 @@ public:
 		return " ";
 	}
 	
-	virtual Color3 GetRadiance(const IntersectionResult& intersectionRes,
+	virtual Color3 GetRadiance(const ShadingInfo& shadingInfo,
 							   const Scene& scene) const = 0;
 	
 	bool CastsShadows() {
@@ -42,12 +42,11 @@ public:
 		return false;
 	}
 
-	virtual float GeometricTerm(
-		const IntersectionResult& intersectionRes) const {
+	virtual float GeometricTerm(const ShadingInfo& shadingInfo) const {
 		return 1.0f;
 	}
 
-	virtual float PDF(ParamsForNormal const &paramsForNormal) const {
+	virtual float PDF(const ShadingInfo& shadingInfo) const {
 		return 1.0f;
 	}
 
@@ -59,15 +58,12 @@ public:
 		return nullptr;
 	}
 
-	virtual void ComputeAndStoreAreaLightInformation(
-		IntersectionResult& intersectionRes,
-		ParamsForNormal const &paramsForNormal) const
+	virtual void ComputeAndStoreAreaLightInformation(ShadingInfo& shadingInfo) const
 	{
 		// for area lights
 	}
 
-	virtual Vector3 GetDirectionFromPositionScaled(
-		const IntersectionResult& intersectionRes) const = 0;
+	virtual Vector3 GetDirectionFromPositionScaled(const ShadingInfo& shadingInfo) const = 0;
 	
 private:
 	bool castsShadows;

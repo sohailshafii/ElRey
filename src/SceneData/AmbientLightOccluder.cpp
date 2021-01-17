@@ -22,21 +22,20 @@ AmbientLightOccluder::~AmbientLightOccluder() {
 	}
 }
 
-Vector3 AmbientLightOccluder::GetDirectionFromPositionScaled(
-const IntersectionResult& intersectionRes) const {
+Vector3 AmbientLightOccluder::GetDirectionFromPositionScaled(const ShadingInfo &shadingInfo) const {
 	Point3 sp = ambientSampler->GetSampleOnHemisphere();
 	Vector3 right;
 	Vector3 up = Vector3::Up();
-	Vector3 forward = intersectionRes.normalVector;
+	Vector3 forward = shadingInfo.normalVector;
 	CommonMath::ComputeUVWFromWandU(right, up, forward);
 	return right*sp[0] + up*sp[1] + forward*sp[2];
 }
 
-Color3 AmbientLightOccluder::GetRadiance(const IntersectionResult& intersectionRes,
+Color3 AmbientLightOccluder::GetRadiance(const ShadingInfo &shadingInfo,
 										 const Scene& scene) const {
-	Vector3 castVec = GetDirectionFromPositionScaled(intersectionRes);
+	Vector3 castVec = GetDirectionFromPositionScaled(shadingInfo);
 	castVec.Normalize();
-	Point3 castPoint = intersectionRes.intersectionPosition +
+	Point3 castPoint = shadingInfo.intersectionPosition +
 		castVec*SHADOW_FEELER_EPSILON;
 	bool shadowFeelerIntersects = scene.ShadowFeelerIntersectsAnObject(Ray(castPoint, castVec), 0.0f, std::numeric_limits<float>::max());
 	

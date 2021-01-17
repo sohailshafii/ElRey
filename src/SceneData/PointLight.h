@@ -9,9 +9,8 @@ public:
 		const Color3& radiance, float radianceScale);
 	~PointLight();
 
-	virtual Vector3 GetDirectionFromPositionScaled(
-		const IntersectionResult& intersectionRes) const override;
-	virtual Color3 GetRadiance(const IntersectionResult& intersectionRes, const Scene& scene) const override;
+	virtual Vector3 GetDirectionFromPositionScaled(const ShadingInfo& shadingInfo) const override;
+	virtual Color3 GetRadiance(const ShadingInfo &shadingInfo, const Scene& scene) const override;
 
 private:
 	Point3 lightPosition;

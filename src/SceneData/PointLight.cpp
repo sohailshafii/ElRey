@@ -9,13 +9,13 @@ PointLight::PointLight(bool castsShadows, const Point3 &lightPosition,
 PointLight::~PointLight() {
 }
 
-Vector3 PointLight::GetDirectionFromPositionScaled(const IntersectionResult& intersectionRes)
+Vector3 PointLight::GetDirectionFromPositionScaled(const ShadingInfo& shadingInfo)
  const {
-	Vector3 directionFromPos = (intersectionRes.intersectionPosition - lightPosition);
+	Vector3 directionFromPos = (shadingInfo.intersectionPosition - lightPosition);
 	directionFromPos.Normalize();
 	return directionFromPos;
 }
 
-Color3 PointLight::GetRadiance(const IntersectionResult& intersectionRes, const Scene& scene) const {
+Color3 PointLight::GetRadiance(const ShadingInfo& shadingInfo, const Scene& scene) const {
 	return radiancePreScaled;
 }

@@ -29,9 +29,9 @@ Primitive* OpenCylinder::IntersectShadow(const Ray &ray, float tMin, float tMax)
 		this : nullptr;
 }
 
-Vector3 OpenCylinder::GetNormal(ParamsForNormal const &paramsForNormal) const {
-	Vector3 rayDir = paramsForNormal.rayDirection;
-	Vector3 normalVec = ComputeHardNormal(paramsForNormal.intersectionPosPrimSpace);
+Vector3 OpenCylinder::GetNormal(const ShadingInfo& shadingInfo) const {
+	Vector3 rayDir = shadingInfo.rayDirection;
+	Vector3 normalVec = ComputeHardNormal(shadingInfo.intersectionPosition);
 	// inside surface?
 	if (-rayDir*normalVec < 0.0f) {
 		normalVec = -normalVec;
@@ -86,11 +86,11 @@ bool OpenCylinder::TestRayAndSetTMax(const Ray &ray, float tMin, float& tMax) {
 }
 
 void OpenCylinder::SamplePrimitive(Point3& resultingSample,
-								   IntersectionResult const & intersectionResult) {
+								   const ShadingInfo& shadingInfo) {
 	// Leave out for now
 }
 
-float OpenCylinder::PDF(ParamsForNormal const &paramsForNormal) const {
+float OpenCylinder::PDF(const ShadingInfo& shadingInfo) const {
 	return 1.0f; // Doesn't return a valid value because we don't use it for sampling
 }
 

@@ -43,7 +43,7 @@ Primitive* Plane::IntersectShadow(const Ray &ray, float tMin, float tMax)
 	return this;
 }
 
-Vector3 Plane::GetNormal(ParamsForNormal const &paramsForNormal) const {
+Vector3 Plane::GetNormal(const ShadingInfo& shadingInfo) const {
 	return normal;
 }
 
@@ -52,10 +52,10 @@ Vector3 Plane::ComputeHardNormal(Point3 const &position) const {
 }
 
 void Plane::SamplePrimitive(Point3& resultingSample,
-							IntersectionResult const & intersectionResult) {
+							const ShadingInfo& shadingInfo) {
 	// not valid for area lighting
 }
 
-float Plane::PDF(ParamsForNormal const &paramsForNormal) const {
+float Plane::PDF(const ShadingInfo& shadingInfo) const {
 	return 1.0f; // not valid for area lighting
 }

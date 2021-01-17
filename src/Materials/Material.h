@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Materials/Color.h"
-#include "SceneData/IntersectionResult.h"
+#include "SceneData/ShadingInfo.h"
 
 class Material {
 public:
@@ -12,7 +12,7 @@ public:
 		
 	}
 	
-	virtual Color GetAmbientColor(const IntersectionResult &intersectionResult) const = 0;
-	virtual Color GetDirectColor(const IntersectionResult &intersectionResult) const = 0;
-	virtual Color GetColorForAreaLight(const IntersectionResult& intersectionResult) const = 0;
+	virtual Color GetAmbientColor(const ShadingInfo &shadingInfo) const = 0;
+	virtual Color GetDirectColor(const ShadingInfo &shadingInfo) const = 0;
+	virtual Color GetColorForAreaLight(const ShadingInfo &shadingInfo) const = 0;
 };

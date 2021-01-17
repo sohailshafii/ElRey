@@ -7,7 +7,7 @@
 #include "Materials/Material.h"
 #include "Math/AABBox.h"
 #include "SceneData/IntersectionResult.h"
-#include "SceneData/ParamsForNormal.h"
+#include "SceneData/ShadingInfo.h"
 #include "Sampling/GenericSampler.h"
 #include <string>
 
@@ -36,11 +36,11 @@ public:
 	virtual Primitive* IntersectShadow(const Ray &ray, float tMin, float tMax) = 0;
 	
 	virtual Vector3 ComputeHardNormal(Point3 const & position) const = 0;
-	virtual Vector3 GetNormal(ParamsForNormal const &paramsForNormal) const = 0;
+	virtual Vector3 GetNormal(const ShadingInfo &shadingInfo) const = 0;
 	
 	// a compound object might have a different material per sub-object
 	// which is why intersection result is required
-	virtual Material const * GetMaterial(IntersectionResult const & intersectionResult) {
+	virtual Material const * GetMaterial(const ShadingInfo& shadingInfo) {
 		return material.get();
 	}
 	
@@ -49,14 +49,14 @@ public:
 	}
 	
 	// a compound object might have a different sampler per-subbject
-	virtual GenericSampler const * GetSampler(IntersectionResult const & intersectionResult) {
+	virtual GenericSampler const * GetSampler(const ShadingInfo& shadingInfo) {
 		return sampler.get();
 	}
 	
 	virtual void SamplePrimitive(Point3& resultingSample,
-								 IntersectionResult const & intersectionResult) = 0;
+								 const ShadingInfo &shadingInfo) = 0;
 	
-	virtual float PDF(ParamsForNormal const &paramsForNormal) const {
+	virtual float PDF(const ShadingInfo &shadingInfo) const {
 		return 1.0f;
 	}
 

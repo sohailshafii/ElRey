@@ -101,11 +101,11 @@ Primitive* Triangle::IntersectShadow(const Ray &ray, float tMin, float tMax) {
 }
 
 void Triangle::SamplePrimitive(Point3& resultingSample,
-							   IntersectionResult const & intersectionResult) {
+							   const ShadingInfo &shadingInfo) {
 	// Not valid; necessary for sampling if we want area lights that are spheres
 }
 
-float Triangle::PDF(ParamsForNormal const &paramsForNormal) const {
+float Triangle::PDF(const ShadingInfo &shadingInfo) const {
 	return 1.0f; // invalid until we need to use it
 }
 

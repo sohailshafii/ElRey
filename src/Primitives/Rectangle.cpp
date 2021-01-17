@@ -72,14 +72,14 @@ Primitive* Rectangle::IntersectShadow(const Ray &ray, float tMin, float tMax)
 }
 
 void Rectangle::SamplePrimitive(Point3& resultingSample,
-								IntersectionResult const & intersectionResult) {
+								const ShadingInfo &shadingInfo) {
 	Point2 sampleOnSquare = sampler->GetSampleOnUnitSquare();
 	resultingSample = origin + side1Vec * sampleOnSquare[0] +
 		side2Vec * sampleOnSquare[1];
 }
 
 // each sample's probability is 1.0/inverseArea
-float Rectangle::PDF(ParamsForNormal const &paramsForNormal) const {
+float Rectangle::PDF(const ShadingInfo &shadingInfo) const {
 	return inverseArea;
 }
 

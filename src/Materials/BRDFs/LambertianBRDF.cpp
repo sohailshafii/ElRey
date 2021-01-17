@@ -11,10 +11,10 @@ LambertianBRDF::LambertianBRDF(float kd, const Color3& cd) {
 	this->uniformRadiance = this->cdScaled*INV_PI;
 }
 
-Color3 LambertianBRDF::GetRadiance(const IntersectionResult& IntersectionResult) const {
+Color3 LambertianBRDF::GetRadiance(const ShadingInfo& shadingInfo) const {
 	return this->uniformRadiance;
 }
 
-Color3 LambertianBRDF::GetRho(const IntersectionResult& IntersectionResult) const {
+Color3 LambertianBRDF::GetRho(const ShadingInfo& shadingInfo) const {
 	return this->cdScaled;
 }

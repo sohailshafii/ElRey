@@ -71,8 +71,8 @@ Primitive* Sphere::IntersectShadow(const Ray &ray, float tMin, float tMax) {
 	return nullptr;
 }
 
-Vector3 Sphere::GetNormal(ParamsForNormal const &paramsForNormal) const {
-	return ComputeHardNormal(paramsForNormal.intersectionPosPrimSpace);
+Vector3 Sphere::GetNormal(const ShadingInfo &shadingInfo) const {
+	return ComputeHardNormal(shadingInfo.intersectionPosition);
 }
 
 Vector3 Sphere::ComputeHardNormal(Point3 const &position) const {
@@ -82,11 +82,11 @@ Vector3 Sphere::ComputeHardNormal(Point3 const &position) const {
 }
 
 void Sphere::SamplePrimitive(Point3& resultingSample,
-							 IntersectionResult const & intersectionResult) {
+							 const ShadingInfo &shadingInfo) {
 	// Not valid; necessary for sampling if we want area lights that are spheres
 }
 
-float Sphere::PDF(ParamsForNormal const &paramsForNormal) const {
+float Sphere::PDF(const ShadingInfo &shadingInfo) const {
 	return 1.0f; // invalid until we need to use it
 }
 

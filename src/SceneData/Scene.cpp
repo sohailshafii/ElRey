@@ -3,7 +3,7 @@
 #include <stdexcept>
 #include <sstream>
 #include "Math/CommonMath.h"
-#include "IntersectionResult.h"
+#include "SceneData/ShadingInfo.h"
 #include "SceneData/DirectionalLight.h"
 #include "SceneData/AmbientLight.h"
 #include "Primitives/CompoundObject.h"
@@ -92,26 +92,21 @@ bool Scene::Intersect(const Ray &ray, Color &newColor,
 	Primitive* closestPrimitive = baseAccelerator->Intersect(ray, tMin, tMax, intersectionResult);
 	
 	if (closestPrimitive != nullptr) {
-		Material const * primitiveMaterial = closestPrimitive->GetMaterial(intersectionResult);
-		intersectionResult.incomingDirInverse = -ray.GetDirection();
-		auto intersectionPos = ray.GetPositionAtParam(tMax);
-		intersectionResult.rayIntersectT = tMax;
-		intersectionResult.intersectionPosition = intersectionPos;
-		
-		ParamsForNormal paramsForNormal(ray.GetDirection(),
-										intersectionPos,
-										intersectionResult.genericMetadata1,
-										intersectionResult.genericMetadata2,
-										intersectionResult.genericMetadata3,
-										intersectionResult.childPrimitiveHit);
-		Vector3 normalVec = closestPrimitive->GetNormal(paramsForNormal);
-		intersectionResult.normalVector = normalVec;
+		ShadingInfo shadingInfo(intersectionResult.genericMetadata1,
+								intersectionResult.genericMetadata2,
+								intersectionResult.genericMetadata3,
+								intersectionResult.childPrimitiveHit,
+								ray.GetDirection(),
+								ray.GetPositionAtParam(tMax));
+		Material const * primitiveMaterial = closestPrimitive->GetMaterial(shadingInfo);
+		Vector3 normalVec = closestPrimitive->GetNormal(shadingInfo);
+		shadingInfo.normalVector = normalVec;
 		
 		// ambient light if available
 		if (ambientLight != nullptr) {
-			auto lightRadiance = ambientLight->GetRadiance(intersectionResult, *this);
+			auto lightRadiance = ambientLight->GetRadiance(shadingInfo, *this);
 			Color lightRadColor4 = Color(lightRadiance[0], lightRadiance[1], lightRadiance[2], 0.0);
-			newColor += primitiveMaterial->GetAmbientColor(intersectionResult)*lightRadColor4;
+			newColor += primitiveMaterial->GetAmbientColor(shadingInfo)*lightRadColor4;
 		}
 		
 		for (auto currentLight : lights) {
@@ -124,16 +119,16 @@ bool Scene::Intersect(const Ray &ray, Color &newColor,
 
 			if (isAreaLight) {
 				primitiveToExclude = currentLight->GetPrimitive();
-				currentLight->ComputeAndStoreAreaLightInformation(intersectionResult, paramsForNormal);
-				vectorToLight = intersectionResult.vectorToLight;
-				vectorMagn = intersectionResult.vectorToLightScaled.Norm();
+				currentLight->ComputeAndStoreAreaLightInformation(shadingInfo);
+				vectorToLight = shadingInfo.vectorToLight;
+				vectorMagn = shadingInfo.vectorToLightScaled.Norm();
 				projectionTerm = vectorToLight * normalVec;
 
 				// if primitive we struck is area light itself, no need to test light visibility
 				if (primitiveToExclude == closestPrimitive)
 				{
 					newColor +=
-						primitiveMaterial->GetColorForAreaLight(intersectionResult);
+						primitiveMaterial->GetColorForAreaLight(shadingInfo);
 					continue;
 				}
 			}
@@ -141,23 +136,23 @@ bool Scene::Intersect(const Ray &ray, Color &newColor,
 				// infinite lights don't rely on normalization
 				auto lightDistanceInfinite = currentLight->IsLightDistanceInfinite();
 				vectorToLight = -currentLight->GetDirectionFromPositionScaled(
-																			  intersectionResult);
+																			  shadingInfo);
 				if (lightDistanceInfinite) {
 					vectorMagn = std::numeric_limits<float>::max();
 				}
 				else {
 					vectorMagn = vectorToLight.Norm();
-					intersectionResult.vectorToLightScaled = vectorToLight;
+					shadingInfo.vectorToLightScaled = vectorToLight;
 					vectorToLight /= vectorMagn;
 				}
 
 				projectionTerm = vectorToLight * normalVec;
-				intersectionResult.vectorToLight = vectorToLight;
+				shadingInfo.vectorToLight = vectorToLight;
 			}
 			
 			if (projectionTerm > 0.0f) {
 				bool inShadow = false;
-				Ray shadowFeelerRay(intersectionPos+vectorToLight*SHADOW_FEELER_EPSILON, vectorToLight);
+				Ray shadowFeelerRay(shadingInfo.intersectionPosition+vectorToLight*SHADOW_FEELER_EPSILON, vectorToLight);
 				// test shadow feeler if light supports it!
 				if (currentLight->CastsShadows() &&
 					ShadowFeelerIntersectsAnObject(shadowFeelerRay, 0.0f, vectorMagn,
@@ -166,17 +161,17 @@ bool Scene::Intersect(const Ray &ray, Color &newColor,
 				}
 				
 				if (!inShadow) {
-					auto lightRadiance = currentLight->GetRadiance(intersectionResult, *this);
+					auto lightRadiance = currentLight->GetRadiance(shadingInfo, *this);
 
 					Color lightRadColor4 = Color(lightRadiance[0], lightRadiance[1],
 						lightRadiance[2], 0.0);
 					newColor += isAreaLight ?
-						primitiveMaterial->GetColorForAreaLight(intersectionResult)*
+						primitiveMaterial->GetColorForAreaLight(shadingInfo)*
 						lightRadColor4*projectionTerm*
-						currentLight->GeometricTerm(intersectionResult)/
-						currentLight->PDF(paramsForNormal)
+						currentLight->GeometricTerm(shadingInfo)/
+						currentLight->PDF(shadingInfo)
 						:
-						primitiveMaterial->GetDirectColor(intersectionResult)*
+						primitiveMaterial->GetDirectColor(shadingInfo)*
 						lightRadColor4*projectionTerm;
 				}
 			}

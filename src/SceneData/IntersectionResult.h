@@ -13,17 +13,6 @@ public:
 	{
 		childPrimitiveHit = nullptr;
 	}
-
-	// All items are in world space unless specified otherwise
-	// usually lighting deals with incoming ray facing away from surface
-	Vector3 vectorToLight, vectorToLightScaled;
-
-	Vector3 areaLightNormalVector;
-	Vector3 incomingDirInverse;
-	Vector3 normalVector;
-	Point3 intersectionPosition;
-	// special stuff
-	Point3 samplePointOnLight;
 	
 	float rayIntersectT;
 	float genericMetadata1, genericMetadata2,

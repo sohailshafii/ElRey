@@ -22,17 +22,17 @@ public:
 								 IntersectionResult &intersectionResult) override;
 	virtual Primitive* IntersectShadow(const Ray &ray, float tMin, float tMax) override;
 	
-	virtual Vector3 GetNormal(ParamsForNormal const &paramsForNormal) const override;
+	virtual Vector3 GetNormal(const ShadingInfo& shadingInfo) const override;
 	
 	virtual Vector3 ComputeHardNormal(Point3 const &position) const override;
 	
 	virtual void SamplePrimitive(Point3& resultingSample,
-								 IntersectionResult const & intersectionResult) override;
+								 const ShadingInfo& shadingInfo) override;
 	
 	// a compound object might have a different sampler per-subbject
-	virtual const GenericSampler* GetSampler(IntersectionResult const & intersectionResult) override;
+	virtual const GenericSampler* GetSampler(const ShadingInfo& shadingInfo) override;
 	
-	virtual float PDF(ParamsForNormal const &paramsForNormal) const override;
+	virtual float PDF(const ShadingInfo& shadingInfo) const override;
 	
 	virtual bool HasBoundingBox() const override {
 		return true;
