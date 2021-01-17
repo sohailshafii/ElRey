@@ -406,6 +406,8 @@ void PrimitiveLoader::LoadModelFromJSON(ModelPrimitiveInfo* primInfo,
 		CommonLoaderFunctions::SafeGetToken(jsonObj, "local_to_world_transform"),
 											localToWorld, worldToLocal);
 	}
+	
+	PrimitiveLoader::LoadModel(primInfo, fileName, isSmooth, objMaterial, 						objectName, reverseNormals, localToWorld);
 }
 
 void PrimitiveLoader::LoadModel(ModelPrimitiveInfo* primInfo,
