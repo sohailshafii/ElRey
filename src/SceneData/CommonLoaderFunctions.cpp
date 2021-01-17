@@ -169,7 +169,7 @@ void CommonLoaderFunctions::SetUpTransformFromJsonNode(nlohmann::json const & tr
 	}
 	
 	for(size_t i = 0; i < localToWorldArray.size(); i++) {
-		// not the difference in order
+		// note the difference in order
 		localToWorld = localToWorldArray[i] * localToWorld;
 		worldToLocal = worldToLocal * worldToLocalArray[i];
 	}

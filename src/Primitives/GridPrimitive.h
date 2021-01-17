@@ -8,6 +8,10 @@
 
 class GridPrimitive : public Primitive {
 public:
+	GridPrimitive(const std::string& iName) :
+		Primitive(iName) {
+	}
+	
 	GridPrimitive(const std::string& iName,
 				  const std::vector<Primitive*> & primitives,
 				  float multipier) :

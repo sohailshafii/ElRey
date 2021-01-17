@@ -2,6 +2,7 @@
 
 #include "ThirdParty/nlohmann/json.hpp"
 #include "Point3.h"
+#include "Matrix4x4.h"
 #include <vector>
 
 class Primitive;
@@ -45,16 +46,34 @@ private:
 		std::string name;
 	};
 public:
+	static void CreateGridOfGrids(Scene* scene,
+								  int numLevels,
+								  int gridRes,
+								  float gap = 0.05f,
+								  float bunnySize = 0.1f);
+	
 	static void AddPrimitivesToScene(Scene* scene,
 									 nlohmann::json const & objectsArray);
+	
+	static InstancePrimitive* CreateInstancePrimitive(std::string const & objectName,
+													  Primitive* originalPrimitive,
+													  Matrix4x4 const & localToWorld,
+													  Matrix4x4 const & worldToLocal);
 	
 	static InstancePrimitive* CreateInstancePrimitive(Scene* scene,
 											  const nlohmann::json& jsonObj);
 	static Primitive* CreatePrimitive(const nlohmann::json& jsonObj);
 	
+	static void LoadModelFromJSON(ModelPrimitiveInfo* primInfo,
+								  const nlohmann::json& jsonObj);
 	// OBJ only for now
 	static void LoadModel(ModelPrimitiveInfo* primInfo,
-						  const nlohmann::json& jsonObj);
+						  std::string const & fileName,
+						  bool isSmooth,
+						  std::shared_ptr<Material> objMaterial,
+						  std::string const & objectName,
+						  bool reverseNormals,
+						  Matrix4x4 const & localToWorld);
 	
 private:
 	static void AddFaceIndex(TriangleMesh *mesh,

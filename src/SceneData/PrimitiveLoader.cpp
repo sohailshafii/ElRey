@@ -13,6 +13,7 @@
 #include "Primitives/TriangleMeshPrim.h"
 #include "Primitives/TriangleMesh.h"
 #include "Primitives/GridPrimitive.h"
+#include "Materials/LambertianMaterial.h"
 #include "SceneData/Scene.h"
 #include "SceneData/CommonLoaderFunctions.h"
 #include "Math/CommonMath.h"
@@ -21,11 +22,69 @@
 #include <sstream>
 #include <unordered_map>
 
+void PrimitiveLoader::CreateGridOfGrids(Scene* scene,
+										int numLevels,
+										int gridRes,
+										float gap,
+										float bunnySize) {
+	ModelPrimitiveInfo *primInfo = new ModelPrimitiveInfo();
+	auto newMaterial = std::make_shared<LambertianMaterial>(0.1f, 0.7f,
+		Color3(0.68f, 0.85f, 0.91f));
+	Matrix4x4 localToWorldScale;
+	localToWorldScale.ScaleMatrix(Vector3(0.02f, 0.02f, 0.02f));
+	Matrix4x4 worldToLocalScale;
+	worldToLocalScale.InvScaleMatrix(Vector3(0.02f, 0.02f, 0.02f));
+	std::string originalTeddyName = "teddy";
+	LoadModel(primInfo,"./teddy.obj", true, newMaterial,
+			  originalTeddyName, false, localToWorldScale);
+	GridPrimitive* newPrim = new GridPrimitive("gridOfGrids");
+	std::vector<Primitive*> primitives;
+	auto objectsToAdd = primInfo->primitives;
+	for(auto object : objectsToAdd) {
+		primitives.push_back(object);
+	}
+	delete primInfo;
+	newPrim->SetUpAccelerator(1.0f, primitives);
+	
+	Matrix4x4 localToWorldGrid;
+	Matrix4x4 worldToLocalGrid;
+	
+	GridPrimitive* currentGridPtr = newPrim;
+	
+	for (int level = 0, primIndex; level < numLevels; level++) {
+		std::ostringstream subGridName;
+		subGridName << "grid-" << level;
+		std::vector<Primitive*> allGridPrimitives;
+		GridPrimitive* subGrid = new GridPrimitive(subGridName.str());
+		
+		for (int i = 0; i < gridRes; i++) {
+			for(int j = 0; j < gridRes; j++, primIndex++) {
+				std::ostringstream instanceName;
+				instanceName << "instance-" << primIndex;
+				localToWorldGrid = Matrix4x4::TranslationMatrix(Vector3(i*(bunnySize+gap), 0.0f, j*(bunnySize + gap))) * localToWorldScale;
+				worldToLocalGrid = worldToLocalScale * Matrix4x4::InvTranslationMatrix(Vector3(i*(bunnySize+gap), 0.0f, j*(bunnySize + gap)));
+				InstancePrimitive* newInstance = CreateInstancePrimitive(instanceName.str(),
+										currentGridPtr,
+										localToWorldGrid,
+										worldToLocalGrid);
+				allGridPrimitives.push_back(newInstance);
+			}
+		}
+		
+		bunnySize = gridRes * bunnySize + (gridRes - 1.0) * gap;
+		gap = 0.05f * bunnySize;
+		subGrid->SetUpAccelerator(1.0f, allGridPrimitives);
+		currentGridPtr = subGrid;
+	}
+	
+	scene->AddPrimitive(currentGridPtr);
+}
+
 void PrimitiveLoader::AddPrimitivesToScene(Scene* scene,
 										   nlohmann::json const & objectsArray) {
 	std::vector<nlohmann::json> instancePrimitiveJsonObjs;
 	std::vector<nlohmann::json> gridPrimitives;
-	std::vector<ModelPrimitiveInfo*> modelPrimitives;
+	std::vector<ModelPrimitiveInfo*> modelPrimitiveInfos;
 	
 	for(auto& element : objectsArray.items()) {
 		nlohmann::json elementJson = element.value();
@@ -40,8 +99,8 @@ void PrimitiveLoader::AddPrimitivesToScene(Scene* scene,
 		}
 		else if (typeName == "obj_model") {
 			ModelPrimitiveInfo *primInfo = new ModelPrimitiveInfo();
-			PrimitiveLoader::LoadModel(primInfo, elementJson);
-			modelPrimitives.push_back(primInfo);
+			PrimitiveLoader::LoadModelFromJSON(primInfo, elementJson);
+			modelPrimitiveInfos.push_back(primInfo);
 		}
 		else {
 			Primitive* newPrimitive = PrimitiveLoader::CreatePrimitive(elementJson);
@@ -99,8 +158,8 @@ void PrimitiveLoader::AddPrimitivesToScene(Scene* scene,
 				std::cerr << "Could not remove primitive due to grid: " <<
 					primName << ". Trying models...\n";
 				int foundModelIndex = -1;
-				for (size_t i = 0; i < modelPrimitives.size(); i++) {
-					auto modelPrim = modelPrimitives[i];
+				for (size_t i = 0; i < modelPrimitiveInfos.size(); i++) {
+					auto modelPrim = modelPrimitiveInfos[i];
 					if (modelPrim->name == primName) {
 						foundModelIndex = i;
 						break;
@@ -109,12 +168,13 @@ void PrimitiveLoader::AddPrimitivesToScene(Scene* scene,
 				// add to grid, and erase from normal models list
 				// remainder goes into normal scene
 				if (foundModelIndex != -1) {
-					auto modelPrim = modelPrimitives[foundModelIndex];
+					auto modelPrim = modelPrimitiveInfos[foundModelIndex];
 					auto objectsToAdd = modelPrim->primitives;
 					for(auto object : objectsToAdd) {
 						primitives.push_back(object);
 					}
-					modelPrimitives.erase(modelPrimitives.begin() + foundModelIndex);
+					delete modelPrimitiveInfos[foundModelIndex];
+					modelPrimitiveInfos.erase(modelPrimitiveInfos.begin() + foundModelIndex);
 				}
 				else {
 					std::cerr << "Could not add model " << primName << " to grid.\n";
@@ -127,13 +187,24 @@ void PrimitiveLoader::AddPrimitivesToScene(Scene* scene,
 	}
 	
 	// add leftover models to main scene, if not part of any accelerators
-	for (size_t i = 0; i < modelPrimitives.size(); i++) {
-		auto modelPrim = modelPrimitives[i];
+	for (size_t i = 0; i < modelPrimitiveInfos.size(); i++) {
+		auto modelPrim = modelPrimitiveInfos[i];
 		auto modelPrimitives = modelPrim->primitives;
 		for(auto object : modelPrimitives) {
 			scene->AddPrimitive(object);
 		}
+		delete modelPrim;
 	}
+}
+
+InstancePrimitive* PrimitiveLoader::CreateInstancePrimitive(std::string const & objectName,
+															Primitive* originalPrimitive,
+															Matrix4x4 const & localToWorld,
+															Matrix4x4 const & worldToLocal) {
+	auto newPrimitive = new InstancePrimitive(objectName, originalPrimitive);
+	newPrimitive->SetLocalToWorld(localToWorld);
+	newPrimitive->SetWorldToLocal(worldToLocal);
+	return newPrimitive;
 }
 
 InstancePrimitive* PrimitiveLoader::CreateInstancePrimitive(Scene* scene,
@@ -314,8 +385,8 @@ Primitive* PrimitiveLoader::CreatePrimitive(const nlohmann::json& jsonObj) {
 	return newPrimitive;
 }
 
-void PrimitiveLoader::LoadModel(ModelPrimitiveInfo* primInfo,
-							  const nlohmann::json& jsonObj) {
+void PrimitiveLoader::LoadModelFromJSON(ModelPrimitiveInfo* primInfo,
+										const nlohmann::json& jsonObj) {
 	std::string fileName = CommonLoaderFunctions::SafeGetToken(jsonObj, "file_name");
 	bool isSmooth = CommonLoaderFunctions::SafeGetToken(jsonObj, "is_smooth");
 	auto materialNode = CommonLoaderFunctions::SafeGetToken(jsonObj, "material");
@@ -335,7 +406,15 @@ void PrimitiveLoader::LoadModel(ModelPrimitiveInfo* primInfo,
 		CommonLoaderFunctions::SafeGetToken(jsonObj, "local_to_world_transform"),
 											localToWorld, worldToLocal);
 	}
-	
+}
+
+void PrimitiveLoader::LoadModel(ModelPrimitiveInfo* primInfo,
+								std::string const & fileName,
+								bool isSmooth,
+								std::shared_ptr<Material> objMaterial,
+								std::string const & objectName,
+								bool reverseNormals,
+								Matrix4x4 const & localToWorld) {
 #if __APPLE__
 	std::string scenePath = "../../" + fileName;
 #else
