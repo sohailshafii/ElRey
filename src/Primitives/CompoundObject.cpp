@@ -51,6 +51,10 @@ Primitive* CompoundObject::IntersectShadow(const Ray &ray, float tMin,
 }
 
 Vector3 CompoundObject::GetNormal(const ShadingInfo& shadingInfo) const {
+	if (shadingInfo.childPrimitiveHit == nullptr) {
+		int breakVar;
+		breakVar = 1;
+	}
 	return shadingInfo.childPrimitiveHit != nullptr ?
 		shadingInfo.childPrimitiveHit->GetNormal(shadingInfo) : Vector3::Zero();
 }

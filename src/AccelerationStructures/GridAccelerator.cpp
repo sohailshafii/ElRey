@@ -302,17 +302,17 @@ bool GridAccelerator::CheckBoundsOfRay(Ray const &ray, float tMin, float tMax,
 }
 
 Primitive* GridAccelerator::EvaluatePrimitiveCollectionCell(PrimitiveCollection & primitiveCollection, const Ray &ray, float tMin, float& tMax, IntersectionResult &intersectionResult, float tNext) {
-	float tMaxToTest = tNext;
-	// use tNext for tMax
-	// if something is hit, THEN set tMax
+	float tMaxTest = tMax;
+	IntersectionResult intersecResTemp;
 	auto hitPrimitive = IntersectAgainstPrimitiveCollection(primitiveCollection,
-															ray, tMin, tMaxToTest,
-															intersectionResult);
-	if (hitPrimitive != nullptr) {
-		tMax = tMaxToTest;
+															ray, tMin, tMaxTest,
+															intersecResTemp);
+	if (hitPrimitive != nullptr && tMaxTest < tNext) {
+		tMax = tMaxTest;
+		intersectionResult = intersecResTemp;
 		return hitPrimitive;
 	}
-	
+
 	return nullptr;
 }
 
