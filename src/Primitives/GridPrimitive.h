@@ -5,10 +5,8 @@
 #include "Math/Vector3.h"
 #include <vector>
 
-// TODO: build functions
 class GridPrimitive : public Primitive {
 public:
-	// Side vectors should NOT be normalized
 	GridPrimitive(const std::string& iName) :
 		Primitive(iName) {
 	}
@@ -66,22 +64,7 @@ private:
 	bool CheckBoundsOfRay(Ray const& ray, float tMin, float tMax,
 		RayParameters& rayParams);
 	
-	Primitive* EvaluatePrimitiveCollectionCell(PrimitiveCollection & primitiveCollection, const Ray &ray, float tMin, float& tMax, IntersectionResult &intersectionResult, float tNext) {
-		// don't set intersection results and tMax until we are tested against tNext
-		float tMaxTest = tMax;
-		IntersectionResult intersecResTemp;
-		auto hitPrimitive = IntersectAgainstPrimitiveCollection(primitiveCollection,
-																ray, tMin, tMaxTest,
-																intersecResTemp);
-		if (hitPrimitive != nullptr && tMaxTest < tNext) {
-			tMax = tMaxTest;
-			// TODO: try to avoid copy somehow, this is gross (but necessary)
-			intersectionResult = intersecResTemp;
-			return hitPrimitive;
-		}
-		
-		return nullptr;
-	}
+	Primitive* EvaluatePrimitiveCollectionCell(PrimitiveCollection & primitiveCollection, const Ray &ray, float tMin, float& tMax, IntersectionResult &intersectionResult, float tNext);
 	
 	Primitive* IntersectAgainstPrimitiveCollection(PrimitiveCollection & primitiveCollection, const Ray &ray, float tMin, float& tMax, IntersectionResult &intersectionResult);
 	

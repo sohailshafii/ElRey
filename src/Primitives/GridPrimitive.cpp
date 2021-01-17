@@ -2,6 +2,7 @@
 #include "GridPrimitive.h"
 #include "Math/CommonMath.h"
 
+// TODO build
 Primitive* GridPrimitive::Intersect(const Ray &ray, float tMin, float& tMax,
 									IntersectionResult &intersectionResult) {
 	Primitive* closestPrimitive = nullptr;
@@ -83,6 +84,8 @@ Primitive* GridPrimitive::Intersect(const Ray &ray, float tMin, float& tMax,
 		}
 	}
 	
+	intersectionResult.childPrimitiveHit = closestPrimitive;
+	
 	return closestPrimitive;
 }
 
@@ -159,8 +162,9 @@ Primitive* GridPrimitive::IntersectShadow(const Ray &ray, float tMin, float tMax
 }
 
 Vector3 GridPrimitive::GetNormal(const ShadingInfo& shadingInfo) const {
-	// nothing to see here; this primitive returns closest during intersections
-	return Vector3();
+	return shadingInfo.childPrimitiveHit != nullptr ?
+		shadingInfo.childPrimitiveHit->GetNormal(shadingInfo) :
+		Vector3();
 }
 
 Vector3 GridPrimitive::ComputeHardNormal(Point3 const &position) const {
@@ -170,12 +174,15 @@ Vector3 GridPrimitive::ComputeHardNormal(Point3 const &position) const {
 
 void GridPrimitive::SamplePrimitive(Point3& resultingSample,
 									const ShadingInfo& shadingInfo) {
-	// nothing to see here; this primitive returns closest during intersections
+	if (shadingInfo.childPrimitiveHit != nullptr) {
+		shadingInfo.childPrimitiveHit->SamplePrimitive(resultingSample,
+															  shadingInfo);
+	}
 }
 
 float GridPrimitive::PDF(const ShadingInfo& shadingInfo) const {
-	// nothing to see here; this primitive returns closest during intersections
-	return 1.0f;
+	return shadingInfo.childPrimitiveHit != nullptr ?
+		shadingInfo.childPrimitiveHit->PDF(shadingInfo) : 0.0f;
 }
 
 AABBox GridPrimitive::GetBoundingBox() const {
@@ -332,6 +339,11 @@ bool GridPrimitive::CheckBoundsOfRay(Ray const &ray, float tMin, float tMax,
 		t1 = tzMax;
 	}
 	
+	// constrict max based on max of the current limits of ray
+	if (t1 > tMax) {
+		t1 = tMax;
+	}
+	
 	// if entry is larger than exit, return false
 	if (t0 > t1) {
 		return false;
@@ -341,11 +353,6 @@ bool GridPrimitive::CheckBoundsOfRay(Ray const &ray, float tMin, float tMax,
 	// entry cannot be greater than max of ray
 	if (t0 > tMax) {
 		return false;
-	}
-	
-	// constrict max
-	if (t1 > tMax) {
-		t1 = tMax;
 	}
 	
 	// find cell coordinates of initial point
@@ -437,6 +444,21 @@ bool GridPrimitive::CheckBoundsOfRay(Ray const &ray, float tMin, float tMax,
 	return true;
 }
 
+Primitive* GridPrimitive::EvaluatePrimitiveCollectionCell(PrimitiveCollection & primitiveCollection, const Ray &ray, float tMin, float& tMax, IntersectionResult &intersectionResult, float tNext) {
+	float tMaxToTest = tNext;
+	// use tNext for tMax
+	// if something is hit, THEN set tMax
+	auto hitPrimitive = IntersectAgainstPrimitiveCollection(primitiveCollection,
+															ray, tMin, tMaxToTest,
+															intersectionResult);
+	if (hitPrimitive != nullptr) {
+		tMax = tMaxToTest;
+		return hitPrimitive;
+	}
+	
+	return nullptr;
+}
+
 Primitive* GridPrimitive::IntersectAgainstPrimitiveCollection(PrimitiveCollection &
 	primitiveCollection, const Ray &ray, float tMin, float& tMax,
 	IntersectionResult &intersectionResult) {
@@ -444,15 +466,11 @@ Primitive* GridPrimitive::IntersectAgainstPrimitiveCollection(PrimitiveCollectio
 	unsigned int numElements = primitivesInCollection.size();
 	
 	Primitive * closestPrimSoFar = nullptr;
-	IntersectionResult tempRes;
 	for (unsigned int index = 0; index < numElements; index++) {
 		auto currPrimitive = primitivesInCollection[index];
-
-		auto hitTest = currPrimitive->Intersect(ray, tMin, tMax, tempRes);
+		auto hitTest = currPrimitive->Intersect(ray, tMin, tMax, intersectionResult);
 		if (hitTest != nullptr) {
 			closestPrimSoFar = hitTest;
-			// TODO: try to avoid copy somehow, this is gross
-			intersectionResult = tempRes;
 		}
 	}
 	
