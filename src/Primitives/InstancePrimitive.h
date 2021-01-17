@@ -1,11 +1,12 @@
 #pragma once
 
 #include "Primitive.h"
+#include <memory>
 
 class InstancePrimitive : public Primitive {
 public:
 	InstancePrimitive(std::string const & iName,
-					  Primitive* primitive);
+					  std::shared_ptr<Primitive> primitive);
 	~InstancePrimitive();
 	
 	virtual Primitive* Intersect(const Ray &ray, float tMin, float& tMax,
@@ -73,7 +74,7 @@ public:
 	}
 	
 private:
-	Primitive* instancePrimitive;
+	std::shared_ptr<Primitive> instancePrimitive;
 	
 	Matrix4x4 worldToLocal, localToWorld;
 	Matrix4x4 localToWorldTranspose, worldToLocalTranspose;

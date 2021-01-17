@@ -2,12 +2,12 @@
 #include <iostream>
 
 InstancePrimitive::InstancePrimitive(std::string const & iName,
-									 Primitive* primitive) :
+									 std::shared_ptr<Primitive> primitive) :
 	Primitive(iName), instancePrimitive(primitive) {
 }
 
 InstancePrimitive::~InstancePrimitive() {
-	delete instancePrimitive;
+	//delete instancePrimitive;
 }
 
 void InstancePrimitive::SamplePrimitive(Point3& resultingSample, const ShadingInfo& shadingInfo) {

@@ -13,24 +13,24 @@
 class Scene {
 public:
 	Scene();
-	Scene(Primitive **primitives, unsigned int numPrimitives);
+	Scene(std::shared_ptr<Primitive> *primitives, unsigned int numPrimitives);
 	virtual ~Scene();
 
-	void AddPrimitive(Primitive *newPrimitive) {
+	void AddPrimitive(std::shared_ptr<Primitive> newPrimitive) {
 		return simpleWorld->AddPrimitive(newPrimitive);
 	}
 	
-	void AddPrimitives(Primitive **newPrimitives,
+	void AddPrimitives(std::shared_ptr<Primitive> *newPrimitives,
 					   unsigned int numNewPrimitives) {
 		return simpleWorld->AddPrimitives(newPrimitives,
 											  numNewPrimitives);
 	}
 	
-	void AddPrimitives(std::vector<Primitive*> newPrimitives) {
+	void AddPrimitives(std::vector<std::shared_ptr<Primitive>> newPrimitives) {
 		return simpleWorld->AddPrimitives(newPrimitives);
 	}
 	
-	void RemovePrimitive(Primitive* primitiveToRemove) {
+	void RemovePrimitive(std::shared_ptr<Primitive> primitiveToRemove) {
 		simpleWorld->RemovePrimitive(primitiveToRemove);
 	}
 	
@@ -46,11 +46,11 @@ public:
 	virtual bool Intersect(const Ray &ray, Color &newColor,
 		float tMin, float& tMax) const;
 
-	Primitive* GetPrimitive(unsigned int index) {
+	std::shared_ptr<Primitive> GetPrimitive(unsigned int index) {
 		return simpleWorld->GetPrimitive(index);
 	}
 
-	Primitive* FindPrimitiveByName(const std::string& name) {
+	std::shared_ptr<Primitive> FindPrimitiveByName(const std::string& name) {
 		return simpleWorld->FindPrimitiveByName(name);
 	}
 

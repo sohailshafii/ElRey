@@ -19,7 +19,7 @@ public:
 		
 	}
 	
-	virtual void SetPrimitive(Primitive* newPrimitive) {
+	virtual void SetPrimitive(std::shared_ptr<Primitive> newPrimitive) {
 		// must override
 	}
 	

@@ -16,7 +16,7 @@ Scene::Scene() {
 	mainCamera = nullptr;
 }
 
-Scene::Scene(Primitive **primitives, unsigned int numPrimitives) {
+Scene::Scene(std::shared_ptr<Primitive> *primitives, unsigned int numPrimitives) {
 	simpleWorld = new SimpleWorld(primitives, numPrimitives);
 	ambientLight = nullptr;
 	mainCamera = nullptr;

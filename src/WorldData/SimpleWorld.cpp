@@ -8,7 +8,7 @@ SimpleWorld::SimpleWorld() {
 	
 }
 
-SimpleWorld::SimpleWorld(Primitive **primitives,
+SimpleWorld::SimpleWorld(std::shared_ptr<Primitive> *primitives,
 						 unsigned int numPrimitives) {
 	for (unsigned int i = 0; i < numPrimitives; i++) {
 		this->primitives.push_back(primitives[i]);
@@ -16,18 +16,15 @@ SimpleWorld::SimpleWorld(Primitive **primitives,
 }
 
 SimpleWorld::~SimpleWorld() {
-	for(auto primitive : primitives) {
-		delete primitive;
-	}
 	primitives.clear();
 }
 
-void SimpleWorld::AddPrimitive(Primitive *newPrimitive) {
+void SimpleWorld::AddPrimitive(std::shared_ptr<Primitive> newPrimitive) {
 	if (newPrimitive == nullptr) {
 		throw std::runtime_error("Trying to add invalid primitive!");
 	}
 	std::string const & primitiveName = newPrimitive->GetName();
-	for(Primitive* prim : primitives)
+	for(auto prim : primitives)
 	{
 		if (prim->GetName() == primitiveName) {
 			std::stringstream exceptionMsg;
@@ -42,7 +39,7 @@ void SimpleWorld::AddPrimitive(Primitive *newPrimitive) {
 	primitives.push_back(newPrimitive);
 }
 
-void SimpleWorld::AddPrimitives(Primitive **newPrimitives, unsigned int numNewPrimitives) {
+void SimpleWorld::AddPrimitives(std::shared_ptr<Primitive> *newPrimitives, unsigned int numNewPrimitives) {
 	if (newPrimitives == nullptr || numNewPrimitives == 0) {
 		throw std::runtime_error("Trying to add invalid primitives!");
 	}
@@ -52,7 +49,7 @@ void SimpleWorld::AddPrimitives(Primitive **newPrimitives, unsigned int numNewPr
 	}
 }
 
-void SimpleWorld::AddPrimitives(std::vector<Primitive*> newPrimitives) {
+void SimpleWorld::AddPrimitives(std::vector<std::shared_ptr<Primitive>> newPrimitives) {
 	size_t numNewPrimitives = newPrimitives.size();
 	if (numNewPrimitives == 0) {
 		throw std::runtime_error("Trying to add invalid primitives!");
@@ -63,7 +60,7 @@ void SimpleWorld::AddPrimitives(std::vector<Primitive*> newPrimitives) {
 	}
 }
 
-void SimpleWorld::RemovePrimitive(Primitive* primitiveToRemove) {
+void SimpleWorld::RemovePrimitive(std::shared_ptr<Primitive> primitiveToRemove) {
 	if (primitiveToRemove == nullptr) {
 		throw std::runtime_error("Trying to remove invalid primitive!");
 	}
@@ -82,8 +79,12 @@ void SimpleWorld::RemovePrimitiveByName(std::string const & name) {
 	}
 }
 
-Primitive* SimpleWorld::FindPrimitiveByName(const std::string& name) {
-	Primitive* foundPrimitive = nullptr;
+std::shared_ptr<Primitive> SimpleWorld::GetPrimitive(unsigned int index) {
+	return primitives[index];
+}
+
+std::shared_ptr<Primitive> SimpleWorld::FindPrimitiveByName(const std::string& name) {
+	std::shared_ptr<Primitive> foundPrimitive = nullptr;
 
 	for (auto currentPrimitive : primitives) {
 		if (currentPrimitive->GetName() == name) {

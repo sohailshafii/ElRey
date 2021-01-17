@@ -42,7 +42,7 @@ namespace std {
 class PrimitiveLoader {
 private:
 	struct ModelPrimitiveInfo {
-		std::vector<Primitive*> primitives;
+		std::vector<std::shared_ptr<Primitive>> primitives;
 		std::string name;
 	};
 public:
@@ -55,14 +55,14 @@ public:
 	static void AddPrimitivesToScene(Scene* scene,
 									 nlohmann::json const & objectsArray);
 	
-	static InstancePrimitive* CreateInstancePrimitive(std::string const & objectName,
-													  Primitive* originalPrimitive,
+	static std::shared_ptr<InstancePrimitive> CreateInstancePrimitive(std::string const & objectName,
+													  std::shared_ptr<Primitive> originalPrimitive,
 													  Matrix4x4 const & localToWorld,
 													  Matrix4x4 const & worldToLocal);
 	
-	static InstancePrimitive* CreateInstancePrimitive(Scene* scene,
+	static std::shared_ptr<InstancePrimitive> CreateInstancePrimitive(Scene* scene,
 											  const nlohmann::json& jsonObj);
-	static Primitive* CreatePrimitive(const nlohmann::json& jsonObj);
+	static std::shared_ptr<Primitive> CreatePrimitive(const nlohmann::json& jsonObj);
 	
 	static void LoadModelFromJSON(ModelPrimitiveInfo* primInfo,
 								  const nlohmann::json& jsonObj);
@@ -81,5 +81,5 @@ private:
 							 unsigned int triIndex);
 	static void ComputeSmoothMeshNormals(std::shared_ptr<TriangleMesh>
 										 triangleMesh,
-										 std::vector<Primitive*>& allPrimitives);
+										 std::vector<std::shared_ptr<Primitive>>& allPrimitives);
 };

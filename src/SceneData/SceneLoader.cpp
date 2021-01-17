@@ -67,7 +67,7 @@ Scene* SceneLoader::DeserializeJSONFileIntoScene(const std::string &jsonFilePath
 		// find primitive if current light needs to be sampled
 		if (currentLight->IsAreaLight()) {
 			std::string const & primName = currentLight->GetPrimitiveName();
-			Primitive* foundPrimitive = scene->FindPrimitiveByName(primName);
+			std::shared_ptr<Primitive> foundPrimitive = scene->FindPrimitiveByName(primName);
 			if (foundPrimitive != nullptr) {
 				currentLight->SetPrimitive(foundPrimitive);
 			}

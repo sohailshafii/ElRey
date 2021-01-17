@@ -82,7 +82,7 @@ AABBox CompoundObject::GetBoundingBox() const {
 	return boundingBox;
 }
 
-void CompoundObject::AddPrimitive(Primitive * primitive) {
+void CompoundObject::AddPrimitive(std::shared_ptr<Primitive> primitive) {
 	primitives.push_back(primitive);
 	RecomputeBoundingBox();
 }
@@ -122,7 +122,7 @@ void CompoundObject::PrintBounds() {
 	boundingBox.PrintBounds();
 }
 
-Primitive* CompoundObject::GetSubPrimitiveByName(std::string const & intersecPrimName) const {
+std::shared_ptr<Primitive> CompoundObject::GetSubPrimitiveByName(std::string const & intersecPrimName) const {
 	for (auto primitive : primitives) {
 		if (primitive->GetName() == intersecPrimName) {
 			return primitive;

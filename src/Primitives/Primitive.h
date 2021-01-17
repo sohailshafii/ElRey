@@ -68,7 +68,7 @@ public:
 	
 	virtual AABBox GetBoundingBox() const = 0;
 
-	virtual Primitive* GetSubPrimitiveByName(std::string const & intersecPrimName) const {
+	virtual std::shared_ptr<Primitive> GetSubPrimitiveByName(std::string const & intersecPrimName) const {
 		return nullptr;
 	}
 	

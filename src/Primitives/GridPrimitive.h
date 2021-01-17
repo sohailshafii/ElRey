@@ -13,7 +13,7 @@ public:
 	}
 	
 	GridPrimitive(const std::string& iName,
-				  const std::vector<Primitive*> & primitives,
+				  const std::vector<std::shared_ptr<Primitive>> & primitives,
 				  float multipier) :
 		Primitive(iName) {
 		SetUpAccelerator(multipier, primitives);
@@ -22,7 +22,7 @@ public:
 	~GridPrimitive();
 	
 	void SetUpAccelerator(float multipier,
-						  const std::vector<Primitive*> & primitives);
+						  const std::vector<std::shared_ptr<Primitive>> & primitives);
 	
 	virtual Primitive* Intersect(const Ray &ray, float tMin, float& tMax,
 								 IntersectionResult &intersectionResult) override;
@@ -43,7 +43,7 @@ public:
 	
 	virtual AABBox GetBoundingBox() const override;
 	
-	virtual Primitive* GetSubPrimitiveByName(std::string const & intersecPrimName) const override;
+	virtual std::shared_ptr<Primitive> GetSubPrimitiveByName(std::string const & intersecPrimName) const override;
 	
 private:
 	class PrimitiveCollection {
@@ -60,7 +60,7 @@ private:
 		}
 		
 		AABBox boundingBox;
-		std::vector<Primitive*> primitives;
+		std::vector<std::shared_ptr<Primitive>> primitives;
 	};
 	
 	class RayParameters {
@@ -74,10 +74,10 @@ private:
 	};
 	
 	void SetupCells(float multipier,
-					const std::vector<Primitive*> & primitives);
+					const std::vector<std::shared_ptr<Primitive>> & primitives);
 	
-	Point3 ComputeMinCoordinates(std::vector<Primitive*> const & primitives);
-	Point3 ComputeMaxCoordinates(std::vector<Primitive*> const & primitives);
+	Point3 ComputeMinCoordinates(std::vector<std::shared_ptr<Primitive>> const & primitives);
+	Point3 ComputeMaxCoordinates(std::vector<std::shared_ptr<Primitive>> const & primitives);
 	
 	bool CheckBoundsOfRay(Ray const& ray, float tMin, float tMax,
 		RayParameters& rayParams);
@@ -97,8 +97,7 @@ private:
 	AABBox boundingBox;
 	// primitives that are not in cells, because they don't have
 	// bounding boxes, like planes
-	std::vector<Primitive*> allPrimRefs;
-	std::vector<Primitive*> primitivesNotInCells;
+	std::vector<std::shared_ptr<Primitive>> primitivesNotInCells;
 	std::vector<PrimitiveCollection> cells;
 	int nx, ny, nz;
 };

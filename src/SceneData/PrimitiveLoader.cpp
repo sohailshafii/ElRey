@@ -37,8 +37,8 @@ void PrimitiveLoader::CreateGridOfGrids(Scene* scene,
 	std::string originalTeddyName = "teddy";
 	LoadModel(primInfo,"./teddy.obj", true, newMaterial,
 			  originalTeddyName, false, localToWorldScale);
-	GridPrimitive* newPrim = new GridPrimitive("gridOfGrids");
-	std::vector<Primitive*> primitives;
+	std::shared_ptr<GridPrimitive> newPrim = std::make_shared<GridPrimitive>("gridOfGrids");
+	std::vector<std::shared_ptr<Primitive>> primitives;
 	auto objectsToAdd = primInfo->primitives;
 	for(auto object : objectsToAdd) {
 		primitives.push_back(object);
@@ -49,13 +49,13 @@ void PrimitiveLoader::CreateGridOfGrids(Scene* scene,
 	Matrix4x4 localToWorldGrid;
 	Matrix4x4 worldToLocalGrid;
 	
-	GridPrimitive* currentGridPtr = newPrim;
+	std::shared_ptr<GridPrimitive> currentGridPtr = newPrim;
 	
 	for (int level = 0, primIndex; level < numLevels; level++) {
 		std::ostringstream subGridName;
 		subGridName << "grid-" << level;
-		std::vector<Primitive*> allGridPrimitives;
-		GridPrimitive* subGrid = new GridPrimitive(subGridName.str());
+		std::vector<std::shared_ptr<Primitive>> allGridPrimitives;
+		std::shared_ptr<GridPrimitive> subGrid = std::make_shared<GridPrimitive>(subGridName.str());
 		
 		for (int i = 0; i < gridRes; i++) {
 			for(int j = 0; j < gridRes; j++, primIndex++) {
@@ -63,7 +63,7 @@ void PrimitiveLoader::CreateGridOfGrids(Scene* scene,
 				instanceName << "instance-" << primIndex;
 				localToWorldGrid = Matrix4x4::TranslationMatrix(Vector3(i*(bunnySize+gap), 0.0f, j*(bunnySize + gap))) * localToWorldScale;
 				worldToLocalGrid = worldToLocalScale * Matrix4x4::InvTranslationMatrix(Vector3(i*(bunnySize+gap), 0.0f, j*(bunnySize + gap)));
-				InstancePrimitive* newInstance = CreateInstancePrimitive(instanceName.str(),
+				std::shared_ptr<InstancePrimitive> newInstance = CreateInstancePrimitive(instanceName.str(),
 										currentGridPtr,
 										localToWorldGrid,
 										worldToLocalGrid);
@@ -103,19 +103,19 @@ void PrimitiveLoader::AddPrimitivesToScene(Scene* scene,
 			modelPrimitiveInfos.push_back(primInfo);
 		}
 		else {
-			Primitive* newPrimitive = PrimitiveLoader::CreatePrimitive(elementJson);
+			std::shared_ptr<Primitive> newPrimitive = PrimitiveLoader::CreatePrimitive(elementJson);
 			scene->AddPrimitive(newPrimitive);
 		}
 	}
 	
 	for(auto & instancePrimObj : instancePrimitiveJsonObjs) {
-		InstancePrimitive* instancePrim = CreateInstancePrimitive(scene,
+		std::shared_ptr<InstancePrimitive> instancePrim = CreateInstancePrimitive(scene,
 																  instancePrimObj);
 		if (instancePrim != nullptr) {
 			scene->AddPrimitive(instancePrim);
 			// original primitive cannot be used for intersections
 			// that's because the instance will be used for intersections instead
-			Primitive* originalPrimitive = scene->FindPrimitiveByName(
+			std::shared_ptr<Primitive> originalPrimitive = scene->FindPrimitiveByName(
 				instancePrim->GetOriginalPrimName());
 			if (originalPrimitive != nullptr) {
 				std::cout << originalPrimitive->GetName() << " used for instancing.\n";
@@ -144,10 +144,10 @@ void PrimitiveLoader::AddPrimitivesToScene(Scene* scene,
 			multipier = CommonLoaderFunctions::SafeGetToken(gridPrimJson, "multipier");
 		}
 		nlohmann::json childrenArray = gridPrimJson["children"];
-		std::vector<Primitive*> primitives;
+		std::vector<std::shared_ptr<Primitive>> primitives;
 		for(auto & child : childrenArray) {
 			std::string primName = child;
-			Primitive* originalPrimitive = scene->FindPrimitiveByName(primName);
+			std::shared_ptr<Primitive> originalPrimitive = scene->FindPrimitiveByName(primName);
 			if (originalPrimitive != nullptr) {
 				std::cout << originalPrimitive->GetName() << " used for grid.\n";
 				
@@ -181,8 +181,8 @@ void PrimitiveLoader::AddPrimitivesToScene(Scene* scene,
 				}
 			}
 		}
-		GridPrimitive* newPrim = new GridPrimitive(objectName, primitives,
-												   multipier);
+		std::shared_ptr<GridPrimitive> newPrim = std::make_shared<GridPrimitive>(
+												objectName, primitives, multipier);
 		scene->AddPrimitive(newPrim);
 	}
 	
@@ -197,44 +197,43 @@ void PrimitiveLoader::AddPrimitivesToScene(Scene* scene,
 	}
 }
 
-InstancePrimitive* PrimitiveLoader::CreateInstancePrimitive(std::string const & objectName,
-															Primitive* originalPrimitive,
+std::shared_ptr<InstancePrimitive> PrimitiveLoader::CreateInstancePrimitive(std::string const & objectName,
+															std::shared_ptr<Primitive> originalPrimitive,
 															Matrix4x4 const & localToWorld,
 															Matrix4x4 const & worldToLocal) {
-	auto newPrimitive = new InstancePrimitive(objectName, originalPrimitive);
+	auto newPrimitive = std::make_shared<InstancePrimitive>(objectName, originalPrimitive);
 	newPrimitive->SetLocalToWorld(localToWorld);
 	newPrimitive->SetWorldToLocal(worldToLocal);
 	return newPrimitive;
 }
 
-InstancePrimitive* PrimitiveLoader::CreateInstancePrimitive(Scene* scene,
+std::shared_ptr<InstancePrimitive> PrimitiveLoader::CreateInstancePrimitive(Scene* scene,
 													const nlohmann::json& jsonObj) {
 
-	InstancePrimitive* newPrimitive = nullptr;
+	std::shared_ptr<InstancePrimitive> newPrimitive;
 	std::string objectName = CommonLoaderFunctions::SafeGetToken(jsonObj, "name");
 	std::string instanceName = CommonLoaderFunctions::SafeGetToken(jsonObj, "inst_name");
 
-	Primitive* originalPrimitive = nullptr;
+	std::shared_ptr<Primitive> originalPrimitive = nullptr;
 	unsigned int numPrimitives = scene->GetNumPrimitives();
 	for(unsigned int primIndex = 0; primIndex < numPrimitives; primIndex++) {
-		Primitive *currPrimitive = scene->FindPrimitiveByName(instanceName);
+		auto currPrimitive = scene->FindPrimitiveByName(instanceName);
 		if (currPrimitive != nullptr) {
 			originalPrimitive = currPrimitive;
 			break;
 		}
 	}
 	
-	newPrimitive = new InstancePrimitive(objectName, originalPrimitive);
-	InstancePrimitive* instancePrim = dynamic_cast<InstancePrimitive*>(newPrimitive);
+	newPrimitive = std::make_shared<InstancePrimitive>(objectName, originalPrimitive);
 	if (CommonLoaderFunctions::HasKey(jsonObj, "local_to_world_matrix")) {
 		Matrix4x4 localToWorld =
 			CommonLoaderFunctions::ConstructMatrixFromJsonNode(jsonObj["local_to_world_matrix"]);
-		instancePrim->SetLocalToWorld(localToWorld);
+		newPrimitive->SetLocalToWorld(localToWorld);
 	}
 	if (CommonLoaderFunctions::HasKey(jsonObj, "world_to_local_matrix")) {
 		Matrix4x4 worldToLocal =
 			CommonLoaderFunctions::ConstructMatrixFromJsonNode(jsonObj["world_to_local_matrix"]);
-		instancePrim->SetWorldToLocal(worldToLocal);
+		newPrimitive->SetWorldToLocal(worldToLocal);
 	}
 	if (CommonLoaderFunctions::HasKey(jsonObj, "local_to_world_transform")) {
 		Matrix4x4 worldToLocal;
@@ -242,15 +241,15 @@ InstancePrimitive* PrimitiveLoader::CreateInstancePrimitive(Scene* scene,
 		CommonLoaderFunctions::SetUpTransformFromJsonNode(
 		CommonLoaderFunctions::SafeGetToken(jsonObj, "local_to_world_transform"),
 											localToWorld, worldToLocal);
-		instancePrim->SetTransformAndInverse(localToWorld, worldToLocal);
+		newPrimitive->SetTransformAndInverse(localToWorld, worldToLocal);
 	}
 	
 	return newPrimitive;
 }
 
-Primitive* PrimitiveLoader::CreatePrimitive(const nlohmann::json& jsonObj) {
+std::shared_ptr<Primitive> PrimitiveLoader::CreatePrimitive(const nlohmann::json& jsonObj) {
 	std::string primitiveType = CommonLoaderFunctions::SafeGetToken(jsonObj, "type");
-	Primitive* newPrimitive = nullptr;
+	std::shared_ptr<Primitive> newPrimitive = nullptr;
 	// TODO: Re-factor, getting huge
 	if (primitiveType == "plane") {
 		auto planeOrigin = CommonLoaderFunctions::SafeGetToken(jsonObj, "position");
@@ -259,7 +258,7 @@ Primitive* PrimitiveLoader::CreatePrimitive(const nlohmann::json& jsonObj) {
 		std::string objectName = CommonLoaderFunctions::SafeGetToken(jsonObj, "name");
 
 		std::shared_ptr<Material> objMaterial = CommonLoaderFunctions::CreateMaterial(materialNode);
-		newPrimitive = new Plane(
+		newPrimitive = std::make_shared<Plane>(
 			Point3((float)planeOrigin[0],(float)planeOrigin[1],
 				(float)planeOrigin[2]),
 			Vector3((float)planeNormal[0],
@@ -273,7 +272,7 @@ Primitive* PrimitiveLoader::CreatePrimitive(const nlohmann::json& jsonObj) {
 		std::string objectName = CommonLoaderFunctions::SafeGetToken(jsonObj, "name");
 		
 		std::shared_ptr<Material> objMaterial = CommonLoaderFunctions::CreateMaterial(materialNode);
-		newPrimitive = new Sphere(
+		newPrimitive = std::make_shared<Sphere>(
 			Point3((float)sphereOrigin[0],(float)sphereOrigin[1],
 					(float)sphereOrigin[2]),
 			sphereRadius, objMaterial, objectName);
@@ -285,7 +284,7 @@ Primitive* PrimitiveLoader::CreatePrimitive(const nlohmann::json& jsonObj) {
 		float tubeRadius = CommonLoaderFunctions::SafeGetToken(jsonObj, "tube_radius");
 		
 		std::shared_ptr<Material> objMaterial = CommonLoaderFunctions::CreateMaterial(materialNode);
-		newPrimitive = new Torus(sweptRadius, tubeRadius,
+		newPrimitive = std::make_shared<Torus>(sweptRadius, tubeRadius,
 								 objMaterial, objectName);
 	}
 	else if (primitiveType == "aabox") {
@@ -304,7 +303,7 @@ Primitive* PrimitiveLoader::CreatePrimitive(const nlohmann::json& jsonObj) {
 		newSampler.reset(SamplerCreator::CreatorSampler(randomSamplerType,
 				numRandomSamples, numRandomSets));
 		
-		newPrimitive = new AABBoxPrim(
+		newPrimitive = std::make_shared<AABBoxPrim>(
 			Point3((float)minPoint[0],(float)minPoint[1],
 					(float)minPoint[2]),
 			Point3((float)maxPoint[0],(float)maxPoint[1],
@@ -329,7 +328,7 @@ Primitive* PrimitiveLoader::CreatePrimitive(const nlohmann::json& jsonObj) {
 		std::shared_ptr<GenericSampler> newSampler;
 		newSampler.reset(SamplerCreator::CreatorSampler(randomSamplerType,
 				numRandomSamples, numRandomSets));
-		newPrimitive = new Rectangle(Point3((float)origin[0], (float)origin[1],
+		newPrimitive = std::make_shared<Rectangle>(Point3((float)origin[0], (float)origin[1],
 			(float)origin[2]), Vector3((float)sideVec1[0], (float)sideVec1[1],
 			(float)sideVec1[2]), Vector3((float)sideVec2[0], (float)sideVec2[1],
 			(float)sideVec2[2]), objMaterial,
@@ -343,7 +342,7 @@ Primitive* PrimitiveLoader::CreatePrimitive(const nlohmann::json& jsonObj) {
 		auto normalVec = CommonLoaderFunctions::SafeGetToken(jsonObj, "normal");
 		float radius = CommonLoaderFunctions::SafeGetToken(jsonObj, "radius");
 		
-		newPrimitive = new Disk(Point3((float)centerPnt[0], (float)centerPnt[1],
+		newPrimitive = std::make_shared<Disk>(Point3((float)centerPnt[0], (float)centerPnt[1],
 										(float)centerPnt[2]),
 								Vector3((float)normalVec[0], (float)normalVec[1],
 										(float)normalVec[2]), radius, objMaterial,
@@ -354,11 +353,11 @@ Primitive* PrimitiveLoader::CreatePrimitive(const nlohmann::json& jsonObj) {
 		auto materialNode = CommonLoaderFunctions::SafeGetToken(jsonObj, "material");
 		std::shared_ptr<Material> objMaterial = CommonLoaderFunctions::CreateMaterial(materialNode);
 		
-		CompoundObject* compoundObject = new CompoundObject(objMaterial, objectName);
+		std::shared_ptr<CompoundObject> compoundObject = std::make_shared<CompoundObject>(objMaterial, objectName);
 		
 		nlohmann::json childrenArray = jsonObj["children"];
 		for(auto & child : childrenArray) {
-			Primitive* childPrim = CreatePrimitive(child);
+			std::shared_ptr<Primitive> childPrim = CreatePrimitive(child);
 			compoundObject->AddPrimitive(childPrim);
 		}
 		
@@ -373,7 +372,7 @@ Primitive* PrimitiveLoader::CreatePrimitive(const nlohmann::json& jsonObj) {
 
 		std::shared_ptr<Material> objMaterial = CommonLoaderFunctions::CreateMaterial(materialNode);
 		
-		newPrimitive = new OpenCylinder(y0, y1, radius, objMaterial, objectName);
+		newPrimitive = std::make_shared<OpenCylinder>(y0, y1, radius, objMaterial, objectName);
 	}
 	else {
 		std::stringstream exceptionMsg;
@@ -465,8 +464,8 @@ void PrimitiveLoader::LoadModel(ModelPrimitiveInfo* primInfo,
 				size_t primitiveIndex = primInfo->primitives.size();
 				std::ostringstream triangleMeshName;
 				triangleMeshName << objectName << "-" << primitiveIndex;
-				TriangleMeshPrimitive* newTriangleMeshPrim =
-					new TriangleMeshPrimitive(objMaterial,
+				std::shared_ptr<TriangleMeshPrimitive> newTriangleMeshPrim =
+					std::make_shared<TriangleMeshPrimitive>(objMaterial,
 											  triangleMeshName.str(),
 											  triangleMesh,
 											  triangleIndices[0],
@@ -518,7 +517,7 @@ void PrimitiveLoader::AddFaceIndex(TriangleMesh *mesh,
 
 
 void PrimitiveLoader::ComputeSmoothMeshNormals(std::shared_ptr<TriangleMesh> triangleMesh,
-											   std::vector<Primitive*>& allPrimitives) {
+											   std::vector<std::shared_ptr<Primitive>>& allPrimitives) {
 	size_t numVerts = triangleMesh->vertices.size();
 	triangleMesh->normals.reserve(triangleMesh->vertices.size());
 	

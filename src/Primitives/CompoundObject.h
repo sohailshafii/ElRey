@@ -12,9 +12,6 @@ public:
 	}
 	
 	~CompoundObject() {
-		for(Primitive* prim : primitives) {
-			delete prim;
-		}
 		primitives.clear();
 	}
 	
@@ -40,16 +37,16 @@ public:
 	
 	virtual AABBox GetBoundingBox() const override;
 	
-	void AddPrimitive(Primitive * primitive);
+	void AddPrimitive(std::shared_ptr<Primitive> primitive);
 	void RemovePrimitiveAtIndex(unsigned int index);
 	void RemovePrimitiveWithName(std::string const & name);
 	
 	void PrintBounds();
 	
-	virtual Primitive* GetSubPrimitiveByName(std::string const & intersecPrimName) const override;
+	virtual std::shared_ptr<Primitive> GetSubPrimitiveByName(std::string const & intersecPrimName) const override;
 	
 private:
-	std::vector<Primitive*> primitives;
+	std::vector<std::shared_ptr<Primitive>> primitives;
 	AABBox boundingBox;
 	
 	void RecomputeBoundingBox();

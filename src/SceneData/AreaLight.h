@@ -17,7 +17,7 @@ public:
 		Primitive* primitive);
 	~AreaLight();
 	
-	virtual void SetPrimitive(Primitive* newPrimitive) override {
+	virtual void SetPrimitive(std::shared_ptr<Primitive> newPrimitive) override {
 		primitive = newPrimitive;
 	}
 	
@@ -37,7 +37,7 @@ public:
 	}
 
 	virtual const Primitive* GetPrimitive() const override {
-		return primitive;
+		return primitive.get();
 	}
 
 	virtual const bool IsAreaLight() const override {
@@ -54,8 +54,6 @@ public:
 	}
 
 private:
-	// this is nasty -- should not have a pointer
-	// this is NOT a pointer that we own!
-	Primitive* primitive;
+	std::shared_ptr<Primitive> primitive;
 	std::string primitiveName;
 };

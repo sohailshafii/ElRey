@@ -7,24 +7,17 @@
 //#define BRUTE_FORCE_TEST
 
 GridPrimitive::~GridPrimitive() {
-	for (auto primitive : allPrimRefs) {
-		delete primitive;
-	}
-	allPrimRefs.clear();
 }
 
 void GridPrimitive::SetUpAccelerator(float multipier,
-									 const std::vector<Primitive*> & primitives) {
-	for(auto& prim : primitives) {
-		allPrimRefs.push_back(prim);
-	}
+									 const std::vector<std::shared_ptr<Primitive>> & primitives) {
 	std::cout << "Setting up Grid...\n";
 	SetupCells(multipier, primitives);
 	std::cout << "Done!\n";
 }
 
 void GridPrimitive::SetupCells(float multipier,
-							   const std::vector<Primitive*> & primitives) {
+							   const std::vector<std::shared_ptr<Primitive>> & primitives) {
 	// find min and max coordinates of the grid
 	Point3 p0 = ComputeMinCoordinates(primitives);
 	Point3 p1 = ComputeMaxCoordinates(primitives);
@@ -80,7 +73,7 @@ void GridPrimitive::SetupCells(float multipier,
 	int zSliceSize = nx*ny;
 	unsigned int numPrimitivesAdded;
 	for (size_t primIndex = 0; primIndex < numPrimitives; primIndex++) {
-		Primitive* currPrimitive = primitives[primIndex];
+		std::shared_ptr<Primitive> currPrimitive = primitives[primIndex];
 		
 		if (!currPrimitive->HasBoundingBox()) {
 			primitivesNotInCells.push_back(currPrimitive);
@@ -329,14 +322,14 @@ AABBox GridPrimitive::GetBoundingBox() const {
 	return boundingBox;
 }
 
-Point3 GridPrimitive::ComputeMinCoordinates(std::vector<Primitive*> const & primitives) {
+Point3 GridPrimitive::ComputeMinCoordinates(std::vector<std::shared_ptr<Primitive>> const & primitives) {
 	AABBox objectBBox;
 	Point3 minCoord;
 	bool xSet = false, ySet = false, zSet = false;
 	size_t numPrimitives = primitives.size();
 	
 	for (size_t index = 0; index < numPrimitives; index++) {
-		auto* currPrimitive = primitives[index];
+		auto currPrimitive = primitives[index];
 		// skip primitives that don't have a bounding box
 		if (!currPrimitive->HasBoundingBox()) {
 			continue;
@@ -365,14 +358,14 @@ Point3 GridPrimitive::ComputeMinCoordinates(std::vector<Primitive*> const & prim
 }
 
 
-Point3 GridPrimitive::ComputeMaxCoordinates(std::vector<Primitive*> const & primitives) {
+Point3 GridPrimitive::ComputeMaxCoordinates(std::vector<std::shared_ptr<Primitive>> const & primitives) {
 	AABBox objectBBox;
 	Point3 maxCoord;
 	bool xSet = false, ySet = false, zSet = false;
 	size_t numPrimitives = primitives.size();
 	
 	for (size_t index = 0; index < numPrimitives; index++) {
-		auto* currPrimitive = primitives[index];
+		auto currPrimitive = primitives[index];
 		// skip primitives that don't have a bounding box
 		if (!currPrimitive->HasBoundingBox()) {
 			continue;
@@ -662,7 +655,7 @@ Primitive* GridPrimitive::BruteForceShadowFeelerIntersectsAnObject(const Ray& ra
 	return nullptr;
 }
 
-Primitive* GridPrimitive::GetSubPrimitiveByName(std::string const & intersecPrimName) const {
+std::shared_ptr<Primitive> GridPrimitive::GetSubPrimitiveByName(std::string const & intersecPrimName) const {
 	for(auto primitiveCollection : cells) {
 		for (auto primitive : primitiveCollection.primitives) {
 			if (primitive->GetName() == intersecPrimName) {
