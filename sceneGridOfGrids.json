@@ -21,7 +21,7 @@
 	[
 		{
 			"type":"grid_of_grids",
-			"num_levels":2,
+			"num_levels":1,
 			"grid_res":2,
 			"gap":0.05,
 			"size":0.1
