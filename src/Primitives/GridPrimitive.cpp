@@ -448,9 +448,6 @@ Primitive* GridPrimitive::IntersectAgainstPrimitiveCollection(PrimitiveCollectio
 	for (unsigned int index = 0; index < numElements; index++) {
 		auto currPrimitive = primitivesInCollection[index];
 
-		// if we test against multiple compound objects in a row, reset primitive
-		// intersection data from previous tests that might have returned true
-		tempRes.ResetPrimIntersectionData();
 		auto hitTest = currPrimitive->Intersect(ray, tMin, tMax, tempRes);
 		if (hitTest != nullptr) {
 			closestPrimSoFar = hitTest;

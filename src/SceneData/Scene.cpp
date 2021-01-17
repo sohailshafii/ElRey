@@ -93,7 +93,7 @@ bool Scene::Intersect(const Ray &ray, Color &newColor,
 	
 	if (closestPrimitive != nullptr) {
 		Material const * primitiveMaterial = closestPrimitive->GetMaterial(intersectionResult);
-		intersectionResult.SetIncomingRay(ray);
+		intersectionResult.incomingDirInverse = -ray.GetDirection();
 		auto intersectionPos = ray.GetPositionAtParam(tMax);
 		intersectionResult.rayIntersectT = tMax;
 		intersectionResult.intersectionPosition = intersectionPos;
