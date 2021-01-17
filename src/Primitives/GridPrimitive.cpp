@@ -1,8 +1,147 @@
 
 #include "GridPrimitive.h"
 #include "Math/CommonMath.h"
+#include "SceneData/CommonLoaderFunctions.h"
+#include <iostream>
 
-// TODO build
+void GridPrimitive::SetUpAccelerator(nlohmann::json const & jsonObj,
+									 const std::vector<Primitive*> & primitives) {
+	std::cout << "Setting up Grid...\n";
+	SetupCells(jsonObj, primitives);
+	std::cout << "Done!\n";
+}
+
+void GridPrimitive::SetupCells(nlohmann::json const & jsonObj,
+							   const std::vector<Primitive*> & primitives) {
+	// find min and max coordinates of the grid
+	Point3 p0 = ComputeMinCoordinates(primitives);
+	Point3 p1 = ComputeMaxCoordinates(primitives);
+	
+	// update bounding box with min and max coords
+	boundingBox.x0 = p0[0];
+	boundingBox.y0 = p0[1];
+	boundingBox.z0 = p0[2];
+	boundingBox.x1 = p1[0];
+	boundingBox.y1 = p1[1];
+	boundingBox.z1 = p1[2];
+	
+	// compute number of cells in the x, y, and z dir
+	size_t numPrimitives = primitives.size();
+	// compute grid extents in all dimensions
+	float wx = p1[0] - p0[0];
+	float wy = p1[1] - p0[1];
+	float wz = p1[2] - p0[2];
+	// use a multiplier to increase cell count
+	
+	float multiplier = 1.0f;
+	if (CommonLoaderFunctions::HasKey(jsonObj, "accelerator_options")) {
+		auto optionsNode = CommonLoaderFunctions::SafeGetToken(jsonObj,
+															   "accelerator_options");
+		multiplier = CommonLoaderFunctions::SafeGetToken(optionsNode, "multiplier");
+	}
+	float s = pow(wx * wy * wz / numPrimitives,
+				  0.333333);
+	// s is like volume/object, and we do the
+	// cube root of it, to make it per dim
+	// multiplying wx by the inverse sorta
+	// cancels the volume, so that you are left
+	// with number of objects per axis
+	nx = multiplier * wx / s + 1;
+	ny = multiplier * wy / s + 1;
+	nz = multiplier * wz / s + 1;
+	
+	// grid cells start out with nothing
+	int numCells = nx*ny*nz;
+	cells.reserve(numPrimitives);
+	
+	for (size_t index = 0; index < numCells; index++) {
+		cells.push_back(PrimitiveCollection());
+	}
+	
+	// temp objects to hold number of objects in each
+	// cell
+	std::vector<int> counts;
+	counts.reserve(numCells);
+	for (int cellIndex = 0; cellIndex < numCells; cellIndex++) {
+		counts.push_back(0);
+	}
+	
+	AABBox objectBBox;
+	float xConversionFactor = nx/(p1[0] - p0[0]);
+	float yConversionFactor = ny/(p1[1] - p0[1]);
+	float zConversionFactor = nz/(p1[2] - p0[2]);
+	int zSliceSize = nx*ny;
+	unsigned int numPrimitivesAdded;
+	for (size_t primIndex = 0; primIndex < numPrimitives; primIndex++) {
+		Primitive* currPrimitive = primitives[primIndex];
+		
+		if (!currPrimitive->HasBoundingBox()) {
+			primitivesNotInCells.push_back(currPrimitive);
+			continue;
+		}
+		
+		objectBBox = currPrimitive->GetBoundingBox();
+		// compute the cell indices at the corners of
+		// the bounding box of the object
+		int ixMin = CommonMath::Clamp((objectBBox.x0 - p0[0])*xConversionFactor, 0, nx - 1);
+		int iyMin = CommonMath::Clamp((objectBBox.y0 - p0[1])*yConversionFactor, 0, ny - 1);
+		int izMin = CommonMath::Clamp((objectBBox.z0 - p0[2])*zConversionFactor, 0, nz - 1);
+
+		int ixMax = CommonMath::Clamp((objectBBox.x1 - p0[0])*xConversionFactor, 0, nx - 1);
+		int iyMax = CommonMath::Clamp((objectBBox.y1 - p0[1])*yConversionFactor, 0, ny - 1);
+		int izMax = CommonMath::Clamp((objectBBox.z1 - p0[2])*zConversionFactor, 0, nz - 1);
+		
+		// add objects to the cells
+		for (int zIndex = izMin; zIndex <= izMax; zIndex++) {
+			for (int yIndex = iyMin; yIndex <= iyMax; yIndex++) {
+				int yOffset = nx*yIndex;
+				for (int xIndex = ixMin; xIndex <= ixMax; xIndex++) {
+					int oneDimIndex = xIndex + yOffset + zSliceSize*zIndex;
+					cells[oneDimIndex].primitives.push_back(currPrimitive);
+					numPrimitivesAdded++;
+					counts[oneDimIndex] += 1;
+				}
+			}
+		}
+	}
+	
+	// compute bounding boxes
+	for(auto primitiveCollection : cells) {
+		primitiveCollection.ComputeBoundingBox();
+	}
+	
+	// useful stats
+	int numZeroes = 0, numOnes = 0,
+		numTwos = 0, numThrees = 0,
+		numGreater = 0;
+	for (int cellIndex = 0; cellIndex < numCells; cellIndex++) {
+		if (counts[cellIndex] == 0) {
+			numZeroes++;
+		}
+		else if (counts[cellIndex] == 1) {
+			numOnes++;
+		}
+		else if (counts[cellIndex] == 1) {
+			numTwos++;
+		}
+		else if (counts[cellIndex] == 2) {
+			numThrees++;
+		}
+		else if (counts[cellIndex] > 3) {
+			numGreater++;
+		}
+	}
+	
+	std::cout << "Num cells total = " << numCells << std::endl;
+	std::cout << "Num zeroes = " << numZeroes << ", num ones = " << numOnes << "  numTwos = " << numTwos << std::endl;
+	std::cout << "Num threes = " << numThrees << "  numGreater = " << numGreater << std::endl;
+	std::cout << "Num intersections with cells in grid " << numPrimitivesAdded <<
+	" vs original pimitives " << numPrimitives << ". Num not in cells: "
+		<< primitivesNotInCells.size()  << ".\n";
+	
+	counts.erase(counts.begin(), counts.end());
+}
+
 Primitive* GridPrimitive::Intersect(const Ray &ray, float tMin, float& tMax,
 									IntersectionResult &intersectionResult) {
 	Primitive* closestPrimitive = nullptr;

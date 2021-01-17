@@ -3,13 +3,19 @@
 #include "Primitive.h"
 #include "Math/Point3.h"
 #include "Math/Vector3.h"
+#include "ThirdParty/nlohmann/json.hpp"
+
 #include <vector>
 
 class GridPrimitive : public Primitive {
 public:
-	GridPrimitive(const std::string& iName) :
+	GridPrimitive(const std::string& iName,
+				  const std::vector<Primitive*> & primitives) :
 		Primitive(iName) {
 	}
+	
+	void SetUpAccelerator(nlohmann::json const & jsonObj,
+						  const std::vector<Primitive*> & primitives);
 	
 	virtual Primitive* Intersect(const Ray &ray, float tMin, float& tMax,
 								 IntersectionResult &intersectionResult) override;
@@ -57,6 +63,9 @@ private:
 		int ixStop, iyStop, izStop;
 		bool txInvalid, tyInvalid, tzInvalid;
 	};
+	
+	void SetupCells(nlohmann::json const & jsonObj,
+					const std::vector<Primitive*> & primitives);
 	
 	Point3 ComputeMinCoordinates(std::vector<Primitive*> const & primitives);
 	Point3 ComputeMaxCoordinates(std::vector<Primitive*> const & primitives);
