@@ -176,7 +176,7 @@ Primitive* AABBoxPrim::Intersect(const Ray &ray, float tMin, float& tMax,
 					tempNorm = posZNormal;
 			}
 		}
-		intersectionResult.SetIntersectionT(tMax);
+		intersectionResult.rayIntersectT = tMax;
 		intersectionResult.genericMetadata1 = tempNorm[0];
 		intersectionResult.genericMetadata2 = tempNorm[1];
 		intersectionResult.genericMetadata3 = tempNorm[2];

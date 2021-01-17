@@ -50,7 +50,7 @@ Primitive* TriangleMeshPrimitive::Intersect(const Ray &ray, float tMin, float& t
 	}
 	
 	tMax = t;
-	intersectionResult.SetIntersectionT(tMax);
+	intersectionResult.rayIntersectT = tMax;
 	if (isSmooth) {
 		intersectionResult.genericMetadata1 = beta;
 		intersectionResult.genericMetadata2 = gamma;

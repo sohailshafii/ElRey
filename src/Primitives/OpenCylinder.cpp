@@ -17,7 +17,7 @@ Primitive* OpenCylinder::Intersect(const Ray &ray, float tMin, float& tMax,
 	}
 	
 	if (TestRayAndSetTMax(ray, tMin, tMax)) {
-		intersectionResult.SetIntersectionT(tMax);
+		intersectionResult.rayIntersectT = tMax;
 		return this;
 	}
 	

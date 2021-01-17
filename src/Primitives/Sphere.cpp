@@ -26,14 +26,14 @@ Primitive* Sphere::Intersect(const Ray &ray, float tMin, float& tMax,
 	// smaller root
 	if (t > EPSILON && t > tMin && t < tMax) {
 		tMax = t;
-		intersectionResult.SetIntersectionT(tMax);
+		intersectionResult.rayIntersectT = tMax;
 		return this;
 	}
 
 	t = (-b+e)/denom;
 	if (t > EPSILON && t > tMin && t < tMax) {
 		tMax = t;
-		intersectionResult.SetIntersectionT(tMax);
+		intersectionResult.rayIntersectT = tMax;
 		return this;
 	}
 

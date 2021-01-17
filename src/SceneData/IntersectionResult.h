@@ -30,44 +30,16 @@ public:
 		this->incomingRay = incomingRay;
 		this->incomingDirInverse = -incomingRay.GetDirection();
 	}
-	
-	void SetLightVector(const Vector3& lightVector) {
-		this->vectorToLight = lightVector;
-	}
 
-	void SetLightVectorScaled(const Vector3 lightVectorScaled) {
-		this->vectorToLightScaled = lightVectorScaled;
-	}
-	
-	void SetIntersectionNormal(const Vector3& normalVector) {
-		this->normalVector = normalVector;
-	}
-
-	void SetAreaLightNormal(const Vector3& areaLightNormal) {
-		this->areaLightNormalVector = areaLightNormal;
-	}
-	
-	void SetIntersectionPosition(const Point3& intersectionPos) {
-		this->intersectionPosition = intersectionPos;
-	}
-	
-	void SetIntersectionT(float rayIntersectT) {
-		this->rayIntersectT = rayIntersectT;
-	}
-
-	void SetSamplePointOnLight(const Point3& samplePoint) {
-		samplePointOnLight = samplePoint;
-	}
-	
 	// is there an alternative? do we need this for simple world class too?
 	// seems to be necessary for compound objects as well...if the same intersection
 	// results are used over and over then the previous tests will interfere with future ones
 	// TODO: clean-up implementation
 	void ResetPrimIntersectionData() {
-		genericMetadata1 = 0.0f;
+		/*genericMetadata1 = 0.0f;
 		genericMetadata2 = 0.0f;
 		genericMetadata3 = 0.0f;
-		childPrimitiveHit = nullptr;
+		childPrimitiveHit = nullptr;*/
 	}
 
 	// All items are in world space unless specified otherwise

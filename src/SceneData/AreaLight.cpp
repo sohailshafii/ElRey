@@ -35,11 +35,11 @@ void AreaLight::ComputeAndStoreAreaLightInformation(
 	
 	Vector3 vectorToLight = lightPrimitiveSample -
 		intersectionRes.intersectionPosition;
-	intersectionRes.SetAreaLightNormal(lightPrimitiveNormal);
-	intersectionRes.SetLightVectorScaled(vectorToLight);
+	intersectionRes.areaLightNormalVector = lightPrimitiveNormal;
+	intersectionRes.vectorToLightScaled = vectorToLight;
 	vectorToLight.Normalize();
-	intersectionRes.SetLightVector(vectorToLight);
-	intersectionRes.SetSamplePointOnLight(lightPrimitiveSample);
+	intersectionRes.vectorToLight = vectorToLight;
+	intersectionRes.samplePointOnLight = lightPrimitiveSample;
 }
 
 Color3 AreaLight::GetRadiance(const IntersectionResult& intersectionRes,

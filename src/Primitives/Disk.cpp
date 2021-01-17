@@ -53,7 +53,7 @@ Primitive* Disk::Intersect(const Ray &ray, float tMin, float& tMax,
 	
 	if (center.GetDistanceSquared(pointOnPlane) < radiusSquared) {
 		tMax = t;
-		intersectionResult.SetIntersectionT(tMax);
+		intersectionResult.rayIntersectT = tMax;
 		return this;
 	}
 	

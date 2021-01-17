@@ -19,7 +19,7 @@ Primitive* Plane::Intersect(const Ray &ray, float tMin, float& tMax,
 	}
 	
 	tMax = t;
-	intersectionResult.SetIntersectionT(tMax);
+	intersectionResult.rayIntersectT = tMax;
 	return this;
 }
 
