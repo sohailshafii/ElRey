@@ -147,10 +147,14 @@ Primitive* GridPrimitive::Intersect(const Ray &ray, float tMin, float& tMax,
 	Primitive* closestPrimitive = nullptr;
 	bool hitBefore = false;
 	for (auto currPrimitive : primitivesNotInCells) {
+		IntersectionResult currResult;
 		auto hitPrim = currPrimitive->Intersect(ray, tMin, tMax,
-												intersectionResult);
+												currResult);
 		if (hitPrim != nullptr) {
 			closestPrimitive = hitPrim;
+			intersectionResult = currResult;
+			intersectionResult.compoundPrimitiveToIntersectedPrim[this] =
+				closestPrimitive;
 			hitBefore = true;
 		}
 	}
@@ -296,26 +300,6 @@ Primitive* GridPrimitive::IntersectShadow(const Ray &ray, float tMin, float tMax
 	}
 	
 	return nullptr;
-}
-
-Vector3 GridPrimitive::GetNormal(const ShadingInfo& shadingInfo) const {
-	// we don't get tested against directly, we are only an accelerator
-	return Vector3();
-}
-
-Vector3 GridPrimitive::ComputeHardNormal(Point3 const &position) const {
-	// we don't get tested against directly, we are only an accelerator
-	return Vector3();
-}
-
-void GridPrimitive::SamplePrimitive(Point3& resultingSample,
-									const ShadingInfo& shadingInfo) {
-	// we don't get tested against directly, we are only an accelerator
-}
-
-float GridPrimitive::PDF(const ShadingInfo& shadingInfo) const {
-	// we don't get tested against directly, we are only an accelerator
-	return 0.0f;
 }
 
 AABBox GridPrimitive::GetBoundingBox() const {
@@ -585,6 +569,7 @@ Primitive* GridPrimitive::EvaluatePrimitiveCollectionCell(PrimitiveCollection & 
 	if (hitPrimitive != nullptr && tMaxTest < tNext) {
 		tMax = tMaxTest;
 		intersectionResult = intersecResTemp;
+		intersectionResult.compoundPrimitiveToIntersectedPrim[this] = hitPrimitive;
 		return hitPrimitive;
 	}
 
@@ -600,9 +585,11 @@ Primitive* GridPrimitive::IntersectAgainstPrimitiveCollection(PrimitiveCollectio
 	Primitive * closestPrimSoFar = nullptr;
 	for (unsigned int index = 0; index < numElements; index++) {
 		auto currPrimitive = primitivesInCollection[index];
-		auto hitTest = currPrimitive->Intersect(ray, tMin, tMax, intersectionResult);
+		IntersectionResult currResult;
+		auto hitTest = currPrimitive->Intersect(ray, tMin, tMax, currResult);
 		if (hitTest != nullptr) {
 			closestPrimSoFar = hitTest;
+			intersectionResult = currResult;
 		}
 	}
 	
@@ -631,11 +618,14 @@ Primitive* GridPrimitive::BruteForceIntersect(const Ray &ray, float tMin, float&
 											  IntersectionResult &intersectionResult) {
 	Primitive* primitiveHit = nullptr;
 	for(auto primitiveCollection : cells) {
+		IntersectionResult currResult;
 		auto currPrimitiveHit =
 			IntersectAgainstPrimitiveCollection(primitiveCollection, ray, tMin, tMax,
-												intersectionResult);
+												currResult);
 		if (currPrimitiveHit != nullptr) {
 			primitiveHit = currPrimitiveHit;
+			intersectionResult = currResult;
+			intersectionResult.compoundPrimitiveToIntersectedPrim[this] = primitiveHit;
 		}
 	}
 	
@@ -653,6 +643,39 @@ Primitive* GridPrimitive::BruteForceShadowFeelerIntersectsAnObject(const Ray& ra
 	}
 	
 	return nullptr;
+}
+
+Vector3 GridPrimitive::GetNormal(const ShadingInfo& shadingInfo) const {
+	Primitive* childPrim = (*shadingInfo.compoundPrimitiveToIntersectedPrim)[(Primitive*)this];
+	return childPrim != nullptr ? childPrim->GetNormal(shadingInfo) : Vector3::Zero();
+}
+
+Material const * GridPrimitive::GetMaterial(const ShadingInfo& shadingInfo) {
+	Primitive* childPrim = (*shadingInfo.compoundPrimitiveToIntersectedPrim)[(Primitive*)this];
+	return childPrim != nullptr ? childPrim->GetMaterial(shadingInfo) : material.get();
+}
+
+// not valid for this primitive
+Vector3 GridPrimitive::ComputeHardNormal(Point3 const &position) const {
+	return Vector3::Zero();
+}
+
+void GridPrimitive::SamplePrimitive(Point3& resultingSample,
+									const ShadingInfo& shadingInfo) {
+	Primitive* childPrim = (*shadingInfo.compoundPrimitiveToIntersectedPrim)[(Primitive*)this];
+	if (childPrim != nullptr) {
+		childPrim->SamplePrimitive(resultingSample, shadingInfo);
+	}
+}
+
+const GenericSampler* GridPrimitive::GetSampler(const ShadingInfo& shadingInfo) {
+	Primitive* childPrim = (*shadingInfo.compoundPrimitiveToIntersectedPrim)[(Primitive*)this];
+	return childPrim != nullptr ? childPrim->GetSampler(shadingInfo) : nullptr;
+}
+
+float GridPrimitive::PDF(const ShadingInfo& shadingInfo) const {
+	Primitive* childPrim = (*shadingInfo.compoundPrimitiveToIntersectedPrim)[(Primitive*)this];
+	return childPrim != nullptr ? childPrim->PDF(shadingInfo) : 0.0f;
 }
 
 std::shared_ptr<Primitive> GridPrimitive::GetSubPrimitiveByName(std::string const & intersecPrimName) const {

@@ -106,10 +106,12 @@ Primitive* SimpleWorld::Intersect(const Ray &ray, float tMin, float& tMax,
 							IntersectionResult &intersectionResult) {
 	Primitive* closestPrimitive = nullptr;
 	for (auto currentPrimitive : primitives) {
+		IntersectionResult currentIntersectionResult;
 		auto hitPrimitive = currentPrimitive->Intersect(ray, tMin, tMax,
-														intersectionResult);
+														currentIntersectionResult);
 		if (hitPrimitive != nullptr) {
 			closestPrimitive = hitPrimitive;
+			intersectionResult = currentIntersectionResult;
 		}
 	}
 

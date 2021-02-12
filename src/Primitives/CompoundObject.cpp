@@ -6,8 +6,6 @@ Primitive* CompoundObject::Intersect(const Ray &ray, float tMin, float& tMax,
 									 IntersectionResult &intersectionResult) {
 	unsigned int numElements = primitives.size();
 	Primitive* closestPrimSoFar = nullptr;
-
-	Primitive *closestChildBeforeTests = intersectionResult.childPrimitiveHit;
 	
 	for (unsigned int index = 0; index < numElements; index++) {
 		auto currPrimitive = primitives[index];
@@ -17,15 +15,8 @@ Primitive* CompoundObject::Intersect(const Ray &ray, float tMin, float& tMax,
 		}
 	}
 	
-	if (closestPrimSoFar != nullptr) {
-		bool childPrimitiveUnchangedAfterTests =
-			intersectionResult.childPrimitiveHit == closestChildBeforeTests;
-		// if child primitive has not changed,
-		// set it. so that we set deepest intersection hit
-		if (childPrimitiveUnchangedAfterTests) {
-			intersectionResult.childPrimitiveHit = closestPrimSoFar;
-		}
-	}
+	intersectionResult.compoundPrimitiveToIntersectedPrim[this] =
+		closestPrimSoFar;
 	
 	return closestPrimSoFar;
 }
@@ -51,8 +42,15 @@ Primitive* CompoundObject::IntersectShadow(const Ray &ray, float tMin,
 }
 
 Vector3 CompoundObject::GetNormal(const ShadingInfo& shadingInfo) const {
-	return shadingInfo.childPrimitiveHit != nullptr ?
-		shadingInfo.childPrimitiveHit->GetNormal(shadingInfo) : Vector3::Zero();
+	Primitive* childPrim = (*shadingInfo.compoundPrimitiveToIntersectedPrim)[(Primitive*)this];
+	return childPrim != nullptr ?
+		childPrim->GetNormal(shadingInfo) : Vector3::Zero();
+}
+
+Material const * CompoundObject::GetMaterial(const ShadingInfo& shadingInfo) {
+	Primitive* childPrim = (*shadingInfo.compoundPrimitiveToIntersectedPrim)[(Primitive*)this];
+	return childPrim != nullptr ?
+		childPrim->GetMaterial(shadingInfo) : material.get();
 }
 
 // not valid for this primitive
@@ -62,20 +60,20 @@ Vector3 CompoundObject::ComputeHardNormal(Point3 const &position) const {
 
 void CompoundObject::SamplePrimitive(Point3& resultingSample,
 									 const ShadingInfo& shadingInfo) {
-	auto childPrim = shadingInfo.childPrimitiveHit;
+	Primitive* childPrim = (*shadingInfo.compoundPrimitiveToIntersectedPrim)[(Primitive*)this];
 	if (childPrim != nullptr) {
 		childPrim->SamplePrimitive(resultingSample, shadingInfo);
 	}
 }
 
 const GenericSampler* CompoundObject::GetSampler(const ShadingInfo& shadingInfo) {
-	return shadingInfo.childPrimitiveHit != nullptr ?
-		shadingInfo.childPrimitiveHit->GetSampler(shadingInfo) : nullptr;
+	Primitive* childPrim = (*shadingInfo.compoundPrimitiveToIntersectedPrim)[(Primitive*)this];
+	return childPrim != nullptr ? childPrim->GetSampler(shadingInfo) : nullptr;
 }
 
 float CompoundObject::PDF(const ShadingInfo& shadingInfo) const {
-	return shadingInfo.childPrimitiveHit != nullptr ?
-		shadingInfo.childPrimitiveHit->PDF(shadingInfo) : 0.0f;
+	Primitive* childPrim = (*shadingInfo.compoundPrimitiveToIntersectedPrim)[(Primitive*)this];
+	return childPrim != nullptr ? childPrim->PDF(shadingInfo) : 0.0f;
 }
 
 AABBox CompoundObject::GetBoundingBox() const {

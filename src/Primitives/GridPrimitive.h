@@ -32,8 +32,13 @@ public:
 	
 	virtual Vector3 ComputeHardNormal(Point3 const &position) const override;
 	
+	virtual Material const * GetMaterial(const ShadingInfo& shadingInfo) override;
+	
 	virtual void SamplePrimitive(Point3& resultingSample,
 								 const ShadingInfo& shadingInfo) override;
+	
+	// a compound object might have a different sampler per-subbject
+	virtual const GenericSampler* GetSampler(const ShadingInfo& shadingInfo) override;
 	
 	virtual float PDF(const ShadingInfo& shadingInfo) const override;
 	

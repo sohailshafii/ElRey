@@ -48,7 +48,8 @@ void PrimitiveLoader::CreateGridOfGrids(Scene* scene,
 	localToWorldScale.Print();
 	std::string originalTeddyName = "teddy";
 	LoadModel(primInfo,"./teddy.obj", true, newMaterial,
-			  originalTeddyName, false,localToWorldScale*Matrix4x4::RotationMatrixY(180.0f));
+			  originalTeddyName, false,
+			  localToWorldScale * Matrix4x4::RotationMatrixY(180.0f));
 	std::shared_ptr<GridPrimitive> newPrim = std::make_shared<GridPrimitive>("gridOfGrids");
 	std::vector<std::shared_ptr<Primitive>> primitives;
 	auto objectsToAdd = primInfo->primitives;
@@ -63,6 +64,8 @@ void PrimitiveLoader::CreateGridOfGrids(Scene* scene,
 	
 	std::shared_ptr<GridPrimitive> currentGridPtr = newPrim;
 	
+	float originalGapSize = gap;
+	float sizeOfEachInstance = bunnySize;
 	for (int level = 0, primIndex; level < numLevels; level++) {
 		std::ostringstream subGridName;
 		subGridName << "grid-" << level;
@@ -74,7 +77,8 @@ void PrimitiveLoader::CreateGridOfGrids(Scene* scene,
 				std::ostringstream instanceName;
 				instanceName << "instance-" << primIndex;
 				Vector3 translationAmount = origin +
-					Vector3(i*(bunnySize+gap), 0.0f, j*(bunnySize + gap));
+					Vector3(i * (sizeOfEachInstance + gap), 0.0f,
+							j * (sizeOfEachInstance + gap));
 				localToWorldGrid = Matrix4x4::TranslationMatrix(translationAmount);
 				worldToLocalGrid = Matrix4x4::InvTranslationMatrix(translationAmount);
 				std::shared_ptr<InstancePrimitive> newInstance = CreateInstancePrimitive(instanceName.str(),
@@ -85,8 +89,10 @@ void PrimitiveLoader::CreateGridOfGrids(Scene* scene,
 			}
 		}
 		
-		bunnySize = gridRes * bunnySize + (gridRes - 1.0) * gap;
-		gap = 0.05f * bunnySize;
+		// Now each element of the subgrid contains
+		// multiple items. recompute the size taken by these items
+		sizeOfEachInstance = gridRes * sizeOfEachInstance + (gridRes - 1.0) * gap;
+		gap = originalGapSize * sizeOfEachInstance;
 		subGrid->SetUpAccelerator(1.0f, allGridPrimitives);
 		currentGridPtr = subGrid;
 	}

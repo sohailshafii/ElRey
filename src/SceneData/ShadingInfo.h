@@ -2,6 +2,7 @@
 
 #include "Math/Vector3.h"
 #include "Math/Point3.h"
+#include <unordered_map>
 
 class Primitive;
 
@@ -10,31 +11,35 @@ public:
 	ShadingInfo(float intGenericMetadata1,
 				float intGenericMetadata2,
 				float intGenericMetadata3,
-				Primitive* childPrimitiveHit,
+				std::unordered_map<Primitive*, Primitive*>* compoundPrimitiveToIntersectedPrim,
 				Vector3 const & rayDirection,
 				Point3 const & intersectionPosition)
 		: intGenericMetadata1(intGenericMetadata1),
 		intGenericMetadata2(intGenericMetadata2),
 		intGenericMetadata3(intGenericMetadata3),
-		childPrimitiveHit(childPrimitiveHit),
+		compoundPrimitiveToIntersectedPrim(compoundPrimitiveToIntersectedPrim),
 		rayDirection(rayDirection),
 		incomingDirInverse(-rayDirection),
-		intersectionPosition(intersectionPosition) {
+		intersectionPosition(intersectionPosition),
+		childIndex(0) {
 	}
 	
 	float intGenericMetadata1, intGenericMetadata2,
 		intGenericMetadata3;
-	// useful for instance primitives
-	Primitive* childPrimitiveHit;
+	// useful for compound or grid primitives
+	// this is pointer because we want to avoid copies
+	std::unordered_map<Primitive*, Primitive*>*
+		compoundPrimitiveToIntersectedPrim;
+	Vector3 rayDirection, incomingDirInverse;
+	Point3 intersectionPosition;
 	
 	// All items are in world space unless specified otherwise
 	// usually lighting deals with incoming ray facing away from surface
 	Vector3 vectorToLight, vectorToLightScaled;
 
 	Vector3 areaLightNormalVector;
-	Vector3 rayDirection, incomingDirInverse;
 	Vector3 normalVector;
-	Point3 intersectionPosition;
 	// special stuff
 	Point3 samplePointOnLight;
+	int childIndex;
 };

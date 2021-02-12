@@ -82,7 +82,7 @@ bool Scene::Intersect(const Ray &ray, Color &newColor,
 		ShadingInfo shadingInfo(intersectionResult.genericMetadata1,
 								intersectionResult.genericMetadata2,
 								intersectionResult.genericMetadata3,
-								intersectionResult.childPrimitiveHit,
+								&intersectionResult.compoundPrimitiveToIntersectedPrim,
 								ray.GetDirection(),
 								ray.GetPositionAtParam(tMax));
 		Material const * primitiveMaterial = closestPrimitive->GetMaterial(shadingInfo);
@@ -171,6 +171,8 @@ bool Scene::Intersect(const Ray &ray, Color &newColor,
 bool Scene::ShadowFeelerIntersectsAnObject(const Ray& ray, float tMin,
 	float tMax, const Primitive* primitiveToExclude) const {
 	auto* primitiveHit = simpleWorld->ShadowFeelerIntersectsAnObject(ray, tMin, tMax);
+	// TODO: we probably don't need this, we wouldn't cast a shadow feeler
+	// from light primitive to itself anyway
 	return (primitiveHit != nullptr && primitiveHit != primitiveToExclude);
 }
 

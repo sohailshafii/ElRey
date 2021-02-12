@@ -1,0 +1,51 @@
+grid of triangles -> instance -> grid
+
+
+grid -> instance - > grid of triangles -> returns triangle hit
+
+
+Instance is ultimately returned closest intersection -> for normal calculation it calls grid's function (what it is an instance). But that function does nothing...it doesn't return actual triangle hit. 
+
+
+Compound problem:
+
+body
+  left arm
+    left hand*
+      triangle
+  right arm
+    right hand
+
+
+What if we have use a pair instead -- primitive, and tree depth?
+
+Keep intersecting until we go down tree. This is for compound. In this case instance will call compound's normal function.
+
+Solution
+
+What we want is a path from topmost instance down to the actual primitive. So in intersection result, use a vector or array that stores the children of the instance that are traversed down to the LAST primitive. The topmost instance, or parent is returned. So what are the children?
+
+Instance1->Compound1->Instance2->Compound2>Instance3->Compound3->Triangle
+
+Here topmost instance is returned. Child array is I2, I3, Triangle. Child array is used as guide for compounds. Need to pass an index that traverses the child array as well when following recursive calls.
+
+So when normal is computed, Instance1 will redirect to Compound1, down the nodes while applying transformations. Each compound object will traverse the vector, so keep track of index.
+
+Now for grid
+
+grid1 -> instance1 - > grid2 of triangles -> returns triangle hit
+
+grid1 sets child as instance1
+with grid2 it's trianglehit
+So final child array:
+
+instance1, trianglehit
+
+grid1 will return ITSELF, then upon normal query, will redirect to instance1 or first child! Instance1 will auto-redict to grid2, which will point to triangle hit via list of children. Each grid will traverse the vector, so keep track of index.
+
+
+
+
+
+
+

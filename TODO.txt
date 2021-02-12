@@ -1,0 +1,12 @@
+TODO
+
+GetNormal, SamplePrimitive, GetSampler, PDF, GetMaterial
+
+Need to reset intersection list due to...
+GetNormal from AreaLight, Scene
+SamplePrimitive from AreaLight
+PDF from Scene
+
+
+Scene calling SimpleWorld::Intersect; need to reset that deque
+Everywhere in grid, need to reset that deque
