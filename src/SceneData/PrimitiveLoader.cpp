@@ -26,46 +26,55 @@
 void PrimitiveLoader::CreateGridOfGrids(Scene *scene, const nlohmann::json& jsonObj) {
 	int numLevels = CommonLoaderFunctions::SafeGetToken(jsonObj, "num_levels");
 	int gridRes = CommonLoaderFunctions::SafeGetToken(jsonObj, "grid_res");
-	float gap = CommonLoaderFunctions::SafeGetToken(jsonObj, "gap");
+	float gapPercentage = CommonLoaderFunctions::SafeGetToken(jsonObj, "gap_percentage");
 	float bunnySize = CommonLoaderFunctions::SafeGetToken(jsonObj, "bunny_size");
 	auto origin = CommonLoaderFunctions::SafeGetToken(jsonObj, "origin");
-	CreateGridOfGrids(scene, numLevels, gridRes, gap, bunnySize,
+	CreateGridOfGrids(scene, numLevels, gridRes, gapPercentage, bunnySize,
 					  Vector3((float)origin[0], (float)origin[1], (float)origin[2]));
 }
 
-// TODO: debug, doesn't work if instance refers to child grid
 void PrimitiveLoader::CreateGridOfGrids(Scene* scene,
 										int numLevels,
 										int gridRes,
-										float gap,
+										float gapPercentage,
 										float bunnySize,
 										Vector3 const & origin) {
-	ModelPrimitiveInfo *primInfo = new ModelPrimitiveInfo();
 	auto newMaterial = std::make_shared<LambertianMaterial>(0.1f, 0.7f,
 		Color3(0.68f, 0.85f, 0.91f));
 	Matrix4x4 localToWorldScale = Matrix4x4::ScaleMatrix(Vector3(bunnySize, bunnySize, bunnySize));
 	Matrix4x4 worldToLocalScale = Matrix4x4::InvScaleMatrix(Vector3(bunnySize, bunnySize, bunnySize));
-	localToWorldScale.Print();
+	
 	std::string originalTeddyName = "teddy";
-	LoadModel(primInfo,"./teddy.obj", true, newMaterial,
+	ModelPrimitiveInfo *modelPrimInfo = new ModelPrimitiveInfo();
+	LoadModel(modelPrimInfo,"./teddy.obj", true, newMaterial,
 			  originalTeddyName, false,
 			  localToWorldScale * Matrix4x4::RotationMatrixY(180.0f));
 	std::shared_ptr<GridPrimitive> newPrim = std::make_shared<GridPrimitive>("gridOfGrids");
 	std::vector<std::shared_ptr<Primitive>> primitives;
-	auto objectsToAdd = primInfo->primitives;
+	auto objectsToAdd = modelPrimInfo->primitives;
 	for(auto object : objectsToAdd) {
 		primitives.push_back(object);
 	}
-	delete primInfo;
+	delete modelPrimInfo;
 	newPrim->SetUpAccelerator(1.0f, primitives);
-	
+	auto boundingBox = newPrim->GetBoundingBox();
+	auto bBoxSize = Point3(boundingBox.x1 - boundingBox.x0,
+						   boundingBox.y1 - boundingBox.y0,
+						   boundingBox.z1 - boundingBox.z1);
+	float maxSize = bBoxSize[0];
+	if (bBoxSize[1] > bBoxSize[0] && bBoxSize[1] > bBoxSize[2]) {
+		maxSize = bBoxSize[1];
+	}
+	else if (bBoxSize[2] > bBoxSize[0] && bBoxSize[2] > bBoxSize[1]) {
+		maxSize = bBoxSize[2];
+	}
 	Matrix4x4 localToWorldGrid;
 	Matrix4x4 worldToLocalGrid;
 	
 	std::shared_ptr<GridPrimitive> currentGridPtr = newPrim;
 	
-	float originalGapSize = gap;
-	float sizeOfEachInstance = bunnySize;
+	float sizeOfEachInstance = maxSize;
+	float gapSize = gapPercentage*maxSize;
 	for (int level = 0, primIndex; level < numLevels; level++) {
 		std::ostringstream subGridName;
 		subGridName << "grid-" << level;
@@ -76,9 +85,15 @@ void PrimitiveLoader::CreateGridOfGrids(Scene* scene,
 			for(int j = 0; j < gridRes; j++, primIndex++) {
 				std::ostringstream instanceName;
 				instanceName << "instance-" << primIndex;
-				Vector3 translationAmount = origin +
-					Vector3(i * (sizeOfEachInstance + gap), 0.0f,
-							j * (sizeOfEachInstance + gap));
+				Vector3 translationAmount =
+					Vector3(i * (sizeOfEachInstance + gapSize),
+							j * (sizeOfEachInstance + gapSize),
+							0.0f);
+				// include offset of origin only for first level
+				if (level == 0) {
+					translationAmount -= origin;
+				}
+				
 				localToWorldGrid = Matrix4x4::TranslationMatrix(translationAmount);
 				worldToLocalGrid = Matrix4x4::InvTranslationMatrix(translationAmount);
 				std::shared_ptr<InstancePrimitive> newInstance = CreateInstancePrimitive(instanceName.str(),
@@ -91,8 +106,9 @@ void PrimitiveLoader::CreateGridOfGrids(Scene* scene,
 		
 		// Now each element of the subgrid contains
 		// multiple items. recompute the size taken by these items
-		sizeOfEachInstance = gridRes * sizeOfEachInstance + (gridRes - 1.0) * gap;
-		gap = originalGapSize * sizeOfEachInstance;
+		// first term in addition is number of items, second is for gaps
+		sizeOfEachInstance = gridRes * sizeOfEachInstance + (gridRes - 1.0) * gapSize;
+		gapSize = gapPercentage * sizeOfEachInstance;
 		subGrid->SetUpAccelerator(1.0f, allGridPrimitives);
 		currentGridPtr = subGrid;
 	}

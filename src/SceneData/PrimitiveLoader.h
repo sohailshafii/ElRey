@@ -50,7 +50,7 @@ public:
 	static void CreateGridOfGrids(Scene* scene,
 								  int numLevels,
 								  int gridRes,
-								  float gap,
+								  float gapPercentage,
 								  float bunnySize,
 								  Vector3 const & origin);
 	
