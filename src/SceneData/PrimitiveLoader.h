@@ -86,7 +86,6 @@ private:
 	static void AddFaceIndex(TriangleMesh *mesh,
 							 unsigned int vertIndex,
 							 unsigned int triIndex);
-	static void ComputeSmoothMeshNormals(std::shared_ptr<TriangleMesh>
-										 triangleMesh,
+	static void ComputeSmoothMeshNormals(TriangleMesh* triangleMesh,
 										 std::vector<std::shared_ptr<Primitive>>& allPrimitives);
 };

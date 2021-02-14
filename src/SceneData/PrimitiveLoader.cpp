@@ -529,7 +529,7 @@ void PrimitiveLoader::LoadModel(ModelPrimitiveInfo* primInfo,
 	}
 	else {
 		std::cout << "Computing smooth normals...\n";
-		ComputeSmoothMeshNormals(triangleMesh, primInfo->primitives);
+		ComputeSmoothMeshNormals(triangleMesh.get(), primInfo->primitives);
 		std::cout << "Done computing normals!\n";
 	}
 	std::cout << "Generated " << numTrianglesTotal << " for "
@@ -551,7 +551,7 @@ void PrimitiveLoader::AddFaceIndex(TriangleMesh *mesh,
 }
 
 
-void PrimitiveLoader::ComputeSmoothMeshNormals(std::shared_ptr<TriangleMesh> triangleMesh,
+void PrimitiveLoader::ComputeSmoothMeshNormals(TriangleMesh* triangleMesh,
 											   std::vector<std::shared_ptr<Primitive>>& allPrimitives) {
 	size_t numVerts = triangleMesh->vertices.size();
 	triangleMesh->normals.reserve(triangleMesh->vertices.size());

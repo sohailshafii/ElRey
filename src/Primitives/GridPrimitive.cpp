@@ -619,16 +619,13 @@ Primitive* GridPrimitive::IntersectAgainstPrimitiveCollectionShadow(
 Primitive* GridPrimitive::BruteForceIntersect(const Ray &ray, float tMin, float& tMax,
 											  IntersectionResult &intersectionResult) {
 	Primitive* primitiveHit = nullptr;
-	IntersectionResult currResult;
 	
 	for(auto primitiveCollection : cells) {
-		currResult.Reset();
 		auto currPrimitiveHit =
 			IntersectAgainstPrimitiveCollection(primitiveCollection, ray, tMin, tMax,
-												currResult);
+												intersectionResult);
 		if (currPrimitiveHit != nullptr) {
 			primitiveHit = currPrimitiveHit;
-			intersectionResult = currResult;
 		}
 	}
 	

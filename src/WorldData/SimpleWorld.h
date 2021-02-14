@@ -14,12 +14,12 @@ public:
 	
 	~SimpleWorld();
 	
-	void AddPrimitive(std::shared_ptr<Primitive> newPrimitive);
+	void AddPrimitive(std::shared_ptr<Primitive> const & newPrimitive);
 	void AddPrimitives(std::shared_ptr<Primitive> *newPrimitives,
 					   unsigned int numNewPrimitives);
-	void AddPrimitives(std::vector<std::shared_ptr<Primitive>> newPrimitives);
+	void AddPrimitives(std::vector<std::shared_ptr<Primitive>> const & newPrimitives);
 
-	void RemovePrimitive(std::shared_ptr<Primitive> primitiveToRemove);
+	void RemovePrimitive(std::shared_ptr<Primitive> const & primitiveToRemove);
 	void RemovePrimitiveByName(std::string const & name);
 	std::shared_ptr<Primitive> GetPrimitive(unsigned int index);
 	std::shared_ptr<Primitive> FindPrimitiveByName(const std::string& name);

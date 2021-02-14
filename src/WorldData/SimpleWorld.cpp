@@ -19,7 +19,7 @@ SimpleWorld::~SimpleWorld() {
 	primitives.clear();
 }
 
-void SimpleWorld::AddPrimitive(std::shared_ptr<Primitive> newPrimitive) {
+void SimpleWorld::AddPrimitive(std::shared_ptr<Primitive> const & newPrimitive) {
 	if (newPrimitive == nullptr) {
 		throw std::runtime_error("Trying to add invalid primitive!");
 	}
@@ -49,7 +49,7 @@ void SimpleWorld::AddPrimitives(std::shared_ptr<Primitive> *newPrimitives, unsig
 	}
 }
 
-void SimpleWorld::AddPrimitives(std::vector<std::shared_ptr<Primitive>> newPrimitives) {
+void SimpleWorld::AddPrimitives(std::vector<std::shared_ptr<Primitive>> const & newPrimitives) {
 	size_t numNewPrimitives = newPrimitives.size();
 	if (numNewPrimitives == 0) {
 		throw std::runtime_error("Trying to add invalid primitives!");
@@ -60,7 +60,7 @@ void SimpleWorld::AddPrimitives(std::vector<std::shared_ptr<Primitive>> newPrimi
 	}
 }
 
-void SimpleWorld::RemovePrimitive(std::shared_ptr<Primitive> primitiveToRemove) {
+void SimpleWorld::RemovePrimitive(std::shared_ptr<Primitive> const & primitiveToRemove) {
 	if (primitiveToRemove == nullptr) {
 		throw std::runtime_error("Trying to remove invalid primitive!");
 	}
