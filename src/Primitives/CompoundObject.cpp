@@ -15,8 +15,10 @@ Primitive* CompoundObject::Intersect(const Ray &ray, float tMin, float& tMax,
 		}
 	}
 	
-	intersectionResult.compoundPrimitiveToIntersectedPrim[this] =
-		closestPrimSoFar;
+	if (closestPrimSoFar != nullptr) {
+		intersectionResult.compoundPrimitiveToIntersectedPrim[this] =
+			closestPrimSoFar;
+	}
 	
 	return closestPrimSoFar;
 }

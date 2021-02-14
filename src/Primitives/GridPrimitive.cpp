@@ -145,25 +145,24 @@ void GridPrimitive::SetupCells(float multipier,
 Primitive* GridPrimitive::Intersect(const Ray &ray, float tMin, float& tMax,
 									IntersectionResult &intersectionResult) {
 	Primitive* closestPrimitive = nullptr;
-	bool hitBefore = false;
 	for (auto currPrimitive : primitivesNotInCells) {
-		IntersectionResult currResult;
 		auto hitPrim = currPrimitive->Intersect(ray, tMin, tMax,
-												currResult);
+												intersectionResult);
 		if (hitPrim != nullptr) {
 			closestPrimitive = hitPrim;
-			intersectionResult = currResult;
-			intersectionResult.compoundPrimitiveToIntersectedPrim[this] =
-				closestPrimitive;
-			hitBefore = true;
 		}
 	}
+	
 #ifdef BRUTE_FORCE_TEST
 	Primitive* closestFromBruteForce = BruteForceIntersect(ray, tMin, tMax, intersectionResult);
 	if (closestFromBruteForce != nullptr) {
+		intersectionResult.compoundPrimitiveToIntersectedPrim[this] =
+			closestFromBruteForce;
 		return closestFromBruteForce;
 	}
 	else {
+		intersectionResult.compoundPrimitiveToIntersectedPrim[this] =
+			closestPrimitive;
 		return closestPrimitive;
 	}
 #endif
@@ -227,6 +226,11 @@ Primitive* GridPrimitive::Intersect(const Ray &ray, float tMin, float& tMax,
 		}
 	}
 		
+	if (closestPrimitive != nullptr) {
+		intersectionResult.compoundPrimitiveToIntersectedPrim[this] =
+			closestPrimitive;
+	}
+	
 	return closestPrimitive;
 }
 
@@ -561,6 +565,7 @@ bool GridPrimitive::CheckBoundsOfRay(Ray const &ray, float tMin, float tMax,
 }
 
 Primitive* GridPrimitive::EvaluatePrimitiveCollectionCell(PrimitiveCollection & primitiveCollection, const Ray &ray, float tMin, float& tMax, IntersectionResult &intersectionResult, float tNext) {
+	
 	float tMaxTest = tMax;
 	IntersectionResult intersecResTemp;
 	auto hitPrimitive = IntersectAgainstPrimitiveCollection(primitiveCollection,
@@ -569,7 +574,6 @@ Primitive* GridPrimitive::EvaluatePrimitiveCollectionCell(PrimitiveCollection & 
 	if (hitPrimitive != nullptr && tMaxTest < tNext) {
 		tMax = tMaxTest;
 		intersectionResult = intersecResTemp;
-		intersectionResult.compoundPrimitiveToIntersectedPrim[this] = hitPrimitive;
 		return hitPrimitive;
 	}
 
@@ -585,11 +589,9 @@ Primitive* GridPrimitive::IntersectAgainstPrimitiveCollection(PrimitiveCollectio
 	Primitive * closestPrimSoFar = nullptr;
 	for (unsigned int index = 0; index < numElements; index++) {
 		auto currPrimitive = primitivesInCollection[index];
-		IntersectionResult currResult;
-		auto hitTest = currPrimitive->Intersect(ray, tMin, tMax, currResult);
+		auto hitTest = currPrimitive->Intersect(ray, tMin, tMax, intersectionResult);
 		if (hitTest != nullptr) {
 			closestPrimSoFar = hitTest;
-			intersectionResult = currResult;
 		}
 	}
 	
@@ -617,15 +619,16 @@ Primitive* GridPrimitive::IntersectAgainstPrimitiveCollectionShadow(
 Primitive* GridPrimitive::BruteForceIntersect(const Ray &ray, float tMin, float& tMax,
 											  IntersectionResult &intersectionResult) {
 	Primitive* primitiveHit = nullptr;
+	IntersectionResult currResult;
+	
 	for(auto primitiveCollection : cells) {
-		IntersectionResult currResult;
+		currResult.Reset();
 		auto currPrimitiveHit =
 			IntersectAgainstPrimitiveCollection(primitiveCollection, ray, tMin, tMax,
 												currResult);
 		if (currPrimitiveHit != nullptr) {
 			primitiveHit = currPrimitiveHit;
 			intersectionResult = currResult;
-			intersectionResult.compoundPrimitiveToIntersectedPrim[this] = primitiveHit;
 		}
 	}
 	

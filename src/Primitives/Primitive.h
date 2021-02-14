@@ -28,9 +28,8 @@ public:
 
 	virtual ~Primitive() { }
 
-	// TODO: make it obvious that the last two arguments are modified upon succesful intersection
-	// if intersection is succesful, return primitive hit. this is useful for compound objects,
-	// which might have multiple objects inside of them
+	// Returns actual primitive hit (nullptr if not). Intersection result is only set
+	// if all tests pass
 	virtual Primitive* Intersect(const Ray &ray, float tMin, float& tMax,
 								 IntersectionResult &intersectionResult) = 0;
 	virtual Primitive* IntersectShadow(const Ray &ray, float tMin, float tMax) = 0;

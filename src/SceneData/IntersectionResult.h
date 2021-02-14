@@ -18,4 +18,8 @@ public:
 	// which child was intersected against
 	std::unordered_map<Primitive*, Primitive*>
 		compoundPrimitiveToIntersectedPrim;
+	
+	void Reset() {
+		compoundPrimitiveToIntersectedPrim.clear();
+	}
 };
