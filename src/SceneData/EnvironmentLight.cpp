@@ -30,7 +30,7 @@ Vector3 EnvironmentLight::GetDirectionFromPositionScaled(const ShadingInfo& shad
 	return -right*sp[0] - up*sp[1] - forward*sp[2];
 }
 
-Color3 EnvironmentLight::GetRadiance(const ShadingInfo& shadingInfo, const Scene& scene) const {
+Color3 EnvironmentLight::GetRadiance(ShadingInfo& shadingInfo, const Scene& scene) const {
 	Color areaLightColor = material->GetColorForAreaLight(shadingInfo);
 	return Color3(areaLightColor[0], areaLightColor[1],
 				  areaLightColor[2]);

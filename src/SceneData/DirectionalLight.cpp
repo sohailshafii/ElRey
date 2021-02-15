@@ -15,7 +15,7 @@ Vector3 DirectionalLight::GetDirectionFromPositionScaled(const ShadingInfo& shad
 	return lightDirection;
 }
 
-Color3 DirectionalLight::GetRadiance(const ShadingInfo& shadingInfo, const Scene& scene) const {
+Color3 DirectionalLight::GetRadiance(ShadingInfo& shadingInfo, const Scene& scene) const {
 	return radiancePreScaled;
 }
 

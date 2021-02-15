@@ -39,7 +39,7 @@ void AreaLight::ComputeAndStoreAreaLightInformation(ShadingInfo& shadingInfo) co
 	shadingInfo.samplePointOnLight = lightPrimitiveSample;
 }
 
-Color3 AreaLight::GetRadiance(const ShadingInfo& shadingInfo,
+Color3 AreaLight::GetRadiance(ShadingInfo& shadingInfo,
 							  const Scene& scene) const {
 	float nDotVectorToLight = -shadingInfo.areaLightNormalVector
 		* shadingInfo.vectorToLight;

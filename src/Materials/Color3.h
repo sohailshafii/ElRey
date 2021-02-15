@@ -21,17 +21,17 @@ public:
 	Color3(const Color3 &p2);
 	Color3& operator=(const Color3& other);
 
-	Color3 operator^(float power);
+	Color3 operator^(float power) const;
 	Color3& operator^=(float power);
 	// TODO: rvalue stuff
 
-	Color3 operator+(const Color3& p2);
+	Color3 operator+(const Color3& p2) const;
 	Color3& operator+=(const Color3& p2);
 	
-	Color3 operator*(const Color3& p2);
+	Color3 operator*(const Color3& p2) const;
 	Color3& operator*=(const Color3& p2);
 
-	Color3 operator/(float divisor);
+	Color3 operator/(float divisor) const;
 	Color3& operator/=(float divisor);
 
 	Color3 operator*(float mult) const;

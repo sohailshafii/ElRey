@@ -8,7 +8,7 @@ public:
 	GlossySpecularBRDF();
 	GlossySpecularBRDF(float ks, Color3 cs, float exponent);
 
-	Color3 GetRadiance(const ShadingInfo& shadingInfo) const override;
+	Color3 GetRadiance(ShadingInfo& shadingInfo) const override;
 	Color3 GetRho(const ShadingInfo& shadingInfo) const override;
 
 	void setKs(float ks) {

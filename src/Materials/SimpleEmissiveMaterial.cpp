@@ -11,11 +11,11 @@ Color SimpleEmissiveMaterial::GetAmbientColor(const ShadingInfo &shadingInfo) co
 	return ambientColor;
 }
 
-Color SimpleEmissiveMaterial::GetDirectColor(const ShadingInfo &shadingInfo) const  {
+Color SimpleEmissiveMaterial::GetDirectColor(ShadingInfo &shadingInfo) const  {
 	return directColor;
 }
 
-Color SimpleEmissiveMaterial::GetColorForAreaLight(const ShadingInfo &shadingInfo) const {
+Color SimpleEmissiveMaterial::GetColorForAreaLight(ShadingInfo &shadingInfo) const {
 	if (shadingInfo.normalVector * shadingInfo.incomingDirInverse
 		> 0.0) {
 		return directColor;

@@ -20,16 +20,18 @@ public:
 		compoundPrimitiveToIntersectedPrim(compoundPrimitiveToIntersectedPrim),
 		rayDirection(rayDirection),
 		incomingDirInverse(-rayDirection),
-		intersectionPosition(intersectionPosition),
-		childIndex(0) {
+		intersectionPosition(intersectionPosition) {
 	}
 	
+	// used to obtain intersection information from a primitive
 	float intGenericMetadata1, intGenericMetadata2,
 		intGenericMetadata3;
 	// useful for compound or grid primitives
 	// this is pointer because we want to avoid copies
 	std::unordered_map<Primitive*, Primitive*>*
 		compoundPrimitiveToIntersectedPrim;
+	
+	// rayDirection = wo, incomingDirInverse = wi
 	Vector3 rayDirection, incomingDirInverse;
 	Point3 intersectionPosition;
 	
@@ -41,5 +43,4 @@ public:
 	Vector3 normalVector;
 	// special stuff
 	Point3 samplePointOnLight;
-	int childIndex;
 };

@@ -21,7 +21,7 @@ float Color3::operator[] (int index) const {
 	return comp[index];
 }
 
-Color3 Color3::operator^(float power) {
+Color3 Color3::operator^(float power) const {
 	return Color3(pow(comp[0], power), pow(comp[1], power),
 		pow(comp[2], power));
 }
@@ -33,7 +33,7 @@ Color3& Color3::operator^=(float power) {
 	return *this;
 }
 
-Color3 Color3::operator+(const Color3& p2) {
+Color3 Color3::operator+(const Color3& p2) const {
 	return Color3(comp[0] + p2[0], comp[1] + p2[1],
 		comp[2] + p2[2]);
 }
@@ -45,7 +45,7 @@ Color3& Color3::operator+=(const Color3& p2) {
 	return *this;
 }
 
-Color3 Color3::operator*(const Color3& p2) {
+Color3 Color3::operator*(const Color3& p2) const {
 	return Color3(comp[0] * p2[0], comp[1] * p2[1],
 		comp[2] * p2[2]);
 }
@@ -57,7 +57,7 @@ Color3& Color3::operator*=(const Color3& p2) {
 	return *this;
 }
 
-Color3 Color3::operator/(float divisor) {
+Color3 Color3::operator/(float divisor) const {
 	return Color3(comp[0]/divisor, comp[1]/divisor,
 		comp[2] / divisor);
 }

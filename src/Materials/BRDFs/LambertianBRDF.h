@@ -8,7 +8,7 @@ public:
 	LambertianBRDF();
 	LambertianBRDF(float kd, const Color3& cd);
 
-	Color3 GetRadiance(const ShadingInfo& shadingInfo) const override;
+	Color3 GetRadiance(ShadingInfo& shadingInfo) const override;
 	Color3 GetRho(const ShadingInfo& shadingInfo) const override;
 
 	void setKd(float kd) {

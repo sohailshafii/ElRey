@@ -28,13 +28,13 @@ public:
 	Color& operator^=(float power);
 	// TODO: rvalue stuff
 
-	Color operator+(const Color& p2);
+	Color operator+(const Color& p2) const;
 	Color& operator+=(const Color& p2);
 	
-	Color operator*(const Color& p2);
+	Color operator*(const Color& p2) const;
 	Color& operator*=(const Color& p2);
 
-	Color operator/(float divisor);
+	Color operator/(float divisor) const;
 	Color& operator/=(float divisor);
 
 	Color operator*(float mult) const;

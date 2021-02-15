@@ -13,6 +13,6 @@ public:
 	}
 	
 	virtual Color GetAmbientColor(const ShadingInfo &shadingInfo) const = 0;
-	virtual Color GetDirectColor(const ShadingInfo &shadingInfo) const = 0;
-	virtual Color GetColorForAreaLight(const ShadingInfo &shadingInfo) const = 0;
+	virtual Color GetDirectColor(ShadingInfo &shadingInfo) const = 0;
+	virtual Color GetColorForAreaLight(ShadingInfo &shadingInfo) const = 0;
 };

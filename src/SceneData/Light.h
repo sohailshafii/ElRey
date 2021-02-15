@@ -27,7 +27,7 @@ public:
 		return " ";
 	}
 	
-	virtual Color3 GetRadiance(const ShadingInfo& shadingInfo,
+	virtual Color3 GetRadiance(ShadingInfo& shadingInfo,
 							   const Scene& scene) const = 0;
 	
 	bool CastsShadows() {

@@ -6,7 +6,9 @@
 
 class BRDF {
 public:
-	virtual Color3 GetRadiance(const ShadingInfo& shadingInfo) const  = 0;
+	// GetRadiance might modify incoming direction, so its argument
+	// is not const
+	virtual Color3 GetRadiance(ShadingInfo& shadingInfo) const  = 0;
 	virtual Color3 GetRho(const ShadingInfo& shadingInfo) const  = 0;
 private:
 };

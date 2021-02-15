@@ -16,6 +16,6 @@ Vector3 PointLight::GetDirectionFromPositionScaled(const ShadingInfo& shadingInf
 	return directionFromPos;
 }
 
-Color3 PointLight::GetRadiance(const ShadingInfo& shadingInfo, const Scene& scene) const {
+Color3 PointLight::GetRadiance(ShadingInfo& shadingInfo, const Scene& scene) const {
 	return radiancePreScaled;
 }

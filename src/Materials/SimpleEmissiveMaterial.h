@@ -8,8 +8,8 @@ public:
 	SimpleEmissiveMaterial(float ka, float kd, const Color3& color);
 
 	virtual Color GetAmbientColor(const ShadingInfo &shadingInfo) const override;
-	virtual Color GetDirectColor(const ShadingInfo &shadingInfo) const override;
-	virtual Color GetColorForAreaLight(const ShadingInfo &shadingInfo) const override;
+	virtual Color GetDirectColor(ShadingInfo &shadingInfo) const override;
+	virtual Color GetColorForAreaLight(ShadingInfo &shadingInfo) const override;
 private:
 	Color ambientColor;
 	Color directColor;

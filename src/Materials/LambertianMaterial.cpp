@@ -14,12 +14,12 @@ Color LambertianMaterial::GetAmbientColor(const ShadingInfo& shadingInfo) const 
 	return Color(ambientColor[0], ambientColor[1], ambientColor[2], 1.0f);
 }
 
-Color LambertianMaterial::GetDirectColor(const ShadingInfo& shadingInfo) const {
+Color LambertianMaterial::GetDirectColor(ShadingInfo& shadingInfo) const {
 	Color3 directColor =  diffuseBRDF.GetRadiance(shadingInfo);
 	return Color(directColor[0], directColor[1], directColor[2], 1.0f);
 }
 
-Color LambertianMaterial::GetColorForAreaLight(const ShadingInfo& shadingInfo) const {
+Color LambertianMaterial::GetColorForAreaLight(ShadingInfo& shadingInfo) const {
 	if (shadingInfo.normalVector * shadingInfo.incomingDirInverse
 		> 0.0) {
 		Color3 directColor = diffuseBRDF.GetRadiance(shadingInfo);

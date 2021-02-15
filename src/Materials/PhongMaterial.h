@@ -12,8 +12,8 @@ public:
 				  const Color3& ksColor);
 
 	virtual Color GetAmbientColor(const ShadingInfo& shadingInfo) const override;
-	virtual Color GetDirectColor(const ShadingInfo& shadingInfo) const override;
-	virtual Color GetColorForAreaLight(const ShadingInfo& shadingInfo) const override;
+	virtual Color GetDirectColor(ShadingInfo& shadingInfo) const override;
+	virtual Color GetColorForAreaLight(ShadingInfo& shadingInfo) const override;
 private:
 	LambertianBRDF ambientBRDF;
 	LambertianBRDF diffuseBRDF;

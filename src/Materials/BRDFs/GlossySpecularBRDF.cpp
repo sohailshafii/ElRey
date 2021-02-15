@@ -11,7 +11,7 @@ GlossySpecularBRDF::GlossySpecularBRDF(float ks, Color3 cs, float exponent) {
 	this->exponent = exponent;
 }
 
-Color3 GlossySpecularBRDF::GetRadiance(const ShadingInfo& shadingInfo) const {
+Color3 GlossySpecularBRDF::GetRadiance(ShadingInfo& shadingInfo) const {
 	Color3 	finalColor;
 	Vector3 const & intersectionNormal = shadingInfo.normalVector;
 	Vector3 const & incomingDirReverse = shadingInfo.incomingDirInverse;

@@ -12,7 +12,7 @@ Vector3 AmbientLight::GetDirectionFromPositionScaled(const ShadingInfo &shadingI
 	return Vector3::Zero();
 }
 
-Color3 AmbientLight::GetRadiance(const ShadingInfo &shadingInfo,
+Color3 AmbientLight::GetRadiance(ShadingInfo &shadingInfo,
 								 const Scene& scene) const {
 	return radiancePreScaled;
 }
