@@ -44,7 +44,7 @@ public:
 	virtual void SetAmbientLight(Light* newAmbientLight);
 
 	virtual bool Intersect(const Ray &ray, Color &newColor,
-		float tMin, float& tMax) const;
+		float tMin, float& tMax, int bounceCount) const;
 
 	std::shared_ptr<Primitive> GetPrimitive(unsigned int index) {
 		return simpleWorld->GetPrimitive(index);
@@ -75,6 +75,14 @@ public:
 	
 	void SetAllowNavigation(bool allowNavigation) {
 		this->allowNavigation = allowNavigation;
+	}
+	
+	void GetMaxBounceCount() const {
+		return maxBounceCount;
+	}
+	
+	void GetMaxBounceCount(int maxBounceCount) {
+		this->maxBounceCount = maxBounceCount;
 	}
 	
 	void TranslateAndRotateCamera();
@@ -108,4 +116,5 @@ protected:
 	
 	Camera* mainCamera;
 	bool allowNavigation;
+	int maxBounceCount;
 };

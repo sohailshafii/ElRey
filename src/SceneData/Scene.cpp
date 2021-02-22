@@ -14,12 +14,14 @@ Scene::Scene() {
 	
 	ambientLight = nullptr;
 	mainCamera = nullptr;
+	maxBounceCount = 4;
 }
 
 Scene::Scene(std::shared_ptr<Primitive> *primitives, unsigned int numPrimitives) {
 	simpleWorld = new SimpleWorld(primitives, numPrimitives);
 	ambientLight = nullptr;
 	mainCamera = nullptr;
+	maxBounceCount = 4;
 }
 
 Scene::~Scene() {
@@ -73,18 +75,20 @@ void Scene::SetAmbientLight(Light* newAmbientLight) {
 }
 
 bool Scene::Intersect(const Ray &ray, Color &newColor,
-	float tMin, float& tMax) const {
+	float tMin, float& tMax, int bounceCount) const {
 	IntersectionResult intersectionResult;
 	
+	float originalTMax = tMax;
 	Primitive* closestPrimitive = simpleWorld->Intersect(ray, tMin, tMax, intersectionResult);
 	
 	if (closestPrimitive != nullptr) {
+		auto intersectionPos = ray.GetPositionAtParam(tMax);
 		ShadingInfo shadingInfo(intersectionResult.genericMetadata1,
 								intersectionResult.genericMetadata2,
 								intersectionResult.genericMetadata3,
 								&intersectionResult.compoundPrimitiveToIntersectedPrim,
 								ray.GetDirection(),
-								ray.GetPositionAtParam(tMax));
+								intersectionPos);
 		Material const * primitiveMaterial = closestPrimitive->GetMaterial(shadingInfo);
 		Vector3 normalVec = closestPrimitive->GetNormal(shadingInfo);
 		shadingInfo.normalVector = normalVec;
@@ -105,6 +109,8 @@ bool Scene::Intersect(const Ray &ray, Color &newColor,
 			float vectorMagn = 0.0f;
 
 			if (isAreaLight) {
+				// TODO: area lighting here messes with shading info, and it's not
+				// clear what it modifies. that's bad
 				primitiveToExclude = currentLight->GetPrimitive();
 				currentLight->ComputeAndStoreAreaLightInformation(shadingInfo);
 				vectorToLight = shadingInfo.wi;
@@ -161,6 +167,17 @@ bool Scene::Intersect(const Ray &ray, Color &newColor,
 						:
 						primitiveMaterial->GetDirectColor(shadingInfo)*
 						lightRadColor4*projectionTerm;
+				}
+				// do we need to recurse?
+				if (primitiveMaterial->DoesSurfaceReflect() && bounceCount <
+					maxBounceCount) {
+					float reflectivity = primitiveMaterial->GetReflectivity();
+					Vector3 reflectiveVec = primitiveMaterial->ReflectVectorOffSurface(normalVec, ray.GetDirection());
+					Ray reflectedRay(intersectionPos, reflectiveVec);
+					Color reflectedColor(0.0f, 0.0f, 0.0f, 0.0f);
+					Intersect(reflectedRay, reflectedColor,
+							  0.0f, originalTMax, bounceCount+1);
+					newColor += reflectedColor*reflectivity;
 				}
 			}
 		}

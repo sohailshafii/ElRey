@@ -127,7 +127,7 @@ void Camera::CastIntoScene(unsigned char* pixels, unsigned int bytesPerPixel,
 			AffectFirstRay(rayToCast, newPixelPnt);
 			
 			tMax = maxCastDistance;
-			scene->Intersect(rayToCast, sampleColor, 0.0f, tMax);
+			scene->Intersect(rayToCast, sampleColor, 0.0f, tMax, 0);
 			accumColor += sampleColor;
 		}
 
