@@ -20,8 +20,7 @@ Color LambertianMaterial::GetDirectColor(ShadingInfo& shadingInfo) const {
 }
 
 Color LambertianMaterial::GetColorForAreaLight(ShadingInfo& shadingInfo) const {
-	if (shadingInfo.normalVector * shadingInfo.incomingDirInverse
-		> 0.0) {
+	if (shadingInfo.normalVector * shadingInfo.wo > 0.0) {
 		Color3 directColor = diffuseBRDF.F(shadingInfo);
 		return Color(directColor[0], directColor[1], directColor[2], 1.0f);
 	}

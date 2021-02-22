@@ -18,10 +18,11 @@ GlossySpecularBRDF::~GlossySpecularBRDF() {
 Color3 GlossySpecularBRDF::F(ShadingInfo& shadingInfo) const {
 	Color3 	finalColor;
 	Vector3 const & intersectionNormal = shadingInfo.normalVector;
-	Vector3 const & lightVector = shadingInfo.vectorToLight;
-	float 		nDotIncomingLightVec = intersectionNormal * lightVector;
-	Vector3 	reflectedVector(-lightVector + intersectionNormal * nDotIncomingLightVec * 2.0f);
-	Vector3 const & outgoingDir = shadingInfo.incomingDirInverse;
+	Vector3 const & wi = shadingInfo.wi;
+	float 		nDotIncomingLightVec = intersectionNormal * wi;
+	Vector3 	reflectedVector(-wi +
+								intersectionNormal * nDotIncomingLightVec * 2.0f);
+	Vector3 const & outgoingDir = shadingInfo.wo;
 	float 		rDotOutgoing = reflectedVector * outgoingDir;
 		
 	if (rDotOutgoing > 0.0) {
@@ -34,9 +35,10 @@ Color3 GlossySpecularBRDF::F(ShadingInfo& shadingInfo) const {
 Color3 GlossySpecularBRDF::SampleF(ShadingInfo& shadingInfo, float& pdf) const {
 	Color3 	finalColor;
 	Vector3 const & intersectionNormal = shadingInfo.normalVector;
-	Vector3 const & incomingDirReverse = shadingInfo.incomingDirInverse;
-	float 		nDotIncomingDirection = intersectionNormal * incomingDirReverse;
-	Vector3 	reflectedVector(-incomingDirReverse + intersectionNormal * nDotIncomingDirection * 2.0f);
+	Vector3 const & wo = shadingInfo.wo;
+	float 		nDotIncomingDirection = intersectionNormal * wo;
+	Vector3 	reflectedVector(-wo +
+								intersectionNormal * nDotIncomingDirection * 2.0f);
 	
 	Vector3 w = reflectedVector;
 	Vector3 u = Vector3(0.00424, 1, 0.00764) ^ w;
@@ -44,22 +46,19 @@ Color3 GlossySpecularBRDF::SampleF(ShadingInfo& shadingInfo, float& pdf) const {
 	Vector3 v = u ^ w;
 	
 	Point3 samplePoint = sampler->GetSampleOnHemisphere();
-	shadingInfo.incomingDirInverse =
+	shadingInfo.wi =
 		u*samplePoint[0] + v*samplePoint[1] + w*samplePoint[2];
 	
-	float rIncomingDotNormal = shadingInfo.incomingDirInverse*
-		intersectionNormal;
+	float rIncomingDotNormal = shadingInfo.wi*intersectionNormal;
 	
 	if (rIncomingDotNormal < 0.0f) {
-		shadingInfo.incomingDirInverse =
+		shadingInfo.wi =
 			-u*samplePoint[0] - v*samplePoint[1] - w*samplePoint[2];
 	}
 	
-	shadingInfo.incomingDirInverse.Normalize();
-	shadingInfo.rayDirection = -shadingInfo.incomingDirInverse;
+	shadingInfo.wi.Normalize();
 	
-	float phongLobe = pow(
-			reflectedVector*shadingInfo.incomingDirInverse,
+	float phongLobe = pow(reflectedVector*shadingInfo.wi,
 						  exponent);
 	pdf = rIncomingDotNormal * phongLobe;
 			

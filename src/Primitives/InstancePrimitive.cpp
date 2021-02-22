@@ -120,7 +120,7 @@ Vector3 InstancePrimitive::GetNormal(const ShadingInfo& shadingInfo) const {
 	// hack; modify intersection position so that primitive thinks it's in local space
 	ShadingInfo resModified = shadingInfo;
 	resModified.intersectionPosition = GetWorldToLocalPos(resModified.intersectionPosition);
-	resModified.rayDirection = GetWorldToLocalDir(resModified.rayDirection);
+	resModified.eyeDir = GetWorldToLocalDir(resModified.eyeDir);
 	// if our child is an instance primitive, then that one will apply its
 	// own transform too
 	Vector3 normalLocal = instancePrimitive->GetNormal(resModified);

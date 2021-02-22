@@ -107,9 +107,10 @@ bool Scene::Intersect(const Ray &ray, Color &newColor,
 			if (isAreaLight) {
 				primitiveToExclude = currentLight->GetPrimitive();
 				currentLight->ComputeAndStoreAreaLightInformation(shadingInfo);
-				vectorToLight = shadingInfo.vectorToLight;
-				vectorMagn = shadingInfo.vectorToLightScaled.Norm();
+				vectorToLight = shadingInfo.wi;
+				vectorMagn = shadingInfo.wiScaled.Norm();
 				projectionTerm = vectorToLight * normalVec;
+				shadingInfo.wi = vectorToLight;
 
 				// if primitive we struck is area light itself, no need to test light visibility
 				if (primitiveToExclude == closestPrimitive)
@@ -129,12 +130,12 @@ bool Scene::Intersect(const Ray &ray, Color &newColor,
 				}
 				else {
 					vectorMagn = vectorToLight.Norm();
-					shadingInfo.vectorToLightScaled = vectorToLight;
+					shadingInfo.wiScaled = vectorToLight;
 					vectorToLight /= vectorMagn;
 				}
 
 				projectionTerm = vectorToLight * normalVec;
-				shadingInfo.vectorToLight = vectorToLight;
+				shadingInfo.wi = vectorToLight;
 			}
 			
 			if (projectionTerm > 0.0f) {

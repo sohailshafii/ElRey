@@ -7,26 +7,23 @@ PerfectSpecularBRDF::PerfectSpecularBRDF() : kr(0), cr(Color3(0.0f, 0.0f, 0.0f))
 PerfectSpecularBRDF::PerfectSpecularBRDF(float kr, Color3 cr) : kr(kr), cr(cr), crScaled(cr*kr) {
 }
 
+// TODO: not clear that a BRDF is supposed to modify wi! that's bad
 Color3 PerfectSpecularBRDF::F(ShadingInfo& shadingInfo) const {
 	Color3 	finalColor;
 	Vector3 const & intersectionNormal = shadingInfo.normalVector;
-	Vector3 const & outgoingDir = shadingInfo.incomingDirInverse;
-	float ndotwo = intersectionNormal*outgoingDir;
-	// TODO: call wi!!
-	shadingInfo.vectorToLight = -outgoingDir +
-		intersectionNormal * 2.0f * ndotwo;
+	Vector3 const & wo = shadingInfo.wo;
+	float ndotwo = intersectionNormal*wo;
+	shadingInfo.wi = -wo + intersectionNormal * 2.0f * ndotwo;
 	
-	return (crScaled/fabs(intersectionNormal*shadingInfo.incomingDirInverse));
+	return (crScaled/fabs(intersectionNormal*shadingInfo.wi));
 }
 
 Color3 PerfectSpecularBRDF::SampleF(ShadingInfo& shadingInfo, float& pdf) const {
 	Vector3 const & intersectionNormal = shadingInfo.normalVector;
-	Vector3 const & outgoingDir = shadingInfo.incomingDirInverse;
-	float ndotwo = intersectionNormal*outgoingDir;
-	// TODO: call wi!!
-	shadingInfo.vectorToLight = -outgoingDir +
-		intersectionNormal * 2.0f * ndotwo;
-	
+	Vector3 const & wo = shadingInfo.wo;
+	float ndotwo = intersectionNormal*wo;
+	shadingInfo.wi = -wo + intersectionNormal * 2.0f * ndotwo;
+	pdf = fabs(intersectionNormal*shadingInfo.wi);
 	return crScaled;
 }
 

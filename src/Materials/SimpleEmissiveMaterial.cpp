@@ -16,8 +16,7 @@ Color SimpleEmissiveMaterial::GetDirectColor(ShadingInfo &shadingInfo) const  {
 }
 
 Color SimpleEmissiveMaterial::GetColorForAreaLight(ShadingInfo &shadingInfo) const {
-	if (shadingInfo.normalVector * shadingInfo.incomingDirInverse
-		> 0.0) {
+	if (shadingInfo.normalVector * shadingInfo.wo > 0.0) {
 		return directColor;
 	}
 	return deadColor;

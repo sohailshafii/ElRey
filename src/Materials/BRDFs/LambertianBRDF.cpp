@@ -31,12 +31,11 @@ Color3 LambertianBRDF::SampleF(ShadingInfo& shadingInfo, float& pdf) const {
 	Vector3 u = v ^ w;
 	
 	Point3 samplePoint = sampler->GetSampleOnHemisphere();
-	shadingInfo.incomingDirInverse =
-	u*samplePoint[0] + v*samplePoint[1] + w*samplePoint[2];
-	shadingInfo.incomingDirInverse.Normalize();
-	shadingInfo.rayDirection = -shadingInfo.incomingDirInverse;
+	shadingInfo.wi =
+		u*samplePoint[0] + v*samplePoint[1] + w*samplePoint[2];
+	shadingInfo.wi.Normalize();
 	
-	pdf = w * shadingInfo.incomingDirInverse * INV_PI;
+	pdf = shadingInfo.normalVector * shadingInfo.wi * INV_PI;
 	
 	return uniformRadiance;
 }

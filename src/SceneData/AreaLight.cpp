@@ -28,22 +28,24 @@ void AreaLight::ComputeAndStoreAreaLightInformation(ShadingInfo& shadingInfo) co
 	primitive->SamplePrimitive(lightPrimitiveSample, shadingInfo);
 	ShadingInfo newShadingInfo = shadingInfo;
 	newShadingInfo.intersectionPosition = lightPrimitiveSample;
+	Vector3 vectorToLight = lightPrimitiveSample -
+		shadingInfo.intersectionPosition;
+	Vector3 vectorToLighNorm = vectorToLight.Normalized();
+	// TODO: not clear if eyeDir should be used in getnormal
+	newShadingInfo.eyeDir = vectorToLighNorm;
 	Vector3 lightPrimitiveNormal = primitive->GetNormal(newShadingInfo);
 	
-	Vector3 vectorToLight = lightPrimitiveSample -
-	shadingInfo.intersectionPosition;
 	shadingInfo.areaLightNormalVector = lightPrimitiveNormal;
-	shadingInfo.vectorToLightScaled = vectorToLight;
-	vectorToLight.Normalize();
-	shadingInfo.vectorToLight = vectorToLight;
+	shadingInfo.wiScaled = vectorToLight;
+	shadingInfo.wi = vectorToLighNorm;
 	shadingInfo.samplePointOnLight = lightPrimitiveSample;
 }
 
 Color3 AreaLight::GetRadiance(ShadingInfo& shadingInfo,
 							  const Scene& scene) const {
-	float nDotVectorToLight = -shadingInfo.areaLightNormalVector
-		* shadingInfo.vectorToLight;
-	if (nDotVectorToLight > 0.0f) {
+	float nDotWi = -shadingInfo.areaLightNormalVector
+		* shadingInfo.wi;
+	if (nDotWi > 0.0f) {
 		Color primitiveColor = primitive->GetMaterial(shadingInfo)
 			->GetDirectColor(shadingInfo);
 		return Color3(primitiveColor[0], primitiveColor[1],
@@ -53,9 +55,9 @@ Color3 AreaLight::GetRadiance(ShadingInfo& shadingInfo,
 }
 
 float AreaLight::GeometricTerm(const ShadingInfo& shadingInfo) const {
-	float nDotVectorToLight = -shadingInfo.areaLightNormalVector
-		* shadingInfo.vectorToLight;
+	float nDotWi = -shadingInfo.areaLightNormalVector
+		* shadingInfo.wi;
 	float d2 = shadingInfo.intersectionPosition.
 		GetDistanceSquared(shadingInfo.samplePointOnLight);
-	return nDotVectorToLight / d2;
+	return nDotWi / d2;
 }

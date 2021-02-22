@@ -12,14 +12,14 @@ public:
 				float intGenericMetadata2,
 				float intGenericMetadata3,
 				std::unordered_map<Primitive*, Primitive*>* compoundPrimitiveToIntersectedPrim,
-				Vector3 const & rayDirection,
+				Vector3 const & eyeDir,
 				Point3 const & intersectionPosition)
 		: intGenericMetadata1(intGenericMetadata1),
 		intGenericMetadata2(intGenericMetadata2),
 		intGenericMetadata3(intGenericMetadata3),
 		compoundPrimitiveToIntersectedPrim(compoundPrimitiveToIntersectedPrim),
-		rayDirection(rayDirection),
-		incomingDirInverse(-rayDirection),
+		eyeDir(eyeDir),
+		wo(-eyeDir),
 		intersectionPosition(intersectionPosition) {
 	}
 	
@@ -31,15 +31,12 @@ public:
 	std::unordered_map<Primitive*, Primitive*>*
 		compoundPrimitiveToIntersectedPrim;
 	
-	// rayDirection = wo, incomingDirInverse = -wo
-	// TODO: rename to wo, terrible names here!
-	Vector3 rayDirection, incomingDirInverse;
+	Vector3 eyeDir;
 	Point3 intersectionPosition;
 	
 	// All items are in world space unless specified otherwise
 	// usually lighting deals with incoming ray facing away from surface
-	// TODO: should make wi vector instead, terrible names here!
-	Vector3 vectorToLight, vectorToLightScaled;
+	Vector3 wi, wiScaled, wo;
 
 	Vector3 areaLightNormalVector;
 	Vector3 normalVector;
