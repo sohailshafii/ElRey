@@ -2,6 +2,7 @@
 #include "Materials/LambertianMaterial.h"
 #include "Materials/PhongMaterial.h"
 #include "Materials/SimpleEmissiveMaterial.h"
+#include "Materials/ReflectiveMaterial.h"
 #include <sstream>
 #include <vector>
 #include <iostream>
@@ -49,6 +50,19 @@ std::shared_ptr<Material> CommonLoaderFunctions::CreateMaterial(
 				colorObj[2]),
 			Color3(ksColor[0], ksColor[1],
 				ksColor[2]));
+	}
+	else if (primitiveType == "reflective") {
+		float kA = SafeGetToken(jsonObj, "ka");
+		float kD = SafeGetToken(jsonObj, "kd");
+		float kS = SafeGetToken(jsonObj, "ks");
+		float cR = SafeGetToken(jsonObj, "cr");
+		float kR = SafeGetToken(jsonObj, "kr");
+		float exponent = SafeGetToken(jsonObj, "exponent");
+		auto colorObj = SafeGetToken(jsonObj, "color");
+		auto ksColor = SafeGetToken(jsonObj, "ks_color");
+		newMaterial = std::make_shared<ReflectiveMaterial>(kA, kD, kS, exponent,
+			Color3(colorObj[0], colorObj[1], colorObj[2]),
+			Color3(ksColor[0], ksColor[1], ksColor[2]), cR, kR);
 	}
 	else if (primitiveType == "simple_emissive") {
 		float kA = SafeGetToken(jsonObj, "ka");

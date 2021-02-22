@@ -1,8 +1,9 @@
 #include "ReflectiveMaterial.h"
 #include "Sampling/GenericSampler.h"
 
-ReflectiveMaterial::ReflectiveMaterial(float ka, float kd, float ks, float exponent, const
-									   Color3& color, const Color3& ksColor) {
+ReflectiveMaterial::ReflectiveMaterial(float ka, float kd, float ks, float exponent,
+									   const Color3& color, const Color3& ksColor,
+									   float cr, float kr) {
 	ambientBRDF.setKd(ka);
 	ambientBRDF.setCd(color);
 	diffuseBRDF.setKd(kd);
@@ -13,6 +14,8 @@ ReflectiveMaterial::ReflectiveMaterial(float ka, float kd, float ks, float expon
 	glossySpecularBRDF.setCs(ksColor);
 
 	deadColor = Color::Black();
+	this->cr = cr;
+	this->kr = kr;
 }
 
 Color ReflectiveMaterial::GetAmbientColor(const ShadingInfo& shadingInfo) const  {
