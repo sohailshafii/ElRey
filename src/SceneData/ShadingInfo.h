@@ -31,12 +31,14 @@ public:
 	std::unordered_map<Primitive*, Primitive*>*
 		compoundPrimitiveToIntersectedPrim;
 	
-	// rayDirection = wo, incomingDirInverse = wi
+	// rayDirection = wo, incomingDirInverse = -wo
+	// TODO: rename to wo, terrible names here!
 	Vector3 rayDirection, incomingDirInverse;
 	Point3 intersectionPosition;
 	
 	// All items are in world space unless specified otherwise
 	// usually lighting deals with incoming ray facing away from surface
+	// TODO: should make wi vector instead, terrible names here!
 	Vector3 vectorToLight, vectorToLightScaled;
 
 	Vector3 areaLightNormalVector;

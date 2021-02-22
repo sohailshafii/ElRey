@@ -20,8 +20,8 @@ Color PhongMaterial::GetAmbientColor(const ShadingInfo& shadingInfo) const  {
 }
 
 Color PhongMaterial::GetDirectColor(ShadingInfo& shadingInfo) const  {
-	Color3 directColor = diffuseBRDF.GetRadiance(shadingInfo);
-	Color3 specularColor = glossySpecularBRDF.GetRadiance(shadingInfo);
+	Color3 directColor = diffuseBRDF.F(shadingInfo);
+	Color3 specularColor = glossySpecularBRDF.F(shadingInfo);
 	Color resultColor = Color(directColor[0]+specularColor[0], directColor[1]+specularColor[1], directColor[2]+specularColor[2], 1.0f);
 
 	return resultColor;
@@ -30,8 +30,8 @@ Color PhongMaterial::GetDirectColor(ShadingInfo& shadingInfo) const  {
 Color PhongMaterial::GetColorForAreaLight(ShadingInfo& shadingInfo) const  {
 	if (shadingInfo.normalVector * shadingInfo.incomingDirInverse
 		> 0.0) {
-		Color3 directColor = diffuseBRDF.GetRadiance(shadingInfo);
-		Color3 specularColor = glossySpecularBRDF.GetRadiance(shadingInfo);
+		Color3 directColor = diffuseBRDF.F(shadingInfo);
+		Color3 specularColor = glossySpecularBRDF.F(shadingInfo);
 		return Color(directColor[0] + specularColor[0], directColor[1] + specularColor[1],
 			directColor[2] + specularColor[2], 1.0f);
 	}
