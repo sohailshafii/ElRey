@@ -15,4 +15,10 @@ public:
 	virtual Color GetAmbientColor(const ShadingInfo &shadingInfo) const = 0;
 	virtual Color GetDirectColor(ShadingInfo &shadingInfo) const = 0;
 	virtual Color GetColorForAreaLight(ShadingInfo &shadingInfo) const = 0;
+	
+	virtual bool DoesSurfaceReflect() const {
+		return false;
+	}
+	virtual Vector3 ReflectVectorOffSurface(Vector3 const &normal,
+											Vector3 const & incomingVec) const;
 };
