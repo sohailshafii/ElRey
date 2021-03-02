@@ -57,6 +57,7 @@ Scene* SceneLoader::DeserializeJSONFileIntoScene(const std::string &jsonFilePath
 		std::stringstream exceptionMsg;
 		exceptionMsg << "Could not deserialize JSON file: " << jsonFilePath
 			<< ". Reason: " << e.what() << std::endl;
+		std::cout << exceptionMsg.str() << std::endl;
 		throw exceptionMsg;
 	}
 

@@ -21,7 +21,7 @@ public:
 	}
 	
 	virtual Vector3 ReflectVectorOffSurface(Vector3 const &normal,
-											Vector3 const & incomingVec) const override;
+											Vector3 const &incomingVecFacingAwaySurface) const override;
 	
 	virtual float GetReflectivity() const override {
 		return kr*cr;

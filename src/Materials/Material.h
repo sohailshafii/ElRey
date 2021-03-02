@@ -20,7 +20,7 @@ public:
 		return false;
 	}
 	virtual Vector3 ReflectVectorOffSurface(Vector3 const &normal,
-											Vector3 const & incomingVec) const;
+											Vector3 const &incomingVecFacingAwaySurface) const;
 	virtual float GetReflectivity() const {
 		return 0.0f;
 	}

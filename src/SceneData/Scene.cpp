@@ -168,17 +168,18 @@ bool Scene::Intersect(const Ray &ray, Color &newColor,
 						primitiveMaterial->GetDirectColor(shadingInfo)*
 						lightRadColor4*projectionTerm;
 				}
-				// do we need to recurse?
-				if (primitiveMaterial->DoesSurfaceReflect() && bounceCount <
-					maxBounceCount) {
-					float reflectivity = primitiveMaterial->GetReflectivity();
-					Vector3 reflectiveVec = primitiveMaterial->ReflectVectorOffSurface(normalVec, ray.GetDirection());
-					Ray reflectedRay(intersectionPos, reflectiveVec);
-					Color reflectedColor(0.0f, 0.0f, 0.0f, 0.0f);
-					Intersect(reflectedRay, reflectedColor,
-							  0.0f, originalTMax, bounceCount+1);
-					newColor += reflectedColor*reflectivity;
-				}
+			}
+			
+			// do we need to recurse?
+			if (primitiveMaterial->DoesSurfaceReflect() && bounceCount <
+				maxBounceCount) {
+				float reflectivity = primitiveMaterial->GetReflectivity();
+				Vector3 reflectiveVec = primitiveMaterial->ReflectVectorOffSurface(normalVec, -ray.GetDirection());
+				Ray reflectedRay(intersectionPos, reflectiveVec);
+				Color reflectedColor(0.0f, 0.0f, 0.0f, 0.0f);
+				Intersect(reflectedRay, reflectedColor,
+						  0.001f, originalTMax, bounceCount+1);
+				newColor += reflectedColor*reflectivity;
 			}
 		}
 	}

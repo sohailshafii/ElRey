@@ -45,14 +45,16 @@
 		{
 			"type":"sphere",
 			"position":[0.0,0.0,0.0],
-			"radius":0.8,
+			"radius":1.5,
 			"name":"main_sphere",
 			"material":
 			{
-				"type":"phong",
+				"type":"reflective",
 				"ka":0.1,
 				"kd":0.95,
 				"ks":0.1,
+				"cr":0.7,
+				"kr":0.6,
 				"exponent":10,
 				"ks_color":[1.0, 1.0, 1.0],
 				"color":[0.0, 1.0, 1.0, 1.0]
@@ -84,8 +86,8 @@
 			"inst_name":"main_sphere",
 			"local_to_world_transform":
 			[
-				{"scale":[0.2, 0.5, 0.2]},
-				{"translate":[0, 0.5, 1]}
+				{"scale":[0.5, 0.5, 0.5]},
+				{"translate":[1.2, 0.5, 1.5]}
 			]
 		},
 		{

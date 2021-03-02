@@ -43,8 +43,8 @@ Color ReflectiveMaterial::GetColorForAreaLight(ShadingInfo& shadingInfo) const  
 }
 
 Vector3 ReflectiveMaterial::ReflectVectorOffSurface(Vector3 const &normal,
-													Vector3 const & incomingVec) const {
-	float ndotwo = normal * incomingVec;
-	Vector3 reflectedVec = -incomingVec + normal * ndotwo * 2.0f;
+													Vector3 const &incomingVecFacingAwaySurface) const {
+	float ndotwo = normal * incomingVecFacingAwaySurface;
+	Vector3 reflectedVec = -incomingVecFacingAwaySurface + normal * ndotwo * 2.0f;
 	return reflectedVec.Normalized();
 }
