@@ -13,7 +13,7 @@ public:
 	// GetRadiance might modify incoming direction, so its argument
 	// is not const
 	virtual Color3 F(ShadingInfo& shadingInfo) const = 0;
-	virtual Color3 SampleF(ShadingInfo& shadingInfo, float& pdf) const = 0;
+	virtual Color3 SampleF(ShadingInfo const & shadingInfo, float& pdf, Vector3 &newWi) const = 0;
 	virtual Color3 GetRho(const ShadingInfo& shadingInfo) const  = 0;
 private:
 };

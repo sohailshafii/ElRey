@@ -12,6 +12,10 @@ ReflectiveMaterial::ReflectiveMaterial(float ka, float kd, float ks, float expon
 	glossySpecularBRDF.setKs(ks);
 	glossySpecularBRDF.setExponent(exponent);
 	glossySpecularBRDF.setCs(ksColor);
+	
+	perfectSpecularBRDF.setKs(ks);
+	perfectSpecularBRDF.setExponent(exponent);
+	perfectSpecularBRDF.setCs(ksColor);
 
 	deadColor = Color::Black();
 	this->cr = cr;
@@ -34,7 +38,10 @@ Color ReflectiveMaterial::GetDirectColor(ShadingInfo& shadingInfo) const  {
 Color ReflectiveMaterial::GetColorForAreaLight(ShadingInfo& shadingInfo) const  {
 	if (shadingInfo.normalVector * shadingInfo.wo > 0.0) {
 		Color3 directColor = diffuseBRDF.F(shadingInfo);
-		Color3 specularColor = glossySpecularBRDF.F(shadingInfo);
+		float pdf;
+		Vector3 wiMod;
+		Color3 specularColor = glossySpecularBRDF.SampleF(shadingInfo,
+														   pdf, wiMod);
 		return Color(directColor[0] + specularColor[0], directColor[1] + specularColor[1],
 			directColor[2] + specularColor[2], 1.0f);
 	}
@@ -44,7 +51,6 @@ Color ReflectiveMaterial::GetColorForAreaLight(ShadingInfo& shadingInfo) const  
 
 Vector3 ReflectiveMaterial::ReflectVectorOffSurface(Vector3 const &normal,
 													Vector3 const &incomingVecFacingAwaySurface) const {
-	float ndotwo = normal * incomingVecFacingAwaySurface;
-	Vector3 reflectedVec = -incomingVecFacingAwaySurface + normal * ndotwo * 2.0f;
-	return reflectedVec.Normalized();
+	return perfectSpecularBRDF.GetReflectionVector(incomingVecFacingAwaySurface,
+												   normal);
 }

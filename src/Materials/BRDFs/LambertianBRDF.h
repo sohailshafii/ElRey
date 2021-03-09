@@ -13,7 +13,7 @@ public:
 	~LambertianBRDF();
 
 	Color3 F(ShadingInfo& shadingInfo) const override;
-	Color3 SampleF(ShadingInfo& shadingInfo, float& pdf) const override;
+	Color3 SampleF(ShadingInfo const & shadingInfo, float& pdf, Vector3 &newWi) const override;
 	Color3 GetRho(const ShadingInfo& shadingInfo) const override;
 
 	void setKd(float kd) {
@@ -30,6 +30,10 @@ public:
 	
 	void setSampler(GenericSampler *sampler) {
 		this->sampler = sampler;
+	}
+	
+	GenericSampler* GetSampler() {
+		return sampler;
 	}
 
 private:

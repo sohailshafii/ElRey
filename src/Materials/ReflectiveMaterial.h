@@ -4,6 +4,7 @@
 #include "Color.h"
 #include "Materials/BRDFs/LambertianBRDF.h"
 #include "Materials/BRDFs/GlossySpecularBRDF.h"
+#include "Materials/BRDFs/PerfectSpecularBRDF.h"
 
 class GenericSampler;
 
@@ -31,6 +32,7 @@ private:
 	LambertianBRDF ambientBRDF;
 	LambertianBRDF diffuseBRDF;
 	GlossySpecularBRDF glossySpecularBRDF;
+	PerfectSpecularBRDF perfectSpecularBRDF;
 
 	Color deadColor;
 	float kr, cr;

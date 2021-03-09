@@ -1,6 +1,7 @@
 
 #include "GlossySpecularMaterial.h"
 #include "Sampling/GenericSampler.h"
+#include "CommonMath.h"
 
 GlossySpecularMaterial::GlossySpecularMaterial(float ka, float kd, float ks,
 											   float exponent, const Color3& color,
@@ -17,6 +18,7 @@ GlossySpecularMaterial::GlossySpecularMaterial(float ka, float kd, float ks,
 	deadColor = Color::Black();
 	this->cr = cr;
 	this->kr = kr;
+	this->exponent = exponent;
 }
 
 Color GlossySpecularMaterial::GetAmbientColor(const ShadingInfo& shadingInfo) const  {
@@ -34,8 +36,10 @@ Color GlossySpecularMaterial::GetDirectColor(ShadingInfo& shadingInfo) const  {
 
 Color GlossySpecularMaterial::GetColorForAreaLight(ShadingInfo& shadingInfo) const  {
 	if (shadingInfo.normalVector * shadingInfo.wo > 0.0) {
-		Color3 directColor = diffuseBRDF.F(shadingInfo);
-		Color3 specularColor = glossySpecularBRDF.F(shadingInfo);
+		Vector3 wiMod;
+		float pdf;
+		Color3 directColor = diffuseBRDF.SampleF(shadingInfo, pdf, wiMod);
+		Color3 specularColor = glossySpecularBRDF.SampleF(shadingInfo, pdf, wiMod);
 		return Color(directColor[0] + specularColor[0], directColor[1] + specularColor[1],
 			directColor[2] + specularColor[2], 1.0f);
 	}
@@ -45,7 +49,6 @@ Color GlossySpecularMaterial::GetColorForAreaLight(ShadingInfo& shadingInfo) con
 
 Vector3 GlossySpecularMaterial::ReflectVectorOffSurface(Vector3 const &normal,
 														Vector3 const &incomingVecFacingAwaySurface) const {
-	float ndotwo = normal * incomingVecFacingAwaySurface;
-	Vector3 reflectedVec = -incomingVecFacingAwaySurface + normal * ndotwo * 2.0f;
-	return reflectedVec.Normalized();
+	float rDotIncomingNormal;
+	return glossySpecularBRDF.GetReflectionVectorSampled(incomingVecFacingAwaySurface, normal, rDotIncomingNormal);
 }

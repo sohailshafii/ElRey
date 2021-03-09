@@ -1,28 +1,24 @@
 #pragma once
 
 #include "Materials/BRDFs/BRDF.h"
+#include "Math/CommonMath.h"
 
 class GenericSampler;
 
-class GlossySpecularBRDF : public BRDF {
+class PerfectSpecularBRDF : public BRDF {
 public:
-	GlossySpecularBRDF();
-	GlossySpecularBRDF(GenericSampler *sampler, float ks, Color3 cs, float exponent);
+	PerfectSpecularBRDF();
+	PerfectSpecularBRDF(GenericSampler *sampler, float ks, Color3 cs, float exponent);
 	
-	~GlossySpecularBRDF();
-	
+	~PerfectSpecularBRDF();
+
 	Vector3 GetReflectionVector(Vector3 const & wo,
 								Vector3 const & normal) const;
-
+	
 	Color3 F(ShadingInfo& shadingInfo) const override;
-	
-	Vector3 GetReflectionVectorSampled(Vector3 const & wo,
-									   Vector3 const & normal,
-									   float& rIncomingDotNormal) const;
-	
 	Color3 SampleF(ShadingInfo const & shadingInfo, float& pdf, Vector3 &newWi) const override;
 	Color3 GetRho(const ShadingInfo& shadingInfo) const override;
-
+	
 	void setKs(float ks) {
 		this->ks = ks;
 		this->csScaled = cs*ks;
@@ -41,7 +37,7 @@ public:
 		this->sampler = sampler;
 	}
 	
-	GenericSampler* GetSampler() const {
+	GenericSampler* GetSampler() {
 		return sampler;
 	}
 

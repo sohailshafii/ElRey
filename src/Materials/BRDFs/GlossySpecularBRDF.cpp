@@ -1,5 +1,6 @@
 #include "GlossySpecularBRDF.h"
 #include "Sampling/GenericSampler.h"
+#include "Math/CommonMath.h"
 
 GlossySpecularBRDF::GlossySpecularBRDF() : sampler(nullptr), ks(0), cs(Color3(0.0f, 0.0f, 0.0f)), csScaled(cs*ks), exponent(0.0f) {
 }
@@ -15,16 +16,20 @@ GlossySpecularBRDF::~GlossySpecularBRDF() {
 	}
 }
 
+Vector3 GlossySpecularBRDF::GetReflectionVector(Vector3 const & wo,
+							Vector3 const & normal) const {
+	float ndotwo = normal * wo;
+	return (-wo + normal * ndotwo * 2.0f).Normalized();
+}
+
 Color3 GlossySpecularBRDF::F(ShadingInfo& shadingInfo) const {
 	Color3 	finalColor;
-	Vector3 const & intersectionNormal = shadingInfo.normalVector;
-	Vector3 const & wi = shadingInfo.wi;
-	float 		nDotIncomingLightVec = intersectionNormal * wi;
-	Vector3 	reflectedVector(-wi +
-								intersectionNormal * nDotIncomingLightVec * 2.0f);
+	Vector3 const & normal = shadingInfo.normalVector;
+	Vector3 reflectedVector = GetReflectionVector(shadingInfo.wi, normal);
 	Vector3 const & outgoingDir = shadingInfo.wo;
 	float 		rDotOutgoing = reflectedVector * outgoingDir;
 		
+	// highlight is strongest when outgoing aligns with reflection
 	if (rDotOutgoing > 0.0) {
 		finalColor = csScaled * pow(rDotOutgoing, exponent);
 	}
@@ -32,33 +37,39 @@ Color3 GlossySpecularBRDF::F(ShadingInfo& shadingInfo) const {
 	return finalColor;
 }
 
-Color3 GlossySpecularBRDF::SampleF(ShadingInfo& shadingInfo, float& pdf) const {
-	Color3 	finalColor;
-	Vector3 const & intersectionNormal = shadingInfo.normalVector;
-	Vector3 const & wo = shadingInfo.wo;
-	float 		nDotIncomingDirection = intersectionNormal * wo;
-	Vector3 	reflectedVector(-wo +
-								intersectionNormal * nDotIncomingDirection * 2.0f);
+Vector3 GlossySpecularBRDF::GetReflectionVectorSampled(Vector3 const & wo,
+								   Vector3 const & normal, float& rIncomingDotNormal) const {
+	Vector3 reflectedVector = GetReflectionVector(wo, normal);
 	
 	Vector3 w = reflectedVector;
-	Vector3 u = Vector3(0.00424, 1, 0.00764) ^ w;
+	Vector3 u = Vector3(0.00424f, 1.0f, 0.00764f) ^ w;
 	u.Normalize();
-	Vector3 v = u ^ w;
+	Vector3 v;
+	CommonMath::ComputeUVWFromWandU(u, v, w);
 	
+	// find a sample in coordinate system centered around reflection vector
+	// that's your new reflection vector
 	Point3 samplePoint = sampler->GetSampleOnHemisphere();
-	shadingInfo.wi =
-		u*samplePoint[0] + v*samplePoint[1] + w*samplePoint[2];
+	reflectedVector = u*samplePoint[0] + v*samplePoint[1] + w*samplePoint[2];
 	
-	float rIncomingDotNormal = shadingInfo.wi*intersectionNormal;
+	rIncomingDotNormal = reflectedVector*normal;
 	
 	if (rIncomingDotNormal < 0.0f) {
-		shadingInfo.wi =
-			-u*samplePoint[0] - v*samplePoint[1] - w*samplePoint[2];
+		reflectedVector = -u*samplePoint[0] - v*samplePoint[1] + w*samplePoint[2];
 	}
 	
-	shadingInfo.wi.Normalize();
+	return reflectedVector.Normalized();
+}
+
+Color3 GlossySpecularBRDF::SampleF(ShadingInfo const & shadingInfo, float& pdf, Vector3 &newWi) const {
+	Color3 	finalColor;
+	// for indirect illumination
+	Vector3 const & normal = shadingInfo.normalVector;
+	float rIncomingDotNormal;
+	Vector3 reflectedVector = GetReflectionVectorSampled(shadingInfo.wi, normal,
+														 rIncomingDotNormal);
 	
-	float phongLobe = pow(reflectedVector*shadingInfo.wi,
+	float phongLobe = pow(reflectedVector*newWi,
 						  exponent);
 	pdf = rIncomingDotNormal * phongLobe;
 			
