@@ -1,6 +1,7 @@
 #include "ReflectiveMaterial.h"
 #include "Sampling/GenericSampler.h"
 
+// TODO: set sampler
 ReflectiveMaterial::ReflectiveMaterial(float ka, float kd, float ks, float exponent,
 									   const Color3& color, const Color3& ksColor,
 									   float cr, float kr) {
@@ -38,10 +39,7 @@ Color ReflectiveMaterial::GetDirectColor(ShadingInfo& shadingInfo) const  {
 Color ReflectiveMaterial::GetColorForAreaLight(ShadingInfo& shadingInfo) const  {
 	if (shadingInfo.normalVector * shadingInfo.wo > 0.0) {
 		Color3 directColor = diffuseBRDF.F(shadingInfo);
-		float pdf;
-		Vector3 wiMod;
-		Color3 specularColor = glossySpecularBRDF.SampleF(shadingInfo,
-														   pdf, wiMod);
+		Color3 specularColor = glossySpecularBRDF.F(shadingInfo);
 		return Color(directColor[0] + specularColor[0], directColor[1] + specularColor[1],
 			directColor[2] + specularColor[2], 1.0f);
 	}

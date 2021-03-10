@@ -1,5 +1,6 @@
 #include "LambertianMaterial.h"
 
+// TODO: set sampler
 LambertianMaterial::LambertianMaterial(float ka, float kd, const Color3& color) {
 	ambientBRDF.setKd(ka);
 	ambientBRDF.setCd(color);
@@ -21,10 +22,7 @@ Color LambertianMaterial::GetDirectColor(ShadingInfo& shadingInfo) const {
 
 Color LambertianMaterial::GetColorForAreaLight(ShadingInfo& shadingInfo) const {
 	if (shadingInfo.normalVector * shadingInfo.wo > 0.0) {
-		Vector3 wiMod;
-		float pdf;
-		Color3 directColor = diffuseBRDF.SampleF(shadingInfo, pdf,
-												 wiMod);
+		Color3 directColor = diffuseBRDF.F(shadingInfo);
 		return Color(directColor[0], directColor[1], directColor[2], 1.0f);
 	}
 	return deadColor;

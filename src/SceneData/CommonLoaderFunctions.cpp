@@ -28,6 +28,7 @@ std::shared_ptr<Material> CommonLoaderFunctions::CreateMaterial(
 	std::shared_ptr<Material> newMaterial;
 
 	// TODO: should BRDFs have four-component colors?
+	// TODO: set up material sampler!!!
 	// think about transparency
 	std::string primitiveType = SafeGetToken(jsonObj, "type");
 	if (primitiveType == "lambertian") {
