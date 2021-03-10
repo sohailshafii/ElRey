@@ -17,6 +17,8 @@ public:
 	virtual Color GetDirectColor(ShadingInfo& shadingInfo) const override;
 	virtual Color GetColorForAreaLight(ShadingInfo& shadingInfo) const override;
 	
+	virtual void SetSampler(class GenericSampler *sampler) override;
+	
 	virtual bool DoesSurfaceReflect() const override {
 		return true;
 	}

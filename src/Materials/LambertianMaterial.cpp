@@ -1,4 +1,5 @@
 #include "LambertianMaterial.h"
+#include "Sampling/GenericSampler.h"
 
 // TODO: set sampler
 LambertianMaterial::LambertianMaterial(float ka, float kd, const Color3& color) {
@@ -26,4 +27,8 @@ Color LambertianMaterial::GetColorForAreaLight(ShadingInfo& shadingInfo) const {
 		return Color(directColor[0], directColor[1], directColor[2], 1.0f);
 	}
 	return deadColor;
+}
+
+void LambertianMaterial::SetSampler(GenericSampler *sampler) {
+	
 }

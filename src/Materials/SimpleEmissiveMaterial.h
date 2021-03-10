@@ -10,6 +10,9 @@ public:
 	virtual Color GetAmbientColor(const ShadingInfo &shadingInfo) const override;
 	virtual Color GetDirectColor(ShadingInfo &shadingInfo) const override;
 	virtual Color GetColorForAreaLight(ShadingInfo &shadingInfo) const override;
+	
+	virtual void SetSampler(class GenericSampler *sampler) override;
+	
 private:
 	Color ambientColor;
 	Color directColor;

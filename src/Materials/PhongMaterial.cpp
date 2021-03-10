@@ -1,4 +1,5 @@
 #include "PhongMaterial.h"
+#include "Sampling/GenericSampler.h"
 
 // TODO: set sampler
 PhongMaterial::PhongMaterial(float ka, float kd, float ks, float exponent, const Color3& color,
@@ -37,4 +38,8 @@ Color PhongMaterial::GetColorForAreaLight(ShadingInfo& shadingInfo) const  {
 	}
 
 	return deadColor;
+}
+
+void PhongMaterial::SetSampler(GenericSampler *sampler) {
+	
 }

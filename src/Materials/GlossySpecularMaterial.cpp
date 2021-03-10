@@ -46,6 +46,10 @@ Color GlossySpecularMaterial::GetColorForAreaLight(ShadingInfo& shadingInfo) con
 	return deadColor;
 }
 
+void GlossySpecularMaterial::SetSampler(class GenericSampler *sampler) {
+	// TODO
+}
+
 Vector3 GlossySpecularMaterial::ReflectVectorOffSurface(Vector3 const &normal,
 														Vector3 const &incomingVecFacingAwaySurface) const {
 	float rDotIncomingNormal;

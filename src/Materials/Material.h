@@ -16,6 +16,8 @@ public:
 	virtual Color GetDirectColor(ShadingInfo &shadingInfo) const = 0;
 	virtual Color GetColorForAreaLight(ShadingInfo &shadingInfo) const = 0;
 	
+	virtual void SetSampler(class GenericSampler *sampler) = 0;
+	
 	virtual bool DoesSurfaceReflect() const {
 		return false;
 	}

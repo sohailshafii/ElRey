@@ -31,6 +31,16 @@ std::shared_ptr<Material> CommonLoaderFunctions::CreateMaterial(
 	// TODO: set up material sampler!!!
 	// think about transparency
 	std::string primitiveType = SafeGetToken(jsonObj, "type");
+	
+	if (HasKey(jsonObj, "sampler")) {
+		nlohmann::json samplerJson = SafeGetToken(jsonObj, "sampler");
+		RandomSamplerType randomSamplerType;
+		int numRandomSamples;
+		int numRandomSets;
+		SetUpRandomSampler(samplerJson, randomSamplerType,
+						   numRandomSamples, numRandomSets);
+	}
+	
 	if (primitiveType == "lambertian") {
 		float kA = SafeGetToken(jsonObj, "ka");
 		float kD = SafeGetToken(jsonObj, "kd");

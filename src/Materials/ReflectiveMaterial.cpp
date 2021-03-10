@@ -47,6 +47,10 @@ Color ReflectiveMaterial::GetColorForAreaLight(ShadingInfo& shadingInfo) const  
 	return deadColor;
 }
 
+void ReflectiveMaterial::SetSampler(GenericSampler *sampler) {
+	// nothing for this material, it's too simple
+}
+
 Vector3 ReflectiveMaterial::ReflectVectorOffSurface(Vector3 const &normal,
 													Vector3 const &incomingVecFacingAwaySurface) const {
 	return perfectSpecularBRDF.GetReflectionVector(incomingVecFacingAwaySurface,

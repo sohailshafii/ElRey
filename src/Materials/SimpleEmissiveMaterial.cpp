@@ -1,4 +1,5 @@
 #include "SimpleEmissiveMaterial.h"
+#include "Sampling/GenericSampler.h"
 
 // TODO: set sampler
 SimpleEmissiveMaterial::SimpleEmissiveMaterial(float ka, float kd, const Color3& color) {
@@ -21,5 +22,9 @@ Color SimpleEmissiveMaterial::GetColorForAreaLight(ShadingInfo &shadingInfo) con
 		return directColor;
 	}
 	return deadColor;
+}
+
+void SimpleEmissiveMaterial::SetSampler(class GenericSampler *sampler) {
+	// nothing for this material, it's too simple
 }
 
