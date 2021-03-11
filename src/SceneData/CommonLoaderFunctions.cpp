@@ -39,6 +39,13 @@ std::shared_ptr<Material> CommonLoaderFunctions::CreateMaterial(
 		int numRandomSets;
 		SetUpRandomSampler(samplerJson, randomSamplerType,
 						   numRandomSamples, numRandomSets);
+		
+		GenericSampler* genericSampler =
+			SamplerCreator::CreatorSampler(randomSamplerType,
+										   numRandomSamples, numRandomSets);
+		GenericSampler* clonedSamplerTest = genericSampler->clone();
+		delete genericSampler;
+		delete clonedSamplerTest;
 	}
 	
 	if (primitiveType == "lambertian") {

@@ -1,5 +1,6 @@
 #include "GenericSampler.h"
-
+#include <cstring>
+#include <iostream>
 
 GenericSampler::GenericSampler() : numSets(83), numSamples(1), samples(nullptr) {
 	AllocateGenericSamples();
@@ -13,6 +14,16 @@ GenericSampler::GenericSampler(unsigned int numSamples) : numSets(83), numSample
 GenericSampler::GenericSampler(unsigned int numSets, unsigned int numSamples) :
 	numSets(numSets), numSamples(numSamples), samples(nullptr) {
 	AllocateGenericSamples();
+}
+
+GenericSampler::GenericSampler(const GenericSampler &other) {
+	numSets = other.numSets;
+	numSamples = other.numSamples;
+	AllocateGenericSamples();
+	for (int i = 0; i < numSets*numSamples; i++) {
+		samples[i] = other.samples[i];
+	}
+	std::cout << "copy constructor\n";
 }
 
 void GenericSampler::AllocateGenericSamples() {

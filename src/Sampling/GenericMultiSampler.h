@@ -10,6 +10,12 @@ public:
 	GenericMultiSampler(unsigned int numSets, unsigned int numSamples);
 
 	virtual ~GenericMultiSampler();
+	
+	virtual GenericMultiSampler* clone() const override {
+		return new GenericMultiSampler(*this);
+	}
+	
+	GenericMultiSampler(GenericMultiSampler const & other);
 
 	virtual void MapSamplesToUnitDisk() override;
 	virtual void MapSamplesToHemisphere(float exponent) override;

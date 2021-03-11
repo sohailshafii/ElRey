@@ -6,6 +6,10 @@ class OneSampleSampler : public GenericSampler {
 public:
 	OneSampleSampler();
 	~OneSampleSampler();
+	
+	virtual OneSampleSampler* clone() const override {
+		return new OneSampleSampler(*this);
+	}
 
 	virtual void MapSamplesToUnitDisk() override;
 	virtual void MapSamplesToHemisphere(float exponent) override;

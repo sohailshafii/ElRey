@@ -1,6 +1,7 @@
 #include "GenericMultiSampler.h"
 #include <algorithm>
 #include <cmath>
+#include <iostream>
 
 GenericMultiSampler::GenericMultiSampler() : GenericSampler(),
   count(0), jump(0), diskSamples(nullptr), shuffledIndices(nullptr) {
@@ -47,6 +48,22 @@ GenericMultiSampler::~GenericMultiSampler() {
 	if (shuffledIndices != nullptr) {
 		delete [] shuffledIndices;
 	}
+}
+
+GenericMultiSampler::GenericMultiSampler(GenericMultiSampler const & other)
+	: GenericSampler(other)
+{
+	count = other.count;
+	jump = other.jump;
+	int numItems = other.numSets * other.numSamples;
+	AllocateSamples();
+	shuffledIndices = new unsigned int[numItems];
+	for (int i = 0; i < numItems; i++) {
+		diskSamples[i] = other.diskSamples[i];
+		hemisphereSamples[i] = other.hemisphereSamples[i];
+		shuffledIndices[i] = other.shuffledIndices[i];
+	}
+	std::cout << "copy constructor multijittered\n";
 }
 
 void GenericMultiSampler::CreateShuffledIndices() {

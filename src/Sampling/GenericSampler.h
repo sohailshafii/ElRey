@@ -11,6 +11,10 @@ public:
 
 	virtual ~GenericSampler();
 	
+	virtual GenericSampler* clone() const = 0;
+	
+	GenericSampler(GenericSampler const & other);
+	
 	virtual void MapSamplesToUnitDisk() = 0;
 	virtual void MapSamplesToHemisphere(float exponent) = 0;
 	
