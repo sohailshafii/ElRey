@@ -1,7 +1,6 @@
 #include "PhongMaterial.h"
 #include "Sampling/GenericSampler.h"
 
-// TODO: set sampler
 PhongMaterial::PhongMaterial(float ka, float kd, float ks, float exponent, const Color3& color,
 const Color3& ksColor) {
 	ambientBRDF.setKd(ka);
@@ -41,5 +40,7 @@ Color PhongMaterial::GetColorForAreaLight(ShadingInfo& shadingInfo) const  {
 }
 
 void PhongMaterial::SetSampler(GenericSampler *sampler) {
-	
+	ambientBRDF.setSampler(sampler);
+	diffuseBRDF.setSampler(sampler->clone());
+	glossySpecularBRDF.setSampler(sampler->clone());
 }

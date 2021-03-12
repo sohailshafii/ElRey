@@ -48,7 +48,10 @@ Color ReflectiveMaterial::GetColorForAreaLight(ShadingInfo& shadingInfo) const  
 }
 
 void ReflectiveMaterial::SetSampler(GenericSampler *sampler) {
-	// nothing for this material, it's too simple
+	ambientBRDF.setSampler(sampler);
+	diffuseBRDF.setSampler(sampler->clone());
+	glossySpecularBRDF.setSampler(sampler->clone());
+	perfectSpecularBRDF.setSampler(sampler->clone());
 }
 
 Vector3 ReflectiveMaterial::ReflectVectorOffSurface(Vector3 const &normal,

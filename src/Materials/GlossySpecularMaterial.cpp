@@ -46,8 +46,10 @@ Color GlossySpecularMaterial::GetColorForAreaLight(ShadingInfo& shadingInfo) con
 	return deadColor;
 }
 
-void GlossySpecularMaterial::SetSampler(class GenericSampler *sampler) {
-	// TODO
+void GlossySpecularMaterial::SetSampler(GenericSampler *sampler) {
+	ambientBRDF.setSampler(sampler);
+	diffuseBRDF.setSampler(sampler->clone());
+	glossySpecularBRDF.setSampler(sampler->clone());
 }
 
 Vector3 GlossySpecularMaterial::ReflectVectorOffSurface(Vector3 const &normal,

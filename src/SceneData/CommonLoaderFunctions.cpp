@@ -28,25 +28,8 @@ std::shared_ptr<Material> CommonLoaderFunctions::CreateMaterial(
 	std::shared_ptr<Material> newMaterial;
 
 	// TODO: should BRDFs have four-component colors?
-	// TODO: set up material sampler!!!
 	// think about transparency
 	std::string primitiveType = SafeGetToken(jsonObj, "type");
-	
-	if (HasKey(jsonObj, "sampler")) {
-		nlohmann::json samplerJson = SafeGetToken(jsonObj, "sampler");
-		RandomSamplerType randomSamplerType;
-		int numRandomSamples;
-		int numRandomSets;
-		SetUpRandomSampler(samplerJson, randomSamplerType,
-						   numRandomSamples, numRandomSets);
-		
-		GenericSampler* genericSampler =
-			SamplerCreator::CreatorSampler(randomSamplerType,
-										   numRandomSamples, numRandomSets);
-		GenericSampler* clonedSamplerTest = genericSampler->clone();
-		delete genericSampler;
-		delete clonedSamplerTest;
-	}
 	
 	if (primitiveType == "lambertian") {
 		float kA = SafeGetToken(jsonObj, "ka");
@@ -89,6 +72,20 @@ std::shared_ptr<Material> CommonLoaderFunctions::CreateMaterial(
 		newMaterial = std::make_shared<SimpleEmissiveMaterial>
 			(kA, kD, Color3(colorObj[0], colorObj[1], colorObj[2]));
 	}
+	
+	if (HasKey(jsonObj, "sampler")) {
+		nlohmann::json samplerJson = SafeGetToken(jsonObj, "sampler");
+		RandomSamplerType randomSamplerType;
+		int numRandomSamples;
+		int numRandomSets;
+		SetUpRandomSampler(samplerJson, randomSamplerType,
+						   numRandomSamples, numRandomSets);
+		GenericSampler* genericSampler =
+			SamplerCreator::CreatorSampler(randomSamplerType,
+										   numRandomSamples, numRandomSets);
+		newMaterial->SetSampler(genericSampler);
+	}
+	
 	return newMaterial;
 }
 

@@ -1,7 +1,6 @@
 #include "LambertianMaterial.h"
 #include "Sampling/GenericSampler.h"
 
-// TODO: set sampler
 LambertianMaterial::LambertianMaterial(float ka, float kd, const Color3& color) {
 	ambientBRDF.setKd(ka);
 	ambientBRDF.setCd(color);
@@ -30,5 +29,6 @@ Color LambertianMaterial::GetColorForAreaLight(ShadingInfo& shadingInfo) const {
 }
 
 void LambertianMaterial::SetSampler(GenericSampler *sampler) {
-	
+	ambientBRDF.setSampler(sampler);
+	diffuseBRDF.setSampler(sampler->clone());
 }
