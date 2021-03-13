@@ -2,8 +2,7 @@
 
 #include "Materials/BRDFs/BRDF.h"
 #include "Math/CommonMath.h"
-
-class GenericSampler;
+#include "Sampling/GenericSampler.h"
 
 class LambertianBRDF : public BRDF {
 public:
@@ -28,9 +27,7 @@ public:
 		this->uniformRadiance = this->cdScaled*INV_PI;
 	}
 	
-	void setSampler(GenericSampler *sampler) {
-		this->sampler = sampler;
-	}
+	void setSampler(GenericSampler *sampler);
 	
 	GenericSampler* GetSampler() {
 		return sampler;

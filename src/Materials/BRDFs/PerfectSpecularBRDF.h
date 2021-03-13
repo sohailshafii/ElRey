@@ -2,8 +2,7 @@
 
 #include "Materials/BRDFs/BRDF.h"
 #include "Math/CommonMath.h"
-
-class GenericSampler;
+#include "Sampling/GenericSampler.h"
 
 class PerfectSpecularBRDF : public BRDF {
 public:
@@ -33,9 +32,7 @@ public:
 		this->exponent = exponent;
 	}
 	
-	void setSampler(GenericSampler *sampler) {
-		this->sampler = sampler;
-	}
+	void setSampler(GenericSampler *sampler);
 	
 	GenericSampler* GetSampler() {
 		return sampler;

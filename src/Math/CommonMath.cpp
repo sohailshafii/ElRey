@@ -20,7 +20,7 @@ const float CommonMath::randMaxInverse = 1.0f/(float)RAND_MAX;
                           ((x) < 0.0 ? -pow((double)-(x), 1.0/3.0) : 0.0))
 //#endif
 
-void CommonMath::ComputeUVWFromWandU(Vector3 &right, Vector3 &up, Vector3 &forward) {
+void CommonMath::ComputeUVWFromUpandForward(Vector3 &right, Vector3 &up, Vector3 &forward) {
 	// turn on sanity check in case we need it but leave it off to
 	// avoid excess computational cost
 #if 1

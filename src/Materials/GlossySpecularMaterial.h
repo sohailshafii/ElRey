@@ -36,7 +36,6 @@ private:
 
 	Color deadColor;
 	float kr, cr;
-	float exponent;
 };
 
 

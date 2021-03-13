@@ -21,16 +21,25 @@ LambertianBRDF::~LambertianBRDF() {
 	}
 }
 
+void LambertianBRDF::setSampler(GenericSampler *sampler) {
+	if (this->sampler != nullptr) {
+		   delete sampler;
+	}
+	this->sampler = sampler;
+	this->sampler->MapSamplesToHemisphere(1.0f);
+}
+
 Color3 LambertianBRDF::F(ShadingInfo& shadingInfo) const {
 	return this->uniformRadiance;
 }
 
 Color3 LambertianBRDF::SampleF(ShadingInfo const & shadingInfo, float& pdf, Vector3 &newWi) const {
 	Vector3 w = shadingInfo.normalVector;
-	Vector3 v = Vector3(0.00424, 1, 0.00764) ^ w;
+	Vector3 u = Vector3(0.00424f, 1.0f, 0.00764f) ^ w;
+	u.Normalize();
+	Vector3 v = w ^ u;
 	v.Normalize();
-	Vector3 u;
-	CommonMath::ComputeUVWFromWandU(u, v, w);
+	CommonMath::ComputeUVWFromUpandForward(u, v, w);
 	
 	Point3 samplePoint = sampler->GetSampleOnHemisphere();
 	newWi = u*samplePoint[0] + v*samplePoint[1] + w*samplePoint[2];

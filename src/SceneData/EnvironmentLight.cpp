@@ -25,7 +25,7 @@ Vector3 EnvironmentLight::GetDirectionFromPositionScaled(const ShadingInfo& shad
 	Vector3 right;
 	Vector3 up(0.0034f, 1.0f, 0.0071f);
 	Vector3 forward = shadingInfo.normalVector;
-	CommonMath::ComputeUVWFromWandU(right, up, forward);
+	CommonMath::ComputeUVWFromUpandForward(right, up, forward);
 	// negate because this is light coming inwards, not out
 	return -right*sp[0] - up*sp[1] - forward*sp[2];
 }

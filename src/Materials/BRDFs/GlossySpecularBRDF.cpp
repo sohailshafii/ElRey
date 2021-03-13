@@ -16,6 +16,14 @@ GlossySpecularBRDF::~GlossySpecularBRDF() {
 	}
 }
 
+void GlossySpecularBRDF::setSampler(GenericSampler *sampler) {
+	if (this->sampler != nullptr) {
+		delete sampler;
+	}
+	this->sampler = sampler;
+	this->sampler->MapSamplesToHemisphere(exponent);
+}
+
 Vector3 GlossySpecularBRDF::GetReflectionVector(Vector3 const & wo,
 							Vector3 const & normal) const {
 	float ndotwo = normal * wo;
@@ -44,8 +52,9 @@ Vector3 GlossySpecularBRDF::GetReflectionVectorSampled(Vector3 const & wo,
 	Vector3 w = reflectedVector;
 	Vector3 u = Vector3(0.00424f, 1.0f, 0.00764f) ^ w;
 	u.Normalize();
-	Vector3 v;
-	CommonMath::ComputeUVWFromWandU(u, v, w);
+	Vector3 v = w ^ u;
+	v.Normalize();
+	CommonMath::ComputeUVWFromUpandForward(u, v, w);
 	
 	// find a sample in coordinate system centered around reflection vector
 	// that's your new reflection vector

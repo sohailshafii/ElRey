@@ -3,7 +3,6 @@
 #include "Sampling/GenericSampler.h"
 #include "CommonMath.h"
 
-// TODO: set sampler
 GlossySpecularMaterial::GlossySpecularMaterial(float ka, float kd, float ks,
 											   float exponent, const Color3& color,
 											   const Color3& ksColor, float cr, float kr) {
@@ -19,7 +18,6 @@ GlossySpecularMaterial::GlossySpecularMaterial(float ka, float kd, float ks,
 	deadColor = Color::Black();
 	this->cr = cr;
 	this->kr = kr;
-	this->exponent = exponent;
 }
 
 Color GlossySpecularMaterial::GetAmbientColor(const ShadingInfo& shadingInfo) const  {

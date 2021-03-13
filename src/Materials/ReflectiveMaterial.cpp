@@ -1,7 +1,6 @@
 #include "ReflectiveMaterial.h"
 #include "Sampling/GenericSampler.h"
 
-// TODO: set sampler
 ReflectiveMaterial::ReflectiveMaterial(float ka, float kd, float ks, float exponent,
 									   const Color3& color, const Color3& ksColor,
 									   float cr, float kr) {

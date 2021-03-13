@@ -35,7 +35,7 @@ Camera::Camera(const Point3& eyePosition, const Point3& lookAtPosition,
 	this->up = up;
 	this->up.Normalize();
 	ComputeForward();
-	CommonMath::ComputeUVWFromWandU(this->right, this->up, this->forward);
+	CommonMath::ComputeUVWFromUpandForward(this->right, this->up, this->forward);
 	this->numColumnsPixels = numColumnsPixels;
 	this->numRowsPixels = numRowsPixels;
 	this->numPixels = numColumnsPixels*numRowsPixels;

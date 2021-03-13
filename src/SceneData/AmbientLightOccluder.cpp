@@ -27,7 +27,7 @@ Vector3 AmbientLightOccluder::GetDirectionFromPositionScaled(const ShadingInfo &
 	Vector3 right;
 	Vector3 up = Vector3::Up();
 	Vector3 forward = shadingInfo.normalVector;
-	CommonMath::ComputeUVWFromWandU(right, up, forward);
+	CommonMath::ComputeUVWFromUpandForward(right, up, forward);
 	return right*sp[0] + up*sp[1] + forward*sp[2];
 }
 

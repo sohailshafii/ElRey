@@ -3,6 +3,7 @@
 #include "Materials/PhongMaterial.h"
 #include "Materials/SimpleEmissiveMaterial.h"
 #include "Materials/ReflectiveMaterial.h"
+#include "Materials/GlossySpecularMaterial.h"
 #include <sstream>
 #include <vector>
 #include <iostream>
@@ -71,6 +72,19 @@ std::shared_ptr<Material> CommonLoaderFunctions::CreateMaterial(
 		auto colorObj = SafeGetToken(jsonObj, "color");
 		newMaterial = std::make_shared<SimpleEmissiveMaterial>
 			(kA, kD, Color3(colorObj[0], colorObj[1], colorObj[2]));
+	}
+	else if (primitiveType == "glossy_specular") {
+		float kA = SafeGetToken(jsonObj, "ka");
+		float kD = SafeGetToken(jsonObj, "kd");
+		float kS = SafeGetToken(jsonObj, "ks");
+		float cR = SafeGetToken(jsonObj, "cr");
+		float kR = SafeGetToken(jsonObj, "kr");
+		float exponent = SafeGetToken(jsonObj, "exponent");
+		auto colorObj = SafeGetToken(jsonObj, "color");
+		auto ksColor = SafeGetToken(jsonObj, "ks_color");
+		newMaterial = std::make_shared<GlossySpecularMaterial>(kA, kD, kS,
+			exponent, Color3(colorObj[0], colorObj[1], colorObj[2]),
+			Color3(ksColor[0], ksColor[1], ksColor[2]), cR, kR);
 	}
 	
 	if (HasKey(jsonObj, "sampler")) {

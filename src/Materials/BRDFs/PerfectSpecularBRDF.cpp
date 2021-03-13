@@ -1,5 +1,4 @@
 #include "PerfectSpecularBRDF.h"
-#include "Sampling/GenericSampler.h"
 
 PerfectSpecularBRDF::PerfectSpecularBRDF() : sampler(nullptr), ks(0), cs(Color3(0.0f, 0.0f, 0.0f)), csScaled(cs*ks), exponent(0.0f) {
 }
@@ -14,6 +13,15 @@ PerfectSpecularBRDF::~PerfectSpecularBRDF() {
 		delete sampler;
 	}
 }
+
+void PerfectSpecularBRDF::setSampler(GenericSampler *sampler) {
+	if (this->sampler != nullptr) {
+		delete sampler;
+	}
+	this->sampler = sampler;
+	this->sampler->MapSamplesToHemisphere(exponent);
+}
+
 
 Vector3 PerfectSpecularBRDF::GetReflectionVector(Vector3 const & wo,
 												 Vector3 const & normal) const {
