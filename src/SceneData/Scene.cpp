@@ -100,80 +100,15 @@ bool Scene::Intersect(const Ray &ray, Color &newColor,
 			newColor += primitiveMaterial->GetAmbientColor(shadingInfo)*lightRadColor4;
 		}
 		
-		bool isAreaLight = false;
-		// don't shade area light
-		for (auto currentLight : lights) {
-			if (currentLight->GetPrimitive() == closestPrimitive) {
-				isAreaLight = true;
-				break;
-			}
-		}
+		bool isAreaLight = IsPrimitiveAssociatedWithLight(closestPrimitive);
 		
 		if (isAreaLight) {
 			newColor +=
 				primitiveMaterial->GetColorForAreaLight(shadingInfo);
 		}
 		else {
-			for (auto currentLight : lights) {
-				Vector3 vectorToLight;
-				auto isAreaLight = currentLight->IsAreaLight();
-				
-				float projectionTerm = 0.0f;
-				float vectorMagn = 0.0f;
-
-				if (isAreaLight) {
-					// TODO: area lighting here messes with shading info, and it's not
-					// clear what it modifies. that's bad
-					currentLight->ComputeAndStoreAreaLightInformation(shadingInfo);
-					vectorToLight = shadingInfo.wi;
-					vectorMagn = shadingInfo.wiScaled.Norm();
-					projectionTerm = vectorToLight * normalVec;
-					shadingInfo.wi = vectorToLight;			}
-				else {
-					// infinite lights don't rely on normalization
-					auto lightDistanceInfinite = currentLight->IsLightDistanceInfinite();
-					vectorToLight = -currentLight->GetDirectionFromPositionScaled(
-																				  shadingInfo);
-					if (lightDistanceInfinite) {
-						vectorMagn = std::numeric_limits<float>::max();
-					}
-					else {
-						vectorMagn = vectorToLight.Norm();
-						shadingInfo.wiScaled = vectorToLight;
-						vectorToLight /= vectorMagn;
-					}
-
-					projectionTerm = vectorToLight * normalVec;
-					shadingInfo.wi = vectorToLight;
-				}
-				
-				if (projectionTerm > 0.0f) {
-					bool inShadow = false;
-					Ray shadowFeelerRay(shadingInfo.intersectionPosition+
-										vectorToLight*SHADOW_FEELER_EPSILON, vectorToLight);
-					// test shadow feeler if light supports it!
-					if (currentLight->CastsShadows() &&
-						ShadowFeelerIntersectsAnObject(shadowFeelerRay, 0.0f, vectorMagn)) {
-						inShadow = true;
-					}
-					
-					if (!inShadow) {
-						auto lightRadiance = currentLight->GetRadiance(shadingInfo, *this);
-
-						Color lightRadColor4 = Color(lightRadiance[0], lightRadiance[1],
-							lightRadiance[2], 0.0);
-						newColor += isAreaLight ?
-							primitiveMaterial->GetColorForAreaLight(shadingInfo)*
-							lightRadColor4*
-							currentLight->GeometricTerm(shadingInfo)/
-							currentLight->PDF(shadingInfo)*
-							projectionTerm
-							:
-							primitiveMaterial->GetDirectColor(shadingInfo)*
-							lightRadColor4*projectionTerm;
-					}
-				}
-			}
+			AddContributionsFromLights(shadingInfo, normalVec, primitiveMaterial,
+									   newColor);
 			
 			// do we need to recurse?
 			if (primitiveMaterial->DoesSurfaceReflect() && bounceCount <
@@ -190,6 +125,80 @@ bool Scene::Intersect(const Ray &ray, Color &newColor,
 	}
 
 	return closestPrimitive != nullptr;
+}
+
+void Scene::AddContributionsFromLights(ShadingInfo &shadingInfo, Vector3 & normalVec,
+									   Material const * primitiveMaterial,
+									   Color& newColor) const {
+	for (auto currentLight : lights) {
+		Vector3 vectorToLight;
+		auto isAreaLight = currentLight->IsAreaLight();
+		
+		float projectionTerm = 0.0f;
+		float vectorMagn = 0.0f;
+
+		if (isAreaLight) {
+			// TODO: area lighting here messes with shading info, and it's not
+			// clear what it modifies. that's bad
+			currentLight->ComputeAndStoreAreaLightInformation(shadingInfo);
+			vectorToLight = shadingInfo.wi;
+			vectorMagn = shadingInfo.wiScaled.Norm();
+			projectionTerm = vectorToLight * normalVec;
+			shadingInfo.wi = vectorToLight;			}
+		else {
+			// infinite lights don't rely on normalization
+			auto lightDistanceInfinite = currentLight->IsLightDistanceInfinite();
+			vectorToLight = -currentLight->GetDirectionFromPositionScaled(
+																		  shadingInfo);
+			if (lightDistanceInfinite) {
+				vectorMagn = std::numeric_limits<float>::max();
+			}
+			else {
+				vectorMagn = vectorToLight.Norm();
+				shadingInfo.wiScaled = vectorToLight;
+				vectorToLight /= vectorMagn;
+			}
+
+			projectionTerm = vectorToLight * normalVec;
+			shadingInfo.wi = vectorToLight;
+		}
+		
+		if (projectionTerm > 0.0f) {
+			bool inShadow = false;
+			Ray shadowFeelerRay(shadingInfo.intersectionPosition+
+								vectorToLight*SHADOW_FEELER_EPSILON, vectorToLight);
+			// test shadow feeler if light supports it!
+			if (currentLight->CastsShadows() &&
+				ShadowFeelerIntersectsAnObject(shadowFeelerRay, 0.0f, vectorMagn)) {
+				inShadow = true;
+			}
+			
+			if (!inShadow) {
+				auto lightRadiance = currentLight->GetRadiance(shadingInfo, *this);
+
+				Color lightRadColor4 = Color(lightRadiance[0], lightRadiance[1],
+					lightRadiance[2], 0.0);
+				newColor += isAreaLight ?
+					primitiveMaterial->GetColorForAreaLight(shadingInfo)*
+					lightRadColor4*
+					currentLight->GeometricTerm(shadingInfo)/
+					currentLight->PDF(shadingInfo)*
+					projectionTerm
+					:
+					primitiveMaterial->GetDirectColor(shadingInfo)*
+					lightRadColor4*projectionTerm;
+			}
+		}
+	}
+}
+
+bool Scene::IsPrimitiveAssociatedWithLight(Primitive* primitive) const {
+	for (auto currentLight : lights) {
+		if (currentLight->GetPrimitive() == primitive) {
+			return true;
+		}
+	}
+	return false;
 }
 
 bool Scene::ShadowFeelerIntersectsAnObject(const Ray& ray, float tMin,
