@@ -103,8 +103,7 @@ public:
 	// exclude a primitive if we are checking area light and want
 	// to exclude their related primitive
 	bool ShadowFeelerIntersectsAnObject(const Ray& ray, float tMin,
-										float tMax,
-										const Primitive* primitiveToExclude = nullptr) const;
+										float tMax) const;
 
 private:
 	void CleanUpLights();
