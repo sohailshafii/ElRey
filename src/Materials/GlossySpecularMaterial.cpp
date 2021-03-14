@@ -37,10 +37,13 @@ Color GlossySpecularMaterial::GetDirectColor(ShadingInfo& shadingInfo) const  {
 	return deadColor;
 }
 
-Color GlossySpecularMaterial::GetColorForAreaLight(ShadingInfo& shadingInfo) const  {
+Color GlossySpecularMaterial::GetSampledColor(ShadingInfo& shadingInfo, float& pdf, Vector3 &newWi) const {
 	if (shadingInfo.normalVector * shadingInfo.wo > 0.0) {
-		Color3 directColor = diffuseBRDF.F(shadingInfo);
-		Color3 specularColor = glossySpecularBRDF.F(shadingInfo);
+		float modPdf = 1.0f;
+		Color3 directColor = diffuseBRDF.SampleF(shadingInfo, modPdf, newWi);
+		pdf *= modPdf;
+		Color3 specularColor = glossySpecularBRDF.SampleF(shadingInfo, modPdf, newWi);
+		pdf *= modPdf;
 		return Color(directColor[0] + specularColor[0], directColor[1] + specularColor[1],
 			directColor[2] + specularColor[2], 1.0f);
 	}

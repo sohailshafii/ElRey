@@ -104,7 +104,7 @@ bool Scene::Intersect(const Ray &ray, Color &newColor,
 		
 		if (isAreaLight) {
 			newColor +=
-				primitiveMaterial->GetColorForAreaLight(shadingInfo);
+				primitiveMaterial->GetDirectColor(shadingInfo);
 		}
 		else {
 			AddContributionsFromLights(shadingInfo, normalVec, primitiveMaterial,
@@ -179,7 +179,7 @@ void Scene::AddContributionsFromLights(ShadingInfo const & shadingInfo, Vector3 
 			Color lightRadColor4 = Color(lightRadiance[0], lightRadiance[1],
 				lightRadiance[2], 0.0);
 			if (isAreaLight) {
-				newColor += primitiveMaterial->GetColorForAreaLight(currShadingInfo)*
+				newColor += primitiveMaterial->GetDirectColor(currShadingInfo)*
 					currentLight->GeometricTerm(shadingInfo)/
 					currentLight->PDF(shadingInfo)*
 					lightRadColor4*projectionTerm;

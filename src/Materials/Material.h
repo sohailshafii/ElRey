@@ -14,7 +14,7 @@ public:
 	
 	virtual Color GetAmbientColor(const ShadingInfo &shadingInfo) const = 0;
 	virtual Color GetDirectColor(ShadingInfo &shadingInfo) const = 0;
-	virtual Color GetColorForAreaLight(ShadingInfo &shadingInfo) const = 0;
+	virtual Color GetSampledColor(ShadingInfo &shadingInfo, float& pdf, Vector3 &newWi) const = 0;
 	
 	virtual void SetSampler(class GenericSampler *sampler) = 0;
 	

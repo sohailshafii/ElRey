@@ -23,9 +23,9 @@ Color LambertianMaterial::GetDirectColor(ShadingInfo& shadingInfo) const {
 	return deadColor;
 }
 
-Color LambertianMaterial::GetColorForAreaLight(ShadingInfo& shadingInfo) const {
+Color LambertianMaterial::GetSampledColor(ShadingInfo& shadingInfo, float& pdf, Vector3 &newWi) const {
 	if (shadingInfo.normalVector * shadingInfo.wo > 0.0) {
-		Color3 directColor = diffuseBRDF.F(shadingInfo);
+		Color3 directColor = diffuseBRDF.SampleF(shadingInfo, pdf, newWi);
 		return Color(directColor[0], directColor[1], directColor[2], 1.0f);
 	}
 	return deadColor;
