@@ -165,11 +165,11 @@ void Scene::AddContributionsFromLights(ShadingInfo &shadingInfo, Vector3 & norma
 		
 		if (projectionTerm > 0.0f) {
 			bool inShadow = false;
-			Ray shadowFeelerRay(shadingInfo.intersectionPosition+
-								vectorToLight*SHADOW_FEELER_EPSILON, vectorToLight);
+			Ray shadowFeelerRay(shadingInfo.intersectionPosition, vectorToLight);
 			// test shadow feeler if light supports it!
 			if (currentLight->CastsShadows() &&
-				simpleWorld->ShadowFeelerIntersectsAnObject(shadowFeelerRay, 0.0f, vectorMagn)) {
+				simpleWorld->ShadowFeelerIntersectsAnObject(shadowFeelerRay,
+															SHADOW_FEELER_EPSILON, vectorMagn)) {
 				inShadow = true;
 			}
 			
@@ -180,10 +180,9 @@ void Scene::AddContributionsFromLights(ShadingInfo &shadingInfo, Vector3 & norma
 					lightRadiance[2], 0.0);
 				newColor += isAreaLight ?
 					primitiveMaterial->GetColorForAreaLight(shadingInfo)*
-					lightRadColor4*
 					currentLight->GeometricTerm(shadingInfo)/
 					currentLight->PDF(shadingInfo)*
-					projectionTerm
+					lightRadColor4*projectionTerm
 					:
 					primitiveMaterial->GetDirectColor(shadingInfo)*
 					lightRadColor4*projectionTerm;

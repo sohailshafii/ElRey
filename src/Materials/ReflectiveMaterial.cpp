@@ -28,11 +28,15 @@ Color ReflectiveMaterial::GetAmbientColor(const ShadingInfo& shadingInfo) const 
 }
 
 Color ReflectiveMaterial::GetDirectColor(ShadingInfo& shadingInfo) const  {
-	Color3 directColor = diffuseBRDF.F(shadingInfo);
-	Color3 specularColor = glossySpecularBRDF.F(shadingInfo);
-	Color resultColor = Color(directColor[0]+specularColor[0], directColor[1]+specularColor[1], directColor[2]+specularColor[2], 1.0f);
-
-	return resultColor;
+	if (shadingInfo.normalVector * shadingInfo.wo > 0.0) {
+		Color3 directColor = diffuseBRDF.F(shadingInfo);
+		Color3 specularColor = glossySpecularBRDF.F(shadingInfo);
+		Color resultColor = Color(directColor[0]+specularColor[0], directColor[1]+specularColor[1], directColor[2]+specularColor[2], 1.0f);
+		
+		return resultColor;
+	}
+	
+	return deadColor;
 }
 
 Color ReflectiveMaterial::GetColorForAreaLight(ShadingInfo& shadingInfo) const  {

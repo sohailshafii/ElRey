@@ -17,6 +17,7 @@ Color SimpleEmissiveMaterial::GetDirectColor(ShadingInfo &shadingInfo) const  {
 }
 
 Color SimpleEmissiveMaterial::GetColorForAreaLight(ShadingInfo &shadingInfo) const {
+	// only emit color if on the "positive" side of material
 	if (shadingInfo.normalVector * shadingInfo.wo > 0.0) {
 		return directColor;
 	}
