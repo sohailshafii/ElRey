@@ -107,6 +107,14 @@ bool Scene::Intersect(const Ray &ray, Color &newColor,
 			
 			float projectionTerm = 0.0f;
 			float vectorMagn = 0.0f;
+			
+			// if primitive we struck is area light itself, no need to test light visibility
+			if (primitiveToExclude == closestPrimitive)
+			{
+				newColor +=
+					primitiveMaterial->GetColorForAreaLight(shadingInfo);
+				continue;
+			}
 
 			if (isAreaLight) {
 				// TODO: area lighting here messes with shading info, and it's not
@@ -116,16 +124,7 @@ bool Scene::Intersect(const Ray &ray, Color &newColor,
 				vectorToLight = shadingInfo.wi;
 				vectorMagn = shadingInfo.wiScaled.Norm();
 				projectionTerm = vectorToLight * normalVec;
-				shadingInfo.wi = vectorToLight;
-
-				// if primitive we struck is area light itself, no need to test light visibility
-				if (primitiveToExclude == closestPrimitive)
-				{
-					newColor +=
-						primitiveMaterial->GetColorForAreaLight(shadingInfo);
-					continue;
-				}
-			}
+				shadingInfo.wi = vectorToLight;			}
 			else {
 				// infinite lights don't rely on normalization
 				auto lightDistanceInfinite = currentLight->IsLightDistanceInfinite();
@@ -161,26 +160,27 @@ bool Scene::Intersect(const Ray &ray, Color &newColor,
 						lightRadiance[2], 0.0);
 					newColor += isAreaLight ?
 						primitiveMaterial->GetColorForAreaLight(shadingInfo)*
-						lightRadColor4*projectionTerm*
+						lightRadColor4*
 						currentLight->GeometricTerm(shadingInfo)/
-						currentLight->PDF(shadingInfo)
+						currentLight->PDF(shadingInfo)*
+						projectionTerm
 						:
 						primitiveMaterial->GetDirectColor(shadingInfo)*
 						lightRadColor4*projectionTerm;
 				}
 			}
-			
-			// do we need to recurse?
-			if (primitiveMaterial->DoesSurfaceReflect() && bounceCount <
-				maxBounceCount) {
-				float reflectivity = primitiveMaterial->GetReflectivity();
-				Vector3 reflectiveVec = primitiveMaterial->ReflectVectorOffSurface(normalVec, -ray.GetDirection());
-				Ray reflectedRay(intersectionPos, reflectiveVec);
-				Color reflectedColor(0.0f, 0.0f, 0.0f, 0.0f);
-				Intersect(reflectedRay, reflectedColor,
-						  0.001f, originalTMax, bounceCount+1);
-				newColor += reflectedColor*reflectivity;
-			}
+		}
+		
+		// do we need to recurse?
+		if (primitiveMaterial->DoesSurfaceReflect() && bounceCount <
+			maxBounceCount) {
+			float reflectivity = primitiveMaterial->GetReflectivity();
+			Vector3 reflectiveVec = primitiveMaterial->ReflectVectorOffSurface(normalVec, -ray.GetDirection());
+			Ray reflectedRay(intersectionPos, reflectiveVec);
+			Color reflectedColor(0.0f, 0.0f, 0.0f, 0.0f);
+			Intersect(reflectedRay, reflectedColor,
+					  0.001f, originalTMax, bounceCount+1);
+			newColor += reflectedColor*reflectivity;
 		}
 	}
 
