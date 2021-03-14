@@ -32,7 +32,7 @@ public:
 	virtual Primitive* Intersect(const Ray &ray, float tMin, float& tMax,
 								 IntersectionResult &intersectionResult) override;
 	
-	virtual Primitive* IntersectShadow(const Ray &ray, float tMin, float tMax) override;
+	virtual bool IntersectShadow(const Ray &ray, float tMin, float tMax) override;
 	virtual Vector3 GetNormal(const ShadingInfo &shadingInfo) const override;
 	
 	virtual Vector3 ComputeHardNormal(Point3 const &position) const override;

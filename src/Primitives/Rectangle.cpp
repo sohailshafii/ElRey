@@ -38,7 +38,7 @@ Primitive* Rectangle::Intersect(const Ray &ray, float tMin, float& tMax,
 	return this;
 }
 
-Primitive* Rectangle::IntersectShadow(const Ray &ray, float tMin, float tMax)
+bool Rectangle::IntersectShadow(const Ray &ray, float tMin, float tMax)
 {
 	const Point3& rayOrigin = ray.GetOrigin();
 	const Vector3& rayDirection = ray.GetDirection();
@@ -46,11 +46,11 @@ Primitive* Rectangle::IntersectShadow(const Ray &ray, float tMin, float tMax)
 
 	if (t < EPSILON)
 	{
-		return nullptr;
+		return false;
 	}
 
 	if (t < tMin || t > tMax) {
-		return nullptr;
+		return false;
 	}
 
 	Point3 intersectionPoint = ray.GetPositionAtParam(t);
@@ -59,16 +59,16 @@ Primitive* Rectangle::IntersectShadow(const Ray &ray, float tMin, float tMax)
 	float projectionSide1 = vectorAlongPlane * side1Vec;
 	if (projectionSide1 < 0.0 || projectionSide1 > side1LengthSqr)
 	{
-		return nullptr;
+		return false;
 	}
 
 	float projectionSide2 = vectorAlongPlane * side2Vec;
 	if (projectionSide2 < 0.0 || projectionSide2 > side2LengthSqr)
 	{
-		return nullptr;
+		return false;
 	}
 
-	return this;
+	return true;
 }
 
 void Rectangle::SamplePrimitive(Point3& resultingSample,

@@ -54,7 +54,7 @@ Primitive* Triangle::Intersect(const Ray &ray, float tMin, float& tMax,
 	return this;
 }
 
-Primitive* Triangle::IntersectShadow(const Ray &ray, float tMin, float tMax) {
+bool Triangle::IntersectShadow(const Ray &ray, float tMin, float tMax) {
 	const Point3& rayOrigin = ray.GetOrigin();
 	const Vector3& rayDirection = ray.GetDirection();
 	
@@ -75,7 +75,7 @@ Primitive* Triangle::IntersectShadow(const Ray &ray, float tMin, float tMax) {
 	float beta = e1 * invDenom;
 	
 	if (beta < 0.0f) {
-		return nullptr;
+		return false;
 	}
 	
 	float r = e * l - h * i;
@@ -83,21 +83,21 @@ Primitive* Triangle::IntersectShadow(const Ray &ray, float tMin, float tMax) {
 	float gamma = e2 * invDenom;
 	
 	if (gamma < 0.0f) {
-		return nullptr;
+		return false;
 	}
 	
 	if ((beta + gamma) > 1.0f) {
-		return nullptr;
+		return false;
 	}
 	
 	float e3 = a * p - b * r + d * s;
 	float t = e3 * invDenom;
 	
 	if (t < tMin || t > tMax) {
-		return nullptr;
+		return false;
 	}
 	
-	return this;
+	return true;
 }
 
 void Triangle::SamplePrimitive(Point3& resultingSample,

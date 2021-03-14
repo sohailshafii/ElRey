@@ -24,9 +24,9 @@ Primitive* OpenCylinder::Intersect(const Ray &ray, float tMin, float& tMax,
 	return nullptr;
 }
 
-Primitive* OpenCylinder::IntersectShadow(const Ray &ray, float tMin, float tMax) {
+bool OpenCylinder::IntersectShadow(const Ray &ray, float tMin, float tMax) {
 	return boundingBox.RayHit(ray) && TestRayAndSetTMax(ray, tMin, tMax) ?
-		this : nullptr;
+		true : false;
 }
 
 Vector3 OpenCylinder::GetNormal(const ShadingInfo& shadingInfo) const {

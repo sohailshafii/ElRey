@@ -116,17 +116,15 @@ Primitive* SimpleWorld::Intersect(const Ray &ray, float tMin, float& tMax,
 	return closestPrimitive;
 }
 
-Primitive* SimpleWorld::ShadowFeelerIntersectsAnObject(const Ray& ray, float tMin,
+bool SimpleWorld::ShadowFeelerIntersectsAnObject(const Ray& ray, float tMin,
 													   float tMax) {
 	Ray rayToCast = ray;
 	Vector3 originalDir = ray.GetDirection();
 	Point3 originalOrigin = ray.GetOrigin();
 	for (auto currentPrimitive : primitives) {
-		auto hitPrimitive = currentPrimitive->IntersectShadow(ray, tMin, tMax);
-		if (hitPrimitive != nullptr)
-		{
-			return hitPrimitive;
+		if (currentPrimitive->IntersectShadow(ray, tMin, tMax)) {
+			return true;
 		}
 	}
-	return nullptr;
+	return false;
 }

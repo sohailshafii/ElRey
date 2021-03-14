@@ -169,7 +169,7 @@ void Scene::AddContributionsFromLights(ShadingInfo &shadingInfo, Vector3 & norma
 								vectorToLight*SHADOW_FEELER_EPSILON, vectorToLight);
 			// test shadow feeler if light supports it!
 			if (currentLight->CastsShadows() &&
-				ShadowFeelerIntersectsAnObject(shadowFeelerRay, 0.0f, vectorMagn)) {
+				simpleWorld->ShadowFeelerIntersectsAnObject(shadowFeelerRay, 0.0f, vectorMagn)) {
 				inShadow = true;
 			}
 			
@@ -199,12 +199,6 @@ bool Scene::IsPrimitiveAssociatedWithLight(Primitive* primitive) const {
 		}
 	}
 	return false;
-}
-
-bool Scene::ShadowFeelerIntersectsAnObject(const Ray& ray, float tMin,
-	float tMax) const {
-	auto* primitiveHit = simpleWorld->ShadowFeelerIntersectsAnObject(ray, tMin, tMax);
-	return primitiveHit != nullptr;
 }
 
 void Scene::TranslateAndRotate(const Vector3& translation, float rightRotationDegrees,

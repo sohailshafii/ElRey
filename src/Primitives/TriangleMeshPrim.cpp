@@ -59,7 +59,7 @@ Primitive* TriangleMeshPrimitive::Intersect(const Ray &ray, float tMin, float& t
 	return this;
 }
 
-Primitive* TriangleMeshPrimitive::IntersectShadow(const Ray &ray, float tMin, float tMax) {
+bool TriangleMeshPrimitive::IntersectShadow(const Ray &ray, float tMin, float tMax) {
 	const Point3& rayOrigin = ray.GetOrigin();
 	const Vector3& rayDirection = ray.GetDirection();
 	
@@ -84,7 +84,7 @@ Primitive* TriangleMeshPrimitive::IntersectShadow(const Ray &ray, float tMin, fl
 	float beta = e1 * invDenom;
 	
 	if (beta < 0.0f) {
-		return nullptr;
+		return false;
 	}
 	
 	float r = e * l - h * i;
@@ -92,21 +92,21 @@ Primitive* TriangleMeshPrimitive::IntersectShadow(const Ray &ray, float tMin, fl
 	float gamma = e2 * invDenom;
 	
 	if (gamma < 0.0f) {
-		return nullptr;
+		return false;
 	}
 	
 	if ((beta + gamma) > 1.0f) {
-		return nullptr;
+		return false;
 	}
 	
 	float e3 = a * p - b * r + d * s;
 	float t = e3 * invDenom;
 	
 	if (t < tMin || t > tMax) {
-		return nullptr;
+		return false;
 	}
 	
-	return this;
+	return true;
 }
 
 Vector3 TriangleMeshPrimitive::ComputeHardNormal(Point3 const &position) const {

@@ -23,7 +23,7 @@ Primitive* Plane::Intersect(const Ray &ray, float tMin, float& tMax,
 	return this;
 }
 
-Primitive* Plane::IntersectShadow(const Ray &ray, float tMin, float tMax)
+bool Plane::IntersectShadow(const Ray &ray, float tMin, float tMax)
 {
 	const Point3& rayOrigin = ray.GetOrigin();
 	const Vector3& rayDirection = ray.GetDirection();
@@ -31,16 +31,16 @@ Primitive* Plane::IntersectShadow(const Ray &ray, float tMin, float tMax)
 	float vDotNormal = rayDirection*normal;
 	if (vDotNormal > -EPSILON && vDotNormal <
 		EPSILON) {
-		return nullptr;
+		return false;
 	}
 
 	float t = -(rayOrigin*normal + distance)/vDotNormal;
 
 	if (t < tMin || t > tMax) {
-		return nullptr;
+		return false;
 	}
 	
-	return this;
+	return true;
 }
 
 Vector3 Plane::GetNormal(const ShadingInfo& shadingInfo) const {

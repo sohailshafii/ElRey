@@ -29,10 +29,10 @@ public:
 	virtual ~Primitive() { }
 
 	// Returns actual primitive hit (nullptr if not). Intersection result is only set
-	// if all tests pass
+	// if all tests pass. We need to return primitive hit for compound objects.
 	virtual Primitive* Intersect(const Ray &ray, float tMin, float& tMax,
 								 IntersectionResult &intersectionResult) = 0;
-	virtual Primitive* IntersectShadow(const Ray &ray, float tMin, float tMax) = 0;
+	virtual bool IntersectShadow(const Ray &ray, float tMin, float tMax) = 0;
 	
 	virtual Vector3 ComputeHardNormal(Point3 const & position) const = 0;
 	virtual Vector3 GetNormal(const ShadingInfo &shadingInfo) const = 0;

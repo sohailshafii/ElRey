@@ -23,24 +23,19 @@ Primitive* CompoundObject::Intersect(const Ray &ray, float tMin, float& tMax,
 	return closestPrimSoFar;
 }
 
-Primitive* CompoundObject::IntersectShadow(const Ray &ray, float tMin,
-										   float tMax) {
+bool CompoundObject::IntersectShadow(const Ray &ray, float tMin,
+									 float tMax) {
 	unsigned int numElements = primitives.size();
 	Primitive* hitPrimitive = nullptr;
 	
 	for (unsigned int index = 0; index < numElements; index++) {
 		auto currPrimitive = primitives[index];
-		hitPrimitive = currPrimitive->IntersectShadow(ray, tMin, tMax);
-		if (hitPrimitive != nullptr) {
-			break;
+		if (currPrimitive->IntersectShadow(ray, tMin, tMax)) {
+			return true;
 		}
 	}
 	
-	// if there is an instance primitive above us it will effectively tell calling
-	// code that it was the object that was hit. that's ok, because shadows
-	// only care if a primitive was hit, and don't use that primitive for additional
-	// processing
-	return hitPrimitive;
+	return false;
 }
 
 Vector3 CompoundObject::GetNormal(const ShadingInfo& shadingInfo) const {

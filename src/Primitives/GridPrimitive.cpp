@@ -234,11 +234,10 @@ Primitive* GridPrimitive::Intersect(const Ray &ray, float tMin, float& tMax,
 	return closestPrimitive;
 }
 
-Primitive* GridPrimitive::IntersectShadow(const Ray &ray, float tMin, float tMax) {
+bool GridPrimitive::IntersectShadow(const Ray &ray, float tMin, float tMax) {
 	for (auto currPrimitive : primitivesNotInCells) {
-		auto hitPrim = currPrimitive->IntersectShadow(ray, tMin, tMax);
-		if (hitPrim != nullptr) {
-			return hitPrim;
+		if (currPrimitive->IntersectShadow(ray, tMin, tMax)) {
+			return true;
 		}
 	}
 	
@@ -251,7 +250,7 @@ Primitive* GridPrimitive::IntersectShadow(const Ray &ray, float tMin, float tMax
 	// ported to Raytracing from the Ground Up
 	RayParameters rayParams;
 	if (!CheckBoundsOfRay(ray, tMin, tMax, rayParams)) {
-		return nullptr;
+		return false;
 	}
 	
 	while(true) {
@@ -259,12 +258,9 @@ Primitive* GridPrimitive::IntersectShadow(const Ray &ray, float tMin, float tMax
 			nx * rayParams.iy + nx * ny * rayParams.iz];
 		if (!rayParams.txInvalid && rayParams.txNext < rayParams.tyNext
 			&& rayParams.txNext < rayParams.tzNext) {
-			auto hitPrimitive =
-				IntersectAgainstPrimitiveCollectionShadow(currentCell, ray, tMin,
-														  rayParams.txNext);
-			
-			if (hitPrimitive != nullptr) {
-				return hitPrimitive;
+			if (IntersectAgainstPrimitiveCollectionShadow(currentCell, ray, tMin,
+														  rayParams.txNext)) {
+				return true;
 			}
 			
 			rayParams.txNext += rayParams.dtx;
@@ -274,11 +270,9 @@ Primitive* GridPrimitive::IntersectShadow(const Ray &ray, float tMin, float tMax
 			}
 		}
 		else if (!rayParams.tyInvalid && rayParams.tyNext < rayParams.tzNext) {
-			auto hitPrimitive =
-				IntersectAgainstPrimitiveCollectionShadow(currentCell, ray, tMin,
-														  rayParams.tyNext);
-			if (hitPrimitive != nullptr) {
-				return hitPrimitive;
+			if (IntersectAgainstPrimitiveCollectionShadow(currentCell, ray, tMin,
+														  rayParams.tyNext)) {
+				return true;
 			}
 			
 			rayParams.tyNext += rayParams.dty;
@@ -288,11 +282,9 @@ Primitive* GridPrimitive::IntersectShadow(const Ray &ray, float tMin, float tMax
 			}
 		}
 		else {
-			auto hitPrimitive =
-				IntersectAgainstPrimitiveCollectionShadow(currentCell, ray, tMin,
-														  rayParams.tzNext);
-			if (hitPrimitive != nullptr) {
-				return hitPrimitive;
+			if (IntersectAgainstPrimitiveCollectionShadow(currentCell, ray, tMin,
+														  rayParams.tzNext)) {
+				return true;
 			}
 			
 			rayParams.tzNext += rayParams.dtz;
@@ -303,7 +295,7 @@ Primitive* GridPrimitive::IntersectShadow(const Ray &ray, float tMin, float tMax
 		}
 	}
 	
-	return nullptr;
+	return false;
 }
 
 AABBox GridPrimitive::GetBoundingBox() const {
@@ -598,22 +590,21 @@ Primitive* GridPrimitive::IntersectAgainstPrimitiveCollection(PrimitiveCollectio
 	return closestPrimSoFar;
 }
 
-Primitive* GridPrimitive::IntersectAgainstPrimitiveCollectionShadow(
-																	PrimitiveCollection & primitiveCollection,
-																	const Ray &ray, float tMin,
-																	float tMax) {
+bool GridPrimitive::IntersectAgainstPrimitiveCollectionShadow(
+															  PrimitiveCollection & primitiveCollection,
+															  const Ray &ray, float tMin,
+															  float tMax) {
 	auto & primitivesInCollection = primitiveCollection.primitives;
 	unsigned int numElements = primitivesInCollection.size();
 	
 	for (unsigned int index = 0; index < numElements; index++) {
 		auto currPrimitive = primitivesInCollection[index];
-		auto shadowPrimHit = currPrimitive->IntersectShadow(ray, tMin, tMax);
-		if (shadowPrimHit != nullptr) {
-			return shadowPrimHit;
+		if (currPrimitive->IntersectShadow(ray, tMin, tMax)) {
+			return true;
 		}
 	}
 	
-	return nullptr;
+	return false;
 }
 
 Primitive* GridPrimitive::BruteForceIntersect(const Ray &ray, float tMin, float& tMax,
@@ -632,17 +623,16 @@ Primitive* GridPrimitive::BruteForceIntersect(const Ray &ray, float tMin, float&
 	return primitiveHit;
 }
 
-Primitive* GridPrimitive::BruteForceShadowFeelerIntersectsAnObject(const Ray& ray, float tMin,
-																   float tMax) {
+bool GridPrimitive::BruteForceShadowFeelerIntersectsAnObject(const Ray& ray, float tMin,
+															 float tMax) {
 	for(auto primitiveCollection : cells) {
-		auto primitiveHit =
-			IntersectAgainstPrimitiveCollectionShadow(primitiveCollection, ray, tMin, tMax);
-		if (primitiveHit != nullptr) {
-			return primitiveHit;
+		if (IntersectAgainstPrimitiveCollectionShadow(primitiveCollection, ray,
+													  tMin, tMax)) {
+			return true;
 		}
 	}
 	
-	return nullptr;
+	return false;
 }
 
 Vector3 GridPrimitive::GetNormal(const ShadingInfo& shadingInfo) const {

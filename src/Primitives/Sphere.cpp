@@ -41,7 +41,7 @@ Primitive* Sphere::Intersect(const Ray &ray, float tMin, float& tMax,
 	return nullptr;
 }
 
-Primitive* Sphere::IntersectShadow(const Ray &ray, float tMin, float tMax) {
+bool Sphere::IntersectShadow(const Ray &ray, float tMin, float tMax) {
 	const Point3& rayOrigin = ray.GetOrigin();
 	const Vector3& rayDirection = ray.GetDirection();
 
@@ -52,7 +52,7 @@ Primitive* Sphere::IntersectShadow(const Ray &ray, float tMin, float tMax) {
 	float discr = b*b - 4.0f*a*c;
 
 	if (discr < 0.0f) {
-		return nullptr;
+		return false;
 	}
 
 	float e = sqrt(discr);
@@ -60,15 +60,15 @@ Primitive* Sphere::IntersectShadow(const Ray &ray, float tMin, float tMax) {
 	float t = (-b-e)/denom;
 	// smaller root
 	if (t > EPSILON && t > tMin && t < tMax) {
-		return this;
+		return true;
 	}
 
 	t = (-b+e)/denom;
 	if (t > EPSILON && t > tMin && t < tMax) {
-		return this;
+		return true;
 	}
 	
-	return nullptr;
+	return false;
 }
 
 Vector3 Sphere::GetNormal(const ShadingInfo &shadingInfo) const {

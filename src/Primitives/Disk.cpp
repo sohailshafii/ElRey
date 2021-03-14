@@ -60,29 +60,29 @@ Primitive* Disk::Intersect(const Ray &ray, float tMin, float& tMax,
 	return nullptr;
 }
 
-Primitive* Disk::IntersectShadow(const Ray &ray, float tMin, float tMax) {
+bool Disk::IntersectShadow(const Ray &ray, float tMin, float tMax) {
 	const Point3& rayOrigin = ray.GetOrigin();
 	const Vector3& rayDirection = ray.GetDirection();
 
 	float rayDotNormal = rayDirection * normalVec;
 	
 	if (fabs(rayDotNormal) <= EPSILON) {
-		return nullptr;
+		return false;
 	}
 	
 	float t = (center - rayOrigin) * normalVec / rayDotNormal;
 	
 	if (t < tMin || t > tMax) {
-		return nullptr;
+		return false;
 	}
 	
 	Point3 pointOnPlane = ray.GetPositionAtParam(t);
 	
 	if (center.GetDistanceSquared(pointOnPlane) < radiusSquared) {
-		return this;
+		return true;
 	}
 	
-	return nullptr;
+	return false;
 }
 
 Vector3 Disk::GetNormal(const ShadingInfo& shadingInfo) const {

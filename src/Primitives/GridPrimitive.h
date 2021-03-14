@@ -26,7 +26,7 @@ public:
 	
 	virtual Primitive* Intersect(const Ray &ray, float tMin, float& tMax,
 								 IntersectionResult &intersectionResult) override;
-	virtual Primitive* IntersectShadow(const Ray &ray, float tMin, float tMax) override;
+	virtual bool IntersectShadow(const Ray &ray, float tMin, float tMax) override;
 	
 	virtual Vector3 GetNormal(const ShadingInfo& shadingInfo) const override;
 	
@@ -91,13 +91,13 @@ private:
 	
 	Primitive* IntersectAgainstPrimitiveCollection(PrimitiveCollection & primitiveCollection, const Ray &ray, float tMin, float& tMax, IntersectionResult &intersectionResult);
 	
-	Primitive* IntersectAgainstPrimitiveCollectionShadow(PrimitiveCollection & primitiveCollection,
-														 const Ray &ray, float tMin, float tMax);
+	bool IntersectAgainstPrimitiveCollectionShadow(PrimitiveCollection & primitiveCollection,
+												   const Ray &ray, float tMin, float tMax);
 	
 	Primitive* BruteForceIntersect(const Ray &ray, float tMin, float& tMax,
 								   IntersectionResult &intersectionResult);
-	Primitive* BruteForceShadowFeelerIntersectsAnObject(const Ray& ray, float tMin,
-														float tMax);
+	bool BruteForceShadowFeelerIntersectsAnObject(const Ray& ray, float tMin,
+												  float tMax);
 	
 	AABBox boundingBox;
 	// primitives that are not in cells, because they don't have

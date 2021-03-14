@@ -105,10 +105,9 @@ public:
 									Color& newColor) const;
 	bool IsPrimitiveAssociatedWithLight(Primitive* primitive) const;
 	
-	// exclude a primitive if we are checking area light and want
-	// to exclude their related primitive
-	bool ShadowFeelerIntersectsAnObject(const Ray& ray, float tMin,
-										float tMax) const;
+	bool ShadowFeelerIntersectsAnObject(Ray const & ray, float tMin, float tMax) const {
+		return simpleWorld->ShadowFeelerIntersectsAnObject(ray, tMin, tMax);
+	}
 
 private:
 	void CleanUpLights();

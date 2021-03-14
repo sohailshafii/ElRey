@@ -69,7 +69,7 @@ Primitive* Torus::Intersect(const Ray &ray, float tMin, float& tMax,
 	return this;
 }
 
-Primitive* Torus::IntersectShadow(const Ray &ray, float tMin, float tMax) {
+bool Torus::IntersectShadow(const Ray &ray, float tMin, float tMax) {
 	if (!boundingBox.RayHit(ray)) {
 		return nullptr;
 	}
@@ -110,7 +110,7 @@ Primitive* Torus::IntersectShadow(const Ray &ray, float tMin, float tMax) {
 	float 	t 		 	= std::numeric_limits<float>::max();
 	// ray misses the torus
 	if (numRealRoots == 0) {
-		return nullptr;
+		return false;
 	}
 	
 	// find the smallest root greater than kEpsilon, if any
@@ -118,15 +118,11 @@ Primitive* Torus::IntersectShadow(const Ray &ray, float tMin, float tMax) {
 	for (int j = 0; j < numRealRoots; j++) {
 		if (roots[j] < tMax && roots[j] > tMin) {
 			t = roots[j];
-			intersected = true;
+			return true;
 		}
 	}
 		
-	if (!intersected) {
-		return nullptr;
-	}
-	
-	return this;
+	return false;
 }
 
 Vector3 Torus::GetNormal(const ShadingInfo &shadingInfo) const {

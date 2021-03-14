@@ -103,8 +103,8 @@ Primitive* InstancePrimitive::Intersect(const Ray &rayWorld, float tMin,
 	return hitPrim != nullptr ? this : nullptr;
 }
 
-Primitive* InstancePrimitive::IntersectShadow(const Ray &rayWorld,
-											  float tMin, float tMax) {
+bool InstancePrimitive::IntersectShadow(const Ray &rayWorld,
+										float tMin, float tMax) {
 	Ray rayToCast = rayWorld;
 	Vector3 originalDir = rayWorld.GetDirection();
 	Point3 originalOrigin = rayWorld.GetOrigin();
@@ -113,7 +113,7 @@ Primitive* InstancePrimitive::IntersectShadow(const Ray &rayWorld,
 	// if our child is an instance primitive, then that one will apply its
 	// own transform too
 	return instancePrimitive->IntersectShadow(rayToCast, tMin, tMax) ?
-		this : nullptr;
+		true : false;
 }
 
 Vector3 InstancePrimitive::GetNormal(const ShadingInfo& shadingInfo) const {

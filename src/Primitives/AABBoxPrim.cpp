@@ -187,7 +187,7 @@ Primitive* AABBoxPrim::Intersect(const Ray &ray, float tMin, float& tMax,
 	}
 }
 
-Primitive* AABBoxPrim::IntersectShadow(const Ray &ray, float tMin, float tMax) {
+bool AABBoxPrim::IntersectShadow(const Ray &ray, float tMin, float tMax) {
 	auto const & rayOrigin = ray.GetOrigin();
 	auto const & rayDirection = ray.GetDirection();
 	
@@ -257,14 +257,14 @@ Primitive* AABBoxPrim::IntersectShadow(const Ray &ray, float tMin, float tMax) {
 	if (t0 < t1 && t1 > tMin) {
 		bool faceIn = t0 > tMin;
 		if (faceIn) {
-			return t0 < tMax ? this : nullptr;
+			return t0 < tMax ? true : false;
 		}
 		else {
-			return t1 < tMax ? this : nullptr;
+			return t1 < tMax ? true : false;
 		}
 	}
 	
-	return nullptr;
+	return false;
 }
 
 Vector3 AABBoxPrim::GetNormal(const ShadingInfo &shadingInfo) const {

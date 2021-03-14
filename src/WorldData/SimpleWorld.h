@@ -31,8 +31,8 @@ public:
 	Primitive* Intersect(const Ray &ray, float tMin, float& tMax,
 						IntersectionResult &intersectionResult);
 	
-	Primitive* ShadowFeelerIntersectsAnObject(const Ray& ray, float tMin,
-											  float tMax);
+	bool ShadowFeelerIntersectsAnObject(const Ray& ray, float tMin,
+										float tMax);
 	
 private:
 	std::vector<std::shared_ptr<Primitive>> primitives;
