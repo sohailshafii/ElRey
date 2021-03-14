@@ -127,9 +127,12 @@ bool Scene::Intersect(const Ray &ray, Color &newColor,
 	return closestPrimitive != nullptr;
 }
 
-void Scene::AddContributionsFromLights(ShadingInfo &shadingInfo, Vector3 & normalVec,
+void Scene::AddContributionsFromLights(ShadingInfo const & shadingInfo, Vector3 & normalVec,
 									   Material const * primitiveMaterial,
 									   Color& newColor) const {
+	ShadingInfo oldShadingInfo = shadingInfo;
+	ShadingInfo currShadingInfo = shadingInfo;
+	
 	for (auto currentLight : lights) {
 		Vector3 vectorToLight;
 		auto isAreaLight = currentLight->IsAreaLight();
@@ -138,13 +141,11 @@ void Scene::AddContributionsFromLights(ShadingInfo &shadingInfo, Vector3 & norma
 		float vectorMagn = 0.0f;
 
 		if (isAreaLight) {
-			// TODO: area lighting here messes with shading info, and it's not
-			// clear what it modifies. that's bad
-			currentLight->ComputeAndStoreAreaLightInformation(shadingInfo);
+			currentLight->ModifyShadingInfoForAreaLight(currShadingInfo);
 			vectorToLight = shadingInfo.wi;
 			vectorMagn = shadingInfo.wiScaled.Norm();
 			projectionTerm = vectorToLight * normalVec;
-			shadingInfo.wi = vectorToLight;			}
+			currShadingInfo.wi = vectorToLight;			}
 		else {
 			// infinite lights don't rely on normalization
 			auto lightDistanceInfinite = currentLight->IsLightDistanceInfinite();
@@ -155,12 +156,12 @@ void Scene::AddContributionsFromLights(ShadingInfo &shadingInfo, Vector3 & norma
 			}
 			else {
 				vectorMagn = vectorToLight.Norm();
-				shadingInfo.wiScaled = vectorToLight;
+				currShadingInfo.wiScaled = vectorToLight;
 				vectorToLight /= vectorMagn;
 			}
 
 			projectionTerm = vectorToLight * normalVec;
-			shadingInfo.wi = vectorToLight;
+			currShadingInfo.wi = vectorToLight;
 		}
 		
 		if (projectionTerm > 0.0f) {
@@ -170,22 +171,25 @@ void Scene::AddContributionsFromLights(ShadingInfo &shadingInfo, Vector3 & norma
 			if (currentLight->CastsShadows() &&
 				simpleWorld->ShadowFeelerIntersectsAnObject(shadowFeelerRay,
 															SHADOW_FEELER_EPSILON, vectorMagn)) {
-				inShadow = true;
+				continue;
 			}
 			
-			if (!inShadow) {
-				auto lightRadiance = currentLight->GetRadiance(shadingInfo, *this);
+			auto lightRadiance = currentLight->GetRadiance(currShadingInfo, *this);
 
-				Color lightRadColor4 = Color(lightRadiance[0], lightRadiance[1],
-					lightRadiance[2], 0.0);
-				newColor += isAreaLight ?
-					primitiveMaterial->GetColorForAreaLight(shadingInfo)*
+			Color lightRadColor4 = Color(lightRadiance[0], lightRadiance[1],
+				lightRadiance[2], 0.0);
+			if (isAreaLight) {
+				newColor += primitiveMaterial->GetColorForAreaLight(currShadingInfo)*
 					currentLight->GeometricTerm(shadingInfo)/
 					currentLight->PDF(shadingInfo)*
-					lightRadColor4*projectionTerm
-					:
-					primitiveMaterial->GetDirectColor(shadingInfo)*
 					lightRadColor4*projectionTerm;
+				// restore old shading info if this was an area light
+				// that's because area lighting modifies shading record
+				currShadingInfo = oldShadingInfo;
+			}
+			else {
+				newColor += primitiveMaterial->GetDirectColor(currShadingInfo)*
+				lightRadColor4*projectionTerm;
 			}
 		}
 	}

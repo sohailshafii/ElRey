@@ -23,15 +23,17 @@ Vector3 AreaLight::GetDirectionFromPositionScaled(const ShadingInfo& shadingInfo
 	return lightDirection;
 }
 
-void AreaLight::ComputeAndStoreAreaLightInformation(ShadingInfo& shadingInfo) const {
+void AreaLight::ModifyShadingInfoForAreaLight(ShadingInfo& shadingInfo) const {
 	Point3 lightPrimitiveSample;
 	primitive->SamplePrimitive(lightPrimitiveSample, shadingInfo);
+	
+	// calculate normal on primitive as if casting ray toward its sample
 	ShadingInfo newShadingInfo = shadingInfo;
 	newShadingInfo.intersectionPosition = lightPrimitiveSample;
 	Vector3 vectorToLight = lightPrimitiveSample -
 		shadingInfo.intersectionPosition;
 	Vector3 vectorToLighNorm = vectorToLight.Normalized();
-	// TODO: not clear if eyeDir should be used in getnormal
+	// eye is ray cast
 	newShadingInfo.eyeDir = vectorToLighNorm;
 	Vector3 lightPrimitiveNormal = primitive->GetNormal(newShadingInfo);
 	

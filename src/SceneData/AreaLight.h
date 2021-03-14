@@ -44,7 +44,7 @@ public:
 		return true;
 	}
 
-	virtual void ComputeAndStoreAreaLightInformation(ShadingInfo& shadingInfo) const override;
+	virtual void ModifyShadingInfoForAreaLight(ShadingInfo& shadingInfo) const override;
 
 	virtual float GeometricTerm(const ShadingInfo& shadingInfo)
 		const override;

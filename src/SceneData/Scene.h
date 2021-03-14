@@ -100,7 +100,7 @@ public:
 		return mainCamera->GetNumColumnsPixels();
 	}
 	
-	void AddContributionsFromLights(ShadingInfo &shadingInfo, Vector3 & normalVec,
+	void AddContributionsFromLights(ShadingInfo  const & shadingInfo, Vector3 & normalVec,
 									Material const * primitiveMaterial,
 									Color& newColor) const;
 	bool IsPrimitiveAssociatedWithLight(Primitive* primitive) const;

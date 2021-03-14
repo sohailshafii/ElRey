@@ -58,7 +58,7 @@ public:
 		return nullptr;
 	}
 
-	virtual void ComputeAndStoreAreaLightInformation(ShadingInfo& shadingInfo) const
+	virtual void ModifyShadingInfoForAreaLight(ShadingInfo& shadingInfo) const
 	{
 		// for area lights
 	}
