@@ -196,15 +196,16 @@ void Scene::AddContributionsFromLights(ShadingInfo const & shadingInfo, Vector3 
 
 		if (isAreaLight) {
 			currentLight->ModifyShadingInfoForAreaLight(currShadingInfo);
-			vectorToLight = shadingInfo.wi;
-			vectorMagn = shadingInfo.wiScaled.Norm();
+			vectorToLight = currShadingInfo.wi;
+			vectorMagn = currShadingInfo.wiScaled.Norm();
 			projectionTerm = vectorToLight * normalVec;
-			currShadingInfo.wi = vectorToLight;			}
+			currShadingInfo.wi = vectorToLight;
+		}
 		else {
 			// infinite lights don't rely on normalization
 			auto lightDistanceInfinite = currentLight->IsLightDistanceInfinite();
 			vectorToLight = -currentLight->GetDirectionFromPositionScaled(
-																		  shadingInfo);
+																		  currShadingInfo);
 			if (lightDistanceInfinite) {
 				vectorMagn = std::numeric_limits<float>::max();
 			}
@@ -220,12 +221,22 @@ void Scene::AddContributionsFromLights(ShadingInfo const & shadingInfo, Vector3 
 		
 		if (projectionTerm > 0.0f) {
 			bool inShadow = false;
-			Ray shadowFeelerRay(shadingInfo.intersectionPosition, vectorToLight);
+			Ray shadowFeelerRay(currShadingInfo.intersectionPosition, vectorToLight);
 			// test shadow feeler if light supports it!
-			if (currentLight->CastsShadows() &&
-				simpleWorld->ShadowFeelerIntersectsAnObject(shadowFeelerRay,
-															SHADOW_FEELER_EPSILON, vectorMagn)) {
-				continue;
+			if (currentLight->CastsShadows()) {
+				// if it's area, light prevent hitting light source
+				auto lightPrimitive = currentLight->GetPrimitive();
+				if (lightPrimitive != nullptr) {
+					lightPrimitive->SetIgnoreShadowTest(true);
+				}
+				bool shadowFeelerHitSomething = simpleWorld->ShadowFeelerIntersectsAnObject(shadowFeelerRay,
+						SHADOW_FEELER_EPSILON, vectorMagn);
+				if (lightPrimitive != nullptr) {
+					lightPrimitive->SetIgnoreShadowTest(false);
+				}
+				if (shadowFeelerHitSomething) {
+					continue;
+				}
 			}
 			
 			auto lightRadiance = currentLight->GetRadiance(currShadingInfo, *this);
@@ -234,8 +245,8 @@ void Scene::AddContributionsFromLights(ShadingInfo const & shadingInfo, Vector3 
 				lightRadiance[2], 0.0);
 			if (isAreaLight) {
 				newColor += primitiveMaterial->GetDirectColor(currShadingInfo)*
-					currentLight->GeometricTerm(shadingInfo)/
-					currentLight->PDF(shadingInfo)*
+					currentLight->GeometricTerm(currShadingInfo)/
+					currentLight->PDF(currShadingInfo)*
 					lightRadColor4*projectionTerm;
 				// restore old shading info if this was an area light
 				// that's because area lighting modifies shading record

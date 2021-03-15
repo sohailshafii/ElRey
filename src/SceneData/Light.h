@@ -54,7 +54,7 @@ public:
 		return false;
 	}
 
-	virtual const Primitive* GetPrimitive() const {
+	virtual Primitive* GetPrimitive() const {
 		return nullptr;
 	}
 

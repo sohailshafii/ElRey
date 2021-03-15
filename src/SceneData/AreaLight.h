@@ -36,7 +36,7 @@ public:
 		return false;
 	}
 
-	virtual const Primitive* GetPrimitive() const override {
+	virtual Primitive* GetPrimitive() const override {
 		return primitive.get();
 	}
 

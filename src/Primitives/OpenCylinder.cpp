@@ -25,6 +25,9 @@ Primitive* OpenCylinder::Intersect(const Ray &ray, float tMin, float& tMax,
 }
 
 bool OpenCylinder::IntersectShadow(const Ray &ray, float tMin, float tMax) {
+	if (ignoreShadowTest) {
+		return false;
+	}
 	return boundingBox.RayHit(ray) && TestRayAndSetTMax(ray, tMin, tMax) ?
 		true : false;
 }

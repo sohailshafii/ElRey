@@ -25,6 +25,9 @@ Primitive* CompoundObject::Intersect(const Ray &ray, float tMin, float& tMax,
 
 bool CompoundObject::IntersectShadow(const Ray &ray, float tMin,
 									 float tMax) {
+	if (ignoreShadowTest) {
+		return false;
+	}
 	unsigned int numElements = primitives.size();
 	Primitive* hitPrimitive = nullptr;
 	

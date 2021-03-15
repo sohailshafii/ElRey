@@ -40,6 +40,9 @@ Primitive* Rectangle::Intersect(const Ray &ray, float tMin, float& tMax,
 
 bool Rectangle::IntersectShadow(const Ray &ray, float tMin, float tMax)
 {
+	if (ignoreShadowTest) {
+		return false;
+	}
 	const Point3& rayOrigin = ray.GetOrigin();
 	const Vector3& rayDirection = ray.GetDirection();
 	float t = (origin - rayOrigin) * normal / (rayDirection * normal);

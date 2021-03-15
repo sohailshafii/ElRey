@@ -71,9 +71,15 @@ public:
 		return nullptr;
 	}
 	
+	void SetIgnoreShadowTest(bool ignore) {
+		ignoreShadowTest = ignore;
+	}
+	
 protected:
 	std::shared_ptr<Material> material;
 	std::shared_ptr<GenericSampler> sampler;
 
 	std::string name;
+	
+	bool ignoreShadowTest;
 };

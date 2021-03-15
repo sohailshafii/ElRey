@@ -235,6 +235,9 @@ Primitive* GridPrimitive::Intersect(const Ray &ray, float tMin, float& tMax,
 }
 
 bool GridPrimitive::IntersectShadow(const Ray &ray, float tMin, float tMax) {
+	if (ignoreShadowTest) {
+		return false;
+	}
 	for (auto currPrimitive : primitivesNotInCells) {
 		if (currPrimitive->IntersectShadow(ray, tMin, tMax)) {
 			return true;

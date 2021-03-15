@@ -55,6 +55,9 @@ Primitive* Triangle::Intersect(const Ray &ray, float tMin, float& tMax,
 }
 
 bool Triangle::IntersectShadow(const Ray &ray, float tMin, float tMax) {
+	if (ignoreShadowTest) {
+		return false;
+	}
 	const Point3& rayOrigin = ray.GetOrigin();
 	const Vector3& rayDirection = ray.GetDirection();
 	

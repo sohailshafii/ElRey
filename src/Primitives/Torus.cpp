@@ -70,6 +70,9 @@ Primitive* Torus::Intersect(const Ray &ray, float tMin, float& tMax,
 }
 
 bool Torus::IntersectShadow(const Ray &ray, float tMin, float tMax) {
+	if (ignoreShadowTest) {
+		return false;
+	}
 	if (!boundingBox.RayHit(ray)) {
 		return nullptr;
 	}

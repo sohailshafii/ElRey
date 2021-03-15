@@ -105,6 +105,9 @@ Primitive* InstancePrimitive::Intersect(const Ray &rayWorld, float tMin,
 
 bool InstancePrimitive::IntersectShadow(const Ray &rayWorld,
 										float tMin, float tMax) {
+	if (ignoreShadowTest) {
+		return false;
+	}
 	Ray rayToCast = rayWorld;
 	Vector3 originalDir = rayWorld.GetDirection();
 	Point3 originalOrigin = rayWorld.GetOrigin();

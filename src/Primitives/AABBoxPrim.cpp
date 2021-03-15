@@ -188,6 +188,10 @@ Primitive* AABBoxPrim::Intersect(const Ray &ray, float tMin, float& tMax,
 }
 
 bool AABBoxPrim::IntersectShadow(const Ray &ray, float tMin, float tMax) {
+	if (ignoreShadowTest) {
+		return false;
+	}
+	
 	auto const & rayOrigin = ray.GetOrigin();
 	auto const & rayDirection = ray.GetDirection();
 	
