@@ -78,10 +78,11 @@ bool Scene::WhittedRaytrace(const Ray &ray, Color &newColor,
 	float tMin, float tMax, int bounceCount) const {
 	IntersectionResult intersectionResult;
 	
-	Primitive* closestPrimitive = simpleWorld->Intersect(ray, tMin, tMax, intersectionResult);
+	float tMaxHit = tMax;
+	Primitive* closestPrimitive = simpleWorld->Intersect(ray, tMin, tMaxHit, intersectionResult);
 	
 	if (closestPrimitive != nullptr) {
-		auto intersectionPos = ray.GetPositionAtParam(tMax);
+		auto intersectionPos = ray.GetPositionAtParam(tMaxHit);
 		ShadingInfo shadingInfo(intersectionResult.genericMetadata1,
 								intersectionResult.genericMetadata2,
 								intersectionResult.genericMetadata3,
@@ -128,16 +129,16 @@ bool Scene::WhittedRaytrace(const Ray &ray, Color &newColor,
 
 bool Scene::PathRaytrace(const Ray &ray, Color &newColor,
 				  float tMin, float tMax, int bounceCount) const {
-	// TODO: rewrite for path tracing
 	IntersectionResult intersectionResult;
 	std::vector<float> pdfs;
 	std::vector<Vector3> wis;
 	std::vector<Color> colors;
 	
-	Primitive* closestPrimitive = simpleWorld->Intersect(ray, tMin, tMax, intersectionResult);
+	float tMaxHit = tMax;
+	Primitive* closestPrimitive = simpleWorld->Intersect(ray, tMin, tMaxHit, intersectionResult);
 	
 	if (closestPrimitive != nullptr) {
-		auto intersectionPos = ray.GetPositionAtParam(tMax);
+		auto intersectionPos = ray.GetPositionAtParam(tMaxHit);
 		ShadingInfo shadingInfo(intersectionResult.genericMetadata1,
 								intersectionResult.genericMetadata2,
 								intersectionResult.genericMetadata3,
@@ -180,20 +181,20 @@ bool Scene::PathRaytrace(const Ray &ray, Color &newColor,
 			primitiveMaterial->SampleColorAndDirections(shadingInfo, colors, pdfs, wis);
 			size_t numWis = wis.size();
 			size_t numColors = colors.size();
-			for (size_t i = 0; i < numWis; i++) {
-				auto& currWi = wis[i];
-				auto currPdf = pdfs[i];
-				float projectionTerm = shadingInfo.normalVector*currWi;
-				
-				// add color contribution and only bounce ray if there is one available
-				// if it's am emissive surface, it will only add to color
-				if (i <= numColors - 1) {
+			// emissive? don't cast
+			if (numWis < numColors) {
+				newColor += colors[0];
+			}
+			else {
+				for (size_t i = 0; i < numColors; i++) {
+					auto& currWi = wis[i];
+					auto currPdf = pdfs[i];
+					float projectionTerm = shadingInfo.normalVector*currWi;
+					
 					Color bounceColor(0.0f, 0.0f, 0.0f, 0.0f);
-					PathRaytrace(Ray(intersectionPos, currWi), bounceColor, 0.0f, tMax, bounceCount+1);
+					PathRaytrace(Ray(intersectionPos, currWi), bounceColor,
+								 SHADOW_FEELER_EPSILON, tMax, bounceCount+1);
 					newColor += colors[i] * bounceColor * projectionTerm/currPdf;
-				}
-				else {
-					newColor += colors[i] * projectionTerm/currPdf;
 				}
 			}
 		}
