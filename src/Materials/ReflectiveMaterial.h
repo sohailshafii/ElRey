@@ -15,7 +15,7 @@ public:
 
 	virtual Color GetAmbientColor(const ShadingInfo& shadingInfo) const override;
 	virtual Color GetDirectColor(ShadingInfo& shadingInfo) const override;
-	virtual Color GetSampledColor(ShadingInfo& shadingInfo, float& pdf, Vector3 &newWi) const override;
+	virtual Color SampleColorAndDirections(ShadingInfo &shadingInfo, std::vector<float>& pdfs, std::vector<Vector3> &wis) const override;
 	
 	virtual void SetSampler(class GenericSampler *sampler) override;
 	

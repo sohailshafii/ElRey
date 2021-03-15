@@ -1,5 +1,6 @@
 #include "ReflectiveMaterial.h"
 #include "Sampling/GenericSampler.h"
+#include <vector>
 
 ReflectiveMaterial::ReflectiveMaterial(float ka, float kd, float ks, float exponent,
 									   const Color3& color, const Color3& ksColor,
@@ -39,13 +40,16 @@ Color ReflectiveMaterial::GetDirectColor(ShadingInfo& shadingInfo) const  {
 	return deadColor;
 }
 
-Color ReflectiveMaterial::GetSampledColor(ShadingInfo& shadingInfo, float& pdf, Vector3 &newWi) const  {
+Color ReflectiveMaterial::SampleColorAndDirections(ShadingInfo &shadingInfo, std::vector<float>& pdfs, std::vector<Vector3> &wis) const  {
 	if (shadingInfo.normalVector * shadingInfo.wo > 0.0) {
-		float modPdf = 1.0f;
-		Color3 directColor = diffuseBRDF.SampleF(shadingInfo, modPdf, newWi);
-		pdf *= modPdf;
-		Color3 specularColor = glossySpecularBRDF.SampleF(shadingInfo, modPdf, newWi);
-		pdf *= modPdf;
+		Vector3 diffuseWi, specularWi;
+		float diffusePdf, specularPdf;
+		Color3 directColor = diffuseBRDF.SampleF(shadingInfo, diffusePdf, diffuseWi);
+		pdfs.push_back(diffusePdf);
+		wis.push_back(diffuseWi);
+		Color3 specularColor = glossySpecularBRDF.SampleF(shadingInfo, specularPdf, specularWi);
+		pdfs.push_back(specularPdf);
+		wis.push_back(specularWi);
 		return Color(directColor[0] + specularColor[0], directColor[1] + specularColor[1],
 			directColor[2] + specularColor[2], 1.0f);
 	}

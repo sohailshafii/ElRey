@@ -1,5 +1,6 @@
 #include "SimpleEmissiveMaterial.h"
 #include "Sampling/GenericSampler.h"
+#include <vector>
 
 SimpleEmissiveMaterial::SimpleEmissiveMaterial(float ka, float kd, const Color3& color) {
 	ambientColor = Color(ka * color[0], ka * color[1], ka * color[2], 1.0f);
@@ -20,9 +21,11 @@ Color SimpleEmissiveMaterial::GetDirectColor(ShadingInfo &shadingInfo) const  {
 	return deadColor;
 }
 
-Color SimpleEmissiveMaterial::GetSampledColor(ShadingInfo &shadingInfo, float& pdf, Vector3 &newWi) const {
+Color SimpleEmissiveMaterial::SampleColorAndDirections(ShadingInfo &shadingInfo, std::vector<float>& pdfs, std::vector<Vector3> &newWi) const {
 	// only emit color if on the "positive" side of material
 	if (shadingInfo.normalVector * shadingInfo.wo > 0.0) {
+		// doesn't reflect; don't add to wis
+		pdfs.push_back(1.0f);
 		return directColor;
 	}
 	return deadColor;

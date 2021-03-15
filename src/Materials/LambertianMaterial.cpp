@@ -1,5 +1,6 @@
 #include "LambertianMaterial.h"
 #include "Sampling/GenericSampler.h"
+#include <vector>
 
 LambertianMaterial::LambertianMaterial(float ka, float kd, const Color3& color) {
 	ambientBRDF.setKd(ka);
@@ -23,9 +24,13 @@ Color LambertianMaterial::GetDirectColor(ShadingInfo& shadingInfo) const {
 	return deadColor;
 }
 
-Color LambertianMaterial::GetSampledColor(ShadingInfo& shadingInfo, float& pdf, Vector3 &newWi) const {
+Color LambertianMaterial::SampleColorAndDirections(ShadingInfo &shadingInfo, std::vector<float>& pdfs, std::vector<Vector3> &wis) const {
 	if (shadingInfo.normalVector * shadingInfo.wo > 0.0) {
-		Color3 directColor = diffuseBRDF.SampleF(shadingInfo, pdf, newWi);
+		Vector3 diffuseWi;
+		float diffusePdf;
+		Color3 directColor = diffuseBRDF.SampleF(shadingInfo, diffusePdf, diffuseWi);
+		pdfs.push_back(diffusePdf);
+		wis.push_back(diffuseWi);
 		return Color(directColor[0], directColor[1], directColor[2], 1.0f);
 	}
 	return deadColor;
