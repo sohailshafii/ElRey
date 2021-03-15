@@ -15,7 +15,8 @@
 			"random_sampler_type":"random",
 			"num_random_samples":2,
 			"num_random_sets":83
-		}
+		},
+		"path_trace":false
 	},
 	"objects":
 	[

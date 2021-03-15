@@ -74,7 +74,7 @@ void Scene::SetAmbientLight(Light* newAmbientLight) {
 	ambientLight = newAmbientLight;
 }
 
-bool Scene::Intersect(const Ray &ray, Color &newColor,
+bool Scene::WhittedRaytrace(const Ray &ray, Color &newColor,
 	float tMin, float& tMax, int bounceCount) const {
 	IntersectionResult intersectionResult;
 	
@@ -117,8 +117,62 @@ bool Scene::Intersect(const Ray &ray, Color &newColor,
 				Vector3 reflectiveVec = primitiveMaterial->ReflectVectorOffSurface(normalVec, -ray.GetDirection());
 				Ray reflectedRay(intersectionPos, reflectiveVec);
 				Color reflectedColor(0.0f, 0.0f, 0.0f, 0.0f);
-				Intersect(reflectedRay, reflectedColor,
-						  0.001f, originalTMax, bounceCount+1);
+				WhittedRaytrace(reflectedRay, reflectedColor,
+								0.001f, originalTMax, bounceCount+1);
+				newColor += reflectedColor*reflectivity;
+			}
+		}
+	}
+
+	return closestPrimitive != nullptr;
+}
+
+bool Scene::PathRaytrace(const Ray &ray, Color &newColor,
+				  float tMin, float& tMax, int bounceCount) const {
+	// TODO: rewrite for path tracing
+	IntersectionResult intersectionResult;
+	
+	float originalTMax = tMax;
+	Primitive* closestPrimitive = simpleWorld->Intersect(ray, tMin, tMax, intersectionResult);
+	
+	if (closestPrimitive != nullptr) {
+		auto intersectionPos = ray.GetPositionAtParam(tMax);
+		ShadingInfo shadingInfo(intersectionResult.genericMetadata1,
+								intersectionResult.genericMetadata2,
+								intersectionResult.genericMetadata3,
+								&intersectionResult.compoundPrimitiveToIntersectedPrim,
+								ray.GetDirection(),
+								intersectionPos);
+		Material const * primitiveMaterial = closestPrimitive->GetMaterial(shadingInfo);
+		Vector3 normalVec = closestPrimitive->GetNormal(shadingInfo);
+		shadingInfo.normalVector = normalVec;
+		
+		// ambient light if available
+		if (ambientLight != nullptr) {
+			auto lightRadiance = ambientLight->GetRadiance(shadingInfo, *this);
+			Color lightRadColor4 = Color(lightRadiance[0], lightRadiance[1], lightRadiance[2], 0.0);
+			newColor += primitiveMaterial->GetAmbientColor(shadingInfo)*lightRadColor4;
+		}
+		
+		bool isAreaLight = IsPrimitiveAssociatedWithLight(closestPrimitive);
+		
+		if (isAreaLight) {
+			newColor +=
+				primitiveMaterial->GetDirectColor(shadingInfo);
+		}
+		else {
+			AddContributionsFromLights(shadingInfo, normalVec, primitiveMaterial,
+									   newColor);
+			
+			// do we need to recurse?
+			if (primitiveMaterial->DoesSurfaceReflect() && bounceCount <
+				maxBounceCount) {
+				float reflectivity = primitiveMaterial->GetReflectivity();
+				Vector3 reflectiveVec = primitiveMaterial->ReflectVectorOffSurface(normalVec, -ray.GetDirection());
+				Ray reflectedRay(intersectionPos, reflectiveVec);
+				Color reflectedColor(0.0f, 0.0f, 0.0f, 0.0f);
+				WhittedRaytrace(reflectedRay, reflectedColor,
+								0.001f, originalTMax, bounceCount+1);
 				newColor += reflectedColor*reflectivity;
 			}
 		}

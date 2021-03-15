@@ -49,6 +49,14 @@ public:
 		return numRowsPixels;
 	}
 	
+	bool GetIsUsingPathtracing() const {
+		return usePathtracing;
+	}
+	
+	void SetIsUsingPathtracking(bool usePathtracing) {
+		this->usePathtracing = usePathtracing;
+	}
+	
 private:
 	
 	float ClampColor(float originalValue) const {
@@ -92,4 +100,6 @@ protected:
 
 	GenericSampler* viewPlaneSampler;
 	Point2* gridPositions;
+	
+	bool usePathtracing;
 };

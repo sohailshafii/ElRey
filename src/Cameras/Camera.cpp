@@ -112,6 +112,10 @@ void Camera::CastIntoScene(unsigned char* pixels, unsigned int bytesPerPixel,
 	float invGamma = GetInvGamma();
 	float maxCastDistance = std::numeric_limits<float>::max();
 	float finalColorMultFactor = GetFinalPixelMultFact();
+	
+	bool (Scene::* const traceFunc) (const Ray &, Color &,
+									 float, float&, int) const =
+		usePathtracing ? &Scene::PathRaytrace : &Scene::WhittedRaytrace;
 
 	for (unsigned int pixelIndex = 0, byteIndex = 0; pixelIndex < numPixels;
 		pixelIndex++, byteIndex += bytesPerPixel) {
@@ -127,7 +131,7 @@ void Camera::CastIntoScene(unsigned char* pixels, unsigned int bytesPerPixel,
 			AffectFirstRay(rayToCast, newPixelPnt);
 			
 			tMax = maxCastDistance;
-			scene->Intersect(rayToCast, sampleColor, 0.0f, tMax, 0);
+			(scene->*traceFunc)(rayToCast, sampleColor, 0.0f, tMax, 0);
 			accumColor += sampleColor;
 		}
 

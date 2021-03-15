@@ -14,7 +14,8 @@
 			"random_sampler_type":"multijittered",
 			"num_random_samples":16,
 			"num_random_sets":83
-		}
+		},
+		"path_trace":false
 	},
 	"objects":
 	[

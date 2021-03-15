@@ -38,6 +38,8 @@ Scene* SceneLoader::DeserializeJSONFileIntoScene(const std::string &jsonFilePath
 		std::string navigationToken = sceneSettings["navigation_type"];
 		nlohmann::json cameraSettings = sceneSettings["camera"];
 		Camera* mainCamera = CreateCamera(cameraSettings);
+		bool usePathtracing = sceneSettings["path_trace"];
+		mainCamera->SetIsUsingPathtracking(usePathtracing);
 		
 		scene = new Scene();
 		scene->SetCamera(mainCamera);
