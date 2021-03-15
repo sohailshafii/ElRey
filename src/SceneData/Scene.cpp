@@ -75,10 +75,9 @@ void Scene::SetAmbientLight(Light* newAmbientLight) {
 }
 
 bool Scene::WhittedRaytrace(const Ray &ray, Color &newColor,
-	float tMin, float& tMax, int bounceCount) const {
+	float tMin, float tMax, int bounceCount) const {
 	IntersectionResult intersectionResult;
 	
-	float originalTMax = tMax;
 	Primitive* closestPrimitive = simpleWorld->Intersect(ray, tMin, tMax, intersectionResult);
 	
 	if (closestPrimitive != nullptr) {
@@ -118,7 +117,7 @@ bool Scene::WhittedRaytrace(const Ray &ray, Color &newColor,
 				Ray reflectedRay(intersectionPos, reflectiveVec);
 				Color reflectedColor(0.0f, 0.0f, 0.0f, 0.0f);
 				WhittedRaytrace(reflectedRay, reflectedColor,
-								0.001f, originalTMax, bounceCount+1);
+								0.001f, tMax, bounceCount+1);
 				newColor += reflectedColor*reflectivity;
 			}
 		}
@@ -128,11 +127,13 @@ bool Scene::WhittedRaytrace(const Ray &ray, Color &newColor,
 }
 
 bool Scene::PathRaytrace(const Ray &ray, Color &newColor,
-				  float tMin, float& tMax, int bounceCount) const {
+				  float tMin, float tMax, int bounceCount) const {
 	// TODO: rewrite for path tracing
 	IntersectionResult intersectionResult;
+	std::vector<float> pdfs;
+	std::vector<Vector3> wis;
+	std::vector<Color> colors;
 	
-	float originalTMax = tMax;
 	Primitive* closestPrimitive = simpleWorld->Intersect(ray, tMin, tMax, intersectionResult);
 	
 	if (closestPrimitive != nullptr) {
@@ -157,23 +158,43 @@ bool Scene::PathRaytrace(const Ray &ray, Color &newColor,
 		bool isAreaLight = IsPrimitiveAssociatedWithLight(closestPrimitive);
 		
 		if (isAreaLight) {
+			// get light color but don't cast additional rays; stop here
 			newColor +=
 				primitiveMaterial->GetDirectColor(shadingInfo);
 		}
 		else {
-			AddContributionsFromLights(shadingInfo, normalVec, primitiveMaterial,
-									   newColor);
+			// only add contributions of direct lighting for first bounce
+			if (bounceCount == 0) {
+				AddContributionsFromLights(shadingInfo, normalVec, primitiveMaterial,
+										   newColor);
+			}
 			
-			// do we need to recurse?
-			if (primitiveMaterial->DoesSurfaceReflect() && bounceCount <
-				maxBounceCount) {
-				float reflectivity = primitiveMaterial->GetReflectivity();
-				Vector3 reflectiveVec = primitiveMaterial->ReflectVectorOffSurface(normalVec, -ray.GetDirection());
-				Ray reflectedRay(intersectionPos, reflectiveVec);
-				Color reflectedColor(0.0f, 0.0f, 0.0f, 0.0f);
-				WhittedRaytrace(reflectedRay, reflectedColor,
-								0.001f, originalTMax, bounceCount+1);
-				newColor += reflectedColor*reflectivity;
+			// done
+			if (bounceCount == maxBounceCount) {
+				return;
+			}
+			
+			// do we need to recurse? get a list of all vectors and pdfs to consider for path tracing
+			pdfs.clear();
+			wis.clear();
+			primitiveMaterial->SampleColorAndDirections(shadingInfo, colors, pdfs, wis);
+			size_t numWis = wis.size();
+			size_t numColors = colors.size();
+			for (size_t i = 0; i < numWis; i++) {
+				auto& currWi = wis[i];
+				auto currPdf = pdfs[i];
+				float projectionTerm = shadingInfo.normalVector*currWi;
+				
+				// add color contribution and only bounce ray if there is one available
+				// if it's am emissive surface, it will only add to color
+				if (i <= numColors - 1) {
+					Color bounceColor(0.0f, 0.0f, 0.0f, 0.0f);
+					PathRaytrace(Ray(intersectionPos, currWi), bounceColor, 0.0f, tMax, bounceCount+1);
+					newColor += colors[i] * bounceColor * projectionTerm/currPdf;
+				}
+				else {
+					newColor += colors[i] * projectionTerm/currPdf;
+				}
 			}
 		}
 	}

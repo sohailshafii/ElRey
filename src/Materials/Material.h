@@ -14,7 +14,7 @@ public:
 	
 	virtual Color GetAmbientColor(const ShadingInfo &shadingInfo) const = 0;
 	virtual Color GetDirectColor(ShadingInfo &shadingInfo) const = 0;
-	virtual Color SampleColorAndDirections(ShadingInfo &shadingInfo, std::vector<float>& pdfs, std::vector<Vector3> &wis) const = 0;
+	virtual void SampleColorAndDirections(ShadingInfo &shadingInfo, std::vector<Color>& colors, std::vector<float>& pdfs, std::vector<Vector3> &wis) const = 0;
 	
 	virtual void SetSampler(class GenericSampler *sampler) = 0;
 	

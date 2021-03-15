@@ -12,10 +12,11 @@
 			"view_plane_width":1.0,
 			"up_vector":[0.0,1.0,0.0],
 			"random_sampler_type":"multijittered",
-			"num_random_samples":4,
+			"num_random_samples":16,
 			"num_random_sets":83
 		},
-		"path_trace":true
+		"path_trace":true,
+		"max_bounce_count":100
 	},
 	"objects":
 	[
@@ -38,20 +39,32 @@
 				"type":"lambertian",
 				"ka":0.1,
 				"kd":0.7,
-				"color":[0.68,0.85,0.91,1.0]
+				"color":[0.68,0.85,0.91,1.0],
+				"sampler":
+				{
+					"random_sampler_type":"multijittered",
+					"num_random_samples":16,
+					"num_random_sets":83
+				}
 			}
 		},
 		{
 			"type":"sphere",
-			"position":[1.5,0.0,-0.2],
-			"radius":0.4,
+			"position":[0.9,0.0,0.3],
+			"radius":0.8,
 			"name":"little_sphere",
 			"material":
 			{
 				"type":"lambertian",
 				"ka":0.1,
 				"kd":0.95,
-				"color":[0.0,0.8,0.1,1.0]
+				"color":[0.0,0.8,0.1,1.0],
+				"sampler":
+				{
+					"random_sampler_type":"multijittered",
+					"num_random_samples":16,
+					"num_random_sets":83
+				}
 			}
 		},
 		{
@@ -64,7 +77,13 @@
 				"type":"lambertian",
 				"ka":0.1,
 				"kd":0.95,
-				"color":[0.98,0.0,0.1,1.0]
+				"color":[0.98,0.0,0.1,1.0],
+				"sampler":
+				{
+					"random_sampler_type":"multijittered",
+					"num_random_samples":16,
+					"num_random_sets":83
+				}
 			}
 		},
 		{
@@ -80,9 +99,9 @@
 		{
 			"type":"rectangle",
 			"name":"area_light_rectangle",
-			"side_vec_1":[0.0, 0.0, 3],
-			"side_vec_2":[3, 0.0, 0.0],
-			"origin":[0, 3.4, 0],
+			"side_vec_1":[0.0, 0.0, 1.2],
+			"side_vec_2":[7, 0.0, 0.0],
+			"origin":[-4, 3.4, 0],
 			"material":
 			{
 				"type":"simple_emissive",
@@ -99,13 +118,7 @@
 		}
 	],
 	"lights":
-	[	{
-			"type":"directional",
-			"direction":[-0.5,-0.4,-0.05],
-			"radiance":[0.4,0.4,0.4],
-			"radiance_scale":3.0,
-			"casts_shadows":true
-		},
+	[
 		{
 			"type":"area_light",
 			"primitive_name":"area_light_rectangle",

@@ -39,11 +39,17 @@ Scene* SceneLoader::DeserializeJSONFileIntoScene(const std::string &jsonFilePath
 		nlohmann::json cameraSettings = sceneSettings["camera"];
 		Camera* mainCamera = CreateCamera(cameraSettings);
 		bool usePathtracing = sceneSettings["path_trace"];
+		
 		mainCamera->SetIsUsingPathtracking(usePathtracing);
 		
 		scene = new Scene();
 		scene->SetCamera(mainCamera);
 		scene->SetAllowNavigation(navigationToken == "fps");
+		if (CommonLoaderFunctions::HasKey(sceneSettings, "max_bounce_count")) {
+			int maxBounceCount =
+				CommonLoaderFunctions::SafeGetToken(sceneSettings, "max_bounce_count");
+			scene->SetMaxBounceCount(maxBounceCount);
+		}
 		
 		PrimitiveLoader::AddPrimitivesToScene(scene, jsonObj["objects"]);
 
