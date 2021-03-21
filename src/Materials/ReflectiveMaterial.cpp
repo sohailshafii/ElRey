@@ -19,8 +19,7 @@ ReflectiveMaterial::ReflectiveMaterial(float ka, float kd, float ks, float expon
 	perfectSpecularBRDF.setCs(ksColor);
 
 	deadColor = Color::Black();
-	this->cr = cr;
-	this->kr = kr;
+	this->reflectivity = cr*kr;
 }
 
 Color ReflectiveMaterial::GetAmbientColor(const ShadingInfo& shadingInfo) const  {
@@ -60,8 +59,11 @@ void ReflectiveMaterial::SetSampler(GenericSampler *sampler) {
 	perfectSpecularBRDF.setSampler(sampler->clone());
 }
 
-Vector3 ReflectiveMaterial::ReflectVectorOffSurface(Vector3 const &normal,
-													Vector3 const &incomingVecFacingAwaySurface) const {
-	return perfectSpecularBRDF.GetReflectionVector(incomingVecFacingAwaySurface,
-												   normal);
+void ReflectiveMaterial::GetSecondaryVectors(Vector3 const &normal,
+											 Vector3 const &incomingVecFacingAwaySurface,
+											 std::vector<SecondaryVectorInfo> & secondaryVectors) const {
+	Vector3 reflectedVec =
+		perfectSpecularBRDF.GetReflectionVector(incomingVecFacingAwaySurface,
+												normal);
+	secondaryVectors.push_back(SecondaryVectorInfo(reflectedVec, reflectivity));
 }

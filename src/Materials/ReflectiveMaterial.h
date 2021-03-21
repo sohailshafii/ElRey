@@ -19,16 +19,9 @@ public:
 	
 	virtual void SetSampler(class GenericSampler *sampler) override;
 	
-	virtual bool DoesSurfaceReflect() const override {
-		return true;
-	}
-	
-	virtual Vector3 ReflectVectorOffSurface(Vector3 const &normal,
-											Vector3 const &incomingVecFacingAwaySurface) const override;
-	
-	virtual float GetReflectivity() const override {
-		return kr*cr;
-	}
+	virtual void GetSecondaryVectors(Vector3 const &normal,
+									 Vector3 const &incomingVecFacingAwaySurface,
+									 std::vector<SecondaryVectorInfo> & secondaryVectors) const override;
 	
 private:
 	LambertianBRDF ambientBRDF;
@@ -37,6 +30,6 @@ private:
 	PerfectSpecularBRDF perfectSpecularBRDF;
 
 	Color deadColor;
-	float kr, cr;
+	float reflectivity;
 };
 

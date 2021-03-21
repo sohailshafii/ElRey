@@ -17,8 +17,7 @@ GlossySpecularMaterial::GlossySpecularMaterial(float ka, float kd, float ks,
 	glossySpecularBRDF.setCs(ksColor);
 
 	deadColor = Color::Black();
-	this->cr = cr;
-	this->kr = kr;
+	this->reflectivity = cr*kr;
 }
 
 Color GlossySpecularMaterial::GetAmbientColor(const ShadingInfo& shadingInfo) const  {
@@ -55,8 +54,11 @@ void GlossySpecularMaterial::SetSampler(GenericSampler *sampler) {
 	glossySpecularBRDF.setSampler(sampler->clone());
 }
 
-Vector3 GlossySpecularMaterial::ReflectVectorOffSurface(Vector3 const &normal,
-														Vector3 const &incomingVecFacingAwaySurface) const {
+void GlossySpecularMaterial::GetSecondaryVectors(Vector3 const &normal,
+		Vector3 const &incomingVecFacingAwaySurface,
+		std::vector<SecondaryVectorInfo> & secondaryVectors) const {
 	float rDotIncomingNormal;
-	return glossySpecularBRDF.GetReflectionVectorSampled(incomingVecFacingAwaySurface, normal, rDotIncomingNormal);
+	Vector3 reflectedVec =
+		glossySpecularBRDF.GetReflectionVectorSampled(incomingVecFacingAwaySurface, normal, rDotIncomingNormal);
+	secondaryVectors.push_back(SecondaryVectorInfo(reflectedVec, reflectivity));
 }

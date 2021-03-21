@@ -109,17 +109,22 @@ bool Scene::WhittedRaytrace(const Ray &ray, Color &newColor,
 		else {
 			AddContributionsFromLights(shadingInfo, normalVec, primitiveMaterial,
 									   newColor);
-			
+			std::vector<Material::SecondaryVectorInfo> secondaryVectors;
+			primitiveMaterial->GetSecondaryVectors(normalVec, -ray.GetDirection(), secondaryVectors);
+			size_t numSecondaryVectors = secondaryVectors.size();
 			// do we need to recurse?
-			if (primitiveMaterial->DoesSurfaceReflect() && bounceCount <
-				maxBounceCount) {
-				float reflectivity = primitiveMaterial->GetReflectivity();
-				Vector3 reflectiveVec = primitiveMaterial->ReflectVectorOffSurface(normalVec, -ray.GetDirection());
-				Ray reflectedRay(intersectionPos, reflectiveVec);
-				Color reflectedColor(0.0f, 0.0f, 0.0f, 0.0f);
-				WhittedRaytrace(reflectedRay, reflectedColor,
-								0.001f, tMax, bounceCount+1);
-				newColor += reflectedColor*reflectivity;
+			if (numSecondaryVectors > 0 && bounceCount < maxBounceCount) {
+				for (size_t i = 0; i < numSecondaryVectors; i++) {
+					auto & secondaryVecInfo = secondaryVectors[i];
+					float vecCoeff = secondaryVecInfo.vecCoeff;
+					auto & secondaryVec = secondaryVecInfo.direction;
+					
+					Ray reflectedRay(intersectionPos, secondaryVec);
+					Color reflectedColor(0.0f, 0.0f, 0.0f, 0.0f);
+					WhittedRaytrace(reflectedRay, reflectedColor,
+									0.001f, tMax, bounceCount+1);
+					newColor += reflectedColor*vecCoeff;
+				}
 			}
 		}
 	}
