@@ -32,18 +32,14 @@ Color PhongMaterial::GetDirectColor(ShadingInfo& shadingInfo) const  {
 	return deadColor;
 }
 
-void PhongMaterial::SampleColorAndDirections(ShadingInfo &shadingInfo, std::vector<Color>& colors, std::vector<float>& pdfs, std::vector<Vector3> &wis) const  {
+void PhongMaterial::SampleColorAndDirections(ShadingInfo &shadingInfo, std::vector<DirectionSample> & directionSamples) const  {
 	if (shadingInfo.normalVector * shadingInfo.wo > 0.0) {
 		Vector3 diffuseWi, specularWi;
 		float diffusePdf, specularPdf;
 		Color3 diffuseColor = diffuseBRDF.SampleF(shadingInfo, diffusePdf, diffuseWi);
 		Color3 specularColor = glossySpecularBRDF.SampleF(shadingInfo, specularPdf, specularWi);
-		pdfs.push_back(diffusePdf);
-		pdfs.push_back(specularPdf);
-		wis.push_back(diffuseWi);
-		wis.push_back(specularWi);
-		colors.push_back(Color(diffuseColor[0], diffuseColor[1], diffuseColor[2], 1.0f));
-		colors.push_back(Color(specularColor[0], specularColor[1], specularColor[2], 1.0f));
+		directionSamples.push_back(DirectionSample(Color(diffuseColor[0], diffuseColor[1], diffuseColor[2], 1.0f), diffusePdf, diffuseWi));
+		directionSamples.push_back(DirectionSample(Color(specularColor[0], specularColor[1], specularColor[2], 1.0f), specularPdf, specularWi));
 	}
 }
 

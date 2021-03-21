@@ -130,9 +130,7 @@ bool Scene::WhittedRaytrace(const Ray &ray, Color &newColor,
 bool Scene::PathRaytrace(const Ray &ray, Color &newColor,
 				  float tMin, float tMax, int bounceCount) const {
 	IntersectionResult intersectionResult;
-	std::vector<float> pdfs;
-	std::vector<Vector3> wis;
-	std::vector<Color> colors;
+	std::vector<Material::DirectionSample> directionSamples;
 	
 	float tMaxHit = tMax;
 	Primitive* closestPrimitive = simpleWorld->Intersect(ray, tMin, tMaxHit, intersectionResult);
@@ -176,26 +174,25 @@ bool Scene::PathRaytrace(const Ray &ray, Color &newColor,
 			}
 			
 			// do we need to recurse? get a list of all vectors and pdfs to consider for path tracing
-			pdfs.clear();
-			wis.clear();
-			primitiveMaterial->SampleColorAndDirections(shadingInfo, colors, pdfs, wis);
-			size_t numWis = wis.size();
-			size_t numColors = colors.size();
-			// emissive? don't cast
-			if (numWis < numColors) {
-				newColor += colors[0];
-			}
-			else {
-				for (size_t i = 0; i < numColors; i++) {
-					auto& currWi = wis[i];
-					auto currPdf = pdfs[i];
-					float projectionTerm = shadingInfo.normalVector*currWi;
-					
-					Color bounceColor(0.0f, 0.0f, 0.0f, 0.0f);
-					PathRaytrace(Ray(intersectionPos, currWi), bounceColor,
-								 SHADOW_FEELER_EPSILON, tMax, bounceCount+1);
-					newColor += colors[i] * bounceColor * projectionTerm/currPdf;
+			primitiveMaterial->SampleColorAndDirections(shadingInfo, directionSamples);
+			size_t numSamples = directionSamples.size();
+			// cast secondary rays, where applicable
+			for (size_t i = 0; i < numSamples; i++) {
+				auto& currDirectionSample = directionSamples[i];
+				auto& currWi = currDirectionSample.wi;
+				auto& currColor = currDirectionSample.color;
+				// if emissive sample, don't cast
+				if (currWi.IsZeroVector()) {
+					newColor += currColor;
+					continue;
 				}
+				
+				auto currPdf = currDirectionSample.pdf;
+				float projectionTerm = shadingInfo.normalVector*currWi;
+				Color bounceColor(0.0f, 0.0f, 0.0f, 0.0f);
+				PathRaytrace(Ray(intersectionPos, currWi), bounceColor,
+							 SHADOW_FEELER_EPSILON, tMax, bounceCount+1);
+				newColor += currColor * bounceColor * projectionTerm/currPdf;
 			}
 		}
 	}

@@ -24,14 +24,12 @@ Color LambertianMaterial::GetDirectColor(ShadingInfo& shadingInfo) const {
 	return deadColor;
 }
 
-void LambertianMaterial::SampleColorAndDirections(ShadingInfo &shadingInfo, std::vector<Color>& colors, std::vector<float>& pdfs, std::vector<Vector3> &wis) const {
+void LambertianMaterial::SampleColorAndDirections(ShadingInfo &shadingInfo, std::vector<DirectionSample> & directionSamples) const {
 	if (shadingInfo.normalVector * shadingInfo.wo > 0.0) {
 		Vector3 diffuseWi;
 		float diffusePdf;
 		Color3 diffuseColor = diffuseBRDF.SampleF(shadingInfo, diffusePdf, diffuseWi);
-		pdfs.push_back(diffusePdf);
-		wis.push_back(diffuseWi);
-		colors.push_back(Color(diffuseColor[0], diffuseColor[1], diffuseColor[2], 1.0f));
+		directionSamples.push_back(DirectionSample(Color(diffuseColor[0], diffuseColor[1], diffuseColor[2], 1.0f), diffusePdf, diffuseWi));
 	}
 }
 

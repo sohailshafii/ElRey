@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cmath>
+#include "CommonMath.h"
 
 class Point3;
 class Point4;
@@ -63,6 +64,12 @@ public:
 
 	static Vector3 Forward() {
 		return Vector3(0.0f, 0.0f, 1.0f);
+	}
+	
+	bool IsZeroVector() const {
+		return fabs(comp[0]) < EPSILON &&
+			fabs(comp[1]) < EPSILON &&
+			fabs(comp[1]) < EPSILON;
 	}
 
 private:

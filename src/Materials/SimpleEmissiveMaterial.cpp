@@ -21,12 +21,11 @@ Color SimpleEmissiveMaterial::GetDirectColor(ShadingInfo &shadingInfo) const  {
 	return deadColor;
 }
 
-void SimpleEmissiveMaterial::SampleColorAndDirections(ShadingInfo &shadingInfo, std::vector<Color>& colors, std::vector<float>& pdfs, std::vector<Vector3> &wis) const {
+void SimpleEmissiveMaterial::SampleColorAndDirections(ShadingInfo &shadingInfo, std::vector<DirectionSample> & directionSamples) const {
 	// only emit color if on the "positive" side of material
 	if (shadingInfo.normalVector * shadingInfo.wo > 0.0) {
-		// doesn't reflect; don't add to wis
-		pdfs.push_back(1.0f);
-		colors.push_back(directColor);
+		// doesn't reflect; don't add valid wi vector
+		directionSamples.push_back(DirectionSample(directColor, 1.0f, Vector3::Zero()));
 	}
 }
 
