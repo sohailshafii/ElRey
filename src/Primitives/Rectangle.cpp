@@ -25,11 +25,21 @@ Primitive* Rectangle::Intersect(const Ray &ray, float tMin, float& tMax,
 	{
 		return nullptr;
 	}
+	
+	if (name == "simple_rectangle2") {
+		int breakVar2;
+		breakVar2 = 1;
+	}
 
 	float projectionSide2 = vectorAlongPlane * side2Vec;
 	if (projectionSide2 < 0.0 || projectionSide2 > side2LengthSqr)
 	{
 		return nullptr;
+	}
+	
+	if (name == "simple_rectangle2") {
+		int breakVar;
+		breakVar = 1;
 	}
 
 	tMax = t;
@@ -100,7 +110,6 @@ void Rectangle::Initialize(const Vector3& iSide1Vec, const Vector3& iSide2Vec) {
 	// assume left-handed
 	normal = side2Vec ^ side1Vec;
 	normal.Normalize();
-	
 	boundingBoxLocal = ComputeBoundingBox();
 }
 
