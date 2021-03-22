@@ -12,11 +12,10 @@ GlossySpecularMaterial::GlossySpecularMaterial(float ka, float kd, float ks,
 }
 
 void GlossySpecularMaterial::GetSecondaryVectors(ShadingInfo const & shadingInfo,
-												 Vector3 const &normal,
-												 Vector3 const &incomingVecFacingAwaySurface,
 												 std::vector<SecondaryVectorInfo> & secondaryVectors) const {
 	float rDotIncomingNormal;
 	Vector3 reflectedVec =
-		glossySpecularBRDF.GetReflectionVectorSampled(incomingVecFacingAwaySurface, normal, rDotIncomingNormal);
-	secondaryVectors.push_back(SecondaryVectorInfo(reflectedVec, reflectivity));
+		glossySpecularBRDF.GetReflectionVectorSampled(shadingInfo.wo, shadingInfo.normalVector, rDotIncomingNormal);
+	secondaryVectors.push_back(SecondaryVectorInfo(reflectedVec, reflectivity,
+												   Color::Black()));
 }

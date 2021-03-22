@@ -10,12 +10,8 @@ TransparentMaterial::TransparentMaterial(float ka, float kd, float ks, float exp
 }
 
 void TransparentMaterial::GetSecondaryVectors(ShadingInfo const & shadingInfo,
-											  Vector3 const &normal,
-											  Vector3 const &incomingVecFacingAwaySurface,
 											  std::vector<SecondaryVectorInfo> & secondaryVectors) const {
-	ReflectiveMaterial::GetSecondaryVectors(shadingInfo, normal,
-											incomingVecFacingAwaySurface,
-											secondaryVectors);
+	ReflectiveMaterial::GetSecondaryVectors(shadingInfo, secondaryVectors);
 	if (perfectTransmitterBTDF.AllowsTransmission(shadingInfo)) {
 		float pdf;
 		Vector3 transmittedVec;

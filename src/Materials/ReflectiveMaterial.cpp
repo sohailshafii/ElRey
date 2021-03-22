@@ -18,11 +18,10 @@ void ReflectiveMaterial::SetSampler(GenericSampler *sampler) {
 }
 
 void ReflectiveMaterial::GetSecondaryVectors(ShadingInfo const & shadingInfo,
-											 Vector3 const &normal,
-											 Vector3 const &incomingVecFacingAwaySurface,
 											 std::vector<SecondaryVectorInfo> & secondaryVectors) const {
 	Vector3 reflectedVec =
-		perfectSpecularBRDF.GetReflectionVector(incomingVecFacingAwaySurface,
-												normal);
-	secondaryVectors.push_back(SecondaryVectorInfo(reflectedVec, reflectivity));
+		perfectSpecularBRDF.GetReflectionVector(shadingInfo.wo,
+												shadingInfo.normalVector);
+	secondaryVectors.push_back(SecondaryVectorInfo(reflectedVec, reflectivity,
+												   Color::Black()));
 }

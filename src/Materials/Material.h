@@ -27,7 +27,7 @@ public:
 	
 	struct SecondaryVectorInfo {
 		SecondaryVectorInfo(Vector3 const & vector, float coeff,
-							Color color = Color::White()) {
+							Color color = Color::Black()) {
 			direction = vector;
 			vecCoeff = coeff;
 			colorComp = color;
@@ -44,9 +44,6 @@ public:
 	
 	virtual void SetSampler(class GenericSampler *sampler) = 0;
 	
-	virtual void GetSecondaryVectors(ShadingInfo const & shadingInfo, Vector3 const &normal,
-									 Vector3 const &incomingVecFacingAwaySurface,
-									 std::vector<SecondaryVectorInfo> & secondaryVectors) const {
-		
+	virtual void GetSecondaryVectors(ShadingInfo const & shadingInfo, 							std::vector<SecondaryVectorInfo> & secondaryVectors) const {
 	}
 };

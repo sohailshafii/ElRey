@@ -14,8 +14,7 @@ public:
 	
 	virtual void SetSampler(class GenericSampler *sampler) override;
 	
-	virtual void GetSecondaryVectors(ShadingInfo const & shadingInfo, Vector3 const &normal,
-									 Vector3 const &incomingVecFacingAwaySurface,
+	virtual void GetSecondaryVectors(ShadingInfo const & shadingInfo,
 									 std::vector<SecondaryVectorInfo> & secondaryVectors) const override;
 	
 private:
