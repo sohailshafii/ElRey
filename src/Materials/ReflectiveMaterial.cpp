@@ -17,6 +17,12 @@ void ReflectiveMaterial::SetSampler(GenericSampler *sampler) {
 	perfectSpecularBRDF.setSampler(sampler);
 }
 
+// TODO: debug black color
+Color ReflectiveMaterial::GetDirectColor(ShadingInfo& shadingInfo) const {
+	Color phongColor = PhongMaterial::GetDirectColor(shadingInfo);
+	return phongColor;
+}
+
 void ReflectiveMaterial::GetSecondaryVectors(ShadingInfo const & shadingInfo,
 											 std::vector<SecondaryVectorInfo> & secondaryVectors) const {
 	Vector3 reflectedVec =
