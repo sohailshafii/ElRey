@@ -17,7 +17,7 @@ public:
 	
 	virtual void SetSampler(class GenericSampler *sampler) override;
 	
-private:
+protected:
 	LambertianBRDF ambientBRDF;
 	LambertianBRDF diffuseBRDF;
 	GlossySpecularBRDF glossySpecularBRDF;
