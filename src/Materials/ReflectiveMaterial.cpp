@@ -17,7 +17,8 @@ void ReflectiveMaterial::SetSampler(GenericSampler *sampler) {
 	perfectSpecularBRDF.setSampler(sampler);
 }
 
-void ReflectiveMaterial::GetSecondaryVectors(Vector3 const &normal,
+void ReflectiveMaterial::GetSecondaryVectors(ShadingInfo const & shadingInfo,
+											 Vector3 const &normal,
 											 Vector3 const &incomingVecFacingAwaySurface,
 											 std::vector<SecondaryVectorInfo> & secondaryVectors) const {
 	Vector3 reflectedVec =

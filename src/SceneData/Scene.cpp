@@ -110,7 +110,7 @@ bool Scene::WhittedRaytrace(const Ray &ray, Color &newColor,
 			AddContributionsFromLights(shadingInfo, normalVec, primitiveMaterial,
 									   newColor);
 			std::vector<Material::SecondaryVectorInfo> secondaryVectors;
-			primitiveMaterial->GetSecondaryVectors(normalVec, -ray.GetDirection(), secondaryVectors);
+			primitiveMaterial->GetSecondaryVectors(shadingInfo, normalVec, -ray.GetDirection(), secondaryVectors);
 			size_t numSecondaryVectors = secondaryVectors.size();
 			// do we need to recurse?
 			if (numSecondaryVectors > 0 && bounceCount < maxBounceCount) {
