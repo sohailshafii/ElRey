@@ -4,7 +4,7 @@
 
 ReflectiveMaterial::ReflectiveMaterial(float ka, float kd, float ks, float exponent,
 									   const Color3& color, const Color3& ksColor,
-									   float cr, float kr) : PhongMaterial(ka, ka, ks, exponent, color, ksColor) {
+									   float cr, float kr) : PhongMaterial(ka, kd, ks, exponent, color, ksColor) {
 	perfectSpecularBRDF.setKs(ks);
 	perfectSpecularBRDF.setExponent(exponent);
 	perfectSpecularBRDF.setCs(ksColor);
@@ -15,12 +15,6 @@ ReflectiveMaterial::ReflectiveMaterial(float ka, float kd, float ks, float expon
 void ReflectiveMaterial::SetSampler(GenericSampler *sampler) {
 	PhongMaterial::SetSampler(sampler->clone());
 	perfectSpecularBRDF.setSampler(sampler);
-}
-
-// TODO: debug black color
-Color ReflectiveMaterial::GetDirectColor(ShadingInfo& shadingInfo) const {
-	Color phongColor = PhongMaterial::GetDirectColor(shadingInfo);
-	return phongColor;
 }
 
 void ReflectiveMaterial::GetSecondaryVectors(ShadingInfo const & shadingInfo,

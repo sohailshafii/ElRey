@@ -16,7 +16,7 @@
 			"num_random_sets":83
 		},
 		"path_trace":false,
-		"max_bounce_count":6
+		"max_bounce_count":3
 	},
 	"objects":
 	[
@@ -50,9 +50,28 @@
 		},
 		{
 			"type":"sphere",
-			"position":[-0.6,0.0,0.6],
+			"position":[-1,0.0,0.6],
 			"radius":0.6,
 			"name":"little_sphere",
+			"material":
+			{
+				"type":"lambertian",
+				"ka":0.1,
+				"kd":0.95,
+				"color":[0.0,0.8,0.1,1.0],
+				"sampler":
+				{
+					"random_sampler_type":"multijittered",
+					"num_random_samples":36,
+					"num_random_sets":83
+				}
+			}
+		},
+		{
+			"type":"sphere",
+			"position":[2.2,0.0,-0.2],
+			"radius":0.6,
+			"name":"little_sphere2",
 			"material":
 			{
 				"type":"transparent",
@@ -70,25 +89,6 @@
 		},
 		{
 			"type":"sphere",
-			"position":[2.2,0.0,-0.2],
-			"radius":0.6,
-			"name":"little_sphere2",
-			"material":
-			{
-				"type":"lambertian",
-				"ka":0.1,
-				"kd":0.95,
-				"color":[0.0,0.8,0.1,1.0],
-				"sampler":
-				{
-					"random_sampler_type":"multijittered",
-					"num_random_samples":36,
-					"num_random_sets":83
-				}
-			}
-		},
-		{
-			"type":"sphere",
 			"position":[0.0,0.0,0.0],
 			"radius":1.5,
 			"name":"main_sphere",
@@ -102,7 +102,7 @@
 				"kr":0.6,
 				"exponent":10,
 				"ks_color":[1.0, 1.0, 1.0],
-				"color":[0.0, 1.0, 1.0, 1.0]
+				"color":[0.6, 0.0, 0.2, 1.0]
 			}
 		},
 		{

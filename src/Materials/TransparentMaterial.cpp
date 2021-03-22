@@ -4,7 +4,7 @@
 
 TransparentMaterial::TransparentMaterial(float ka, float kd, float ks, float exponent,
 										 const Color3& color, const Color3& ksColor,
-										 float cr, float kr, float eta, float kt) : ReflectiveMaterial(ka, ka, ks, exponent, color, ksColor, cr, kr) {
+										 float cr, float kr, float eta, float kt) : ReflectiveMaterial(ka, kd, ks, exponent, color, ksColor, cr, kr) {
 	perfectTransmitterBTDF.SetEta(eta);
 	perfectTransmitterBTDF.SetKt(kt);
 }

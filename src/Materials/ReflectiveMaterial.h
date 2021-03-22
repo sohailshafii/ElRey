@@ -14,8 +14,6 @@ public:
 	
 	virtual void SetSampler(class GenericSampler *sampler) override;
 	
-	virtual Color GetDirectColor(ShadingInfo& shadingInfo) const override;
-	
 	virtual void GetSecondaryVectors(ShadingInfo const & shadingInfo,
 									 std::vector<SecondaryVectorInfo> & secondaryVectors) const override;
 	
