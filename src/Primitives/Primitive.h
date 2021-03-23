@@ -13,17 +13,17 @@
 
 class Primitive {
 public:
-	Primitive(std::string const & iName) : name(iName) {
+	Primitive(std::string const & iName) : name(iName), ignoreShadowTest(false) {
 	}
 	
 	Primitive(std::shared_ptr<Material> const& iMaterial,
 			  const std::string& iName)
-		: material(iMaterial), name(iName)
+		: material(iMaterial), name(iName), ignoreShadowTest(false)
 	{ }
 	Primitive(std::shared_ptr<Material> const& iMaterial,
 			  std::shared_ptr<GenericSampler> const& iSampler,
 			  const std::string& iName)
-		: material(iMaterial), sampler(iSampler), name(iName)
+		: material(iMaterial), sampler(iSampler), name(iName), ignoreShadowTest(false)
 	{ }
 
 	virtual ~Primitive() { }
