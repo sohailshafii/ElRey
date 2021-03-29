@@ -29,7 +29,7 @@ Vector3 PerfectSpecularBRDF::GetReflectionVector(Vector3 const & wo,
 	return (-wo + normal * ndotwo * 2.0f).Normalized();
 }
 
-Color3 PerfectSpecularBRDF::F(ShadingInfo& shadingInfo) const {
+Color3 PerfectSpecularBRDF::F(ShadingInfo const & shadingInfo) const {
 	return Color3::Black();
 }
 

@@ -29,7 +29,7 @@ void LambertianBRDF::setSampler(GenericSampler *sampler) {
 	this->sampler->MapSamplesToHemisphere(1.0f);
 }
 
-Color3 LambertianBRDF::F(ShadingInfo& shadingInfo) const {
+Color3 LambertianBRDF::F(ShadingInfo const & shadingInfo) const {
 	return this->uniformRadiance;
 }
 

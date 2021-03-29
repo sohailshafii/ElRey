@@ -107,8 +107,8 @@ bool Scene::WhittedRaytrace(const Ray &ray, Color &newColor,
 				primitiveMaterial->GetDirectColor(shadingInfo);
 		}
 		else {
-			AddContributionsFromLights(shadingInfo, normalVec, primitiveMaterial,
-									   newColor);
+			Color colorFromLights = AddContributionsFromLights(shadingInfo, normalVec, primitiveMaterial);
+			newColor += colorFromLights;
 			std::vector<Material::SecondaryVectorInfo> secondaryVectors;
 			primitiveMaterial->GetSecondaryVectors(shadingInfo, secondaryVectors);
 			size_t numSecondaryVectors = secondaryVectors.size();
@@ -121,9 +121,10 @@ bool Scene::WhittedRaytrace(const Ray &ray, Color &newColor,
 					Color secondaryColor = secondaryVecInfo.colorComp;
 					
 					Ray secondaryRay(intersectionPos, secondaryVec);
-					bool hitSomething = WhittedRaytrace(secondaryRay, secondaryColor,
+					Color tracedColor = Color::Black();
+					WhittedRaytrace(secondaryRay, tracedColor,
 									0.001f, tMax, bounceCount+1);
-					newColor += secondaryColor*vecCoeff;
+					newColor += secondaryColor*tracedColor*vecCoeff;
 				}
 			}
 		}
@@ -169,8 +170,7 @@ bool Scene::PathRaytrace(const Ray &ray, Color &newColor,
 		else {
 			// only add contributions of direct lighting for first bounce
 			if (bounceCount == 0) {
-				AddContributionsFromLights(shadingInfo, normalVec, primitiveMaterial,
-										   newColor);
+				newColor += AddContributionsFromLights(shadingInfo, normalVec, primitiveMaterial);
 			}
 			
 			// done
@@ -205,11 +205,11 @@ bool Scene::PathRaytrace(const Ray &ray, Color &newColor,
 	return closestPrimitive != nullptr;
 }
 
-void Scene::AddContributionsFromLights(ShadingInfo const & shadingInfo, Vector3 & normalVec,
-									   Material const * primitiveMaterial,
-									   Color& newColor) const {
+Color Scene::AddContributionsFromLights(ShadingInfo const & shadingInfo, Vector3 & normalVec,
+									   Material const * primitiveMaterial) const {
 	ShadingInfo oldShadingInfo = shadingInfo;
 	ShadingInfo currShadingInfo = shadingInfo;
+	Color newColor = Color::Black();
 	
 	for (auto currentLight : lights) {
 		Vector3 vectorToLight;
@@ -282,6 +282,11 @@ void Scene::AddContributionsFromLights(ShadingInfo const & shadingInfo, Vector3 
 			}
 		}
 	}
+	if (newColor[0] > 0.0) {
+		int breakVar;
+		breakVar = 2;
+	}
+	return newColor;
 }
 
 bool Scene::IsPrimitiveAssociatedWithLight(Primitive* primitive) const {

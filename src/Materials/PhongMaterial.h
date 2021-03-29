@@ -12,7 +12,7 @@ public:
 				  const Color3& ksColor);
 
 	virtual Color GetAmbientColor(const ShadingInfo& shadingInfo) const override;
-	virtual Color GetDirectColor(ShadingInfo& shadingInfo) const override;
+	virtual Color GetDirectColor(ShadingInfo const & shadingInfo) const override;
 	virtual void SampleColorAndDirections(ShadingInfo &shadingInfo, std::vector<DirectionSample> & directionSamples) const override;
 	
 	virtual void SetSampler(class GenericSampler *sampler) override;

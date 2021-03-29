@@ -103,9 +103,8 @@ public:
 		return mainCamera->GetNumColumnsPixels();
 	}
 	
-	void AddContributionsFromLights(ShadingInfo  const & shadingInfo, Vector3 & normalVec,
-									Material const * primitiveMaterial,
-									Color& newColor) const;
+	Color AddContributionsFromLights(ShadingInfo  const & shadingInfo, Vector3 & normalVec,
+									Material const * primitiveMaterial) const;
 	bool IsPrimitiveAssociatedWithLight(Primitive* primitive) const;
 	
 	bool ShadowFeelerIntersectsAnObject(Ray const & ray, float tMin, float tMax) const {

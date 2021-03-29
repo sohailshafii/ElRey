@@ -13,7 +13,7 @@ public:
 	Vector3 GetReflectionVector(Vector3 const & wo,
 								Vector3 const & normal) const;
 
-	Color3 F(ShadingInfo& shadingInfo) const override;
+	Color3 F(ShadingInfo const & shadingInfo) const override;
 	
 	Vector3 GetReflectionVectorSampled(Vector3 const & wo,
 									   Vector3 const & normal,

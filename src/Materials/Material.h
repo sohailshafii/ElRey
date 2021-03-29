@@ -39,7 +39,7 @@ public:
 	};
 	
 	virtual Color GetAmbientColor(const ShadingInfo &shadingInfo) const = 0;
-	virtual Color GetDirectColor(ShadingInfo &shadingInfo) const = 0;
+	virtual Color GetDirectColor(ShadingInfo const  &shadingInfo) const = 0;
 	virtual void SampleColorAndDirections(ShadingInfo &shadingInfo, std::vector<DirectionSample> & directionSamples) const = 0;
 	
 	virtual void SetSampler(class GenericSampler *sampler) = 0;

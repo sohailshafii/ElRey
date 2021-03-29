@@ -14,7 +14,7 @@ public:
 	Vector3 GetReflectionVector(Vector3 const & wo,
 								Vector3 const & normal) const;
 	
-	Color3 F(ShadingInfo& shadingInfo) const override;
+	Color3 F(ShadingInfo const & shadingInfo) const override;
 	Color3 SampleF(ShadingInfo const & shadingInfo, float& pdf, Vector3 &newWi) const override;
 	Color3 GetRho(const ShadingInfo& shadingInfo) const override;
 	

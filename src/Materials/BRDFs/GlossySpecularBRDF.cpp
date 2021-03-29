@@ -30,7 +30,7 @@ Vector3 GlossySpecularBRDF::GetReflectionVector(Vector3 const & wo,
 	return (-wo + normal * ndotwo * 2.0f).Normalized();
 }
 
-Color3 GlossySpecularBRDF::F(ShadingInfo& shadingInfo) const {
+Color3 GlossySpecularBRDF::F(ShadingInfo const & shadingInfo) const {
 	Color3 	finalColor;
 	Vector3 const & normal = shadingInfo.normalVector;
 	Vector3 reflectedVector = GetReflectionVector(shadingInfo.wi, normal);

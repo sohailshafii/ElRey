@@ -2,7 +2,7 @@
 #include "Sampling/GenericSampler.h"
 #include "Math/CommonMath.h"
 
-PerfectTransmitterBTDF::PerfectTransmitterBTDF() : eta(0.0f), kt(0.0f) {
+PerfectTransmitterBTDF::PerfectTransmitterBTDF() : eta(0.0f), kt(0.0f), normalColor(Color::White()) {
 }
 
 PerfectTransmitterBTDF::PerfectTransmitterBTDF(float eta, float kt) {
