@@ -118,12 +118,12 @@ bool Scene::WhittedRaytrace(const Ray &ray, Color &newColor,
 					auto & secondaryVecInfo = secondaryVectors[i];
 					float vecCoeff = secondaryVecInfo.vecCoeff;
 					auto & secondaryVec = secondaryVecInfo.direction;
-					Color reflectedColor = secondaryVecInfo.colorComp;
+					Color secondaryColor = secondaryVecInfo.colorComp;
 					
-					Ray reflectedRay(intersectionPos, secondaryVec);
-					WhittedRaytrace(reflectedRay, reflectedColor,
+					Ray secondaryRay(intersectionPos, secondaryVec);
+					bool hitSomething = WhittedRaytrace(secondaryRay, secondaryColor,
 									0.001f, tMax, bounceCount+1);
-					newColor += reflectedColor*vecCoeff;
+					newColor += secondaryColor*vecCoeff;
 				}
 			}
 		}

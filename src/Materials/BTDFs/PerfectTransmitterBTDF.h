@@ -27,5 +27,9 @@ private:
 	Color normalColor;
 	float eta;
 	float kt;
+	
+	float ComputeDescriminant(float cosTheta, float invRelEta) const {
+		return 1.0f - invRelEta*invRelEta*(1.0f - cosTheta*cosTheta);
+	}
 };
 

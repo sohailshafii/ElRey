@@ -21,7 +21,8 @@ void TransparentMaterial::GetSecondaryVectors(ShadingInfo const & shadingInfo,
 										transmission);
 		secondaryVectors.push_back(SecondaryVectorInfo(transmittedVec, transmission, transmittedColor));
 	}
-	else {
+	// only if reflective coefficent is strong
+	else if (secondaryVectors.size() > 0) {
 		// crank up reflectivity to 100%
 		secondaryVectors[0].vecCoeff = 1.0f;
 	}

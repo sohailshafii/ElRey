@@ -19,6 +19,9 @@ void ReflectiveMaterial::SetSampler(GenericSampler *sampler) {
 
 void ReflectiveMaterial::GetSecondaryVectors(ShadingInfo const & shadingInfo,
 											 std::vector<SecondaryVectorInfo> & secondaryVectors) const {
+	if (reflectivity < EPSILON) {
+		return;
+	}
 	Vector3 reflectedVec =
 		perfectSpecularBRDF.GetReflectionVector(shadingInfo.wo,
 												shadingInfo.normalVector);

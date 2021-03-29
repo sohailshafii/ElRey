@@ -16,31 +16,37 @@ PerfectTransmitterBTDF::~PerfectTransmitterBTDF() {
 
 Color PerfectTransmitterBTDF::SampleF(ShadingInfo const & shadingInfo, float& pdf, Vector3 									&transmittedVec, float& transmission, float etaOut) const {
 	auto normal = shadingInfo.normalVector;
-	float cosTheta = normal * shadingInfo.wo;
-	float relativeEta = eta/etaOut;
+	auto incomingVec = shadingInfo.wo;
+	float cosTheta = normal * incomingVec;
+	float invRelEta = etaOut/eta;
 	
 	if (cosTheta < 0.0f) {
 		cosTheta = -cosTheta;
 		normal = -normal;
-		relativeEta = 1.0f/relativeEta;
+		invRelEta = eta/etaOut;
 	}
 	
-	float temp = 1.0f - (1.0f - cosTheta*cosTheta)/(relativeEta*relativeEta);
-	float cosThetaSqrt = sqrt(temp);
+	float descSqrt = sqrt(ComputeDescriminant(cosTheta, invRelEta));
 	
-	transmittedVec = shadingInfo.wo*(1.0f/relativeEta) -
-		normal*((cosThetaSqrt - cosTheta)/relativeEta);
-	transmittedVec.Normalize();
-	transmission = kt /(relativeEta*relativeEta);
+	transmittedVec = -incomingVec*invRelEta - normal*(descSqrt - cosTheta*invRelEta);
+	transmission = kt*invRelEta*invRelEta;
 	
 	return normalColor;
 }
 
 bool PerfectTransmitterBTDF::AllowsTransmission(ShadingInfo const & shadingInfo,
 												float etaOut) const {
-	float cosTheta = shadingInfo.normalVector*shadingInfo.wo;
-	float relativeEta = cosTheta < 0.0f ? eta/etaOut : etaOut/eta;
+	if (kt <= EPSILON) {
+		return false;
+	}
+	auto incomingVec = shadingInfo.wo;
+	float cosTheta = shadingInfo.normalVector*incomingVec;
+	float mag1 = shadingInfo.normalVector.Norm();
+	float mag2 = incomingVec.Norm();
+	// flip if are tracing from inside translucent object toward outside
+	float invRelEta = cosTheta > 0.0f ? etaOut/eta : eta/etaOut;
+	float descriminant = ComputeDescriminant(cosTheta, invRelEta);
 	
-	return (1.0f - (1.0f - cosTheta * cosTheta)/(relativeEta*relativeEta)) < 0.0f;
+	return descriminant >= 0.0f;
 }
 
