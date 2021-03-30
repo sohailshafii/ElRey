@@ -26,5 +26,5 @@ void ReflectiveMaterial::GetSecondaryVectors(ShadingInfo const & shadingInfo,
 		perfectSpecularBRDF.GetReflectionVector(shadingInfo.wo,
 												shadingInfo.normalVector);
 	secondaryVectors.push_back(SecondaryVectorInfo(reflectedVec, reflectivity,
-												   GetDirectColor(shadingInfo)));
+												   Color::White()));
 }
