@@ -61,6 +61,34 @@ void CommonMath::ComputeUVWFromUpandForward(Vector3 &right, Vector3 &up, Vector3
 	// crossed results in a normal vector)
 }
 
+void CommonMath::ComputeFresnelCoefficients(Vector3 const & wo,
+											float etaIn, float etaOut,
+											Vector3 & normal,
+											float &kr, float &kt,
+											float &relativeEta,
+											float &cosThetaI,
+											float &cosThetaT) {
+	cosThetaI = normal * wo;
+	Vector3 modifiedNormal = normal;
+		
+	if (cosThetaI < 0.0) {
+		cosThetaI = -cosThetaI;
+		normal = -normal;
+		relativeEta = etaOut / etaIn;
+	}
+	else {
+		relativeEta = etaIn / etaOut;
+	}
+
+	// compute transmitted coefficient before computing the related vector
+	float descriminant = CommonMath::ComputeFresnelDescriminant(cosThetaI, 1.0f/relativeEta);
+	cosThetaT = sqrt(descriminant);
+	float rParallel = (relativeEta * cosThetaI - cosThetaT) / (relativeEta * cosThetaI + cosThetaT);
+	float rPerpendicular = (cosThetaI - relativeEta * cosThetaT) / (cosThetaI + relativeEta * cosThetaT);
+	kr = 0.5 * (rParallel * rParallel + rPerpendicular * rPerpendicular);
+	kt = 1.0f - kr;
+}
+
 // originally from graphics gems, volume 1
 // http://www.realtimerendering.com/resources/GraphicsGems/gems/Roots3And4.c
 int CommonMath::SolveQuadric(double c[3], double s[2]) {

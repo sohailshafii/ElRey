@@ -1,4 +1,5 @@
 #include "FresnelBRDF.h"
+#include "Math/CommonMath.h"
 
 FresnelBRDF::FresnelBRDF() : sampler(nullptr), ks(0), cs(Color3(0.0f, 0.0f, 0.0f)), csScaled(cs*ks), exponent(0.0f) {
 }
@@ -25,7 +26,7 @@ void FresnelBRDF::setSampler(GenericSampler *sampler) {
 
 
 Vector3 FresnelBRDF::GetReflectionVector(Vector3 const & wo,
-												 Vector3 const & normal) const {
+										 Vector3 const & normal) const {
 	float ndotwo = normal * wo;
 	return (-wo + normal * ndotwo * 2.0f).Normalized();
 }
@@ -41,25 +42,10 @@ Color3 FresnelBRDF::SampleF(ShadingInfo const & shadingInfo, float& pdf, Vector3
 	// strongest where we reflect perfectly
 	pdf = fabs(normal*reflectedVec);
 	
-	auto incomingVec = shadingInfo.wo;
-	float cosThetaI = normal * incomingVec;
-	float relativeEta;
-		
-	if (cosThetaI < 0.0) {
-		cosThetaI = -cosThetaI;
-		normal = -normal;
-		relativeEta = etaOut / eta;
-	}
-	else {
-		relativeEta = eta / etaOut;
-	}
-
-	// compute transmitted coefficient before computing the related vector
-	float descriminant = ComputeDescriminant(cosThetaI, 1.0f/relativeEta);
-	float cosThetaT = sqrt(descriminant);
-	float rParallel = (relativeEta * cosThetaI - cosThetaT) / (relativeEta * cosThetaI + cosThetaT);
-	float rPerpendicular = (cosThetaI - relativeEta * cosThetaT) / (cosThetaI + relativeEta * cosThetaT);
-	float kr = 0.5 * (rParallel * rParallel + rPerpendicular * rPerpendicular);	
+	float kr = 0.0f, kt = 0.0f;
+	float relativeEta, cosThetaI, cosThetaT;
+	CommonMath::ComputeFresnelCoefficients(shadingInfo.wo, eta, etaOut, normal,
+										   kr, kt, relativeEta, cosThetaI, cosThetaT);
 	
 	return csScaled*kr;
 }

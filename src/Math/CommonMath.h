@@ -60,6 +60,19 @@ public:
 	
 	static void ComputeUVWFromUpandForward(Vector3 &right, Vector3 &up, Vector3 &forward);
 	
+	static void ComputeFresnelCoefficients(Vector3 const & wo,
+										   float etaIn, float etaOut,
+										   Vector3 & normal,
+										   float &kr, float &kt,
+										   float &relativeEta,
+										   float &cosThetaI,
+										   float &cosThetaT);
+	
+	static float ComputeFresnelDescriminant(float cosTheta,
+											float invRelativeEta) {
+		return 1.0f - invRelativeEta*invRelativeEta*(1.0f - cosTheta*cosTheta);
+	}
+	
 	static int SolveQuadric(double c[3], double s[2]);
 	static int SolveCubic(double c[4], double s[3]);
 	static int SolveQuartic(double c[5], double s[4]);

@@ -26,8 +26,8 @@ Color PerfectTransmitterBTDF::SampleF(ShadingInfo const & shadingInfo, float& pd
 		invRelEta = eta/etaOut;
 	}
 	
-	float descSqrt = sqrt(ComputeDescriminant(cosTheta, invRelEta));
-	
+	float descSqrt = sqrt(CommonMath::ComputeFresnelDescriminant(cosTheta,
+																 invRelEta));
 	transmittedVec = -incomingVec*invRelEta - normal*(descSqrt - cosTheta*invRelEta);
 	transmission = kt*invRelEta*invRelEta;
 	
@@ -41,11 +41,10 @@ bool PerfectTransmitterBTDF::AllowsTransmission(ShadingInfo const & shadingInfo,
 	}
 	auto incomingVec = shadingInfo.wo;
 	float cosTheta = shadingInfo.normalVector*incomingVec;
-	float mag1 = shadingInfo.normalVector.Norm();
-	float mag2 = incomingVec.Norm();
 	// flip if are tracing from inside translucent object toward outside
 	float invRelEta = cosTheta > 0.0f ? etaOut/eta : eta/etaOut;
-	float descriminant = ComputeDescriminant(cosTheta, invRelEta);
+	float descriminant = CommonMath::ComputeFresnelDescriminant(cosTheta,
+																invRelEta);
 	
 	return descriminant >= 0.0f;
 }
