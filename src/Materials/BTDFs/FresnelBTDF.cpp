@@ -5,9 +5,9 @@
 FresnelBTDF::FresnelBTDF() : eta(0.0f), normalColor(Color::White()) {
 }
 
-FresnelBTDF::FresnelBTDF(float eta) {
+FresnelBTDF::FresnelBTDF(Color3 const & color, float eta) {
+	this->normalColor = Color(color[0], color[1], color[2], 1.0f);
 	this->eta = eta;
-	normalColor = Color::White();
 }
 
 FresnelBTDF::~FresnelBTDF() {
