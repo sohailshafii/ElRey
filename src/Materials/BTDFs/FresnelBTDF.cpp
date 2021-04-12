@@ -24,7 +24,7 @@ Color FresnelBTDF::SampleF(ShadingInfo const & shadingInfo, float& pdf, Vector3 
 	
 	float invRelEta = 1.0f/relativeEta;
 	transmittedVec = -incomingVec*invRelEta - normal*(cosThetaT - cosThetaI*invRelEta);
-	transmission = kt*invRelEta*invRelEta;
+	transmission = kt;
 	
 	return normalColor;
 }
