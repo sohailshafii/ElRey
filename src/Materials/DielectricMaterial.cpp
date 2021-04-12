@@ -9,9 +9,10 @@ DielectricMaterial::DielectricMaterial(float ka, float kd, float ks, float expon
 		PhongMaterial(ka, kd, ks, exponent, color, ksColor) {
 	fresnelBrdf.SetEtaIn(etaIn);
 	fresnelBrdf.SetEtaOut(etaOut);
-	fresnelBrdf.setKs(ks);
-	fresnelBrdf.setCs(ksColor);
-	fresnelBrdf.setExponent(exponent);
+	fresnelBrdf.SetKs(ks);
+	fresnelBrdf.SetCs(ksColor);
+	fresnelBrdf.SetExponent(exponent);
+			
 	fresnelBtdf.SetColor(ksColor);
 	fresnelBtdf.SetEta(etaIn);
 	this->etaOut = etaOut;
@@ -21,7 +22,8 @@ DielectricMaterial::DielectricMaterial(float ka, float kd, float ks, float expon
 
 void DielectricMaterial::SetSampler(GenericSampler *sampler) {
 	PhongMaterial::SetSampler(sampler);
-	fresnelBrdf.setSampler(sampler->clone());
+	fresnelBrdf.SetSampler(sampler->clone());
+	fresnelBtdf.SetSampler(sampler->clone());
 }
 
 void DielectricMaterial::GetSecondaryVectors(ShadingInfo const & shadingInfo,

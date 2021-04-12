@@ -19,17 +19,17 @@ public:
 	Color3 SampleF(ShadingInfo const & shadingInfo, float& pdf, Vector3 &newWi) const override;
 	Color3 GetRho(const ShadingInfo& shadingInfo) const override;
 	
-	void setKs(float ks) {
+	void SetKs(float ks) {
 		this->ks = ks;
 		this->csScaled = cs*ks;
 	}
 
-	void setCs(const Color3& cs) {
+	void SetCs(const Color3& cs) {
 		this->cs = cs;
 		this->csScaled = cs*ks;
 	}
 	
-	void setExponent(float exponent) {
+	void SetExponent(float exponent) {
 		this->exponent = exponent;
 	}
 	
@@ -41,7 +41,7 @@ public:
 		this->etaOut = etaOut;
 	}
 	
-	void setSampler(GenericSampler *sampler);
+	void SetSampler(GenericSampler *sampler);
 	
 	GenericSampler* GetSampler() {
 		return sampler;

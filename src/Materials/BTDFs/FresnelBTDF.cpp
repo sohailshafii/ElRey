@@ -11,6 +11,17 @@ FresnelBTDF::FresnelBTDF(Color3 const & color, float eta) {
 }
 
 FresnelBTDF::~FresnelBTDF() {
+	if (sampler != nullptr) {
+		delete sampler;
+	}
+}
+
+void FresnelBTDF::SetSampler(GenericSampler *sampler) {
+	if (this->sampler != nullptr) {
+		delete sampler;
+	}
+	this->sampler = sampler;
+	this->sampler->MapSamplesToHemisphere(exponent);
 }
 
 Color FresnelBTDF::SampleF(ShadingInfo const & shadingInfo, float& pdf, Vector3 									&transmittedVec, float& transmission, float etaOut) const {

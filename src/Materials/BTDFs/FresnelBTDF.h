@@ -23,9 +23,22 @@ public:
 	void SetEta(float eta) {
 		this->eta = eta;
 	}
+	
+	void SetExponent(float exponent) {
+		this->exponent = exponent;
+	}
+	
+	void SetSampler(GenericSampler *sampler);
+	
+	GenericSampler* GetSampler() {
+		return sampler;
+	}
 
 private:
 	Color normalColor;
 	float eta;
+	float exponent;
+	
+	GenericSampler *sampler;
 };
 

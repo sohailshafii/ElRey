@@ -16,7 +16,7 @@ FresnelBRDF::~FresnelBRDF() {
 	}
 }
 
-void FresnelBRDF::setSampler(GenericSampler *sampler) {
+void FresnelBRDF::SetSampler(GenericSampler *sampler) {
 	if (this->sampler != nullptr) {
 		delete sampler;
 	}
