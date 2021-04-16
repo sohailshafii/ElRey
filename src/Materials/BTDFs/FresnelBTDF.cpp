@@ -37,7 +37,7 @@ Color FresnelBTDF::SampleF(ShadingInfo const & shadingInfo, float& pdf, Vector3 
 	transmittedVec = -incomingVec*invRelEta - normal*(cosThetaT - cosThetaI*invRelEta);
 	transmission = kt;
 	
-	return normalColor;
+	return normalColor*invRelEta*invRelEta;
 }
 
 bool FresnelBTDF::AllowsTransmission(ShadingInfo const & shadingInfo,

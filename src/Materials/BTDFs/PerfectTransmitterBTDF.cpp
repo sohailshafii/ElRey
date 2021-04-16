@@ -29,9 +29,9 @@ Color PerfectTransmitterBTDF::SampleF(ShadingInfo const & shadingInfo, float& pd
 	float descSqrt = sqrt(CommonMath::ComputeFresnelDescriminant(cosTheta,
 																 invRelEta));
 	transmittedVec = -incomingVec*invRelEta - normal*(descSqrt - cosTheta*invRelEta);
-	transmission = kt*invRelEta*invRelEta;
+	transmission = kt;
 	
-	return normalColor;
+	return normalColor*invRelEta*invRelEta;
 }
 
 bool PerfectTransmitterBTDF::AllowsTransmission(ShadingInfo const & shadingInfo,
