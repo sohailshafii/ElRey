@@ -1,12 +1,12 @@
 #include "FresnelBRDF.h"
 #include "Math/CommonMath.h"
 
-FresnelBRDF::FresnelBRDF() : sampler(nullptr), ks(0), cs(Color3(0.0f, 0.0f, 0.0f)), csScaled(cs*ks), exponent(0.0f) {
+FresnelBRDF::FresnelBRDF() : sampler(nullptr), cs(Color3(0.0f, 0.0f, 0.0f)), exponent(0.0f) {
 }
 	
-FresnelBRDF::FresnelBRDF(GenericSampler *sampler, float ks, Color3 cs, float exponent,
-						 float eta, float etaOut) : sampler(sampler), ks(ks),
-	cs(cs), csScaled(cs*ks), exponent(exponent), eta(eta), etaOut(etaOut) {
+FresnelBRDF::FresnelBRDF(GenericSampler *sampler, Color3 cs, float exponent,
+						 float eta, float etaOut) : sampler(sampler),
+	cs(cs), exponent(exponent), eta(eta), etaOut(etaOut) {
 	sampler->MapSamplesToHemisphere(exponent);
 }
 
@@ -35,6 +35,7 @@ Color3 FresnelBRDF::F(ShadingInfo const & shadingInfo) const {
 	return Color3::Black();
 }
 
+// Note that fresnel coefficient is not calculated here; use btdf for that
 Color3 FresnelBRDF::SampleF(ShadingInfo const & shadingInfo, float& pdf, Vector3 &newWi) const {
 	Vector3 normal = shadingInfo.normalVector;
 	Vector3 reflectedVec = GetReflectionVector(shadingInfo.wo, normal);
@@ -42,20 +43,11 @@ Color3 FresnelBRDF::SampleF(ShadingInfo const & shadingInfo, float& pdf, Vector3
 	// strongest where we reflect perfectly
 	pdf = fabs(normal*reflectedVec);
 	
-	float kr = 0.0f, kt = 0.0f;
-	float relativeEta, cosThetaI, cosThetaT;
-	CommonMath::ComputeFresnelCoefficients(shadingInfo.wo, eta, etaOut, normal,
-										   kr, kt, relativeEta, cosThetaI, cosThetaT);
-	
-	return csScaled*kr;
+	return cs;
 }
 
 Color3 FresnelBRDF::GetRho(const ShadingInfo& shadingInfo) const {
 	return Color3::Black();
-}
-
-float FresnelBRDF::ComputeFresnelCoeff(ShadingInfo const & shadingInfo) {
-	return 1.0; // TODO
 }
 
 

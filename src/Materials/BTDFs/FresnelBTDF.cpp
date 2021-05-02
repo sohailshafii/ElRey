@@ -24,7 +24,7 @@ void FresnelBTDF::SetSampler(GenericSampler *sampler) {
 	this->sampler->MapSamplesToHemisphere(exponent);
 }
 
-Color FresnelBTDF::SampleF(ShadingInfo const & shadingInfo, float& pdf, Vector3 									&transmittedVec, float& transmission, float etaOut) const {
+Color FresnelBTDF::SampleF(ShadingInfo const & shadingInfo, float& pdf, Vector3 						&transmittedVec, float& transmission, float etaOut) const {
 	auto normal = shadingInfo.normalVector;
 		
 	float kr = 0.0f, kt = 0.0f;

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Materials/Color.h"
+#include "Materials/Color3.h"
 #include "SceneData/ShadingInfo.h"
 
 class Material {
@@ -27,15 +28,23 @@ public:
 	
 	struct SecondaryVectorInfo {
 		SecondaryVectorInfo(Vector3 const & vector, float coeff,
-							Color color = Color::Black()) {
-			direction = vector;
-			vecCoeff = coeff;
-			colorComp = color;
+							Color color = Color::Black(),
+							Color3 colorFilter = Color3::Black(),
+							bool useColorFilter = false) {
+			this->direction = vector;
+			this->vecCoeff = coeff;
+			this->colorComp = color;
+			
+			this->colorFilter = colorFilter;
+			this->useColorFilter = useColorFilter;
 		}
 		
 		Vector3 direction;
 		float vecCoeff;
 		Color colorComp;
+		
+		Color3 colorFilter;
+		bool useColorFilter;
 	};
 	
 	virtual Color GetAmbientColor(const ShadingInfo &shadingInfo) const = 0;

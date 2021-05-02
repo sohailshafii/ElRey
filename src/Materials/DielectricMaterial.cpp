@@ -9,7 +9,6 @@ DielectricMaterial::DielectricMaterial(float ka, float kd, float ks, float expon
 		PhongMaterial(ka, kd, ks, exponent, color, ksColor) {
 	fresnelBrdf.SetEtaIn(etaIn);
 	fresnelBrdf.SetEtaOut(etaOut);
-	fresnelBrdf.SetKs(ks);
 	fresnelBrdf.SetCs(ksColor);
 	fresnelBrdf.SetExponent(exponent);
 			
@@ -28,18 +27,42 @@ void DielectricMaterial::SetSampler(GenericSampler *sampler) {
 
 void DielectricMaterial::GetSecondaryVectors(ShadingInfo const & shadingInfo,
 											  std::vector<SecondaryVectorInfo> & secondaryVectors) const {
-	/*if (perfectTransmitterBTDF.AllowsTransmission(shadingInfo)) {
-		float pdf;
+	
+	bool allowsTransmission = fresnelBtdf.AllowsTransmission(shadingInfo);
+	auto const & shadingNormal = shadingInfo.normalVector;
+	float ndotwi = shadingNormal*shadingInfo.wi;
+	Vector3 reflectedVec;
+	float fresnelBrdfPDF;
+	Color3 brdfColor = fresnelBrdf.SampleF(shadingInfo, fresnelBrdfPDF, reflectedVec);
+	
+	// reflection only case
+	if (!allowsTransmission) {
+		// TODO: fix reflectivity
+		secondaryVectors.push_back(SecondaryVectorInfo(reflectedVec, 1.0f,
+													   Color(brdfColor[0],
+															 brdfColor[1],
+															 brdfColor[2], 1.0f),
+													   ndotwi < 0.0f ? cfIn : cfOut,
+													   true));
+	}
+	else {
+		float btdfPdf;
 		Vector3 transmittedVec;
 		float transmission;
-		Color transmittedColor = perfectTransmitterBTDF.SampleF(
-										shadingInfo, pdf, transmittedVec,
-										transmission);
-		secondaryVectors.push_back(SecondaryVectorInfo(transmittedVec, transmission, transmittedColor));
+		Color btdfColor = fresnelBtdf.SampleF(shadingInfo, btdfPdf, transmittedVec, transmission);
+		float ndotwt = shadingNormal * transmittedVec;
+		secondaryVectors.push_back(SecondaryVectorInfo(reflectedVec, 1.0f - transmission,
+													   Color(brdfColor[0],
+															 brdfColor[1],
+															 brdfColor[2], 1.0f),
+													   ndotwt < 0.0f ? cfIn : cfOut,
+													   true));
+		
+		secondaryVectors.push_back(SecondaryVectorInfo(transmittedVec, transmission,
+													   Color(btdfColor[0],
+															 btdfColor[1],
+															 btdfColor[2], 1.0f),
+													   ndotwt < 0.0f ? cfOut : cfIn,
+													   true));
 	}
-	// only if reflective coefficent is strong
-	else if (secondaryVectors.size() > 0) {
-		// crank up reflectivity to 100%
-		secondaryVectors[0].vecCoeff = 1.0f;
-	}*/
 }
