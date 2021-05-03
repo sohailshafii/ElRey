@@ -12,7 +12,7 @@
 			"view_plane_width":1.0,
 			"up_vector":[0.0,1.0,0.0],
 			"random_sampler_type":"multijittered",
-			"num_random_samples":4,
+			"num_random_samples":16,
 			"num_random_sets":83
 		},
 		"path_trace":false
@@ -48,15 +48,21 @@
 			"name":"main_sphere",
 			"material":
 			{
-				"type":"reflective",
+				"type":"glossy_specular",
 				"ka":0.1,
 				"kd":0.95,
 				"ks":0.1,
 				"cr":0.7,
 				"kr":0.6,
-				"exponent":10,
+				"exponent":20,
 				"ks_color":[1.0, 1.0, 1.0],
-				"color":[0.0, 1.0, 1.0, 1.0]
+				"color":[0.0, 1.0, 1.0, 1.0],
+				"sampler":
+				{
+					"random_sampler_type":"multijittered",
+					"num_random_samples":16,
+					"num_random_sets":83
+				}
 			}
 		},
 		{

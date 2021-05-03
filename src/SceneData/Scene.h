@@ -43,11 +43,11 @@ public:
 	
 	virtual void SetAmbientLight(Light* newAmbientLight);
 
-	virtual bool WhittedRaytrace(const Ray &ray, Color &newColor,
-		float tMin, float tMax, int bounceCount) const;
+	virtual float WhittedRaytrace(const Ray &ray, Color &newColor,
+								  float tMin, float tMax, int bounceCount) const;
 	
-	virtual bool PathRaytrace(const Ray &ray, Color &newColor,
-							  float tMin, float tMax, int bounceCount) const;
+	virtual float PathRaytrace(const Ray &ray, Color &newColor,
+							   float tMin, float tMax, int bounceCount) const;
 
 	std::shared_ptr<Primitive> GetPrimitive(unsigned int index) {
 		return simpleWorld->GetPrimitive(index);

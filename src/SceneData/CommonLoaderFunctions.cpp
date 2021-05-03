@@ -5,6 +5,7 @@
 #include "Materials/ReflectiveMaterial.h"
 #include "Materials/GlossySpecularMaterial.h"
 #include "Materials/TransparentMaterial.h"
+#include "Materials/DielectricMaterial.h"
 #include <sstream>
 #include <vector>
 #include <iostream>
@@ -82,6 +83,25 @@ std::shared_ptr<Material> CommonLoaderFunctions::CreateMaterial(
 			Color3(colorObj[0], colorObj[1], colorObj[2]),
 			Color3(ksColor[0], ksColor[1], ksColor[2]), cR, kR,
 			eta, kt);
+	}
+	else if (primitiveType == "dielectric") {
+		float kA = SafeGetToken(jsonObj, "ka");
+		float kD = SafeGetToken(jsonObj, "kd");
+		float kS = SafeGetToken(jsonObj, "ks");
+		float etaIn = SafeGetToken(jsonObj, "eta_in");
+		float etaOut = SafeGetToken(jsonObj, "eta_out");
+		float exponent = SafeGetToken(jsonObj, "exponent");
+		auto colorObj = SafeGetToken(jsonObj, "color");
+		auto ksColor = SafeGetToken(jsonObj, "ks_color");
+		
+		auto cfIn = SafeGetToken(jsonObj, "cf_in");
+		auto cfOut = SafeGetToken(jsonObj, "cf_out");
+		newMaterial = std::make_shared<DielectricMaterial>(kA, kD, kS, exponent,
+														   Color3(colorObj[0], colorObj[1], colorObj[2]),
+														   Color3(ksColor[0], ksColor[1], ksColor[2]),
+														   etaIn, etaOut,
+														   Color3(cfIn[0], cfIn[1], cfIn[2]),
+														   Color3(cfOut[0], cfOut[1], cfOut[2]));
 	}
 	else if (primitiveType == "simple_emissive") {
 		float kA = SafeGetToken(jsonObj, "ka");

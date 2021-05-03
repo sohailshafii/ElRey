@@ -73,9 +73,9 @@ void Scene::SetAmbientLight(Light* newAmbientLight) {
 	}
 	ambientLight = newAmbientLight;
 }
-
-bool Scene::WhittedRaytrace(const Ray &ray, Color &newColor,
-	float tMin, float tMax, int bounceCount) const {
+	
+float Scene::WhittedRaytrace(const Ray &ray, Color &newColor,
+							 float tMin, float tMax, int bounceCount) const {
 	IntersectionResult intersectionResult;
 	
 	float tMaxHit = tMax;
@@ -122,19 +122,26 @@ bool Scene::WhittedRaytrace(const Ray &ray, Color &newColor,
 					
 					Ray secondaryRay(intersectionPos, secondaryVec);
 					Color tracedColor = Color::Black();
-					WhittedRaytrace(secondaryRay, tracedColor,
-									0.001f, tMax, bounceCount+1);
-					newColor += secondaryColor*tracedColor*vecCoeff;
+					float tracedLen = WhittedRaytrace(secondaryRay, tracedColor,
+													  0.001f, tMax, bounceCount+1);
+					Color returnedColor = secondaryColor*tracedColor*vecCoeff;
+					if (secondaryVecInfo.useColorFilter && tracedLen > 0.0f) {
+						auto colorFilter = secondaryVecInfo.colorFilter;
+						Color colorFilterB(colorFilter[0], colorFilter[1],
+										   colorFilter[2], 1.0f);
+						returnedColor *= (colorFilterB^tracedLen);
+					}
+					newColor += returnedColor;
 				}
 			}
 		}
 	}
 
-	return closestPrimitive != nullptr;
+	return closestPrimitive != nullptr ? tMaxHit : 0.0f;
 }
 
-bool Scene::PathRaytrace(const Ray &ray, Color &newColor,
-				  float tMin, float tMax, int bounceCount) const {
+float Scene::PathRaytrace(const Ray &ray, Color &newColor,
+						  float tMin, float tMax, int bounceCount) const {
 	IntersectionResult intersectionResult;
 	std::vector<Material::DirectionSample> directionSamples;
 	
@@ -175,7 +182,7 @@ bool Scene::PathRaytrace(const Ray &ray, Color &newColor,
 			
 			// done
 			if (bounceCount == maxBounceCount) {
-				return;
+				return 0.0f;
 			}
 			
 			// do we need to recurse? get a list of all vectors and pdfs to consider for path tracing
@@ -202,7 +209,7 @@ bool Scene::PathRaytrace(const Ray &ray, Color &newColor,
 		}
 	}
 
-	return closestPrimitive != nullptr;
+	return closestPrimitive != nullptr ? tMaxHit : 0.0f;
 }
 
 Color Scene::AddContributionsFromLights(ShadingInfo const & shadingInfo, Vector3 & normalVec,

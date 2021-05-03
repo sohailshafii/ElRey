@@ -113,7 +113,7 @@ void Camera::CastIntoScene(unsigned char* pixels, unsigned int bytesPerPixel,
 	float maxCastDistance = std::numeric_limits<float>::max();
 	float finalColorMultFactor = GetFinalPixelMultFact();
 	
-	bool (Scene::* const traceFunc) (const Ray &, Color &,
+	float (Scene::* const traceFunc) (const Ray &, Color &,
 									 float, float, int) const =
 		usePathtracing ? &Scene::PathRaytrace : &Scene::WhittedRaytrace;
 
