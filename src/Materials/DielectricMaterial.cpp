@@ -39,7 +39,7 @@ void DielectricMaterial::GetSecondaryVectors(ShadingInfo const & shadingInfo,
 	Vector3 transmittedVec;
 	float transmission;
 	Color btdfColor = fresnelBtdf.SampleF(shadingInfo, btdfPdf, transmittedVec, transmission);
-	int reflecCoeff = 1.0f - transmission;
+	float reflecCoeff = 1.0f - transmission;
 	
 	// reflection only case
 	if (!allowsTransmission) {

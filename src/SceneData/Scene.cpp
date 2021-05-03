@@ -125,6 +125,7 @@ float Scene::WhittedRaytrace(const Ray &ray, Color &newColor,
 					float tracedLen = WhittedRaytrace(secondaryRay, tracedColor,
 													  0.001f, tMax, bounceCount+1);
 					Color returnedColor = secondaryColor*tracedColor*vecCoeff;
+					// TODO: verify color filter
 					if (secondaryVecInfo.useColorFilter && tracedLen > 0.0f) {
 						auto colorFilter = secondaryVecInfo.colorFilter;
 						Color colorFilterB(colorFilter[0], colorFilter[1],
