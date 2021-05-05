@@ -2,11 +2,11 @@
 #include "Sampling/GenericSampler.h"
 #include "Math/CommonMath.h"
 
-FresnelBTDF::FresnelBTDF() : eta(0.0f), normalColor(Color::White()), sampler(nullptr) {
+FresnelBTDF::FresnelBTDF() : eta(0.0f), normalColor(Color3::White()), sampler(nullptr) {
 }
 
 FresnelBTDF::FresnelBTDF(Color3 const & color, float eta) {
-	this->normalColor = Color(color[0], color[1], color[2], 1.0f);
+	this->normalColor = color;
 	this->eta = eta;
 	this->sampler = nullptr;
 }
@@ -26,7 +26,7 @@ void FresnelBTDF::SetSampler(GenericSampler *sampler) {
 	this->sampler->MapSamplesToHemisphere(exponent);
 }
 
-Color FresnelBTDF::SampleF(ShadingInfo const & shadingInfo, float& pdf, Vector3 						&transmittedVec, float& transmission, float etaOut) const {
+Color3 FresnelBTDF::SampleF(ShadingInfo const & shadingInfo, float& pdf, Vector3 						&transmittedVec, float& transmission, float etaOut) const {
 	auto normal = shadingInfo.normalVector;
 		
 	float kr = 0.0f, kt = 0.0f;

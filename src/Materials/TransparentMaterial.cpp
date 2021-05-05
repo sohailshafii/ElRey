@@ -16,7 +16,7 @@ void TransparentMaterial::GetSecondaryVectors(ShadingInfo const & shadingInfo,
 		float pdf;
 		Vector3 transmittedVec;
 		float transmission;
-		Color transmittedColor = perfectTransmitterBTDF.SampleF(
+		Color3 transmittedColor = perfectTransmitterBTDF.SampleF(
 										shadingInfo, pdf, transmittedVec,
 										transmission);
 		secondaryVectors.push_back(SecondaryVectorInfo(transmittedVec, transmission, transmittedColor));

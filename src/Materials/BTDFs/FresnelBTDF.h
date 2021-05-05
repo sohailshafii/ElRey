@@ -10,14 +10,14 @@ public:
 	FresnelBTDF(Color3 const & color, float eta);
 	~FresnelBTDF();
 	
-	Color SampleF(ShadingInfo const & shadingInfo, float& pdf, Vector3 &transmittedVec,
-				  float &transmission, float etaOut = 1.0f) const override;
+	Color3 SampleF(ShadingInfo const & shadingInfo, float& pdf, Vector3 &transmittedVec,
+				   float &transmission, float etaOut = 1.0f) const override;
 	
 	bool AllowsTransmission(ShadingInfo const & shadingInfo,
 							float etaOut = 1.0f) const override;
 	
 	void SetColor(Color3 const & color) {
-		this->normalColor = Color(color[0], color[1], color[2], 1.0f);;
+		this->normalColor = color;
 	}
 	
 	void SetEta(float eta) {
@@ -35,7 +35,7 @@ public:
 	}
 
 private:
-	Color normalColor;
+	Color3 normalColor;
 	float eta;
 	float exponent;
 	

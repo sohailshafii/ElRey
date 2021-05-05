@@ -9,8 +9,8 @@ public:
 	PerfectTransmitterBTDF(float eta, float kt);
 	~PerfectTransmitterBTDF();
 	
-	Color SampleF(ShadingInfo const & shadingInfo, float& pdf, Vector3 &transmittedVec,
-				  float &transmission, float etaOut = 1.0f) const override;
+	Color3 SampleF(ShadingInfo const & shadingInfo, float& pdf, Vector3 &transmittedVec,
+				   float &transmission, float etaOut = 1.0f) const override;
 	
 	bool AllowsTransmission(ShadingInfo const & shadingInfo,
 							float etaOut = 1.0f) const override;
@@ -24,7 +24,7 @@ public:
 	}
 
 private:
-	Color normalColor;
+	Color3 normalColor;
 	float eta;
 	float kt;
 };

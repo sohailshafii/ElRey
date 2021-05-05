@@ -38,31 +38,28 @@ void DielectricMaterial::GetSecondaryVectors(ShadingInfo const & shadingInfo,
 	float btdfPdf;
 	Vector3 transmittedVec;
 	float transmission;
-	Color btdfColor = fresnelBtdf.SampleF(shadingInfo, btdfPdf, transmittedVec, transmission);
+	Color3 btdfColor = fresnelBtdf.SampleF(shadingInfo, btdfPdf, transmittedVec, transmission);
 	float reflecCoeff = 1.0f - transmission;
 	
 	// reflection only case
 	if (!allowsTransmission) {
-		secondaryVectors.push_back(SecondaryVectorInfo(reflectedVec, reflecCoeff,
-													   Color(brdfColor[0],
-															 brdfColor[1],
-															 brdfColor[2], 1.0f),
+		secondaryVectors.push_back(SecondaryVectorInfo(reflectedVec,
+													   reflecCoeff,
+													   brdfColor,
 													   ndotwi < 0.0f ? cfIn : cfOut,
 													   true));
 	}
 	else {
 		float ndotwt = shadingNormal * transmittedVec;
-		secondaryVectors.push_back(SecondaryVectorInfo(reflectedVec, reflecCoeff,
-													   Color(brdfColor[0],
-															 brdfColor[1],
-															 brdfColor[2], 1.0f),
+		secondaryVectors.push_back(SecondaryVectorInfo(reflectedVec,
+													   reflecCoeff,
+													   brdfColor,
 													   ndotwt < 0.0f ? cfIn : cfOut,
 													   true));
 		
-		secondaryVectors.push_back(SecondaryVectorInfo(transmittedVec, transmission,
-													   Color(btdfColor[0],
-															 btdfColor[1],
-															 btdfColor[2], 1.0f),
+		secondaryVectors.push_back(SecondaryVectorInfo(transmittedVec,
+													   transmission,
+													   btdfColor,
 													   ndotwt < 0.0f ? cfOut : cfIn,
 													   true));
 	}

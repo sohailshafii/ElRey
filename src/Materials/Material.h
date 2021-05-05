@@ -28,7 +28,7 @@ public:
 	
 	struct SecondaryVectorInfo {
 		SecondaryVectorInfo(Vector3 const & vector, float coeff,
-							Color color = Color::Black(),
+							Color3 color = Color3::Black(),
 							Color3 colorFilter = Color3::Black(),
 							bool useColorFilter = false) {
 			this->direction = vector;
@@ -41,7 +41,7 @@ public:
 		
 		Vector3 direction;
 		float vecCoeff;
-		Color colorComp;
+		Color3 colorComp;
 		
 		Color3 colorFilter;
 		bool useColorFilter;

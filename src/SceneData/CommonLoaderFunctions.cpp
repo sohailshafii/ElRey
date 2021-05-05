@@ -30,8 +30,7 @@ std::shared_ptr<Material> CommonLoaderFunctions::CreateMaterial(
 																nlohmann::json const & jsonObj) {
 	std::shared_ptr<Material> newMaterial;
 
-	// TODO: should BRDFs have four-component colors?
-	// think about transparency
+	// TODO: make brdfs and materials have three-component colors throughout
 	std::string primitiveType = SafeGetToken(jsonObj, "type");
 	
 	if (primitiveType == "lambertian") {

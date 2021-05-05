@@ -2,19 +2,21 @@
 #include "Sampling/GenericSampler.h"
 #include "Math/CommonMath.h"
 
-PerfectTransmitterBTDF::PerfectTransmitterBTDF() : eta(0.0f), kt(0.0f), normalColor(Color::White()) {
+PerfectTransmitterBTDF::PerfectTransmitterBTDF() : eta(0.0f), kt(0.0f), normalColor(Color3::White()) {
 }
 
 PerfectTransmitterBTDF::PerfectTransmitterBTDF(float eta, float kt) {
 	this->eta = eta;
 	this->kt = kt;
-	normalColor = Color::White();
+	normalColor = Color3::White();
 }
 
 PerfectTransmitterBTDF::~PerfectTransmitterBTDF() {
 }
 
-Color PerfectTransmitterBTDF::SampleF(ShadingInfo const & shadingInfo, float& pdf, Vector3 									&transmittedVec, float& transmission, float etaOut) const {
+Color3 PerfectTransmitterBTDF::SampleF(ShadingInfo const & shadingInfo, float& pdf,
+									   Vector3 &transmittedVec, float& transmission,
+									   float etaOut) const {
 	auto normal = shadingInfo.normalVector;
 	auto incomingVec = shadingInfo.wo;
 	float cosTheta = normal * incomingVec;

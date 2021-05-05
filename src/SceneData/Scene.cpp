@@ -118,7 +118,9 @@ float Scene::WhittedRaytrace(const Ray &ray, Color &newColor,
 					auto & secondaryVecInfo = secondaryVectors[i];
 					float vecCoeff = secondaryVecInfo.vecCoeff;
 					auto & secondaryVec = secondaryVecInfo.direction;
-					Color secondaryColor = secondaryVecInfo.colorComp;
+					Color secondaryColor = Color(secondaryVecInfo.colorComp[0],
+												 secondaryVecInfo.colorComp[1],
+												 secondaryVecInfo.colorComp[2], 1.0f);
 					
 					Ray secondaryRay(intersectionPos, secondaryVec);
 					Color tracedColor = Color::Black();
