@@ -75,7 +75,7 @@ void PrimitiveLoader::CreateGridOfGrids(Scene* scene,
 	
 	float sizeOfEachInstance = maxSize;
 	float gapSize = gapPercentage*maxSize;
-	for (int level = 0, primIndex; level < numLevels; level++) {
+	for (int level = 0, primIndex = 0; level < numLevels; level++) {
 		std::ostringstream subGridName;
 		subGridName << "grid-" << level;
 		std::vector<std::shared_ptr<Primitive>> allGridPrimitives;
@@ -107,7 +107,7 @@ void PrimitiveLoader::CreateGridOfGrids(Scene* scene,
 		// Now each element of the subgrid contains
 		// multiple items. recompute the size taken by these items
 		// first term in addition is number of items, second is for gaps
-		sizeOfEachInstance = gridRes * sizeOfEachInstance + (gridRes - 1.0) * gapSize;
+		sizeOfEachInstance = gridRes * sizeOfEachInstance + (gridRes - 1.0f) * gapSize;
 		gapSize = gapPercentage * sizeOfEachInstance;
 		subGrid->SetUpAccelerator(1.0f, allGridPrimitives);
 		currentGridPtr = subGrid;

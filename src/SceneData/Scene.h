@@ -80,7 +80,7 @@ public:
 		this->allowNavigation = allowNavigation;
 	}
 	
-	void GetMaxBounceCount() const {
+	int GetMaxBounceCount() const {
 		return maxBounceCount;
 	}
 	

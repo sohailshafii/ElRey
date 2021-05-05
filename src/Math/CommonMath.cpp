@@ -85,7 +85,7 @@ void CommonMath::ComputeFresnelCoefficients(Vector3 const & wo,
 	cosThetaT = sqrt(descriminant);
 	float rParallel = (relativeEta * cosThetaI - cosThetaT) / (relativeEta * cosThetaI + cosThetaT);
 	float rPerpendicular = (cosThetaI - relativeEta * cosThetaT) / (cosThetaI + relativeEta * cosThetaT);
-	kr = 0.5 * (rParallel * rParallel + rPerpendicular * rPerpendicular);
+	kr = 0.5f * (rParallel * rParallel + rPerpendicular * rPerpendicular);
 	kt = 1.0f - kr;
 }
 

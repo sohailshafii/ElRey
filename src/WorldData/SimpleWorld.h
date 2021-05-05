@@ -1,6 +1,7 @@
 #pragma once
 
 #include <vector>
+#include <memory>
 
 class Primitive;
 class Ray;
@@ -25,7 +26,7 @@ public:
 	std::shared_ptr<Primitive> FindPrimitiveByName(const std::string& name);
 
 	unsigned int GetNumPrimitives() const {
-		return primitives.size();
+		return (unsigned int)primitives.size();
 	}
 	
 	Primitive* Intersect(const Ray &ray, float tMin, float& tMax,

@@ -40,15 +40,15 @@ void GridPrimitive::SetupCells(float multipier,
 	
 	float multiplier = 1.0f;
 	float s = pow(wx * wy * wz / numPrimitives,
-				  0.333333);
+				  0.333333f);
 	// s is like volume/object, and we do the
 	// cube root of it, to make it per dim
 	// multiplying wx by the inverse sorta
 	// cancels the volume, so that you are left
 	// with number of objects per axis
-	nx = multiplier * wx / s + 1;
-	ny = multiplier * wy / s + 1;
-	nz = multiplier * wz / s + 1;
+	nx = (int)(multiplier * wx / s) + 1;
+	ny = (int)(multiplier * wy / s) + 1;
+	nz = (int)(multiplier * wz / s) + 1;
 	
 	// grid cells start out with nothing
 	int numCells = nx*ny*nz;
@@ -71,7 +71,7 @@ void GridPrimitive::SetupCells(float multipier,
 	float yConversionFactor = ny/(p1[1] - p0[1]);
 	float zConversionFactor = nz/(p1[2] - p0[2]);
 	int zSliceSize = nx*ny;
-	unsigned int numPrimitivesAdded;
+	unsigned int numPrimitivesAdded = 0;
 	for (size_t primIndex = 0; primIndex < numPrimitives; primIndex++) {
 		std::shared_ptr<Primitive> currPrimitive = primitives[primIndex];
 		
@@ -83,13 +83,13 @@ void GridPrimitive::SetupCells(float multipier,
 		objectBBox = currPrimitive->GetBoundingBox();
 		// compute the cell indices at the corners of
 		// the bounding box of the object
-		int ixMin = CommonMath::Clamp((objectBBox.x0 - p0[0])*xConversionFactor, 0, nx - 1);
-		int iyMin = CommonMath::Clamp((objectBBox.y0 - p0[1])*yConversionFactor, 0, ny - 1);
-		int izMin = CommonMath::Clamp((objectBBox.z0 - p0[2])*zConversionFactor, 0, nz - 1);
+		int ixMin = (int)CommonMath::Clamp((objectBBox.x0 - p0[0])*xConversionFactor, 0, nx - 1);
+		int iyMin = (int)CommonMath::Clamp((objectBBox.y0 - p0[1])*yConversionFactor, 0, ny - 1);
+		int izMin = (int)CommonMath::Clamp((objectBBox.z0 - p0[2])*zConversionFactor, 0, nz - 1);
 
-		int ixMax = CommonMath::Clamp((objectBBox.x1 - p0[0])*xConversionFactor, 0, nx - 1);
-		int iyMax = CommonMath::Clamp((objectBBox.y1 - p0[1])*yConversionFactor, 0, ny - 1);
-		int izMax = CommonMath::Clamp((objectBBox.z1 - p0[2])*zConversionFactor, 0, nz - 1);
+		int ixMax = (int)CommonMath::Clamp((objectBBox.x1 - p0[0])*xConversionFactor, 0, nx - 1);
+		int iyMax = (int)CommonMath::Clamp((objectBBox.y1 - p0[1])*yConversionFactor, 0, ny - 1);
+		int izMax = (int)CommonMath::Clamp((objectBBox.z1 - p0[2])*zConversionFactor, 0, nz - 1);
 		
 		// add objects to the cells
 		for (int zIndex = izMin; zIndex <= izMax; zIndex++) {

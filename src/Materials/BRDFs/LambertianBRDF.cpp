@@ -45,7 +45,7 @@ Color3 LambertianBRDF::SampleF(ShadingInfo const & shadingInfo, float& pdf, Vect
 	newWi = u*samplePoint[0] + v*samplePoint[1] + w*samplePoint[2];
 	newWi.Normalize();
 	
-	pdf = shadingInfo.normalVector * newWi * INV_PI;
+	pdf = shadingInfo.normalVector * newWi * (float)INV_PI;
 	
 	return uniformRadiance;
 }
