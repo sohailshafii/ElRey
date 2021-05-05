@@ -63,7 +63,6 @@ GenericMultiSampler::GenericMultiSampler(GenericMultiSampler const & other)
 		hemisphereSamples[i] = other.hemisphereSamples[i];
 		shuffledIndices[i] = other.shuffledIndices[i];
 	}
-	std::cout << "copy constructor multijittered\n";
 }
 
 void GenericMultiSampler::CreateShuffledIndices() {

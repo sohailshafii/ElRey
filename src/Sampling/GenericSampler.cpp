@@ -23,7 +23,6 @@ GenericSampler::GenericSampler(const GenericSampler &other) {
 	for (int i = 0; i < numSets*numSamples; i++) {
 		samples[i] = other.samples[i];
 	}
-	std::cout << "copy constructor\n";
 }
 
 void GenericSampler::AllocateGenericSamples() {

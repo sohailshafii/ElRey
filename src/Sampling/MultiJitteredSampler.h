@@ -1,7 +1,6 @@
 #pragma once
 
 #include "Sampling/GenericMultiSampler.h"
-#include <iostream>
 
 class MultiJitteredSampler : public GenericMultiSampler {
 public:
@@ -9,7 +8,6 @@ public:
 	~MultiJitteredSampler();
 	
 	virtual MultiJitteredSampler* clone() const override {
-		std::cout << "Hello multijittered\n";
 		return new MultiJitteredSampler(*this);
 	}
 

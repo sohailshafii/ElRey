@@ -3,7 +3,6 @@
 #include "Materials/BRDFs/BRDF.h"
 #include "Math/CommonMath.h"
 #include "Sampling/GenericSampler.h"
-#include <iostream>
 
 class LambertianBRDF : public BRDF {
 public:
@@ -26,10 +25,6 @@ public:
 		this->cd = cd;
 		this->cdScaled = cd*kd;
 		this->uniformRadiance = this->cdScaled*INV_PI;
-		std::cout << "uniform rad " << uniformRadiance[0] << " "
-		<< uniformRadiance[1] << " " << uniformRadiance[2] << std::endl;
-		int breakVar;
-		breakVar = 1;
 	}
 	
 	void setSampler(GenericSampler *sampler);
