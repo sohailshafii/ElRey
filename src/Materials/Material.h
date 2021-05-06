@@ -14,14 +14,14 @@ public:
 	}
 	
 	struct DirectionSample {
-		DirectionSample(Color const & color, float pdf,
+		DirectionSample(Color3 const & color, float pdf,
 						Vector3 const & wi) {
 			this->color = color;
 			this->pdf = pdf;
 			this->wi = wi;
 		}
 		
-		Color color;
+		Color3 color;
 		float pdf;
 		Vector3 wi;
 	};
@@ -47,8 +47,8 @@ public:
 		bool useColorFilter;
 	};
 	
-	virtual Color GetAmbientColor(const ShadingInfo &shadingInfo) const = 0;
-	virtual Color GetDirectColor(ShadingInfo const  &shadingInfo) const = 0;
+	virtual Color3 GetAmbientColor(const ShadingInfo &shadingInfo) const = 0;
+	virtual Color3 GetDirectColor(ShadingInfo const  &shadingInfo) const = 0;
 	virtual void SampleColorAndDirections(ShadingInfo &shadingInfo, std::vector<DirectionSample> & directionSamples) const = 0;
 	
 	virtual void SetSampler(class GenericSampler *sampler) = 0;

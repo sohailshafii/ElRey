@@ -16,8 +16,7 @@ void GlossySpecularMaterial::GetSecondaryVectors(ShadingInfo const & shadingInfo
 	float rDotIncomingNormal;
 	Vector3 reflectedVec =
 		glossySpecularBRDF.GetReflectionVectorSampled(shadingInfo.wo, shadingInfo.normalVector, rDotIncomingNormal);
-	Color directColor = GetDirectColor(shadingInfo);
+	Color3 directColor = GetDirectColor(shadingInfo);
 	secondaryVectors.push_back(SecondaryVectorInfo(reflectedVec, reflectivity,
-												   Color3(directColor[0], directColor[1],
-														  directColor[2])));
+												   directColor));
 }

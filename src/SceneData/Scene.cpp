@@ -97,14 +97,15 @@ float Scene::WhittedRaytrace(const Ray &ray, Color &newColor,
 		if (ambientLight != nullptr) {
 			auto lightRadiance = ambientLight->GetRadiance(shadingInfo, *this);
 			Color lightRadColor4 = Color(lightRadiance[0], lightRadiance[1], lightRadiance[2], 0.0);
-			newColor += primitiveMaterial->GetAmbientColor(shadingInfo)*lightRadColor4;
+			Color3 ambientColor = primitiveMaterial->GetAmbientColor(shadingInfo);
+			newColor += Color(ambientColor[0], ambientColor[1], ambientColor[2], 1.0f) * lightRadColor4;
 		}
 		
 		bool isAreaLight = IsPrimitiveAssociatedWithLight(closestPrimitive);
 		
 		if (isAreaLight) {
-			newColor +=
-				primitiveMaterial->GetDirectColor(shadingInfo);
+			Color3 directColor = primitiveMaterial->GetDirectColor(shadingInfo);
+			newColor += Color(directColor[0], directColor[1], directColor[2], 1.0f);
 		}
 		else {
 			Color colorFromLights = AddContributionsFromLights(shadingInfo, normalVec, primitiveMaterial);
@@ -167,15 +168,17 @@ float Scene::PathRaytrace(const Ray &ray, Color &newColor,
 		if (ambientLight != nullptr) {
 			auto lightRadiance = ambientLight->GetRadiance(shadingInfo, *this);
 			Color lightRadColor4 = Color(lightRadiance[0], lightRadiance[1], lightRadiance[2], 0.0);
-			newColor += primitiveMaterial->GetAmbientColor(shadingInfo)*lightRadColor4;
+			Color3 ambientColor = primitiveMaterial->GetAmbientColor(shadingInfo);
+			newColor += Color(ambientColor[0], ambientColor[1], ambientColor[2], 1.0f)
+				*lightRadColor4;
 		}
 		
 		bool isAreaLight = IsPrimitiveAssociatedWithLight(closestPrimitive);
 		
 		if (isAreaLight) {
 			// get light color but don't cast additional rays; stop here
-			newColor +=
-				primitiveMaterial->GetDirectColor(shadingInfo);
+			Color3 directColor = primitiveMaterial->GetDirectColor(shadingInfo);
+			newColor += Color(directColor[0], directColor[1], directColor[2], 1.0f);
 		}
 		else {
 			// only add contributions of direct lighting for first bounce
@@ -196,9 +199,10 @@ float Scene::PathRaytrace(const Ray &ray, Color &newColor,
 				auto& currDirectionSample = directionSamples[i];
 				auto& currWi = currDirectionSample.wi;
 				auto& currColor = currDirectionSample.color;
+				Color currColor4 = Color(currColor[0], currColor[1], currColor[2], 1.0f);
 				// if emissive sample, don't cast
 				if (currWi.IsZeroVector()) {
-					newColor += currColor;
+					newColor += currColor4;
 					continue;
 				}
 				
@@ -207,7 +211,7 @@ float Scene::PathRaytrace(const Ray &ray, Color &newColor,
 				Color bounceColor(0.0f, 0.0f, 0.0f, 0.0f);
 				PathRaytrace(Ray(intersectionPos, currWi), bounceColor,
 							 SHADOW_FEELER_EPSILON, tMax, bounceCount+1);
-				newColor += currColor * bounceColor * projectionTerm/currPdf;
+				newColor += currColor4 * bounceColor * projectionTerm/currPdf;
 			}
 		}
 	}
@@ -277,8 +281,10 @@ Color Scene::AddContributionsFromLights(ShadingInfo const & shadingInfo, Vector3
 
 			Color lightRadColor4 = Color(lightRadiance[0], lightRadiance[1],
 				lightRadiance[2], 0.0);
+			Color3 directColor = primitiveMaterial->GetDirectColor(currShadingInfo);
+			Color directColor4 = Color(directColor[0], directColor[1], directColor[2], 1.0f);
 			if (isAreaLight) {
-				newColor += primitiveMaterial->GetDirectColor(currShadingInfo)*
+				newColor += directColor4*
 					currentLight->GeometricTerm(currShadingInfo)/
 					currentLight->PDF(currShadingInfo)*
 					lightRadColor4*projectionTerm;
@@ -287,8 +293,7 @@ Color Scene::AddContributionsFromLights(ShadingInfo const & shadingInfo, Vector3
 				currShadingInfo = oldShadingInfo;
 			}
 			else {
-				newColor += primitiveMaterial->GetDirectColor(currShadingInfo)*
-				lightRadColor4*projectionTerm;
+				newColor += directColor4*lightRadColor4*projectionTerm;
 			}
 		}
 	}

@@ -48,10 +48,9 @@ Color3 AreaLight::GetRadiance(ShadingInfo& shadingInfo,
 	float nDotWi = -shadingInfo.areaLightNormalVector
 		* shadingInfo.wi;
 	if (nDotWi > 0.0f) {
-		Color primitiveColor = primitive->GetMaterial(shadingInfo)
+		Color3 primitiveColor = primitive->GetMaterial(shadingInfo)
 			->GetDirectColor(shadingInfo);
-		return Color3(primitiveColor[0], primitiveColor[1],
-			primitiveColor[2]);
+		return primitiveColor;
 	}
 	return Color3::Black();
 }

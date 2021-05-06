@@ -8,18 +8,16 @@ LambertianMaterial::LambertianMaterial(float ka, float kd, const Color3& color) 
 	diffuseBRDF.setKd(kd);
 	diffuseBRDF.setCd(color);
 
-	deadColor = Color::Black();
+	deadColor = Color3::Black();
 }
 
-Color LambertianMaterial::GetAmbientColor(const ShadingInfo& shadingInfo) const {
-	Color3 ambientColor = ambientBRDF.GetRho(shadingInfo);
-	return Color(ambientColor[0], ambientColor[1], ambientColor[2], 1.0f);
+Color3 LambertianMaterial::GetAmbientColor(const ShadingInfo& shadingInfo) const {
+	return ambientBRDF.GetRho(shadingInfo);
 }
 
-Color LambertianMaterial::GetDirectColor(ShadingInfo const & shadingInfo) const {
+Color3 LambertianMaterial::GetDirectColor(ShadingInfo const & shadingInfo) const {
 	if (shadingInfo.normalVector * shadingInfo.wo > 0.0) {
-		Color3 directColor =  diffuseBRDF.F(shadingInfo);
-		return Color(directColor[0], directColor[1], directColor[2], 1.0f);
+		return diffuseBRDF.F(shadingInfo);
 	}
 	return deadColor;
 }
@@ -29,7 +27,8 @@ void LambertianMaterial::SampleColorAndDirections(ShadingInfo &shadingInfo, std:
 		Vector3 diffuseWi;
 		float diffusePdf;
 		Color3 diffuseColor = diffuseBRDF.SampleF(shadingInfo, diffusePdf, diffuseWi);
-		directionSamples.push_back(DirectionSample(Color(diffuseColor[0], diffuseColor[1], diffuseColor[2], 1.0f), diffusePdf, diffuseWi));
+		directionSamples.push_back(DirectionSample(diffuseColor, diffusePdf,
+												   diffuseWi));
 	}
 }
 
