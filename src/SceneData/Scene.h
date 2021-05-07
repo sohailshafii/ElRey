@@ -43,10 +43,10 @@ public:
 	
 	virtual void SetAmbientLight(Light* newAmbientLight);
 
-	virtual float WhittedRaytrace(const Ray &ray, Color &newColor,
+	virtual float WhittedRaytrace(const Ray &ray, Color3 &newColor,
 								  float tMin, float tMax, int bounceCount) const;
 	
-	virtual float PathRaytrace(const Ray &ray, Color &newColor,
+	virtual float PathRaytrace(const Ray &ray, Color3 &newColor,
 							   float tMin, float tMax, int bounceCount) const;
 
 	std::shared_ptr<Primitive> GetPrimitive(unsigned int index) {
@@ -103,8 +103,8 @@ public:
 		return mainCamera->GetNumColumnsPixels();
 	}
 	
-	Color AddContributionsFromLights(ShadingInfo  const & shadingInfo, Vector3 & normalVec,
-									Material const * primitiveMaterial) const;
+	Color3 AddContributionsFromLights(ShadingInfo  const & shadingInfo, Vector3 & normalVec,
+									  Material const * primitiveMaterial) const;
 	bool IsPrimitiveAssociatedWithLight(Primitive* primitive) const;
 	
 	bool ShadowFeelerIntersectsAnObject(Ray const & ray, float tMin, float tMax) const {

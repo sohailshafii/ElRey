@@ -113,17 +113,17 @@ void Camera::CastIntoScene(unsigned char* pixels, unsigned int bytesPerPixel,
 	float maxCastDistance = std::numeric_limits<float>::max();
 	float finalColorMultFactor = GetFinalPixelMultFact();
 	
-	float (Scene::* const traceFunc) (const Ray &, Color &,
+	float (Scene::* const traceFunc) (const Ray &, Color3 &,
 									 float, float, int) const =
 		usePathtracing ? &Scene::PathRaytrace : &Scene::WhittedRaytrace;
 
 	for (unsigned int pixelIndex = 0, byteIndex = 0; pixelIndex < numPixels;
 		pixelIndex++, byteIndex += bytesPerPixel) {
-		Color accumColor = Color::Black();
-		Color sampleColor = Color::Black();
+		Color3 accumColor = Color3::Black();
+		Color3 sampleColor = Color3::Black();
 		const Point2& oldOrigin = gridPositions[pixelIndex];
 		for (unsigned int sampleIndex = 0; sampleIndex < numSamples; sampleIndex++) {
-			sampleColor = Color::Black();
+			sampleColor = Color3::Black();
 			Point2 newSample = viewPlaneSampler->GetSampleOnUnitSquare();
 			Point2 newPixelPnt(oldOrigin[0] + pixelColWidth * newSample[0],
 							   oldOrigin[1] + pixelRowHeight * newSample[1]);
