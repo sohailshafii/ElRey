@@ -1,10 +1,12 @@
 #include "FresnelBRDF.h"
 #include "Math/CommonMath.h"
+#include "Materials/Texturing/AbstractTexture.h"
 
-FresnelBRDF::FresnelBRDF() : sampler(nullptr), cs(Color3(0.0f, 0.0f, 0.0f)), exponent(0.0f) {
+FresnelBRDF::FresnelBRDF() : sampler(nullptr), cs(nullptr), exponent(0.0f) {
 }
 	
-FresnelBRDF::FresnelBRDF(GenericSampler *sampler, Color3 cs, float exponent,
+FresnelBRDF::FresnelBRDF(GenericSampler *sampler,
+						 std::shared_ptr<AbstractTexture> const & cs, float exponent,
 						 float eta, float etaOut) : sampler(sampler),
 	cs(cs), exponent(exponent), eta(eta), etaOut(etaOut) {
 	sampler->MapSamplesToHemisphere(exponent);
@@ -43,7 +45,7 @@ Color3 FresnelBRDF::SampleF(ShadingInfo const & shadingInfo, float& pdf, Vector3
 	// strongest where we reflect perfectly
 	pdf = fabs(normal*reflectedVec);
 	
-	return cs;
+	return cs->GetColor(shadingInfo);
 }
 
 Color3 FresnelBRDF::GetRho(const ShadingInfo& shadingInfo) const {

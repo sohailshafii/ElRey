@@ -9,8 +9,9 @@ class GenericSampler;
 
 class ReflectiveMaterial : public PhongMaterial {
 public:
-	ReflectiveMaterial(float ka, float kd, float ks, float exponent, const Color3& color,
-					   const Color3& ksColor, float cr, float kr);
+	ReflectiveMaterial(float ka, float kd, float ks, float exponent,
+					   std::shared_ptr<AbstractTexture> const & color,
+					   std::shared_ptr<AbstractTexture> const & ksColor, float cr, float kr);
 	
 	virtual void SetSampler(class GenericSampler *sampler) override;
 	

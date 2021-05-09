@@ -2,8 +2,9 @@
 #include "Sampling/GenericSampler.h"
 #include <vector>
 
-PhongMaterial::PhongMaterial(float ka, float kd, float ks, float exponent, const Color3& color,
-const Color3& ksColor) {
+PhongMaterial::PhongMaterial(float ka, float kd, float ks, float exponent,
+							 std::shared_ptr<AbstractTexture> const & color,
+							 std::shared_ptr<AbstractTexture> const & ksColor) {
 	ambientBRDF.setKd(ka);
 	ambientBRDF.setCd(color);
 	diffuseBRDF.setKd(kd);

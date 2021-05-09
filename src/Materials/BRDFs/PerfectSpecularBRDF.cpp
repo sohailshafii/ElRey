@@ -1,10 +1,12 @@
 #include "PerfectSpecularBRDF.h"
 
-PerfectSpecularBRDF::PerfectSpecularBRDF() : sampler(nullptr), ks(0), cs(Color3(0.0f, 0.0f, 0.0f)), csScaled(cs*ks), exponent(0.0f) {
+PerfectSpecularBRDF::PerfectSpecularBRDF() : sampler(nullptr), ks(0), cs(nullptr), exponent(0.0f) {
 }
 	
-PerfectSpecularBRDF::PerfectSpecularBRDF(GenericSampler *sampler, float ks, Color3 cs, float exponent) : sampler(sampler), ks(ks),
-	cs(cs), csScaled(cs*ks), exponent(exponent) {
+PerfectSpecularBRDF::PerfectSpecularBRDF(GenericSampler *sampler, float ks,
+										 std::shared_ptr<AbstractTexture> const & color,
+										 float exponent) : sampler(sampler), ks(ks),
+	cs(cs), exponent(exponent) {
 	sampler->MapSamplesToHemisphere(exponent);
 }
 
@@ -39,7 +41,7 @@ Color3 PerfectSpecularBRDF::SampleF(ShadingInfo const & shadingInfo, float& pdf,
 	newWi = reflectedVec;
 	// strongest where we reflect perfectly
 	pdf = fabs(normal*reflectedVec);
-	return csScaled;
+	return cs->GetColor(shadingInfo);
 }
 
 Color3 PerfectSpecularBRDF::GetRho(const ShadingInfo& shadingInfo) const {

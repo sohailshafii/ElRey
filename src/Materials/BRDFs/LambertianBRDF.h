@@ -3,11 +3,14 @@
 #include "Materials/BRDFs/BRDF.h"
 #include "Math/CommonMath.h"
 #include "Sampling/GenericSampler.h"
+#include "Materials/Texturing/AbstractTexture.h"
+#include <memory>
 
 class LambertianBRDF : public BRDF {
 public:
 	LambertianBRDF();
-	LambertianBRDF(GenericSampler *sampler, float samplerExp, float kd, const Color3& cd);
+	LambertianBRDF(GenericSampler *sampler, float samplerExp, float kd,
+				   std::shared_ptr<AbstractTexture> const & cd);
 	
 	~LambertianBRDF();
 
@@ -17,14 +20,11 @@ public:
 
 	void setKd(float kd) {
 		this->kd = kd;
-		this->cdScaled = cd*kd;
-		this->uniformRadiance = this->cdScaled*INV_PI;
+		this->kdScaled = kd*INV_PI;
 	}
 
-	void setCd(const Color3& cd) {
+	void setCd(std::shared_ptr<AbstractTexture> const & cd) {
 		this->cd = cd;
-		this->cdScaled = cd*kd;
-		this->uniformRadiance = this->cdScaled*INV_PI;
 	}
 	
 	void setSampler(GenericSampler *sampler);
@@ -34,10 +34,8 @@ public:
 	}
 
 private:
-	float kd;
-	Color3 cd;
-	Color3 cdScaled;
-	Color3 uniformRadiance;
+	float kd, kdScaled;
+	std::shared_ptr<AbstractTexture> cd;
 	
 	GenericSampler *sampler;
 };

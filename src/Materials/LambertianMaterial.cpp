@@ -2,7 +2,8 @@
 #include "Sampling/GenericSampler.h"
 #include <vector>
 
-LambertianMaterial::LambertianMaterial(float ka, float kd, const Color3& color) {
+LambertianMaterial::LambertianMaterial(float ka, float kd,
+									   std::shared_ptr<AbstractTexture> const & color) {
 	ambientBRDF.setKd(ka);
 	ambientBRDF.setCd(color);
 	diffuseBRDF.setKd(kd);

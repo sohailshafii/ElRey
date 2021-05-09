@@ -3,15 +3,14 @@
 #include "Math/CommonMath.h"
 
 LambertianBRDF::LambertianBRDF() : sampler(nullptr),
-	kd(0), cd(Color3(0.0f, 0.0f, 0.0f)),
-	cdScaled(cd*kd), uniformRadiance(cd*kd*INV_PI) {
+	kd(0), kdScaled(0), cd(nullptr) {
 }
 	
 LambertianBRDF::LambertianBRDF(GenericSampler *sampler,
 							   float samplerExp, float kd,
-							   const Color3& cd)
-	: sampler(sampler), kd(kd), cd(cd), cdScaled(cd*kd),
-		uniformRadiance(cd*kd*INV_PI) {
+							   std::shared_ptr<AbstractTexture> const & cd)
+	: sampler(sampler), kd(kd), kdScaled(kd*INV_PI),
+		cd(cd) {
 	sampler->MapSamplesToHemisphere(samplerExp);
 }
 
@@ -30,7 +29,7 @@ void LambertianBRDF::setSampler(GenericSampler *sampler) {
 }
 
 Color3 LambertianBRDF::F(ShadingInfo const & shadingInfo) const {
-	return this->uniformRadiance;
+	return cd->GetColor(shadingInfo)*kdScaled;
 }
 
 Color3 LambertianBRDF::SampleF(ShadingInfo const & shadingInfo, float& pdf, Vector3 &newWi) const {
@@ -47,9 +46,9 @@ Color3 LambertianBRDF::SampleF(ShadingInfo const & shadingInfo, float& pdf, Vect
 	
 	pdf = shadingInfo.normalVector * newWi * (float)INV_PI;
 	
-	return uniformRadiance;
+	return cd->GetColor(shadingInfo)*kdScaled;
 }
 
 Color3 LambertianBRDF::GetRho(const ShadingInfo& shadingInfo) const {
-	return this->cdScaled;
+	return cd->GetColor(shadingInfo)*kd;
 }

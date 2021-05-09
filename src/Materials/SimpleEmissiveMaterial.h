@@ -3,9 +3,11 @@
 #include "Material.h"
 #include "Color3.h"
 
+class AbstractTexture;
+
 class SimpleEmissiveMaterial : public Material {
 public:
-	SimpleEmissiveMaterial(float ka, float kd, const Color3& color);
+	SimpleEmissiveMaterial(float ka, float kd, std::shared_ptr<AbstractTexture> const & color);
 
 	virtual Color3 GetAmbientColor(const ShadingInfo &shadingInfo) const override;
 	virtual Color3 GetDirectColor(ShadingInfo const &shadingInfo) const override;
@@ -14,8 +16,8 @@ public:
 	virtual void SetSampler(class GenericSampler *sampler) override;
 	
 private:
-	Color3 ambientColor;
-	Color3 directColor;
+	float ka, kd;
+	std::shared_ptr<AbstractTexture> color;
 
 	Color3 deadColor;
 };

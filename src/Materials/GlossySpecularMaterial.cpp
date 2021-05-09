@@ -5,8 +5,10 @@
 #include <vector>
 
 GlossySpecularMaterial::GlossySpecularMaterial(float ka, float kd, float ks,
-											   float exponent, const Color3& color,
-											   const Color3& ksColor, float cr, float kr)
+											   float exponent,
+											   std::shared_ptr<AbstractTexture> const & color,
+											   std::shared_ptr<AbstractTexture> const & ksColor,
+											   float cr, float kr)
 	: PhongMaterial(ka, kd, ks, exponent, color, ksColor) {
 	this->reflectivity = cr*kr;
 }

@@ -3,7 +3,8 @@
 #include <vector>
 
 DielectricMaterial::DielectricMaterial(float ka, float kd, float ks, float exponent,
-									   const Color3& color, const Color3& ksColor,
+									   std::shared_ptr<AbstractTexture> const & color,
+									   std::shared_ptr<AbstractTexture> const & ksColor,
 									   float etaIn, float etaOut,
 									   Color3 const & cfIn, Color3 const & cfOut) :
 		PhongMaterial(ka, kd, ks, exponent, color, ksColor) {

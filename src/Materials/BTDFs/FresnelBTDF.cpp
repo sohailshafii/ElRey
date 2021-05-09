@@ -1,11 +1,14 @@
 #include "FresnelBTDF.h"
 #include "Sampling/GenericSampler.h"
 #include "Math/CommonMath.h"
+#include "Materials/Texturing/SingleColorTex.h"
 
-FresnelBTDF::FresnelBTDF() : eta(0.0f), normalColor(Color3::White()), sampler(nullptr) {
+FresnelBTDF::FresnelBTDF() : eta(0.0f),
+	normalColor(std::make_shared<SingleColorTex>(SingleColorTex::SolidWhite())),
+	sampler(nullptr) {
 }
 
-FresnelBTDF::FresnelBTDF(Color3 const & color, float eta) {
+FresnelBTDF::FresnelBTDF(std::shared_ptr<AbstractTexture> const & color, float eta) {
 	this->normalColor = color;
 	this->eta = eta;
 	this->sampler = nullptr;
@@ -39,7 +42,7 @@ Color3 FresnelBTDF::SampleF(ShadingInfo const & shadingInfo, float& pdf, Vector3
 	transmittedVec = -incomingVec*invRelEta - normal*(cosThetaT - cosThetaI*invRelEta);
 	transmission = kt;
 	
-	return normalColor*invRelEta*invRelEta;
+	return normalColor->GetColor(shadingInfo)*invRelEta*invRelEta;
 }
 
 bool FresnelBTDF::AllowsTransmission(ShadingInfo const & shadingInfo,

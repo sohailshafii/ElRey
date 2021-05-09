@@ -2,11 +2,13 @@
 #include "Sampling/GenericSampler.h"
 #include "Math/CommonMath.h"
 
-GlossySpecularBRDF::GlossySpecularBRDF() : sampler(nullptr), ks(0), cs(Color3(0.0f, 0.0f, 0.0f)), csScaled(cs*ks), exponent(0.0f) {
+GlossySpecularBRDF::GlossySpecularBRDF() : sampler(nullptr), ks(0), cs(nullptr), exponent(0.0f) {
 }
 	
-GlossySpecularBRDF::GlossySpecularBRDF(GenericSampler *sampler, float ks, Color3 cs, float exponent) : sampler(sampler), ks(ks),
-	cs(cs), csScaled(cs*ks), exponent(exponent) {
+GlossySpecularBRDF::GlossySpecularBRDF(GenericSampler *sampler, float ks,
+									   std::shared_ptr<AbstractTexture> const &cs,
+									   float exponent) : sampler(sampler), ks(ks),
+	cs(cs), exponent(exponent) {
 	sampler->MapSamplesToHemisphere(exponent);
 }
 
@@ -39,7 +41,7 @@ Color3 GlossySpecularBRDF::F(ShadingInfo const & shadingInfo) const {
 		
 	// highlight is strongest when outgoing aligns with reflection
 	if (rDotOutgoing > 0.0) {
-		finalColor = csScaled * pow(rDotOutgoing, exponent);
+		finalColor = cs->GetColor(shadingInfo) * ks * pow(rDotOutgoing, exponent);
 	}
 			
 	return finalColor;
@@ -82,7 +84,7 @@ Color3 GlossySpecularBRDF::SampleF(ShadingInfo const & shadingInfo, float& pdf, 
 						  exponent);
 	pdf = rIncomingDotNormal * phongLobe;
 			
-	return csScaled * phongLobe;
+	return cs->GetColor(shadingInfo) * ks * phongLobe;
 }
 
 Color3 GlossySpecularBRDF::GetRho(const ShadingInfo& shadingInfo) const {

@@ -4,10 +4,12 @@
 #include "Sampling/GenericSampler.h"
 #include "Materials/Color3.h"
 
+class AbstractTexture;
+
 class FresnelBTDF : public BTDF {
 public:
 	FresnelBTDF();
-	FresnelBTDF(Color3 const & color, float eta);
+	FresnelBTDF(std::shared_ptr<AbstractTexture> const & color, float eta);
 	~FresnelBTDF();
 	
 	Color3 SampleF(ShadingInfo const & shadingInfo, float& pdf, Vector3 &transmittedVec,
@@ -16,7 +18,7 @@ public:
 	bool AllowsTransmission(ShadingInfo const & shadingInfo,
 							float etaOut = 1.0f) const override;
 	
-	void SetColor(Color3 const & color) {
+	void SetColor(std::shared_ptr<AbstractTexture> const & color) {
 		this->normalColor = color;
 	}
 	
@@ -35,7 +37,7 @@ public:
 	}
 
 private:
-	Color3 normalColor;
+	std::shared_ptr<AbstractTexture> normalColor;
 	float eta;
 	float exponent;
 	

@@ -4,11 +4,14 @@
 #include "Math/CommonMath.h"
 #include "Sampling/GenericSampler.h"
 
+class AbstractTexture;
+
 class FresnelBRDF : public BRDF {
 public:
 	FresnelBRDF();
-	FresnelBRDF(GenericSampler *sampler, Color3 cs, float exponent,
-				float eta, float etaOut);
+	FresnelBRDF(GenericSampler *sampler,
+				std::shared_ptr<AbstractTexture> const & cs,
+				float exponent, float eta, float etaOut);
 	
 	~FresnelBRDF();
 
@@ -19,7 +22,7 @@ public:
 	Color3 SampleF(ShadingInfo const & shadingInfo, float& pdf, Vector3 &newWi) const override;
 	Color3 GetRho(const ShadingInfo& shadingInfo) const override;
 
-	void SetCs(const Color3& cs) {
+	void SetCs(std::shared_ptr<AbstractTexture> const & cs) {
 		this->cs = cs;
 	}
 	
@@ -42,7 +45,7 @@ public:
 	}
 
 private:
-	Color3 cs;
+	std::shared_ptr<AbstractTexture> cs;
 	float exponent;
 	float eta, etaOut;
 	

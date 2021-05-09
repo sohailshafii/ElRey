@@ -14,6 +14,7 @@
 #include "Primitives/TriangleMesh.h"
 #include "Primitives/GridPrimitive.h"
 #include "Materials/LambertianMaterial.h"
+#include "Materials/Texturing/SingleColorTex.h"
 #include "SceneData/Scene.h"
 #include "SceneData/CommonLoaderFunctions.h"
 #include "Math/CommonMath.h"
@@ -39,8 +40,9 @@ void PrimitiveLoader::CreateGridOfGrids(Scene* scene,
 										float gapPercentage,
 										float bunnySize,
 										Vector3 const & origin) {
+	auto solidColorTex = std::make_shared<SingleColorTex>(SingleColorTex(Color3(0.68f, 0.85f, 0.91f)));
 	auto newMaterial = std::make_shared<LambertianMaterial>(0.1f, 0.7f,
-		Color3(0.68f, 0.85f, 0.91f));
+															solidColorTex);
 	Matrix4x4 localToWorldScale = Matrix4x4::ScaleMatrix(Vector3(bunnySize, bunnySize, bunnySize));
 	Matrix4x4 worldToLocalScale = Matrix4x4::InvScaleMatrix(Vector3(bunnySize, bunnySize, bunnySize));
 	

@@ -2,8 +2,10 @@
 #include "Sampling/GenericSampler.h"
 #include <vector>
 
-ReflectiveMaterial::ReflectiveMaterial(float ka, float kd, float ks, float exponent,
-									   const Color3& color, const Color3& ksColor,
+ReflectiveMaterial::ReflectiveMaterial(float ka, float kd, float ks,
+									   float exponent,
+									   std::shared_ptr<AbstractTexture> const & color,
+									   std::shared_ptr<AbstractTexture> const & ksColor,
 									   float cr, float kr) : PhongMaterial(ka, kd, ks, exponent, color, ksColor) {
 	perfectSpecularBRDF.setKs(ks);
 	perfectSpecularBRDF.setExponent(exponent);

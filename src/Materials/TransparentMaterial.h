@@ -10,8 +10,10 @@ class GenericSampler;
 
 class TransparentMaterial : public ReflectiveMaterial {
 public:
-	TransparentMaterial(float ka, float kd, float ks, float exponent, const Color3& color,
-					   const Color3& ksColor, float cr, float kr, float eta, float kt);
+	TransparentMaterial(float ka, float kd, float ks, float exponent,
+						std::shared_ptr<AbstractTexture> const & color,
+						std::shared_ptr<AbstractTexture> const & ksColor,
+						float cr, float kr, float eta, float kt);
 	
 	virtual void GetSecondaryVectors(ShadingInfo const & shadingInfo,
 									 std::vector<SecondaryVectorInfo> & secondaryVectors) const override;

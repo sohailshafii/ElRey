@@ -2,11 +2,13 @@
 
 #include "Materials/BRDFs/BRDF.h"
 #include "Sampling/GenericSampler.h"
+#include "Materials/Texturing/AbstractTexture.h"
 
 class GlossySpecularBRDF : public BRDF {
 public:
 	GlossySpecularBRDF();
-	GlossySpecularBRDF(GenericSampler *sampler, float ks, Color3 cs, float exponent);
+	GlossySpecularBRDF(GenericSampler *sampler, float ks,
+					   std::shared_ptr<AbstractTexture> const & color, float exponent);
 	
 	~GlossySpecularBRDF();
 	
@@ -24,12 +26,10 @@ public:
 
 	void setKs(float ks) {
 		this->ks = ks;
-		this->csScaled = cs*ks;
 	}
 
-	void setCs(const Color3& cs) {
+	void setCs(std::shared_ptr<AbstractTexture> const & cs) {
 		this->cs = cs;
-		this->csScaled = cs*ks;
 	}
 	
 	void setExponent(float exponent) {
@@ -44,8 +44,7 @@ public:
 
 private:
 	float ks;
-	Color3 cs;
-	Color3 csScaled;
+	std::shared_ptr<AbstractTexture> cs;
 	float exponent;
 	
 	GenericSampler *sampler;
