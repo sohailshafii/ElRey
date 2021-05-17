@@ -20,7 +20,8 @@ public:
 		compoundPrimitiveToIntersectedPrim(compoundPrimitiveToIntersectedPrim),
 		eyeDir(eyeDir),
 		wo(-eyeDir),
-		intersectionPosition(intersectionPosition) {
+		intersectionPosition(intersectionPosition),
+		intersectionPositionLocal(intersectionPosition) {
 	}
 	
 	// used to obtain intersection information from a primitive
@@ -33,6 +34,7 @@ public:
 	
 	Vector3 eyeDir;
 	Point3 intersectionPosition;
+	Point3 intersectionPositionLocal;
 	
 	// All items are in world space unless specified otherwise
 	// usually lighting deals with incoming ray facing away from surface

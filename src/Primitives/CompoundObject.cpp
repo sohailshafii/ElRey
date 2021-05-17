@@ -41,7 +41,7 @@ bool CompoundObject::IntersectShadow(const Ray &ray, float tMin,
 	return false;
 }
 
-Vector3 CompoundObject::GetNormal(const ShadingInfo& shadingInfo) const {
+Vector3 CompoundObject::GetNormal(ShadingInfo& shadingInfo) const {
 	Primitive* childPrim = (*shadingInfo.compoundPrimitiveToIntersectedPrim)[(Primitive*)this];
 	return childPrim != nullptr ?
 		childPrim->GetNormal(shadingInfo) : Vector3::Zero();

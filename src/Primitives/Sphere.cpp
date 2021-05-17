@@ -74,7 +74,7 @@ bool Sphere::IntersectShadow(const Ray &ray, float tMin, float tMax) {
 	return false;
 }
 
-Vector3 Sphere::GetNormal(const ShadingInfo &shadingInfo) const {
+Vector3 Sphere::GetNormal(ShadingInfo &shadingInfo) const {
 	return ComputeHardNormal(shadingInfo.intersectionPosition);
 }
 

@@ -40,7 +40,9 @@ void PrimitiveLoader::CreateGridOfGrids(Scene* scene,
 										float gapPercentage,
 										float bunnySize,
 										Vector3 const & origin) {
-	auto solidColorTex = std::make_shared<SingleColorTex>(SingleColorTex(Color3(0.68f, 0.85f, 0.91f)));
+	auto solidColorTex = std::make_shared<SingleColorTex>(
+														  SingleColorTex(std::make_shared<NullMapping>(),
+														Color3(0.68f, 0.85f, 0.91f)));
 	auto newMaterial = std::make_shared<LambertianMaterial>(0.1f, 0.7f,
 															solidColorTex);
 	Matrix4x4 localToWorldScale = Matrix4x4::ScaleMatrix(Vector3(bunnySize, bunnySize, bunnySize));
@@ -510,6 +512,9 @@ void PrimitiveLoader::LoadModel(ModelPrimitiveInfo* primInfo,
 				uniqueVertices[vertex] = static_cast<uint32_t>(triangleMesh->vertices.size());
 				Point3 newPoint(vertex.pos[0], vertex.pos[1], vertex.pos[2]);
 				triangleMesh->vertices.push_back(localToWorld * newPoint);
+				// TODO: figure out transformation of texture coords
+				triangleMesh->textureCoords.push_back(Point2(vertex.texCoord[0],
+															 vertex.texCoord[1]));
 			}
 			triangleIndices[triIndex++] = uniqueVertices[vertex];
 			

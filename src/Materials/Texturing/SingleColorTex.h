@@ -1,10 +1,13 @@
 #pragma once
 
 #include "Materials/Texturing/AbstractTexture.h"
+#include "Materials/Texturing/NullMapping.h"
 
 class SingleColorTex : public AbstractTexture {
 public:
-	SingleColorTex(Color3 color) : constantColor(color) {
+	SingleColorTex(std::shared_ptr<MappingLayer> const & mappingLayer,
+				   Color3 const & color) : AbstractTexture(mappingLayer),
+		constantColor(color) {
 	}
 	
 	virtual Color3 GetColor(const ShadingInfo& shadingInfo) const override {
@@ -12,7 +15,7 @@ public:
 	}
 	
 	static SingleColorTex SolidWhite() {
-		return SingleColorTex(Color3::White());
+		return SingleColorTex(std::make_shared<NullMapping>(), Color3::White());
 	}
 
 private:

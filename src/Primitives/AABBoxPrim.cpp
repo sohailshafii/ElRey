@@ -271,7 +271,7 @@ bool AABBoxPrim::IntersectShadow(const Ray &ray, float tMin, float tMax) {
 	return false;
 }
 
-Vector3 AABBoxPrim::GetNormal(const ShadingInfo &shadingInfo) const {
+Vector3 AABBoxPrim::GetNormal(ShadingInfo &shadingInfo) const {
 	return Vector3(shadingInfo.intGenericMetadata1,
 				   shadingInfo.intGenericMetadata2,
 				   shadingInfo.intGenericMetadata3);

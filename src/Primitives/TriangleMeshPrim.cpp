@@ -116,7 +116,7 @@ Vector3 TriangleMeshPrimitive::ComputeHardNormal(Point3 const &position) const {
 	return normal;
 }
 
-Vector3 TriangleMeshPrimitive::GetNormal(const ShadingInfo &shadingInfo) const {
+Vector3 TriangleMeshPrimitive::GetNormal(ShadingInfo &shadingInfo) const {
 	if (!isSmooth) {
 		return normal;
 	}

@@ -128,7 +128,7 @@ bool Torus::IntersectShadow(const Ray &ray, float tMin, float tMax) {
 	return false;
 }
 
-Vector3 Torus::GetNormal(const ShadingInfo &shadingInfo) const {
+Vector3 Torus::GetNormal(ShadingInfo &shadingInfo) const {
 	return ComputeHardNormal(shadingInfo.intersectionPosition);
 }
 

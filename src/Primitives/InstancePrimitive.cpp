@@ -119,10 +119,12 @@ bool InstancePrimitive::IntersectShadow(const Ray &rayWorld,
 		true : false;
 }
 
-Vector3 InstancePrimitive::GetNormal(const ShadingInfo& shadingInfo) const {
+Vector3 InstancePrimitive::GetNormal(ShadingInfo& shadingInfo) const {
 	// hack; modify intersection position so that primitive thinks it's in local space
 	ShadingInfo resModified = shadingInfo;
-	resModified.intersectionPosition = GetWorldToLocalPos(resModified.intersectionPosition);
+	auto intersectionPosLocal = GetWorldToLocalPos(resModified.intersectionPosition);
+	resModified.intersectionPosition = intersectionPosLocal;
+	shadingInfo.intersectionPositionLocal = intersectionPosLocal;
 	resModified.eyeDir = GetWorldToLocalDir(resModified.eyeDir);
 	// if our child is an instance primitive, then that one will apply its
 	// own transform too

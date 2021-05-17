@@ -88,7 +88,7 @@ bool Disk::IntersectShadow(const Ray &ray, float tMin, float tMax) {
 	return false;
 }
 
-Vector3 Disk::GetNormal(const ShadingInfo& shadingInfo) const {
+Vector3 Disk::GetNormal(ShadingInfo& shadingInfo) const {
 	return normalVec;
 }
 
