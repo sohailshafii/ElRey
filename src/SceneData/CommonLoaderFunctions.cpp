@@ -7,6 +7,7 @@
 #include "Materials/TransparentMaterial.h"
 #include "Materials/DielectricMaterial.h"
 #include "Materials/Texturing/SingleColorTex.h"
+#include "Materials/Texturing/ImageTexture.h"
 #include "Materials/Texturing/NullMapping.h"
 #include <sstream>
 #include <vector>
@@ -37,24 +38,22 @@ std::shared_ptr<Material> CommonLoaderFunctions::CreateMaterial(
 	if (primitiveType == "lambertian") {
 		float kA = SafeGetToken(jsonObj, "ka");
 		float kD = SafeGetToken(jsonObj, "kd");
-		auto colorObj = SafeGetToken(jsonObj, "color");
 		
 		newMaterial = std::make_shared<LambertianMaterial>(kA, kD,
-			std::make_shared<SingleColorTex>(std::make_shared<NullMapping>(),
-											 Color3(colorObj[0], colorObj[1], colorObj[2])));
+														   CreateTexture(jsonObj,
+																		 "color"));
 	}
 	else if (primitiveType == "phong") {
 		float kA = SafeGetToken(jsonObj, "ka");
 		float kD = SafeGetToken(jsonObj, "kd");
 		float kS = SafeGetToken(jsonObj, "ks");
 		float exponent = SafeGetToken(jsonObj, "exponent");
-		auto colorObj = SafeGetToken(jsonObj, "color");
-		auto ksColor = SafeGetToken(jsonObj, "ks_color");
+		
 		newMaterial = std::make_shared<PhongMaterial>(kA, kD, kS, exponent,
-			std::make_shared<SingleColorTex>(std::make_shared<NullMapping>(),
-											 Color3(colorObj[0], colorObj[1], colorObj[2])),
-			std::make_shared<SingleColorTex>(std::make_shared<NullMapping>(),
-											 Color3(ksColor[0], ksColor[1], ksColor[2])));
+													  CreateTexture(jsonObj,
+																	"color"),
+													  CreateTexture(jsonObj,
+																	"ks_color"));
 	}
 	else if (primitiveType == "reflective") {
 		float kA = SafeGetToken(jsonObj, "ka");
@@ -63,13 +62,13 @@ std::shared_ptr<Material> CommonLoaderFunctions::CreateMaterial(
 		float cR = SafeGetToken(jsonObj, "cr");
 		float kR = SafeGetToken(jsonObj, "kr");
 		float exponent = SafeGetToken(jsonObj, "exponent");
-		auto colorObj = SafeGetToken(jsonObj, "color");
-		auto ksColor = SafeGetToken(jsonObj, "ks_color");
+		
 		newMaterial = std::make_shared<ReflectiveMaterial>(kA, kD, kS, exponent,
-			std::make_shared<SingleColorTex>(std::make_shared<NullMapping>(),
-											 Color3(colorObj[0], colorObj[1], colorObj[2])),
-			std::make_shared<SingleColorTex>(std::make_shared<NullMapping>(),
-											 Color3(ksColor[0], ksColor[1], ksColor[2])), cR, kR);
+														   CreateTexture(jsonObj,
+																	  "color"),
+														   CreateTexture(jsonObj,
+																	  "ks_color"),
+														   cR, kR);
 	}
 	else if (primitiveType == "transparent") {
 		float kA = SafeGetToken(jsonObj, "ka");
@@ -80,14 +79,13 @@ std::shared_ptr<Material> CommonLoaderFunctions::CreateMaterial(
 		float kt = SafeGetToken(jsonObj, "kt");
 		float eta = SafeGetToken(jsonObj, "eta");
 		float exponent = SafeGetToken(jsonObj, "exponent");
-		auto colorObj = SafeGetToken(jsonObj, "color");
-		auto ksColor = SafeGetToken(jsonObj, "ks_color");
+		
 		newMaterial = std::make_shared<TransparentMaterial>(kA, kD, kS, exponent,
-			std::make_shared<SingleColorTex>(std::make_shared<NullMapping>(),
-											 Color3(colorObj[0], colorObj[1], colorObj[2])),
-			std::make_shared<SingleColorTex>(std::make_shared<NullMapping>(),
-											 Color3(ksColor[0], ksColor[1], ksColor[2])), cR, kR,
-			eta, kt);
+															CreateTexture(jsonObj,
+																	"color"),
+															CreateTexture(jsonObj,
+																	"ks_color"),
+															cR, kR, eta, kt);
 	}
 	else if (primitiveType == "dielectric") {
 		float kA = SafeGetToken(jsonObj, "ka");
@@ -96,26 +94,25 @@ std::shared_ptr<Material> CommonLoaderFunctions::CreateMaterial(
 		float etaIn = SafeGetToken(jsonObj, "eta_in");
 		float etaOut = SafeGetToken(jsonObj, "eta_out");
 		float exponent = SafeGetToken(jsonObj, "exponent");
-		auto colorObj = SafeGetToken(jsonObj, "color");
-		auto ksColor = SafeGetToken(jsonObj, "ks_color");
 		
 		auto cfIn = SafeGetToken(jsonObj, "cf_in");
 		auto cfOut = SafeGetToken(jsonObj, "cf_out");
+		
 		newMaterial = std::make_shared<DielectricMaterial>(kA, kD, kS, exponent,
-			std::make_shared<SingleColorTex>(std::make_shared<NullMapping>(),
-											 Color3(colorObj[0], colorObj[1], colorObj[2])),
-			std::make_shared<SingleColorTex>(std::make_shared<NullMapping>(),
-											 Color3(ksColor[0], ksColor[1], ksColor[2])),
-			etaIn, etaOut, Color3(cfIn[0], cfIn[1], cfIn[2]),
-			Color3(cfOut[0], cfOut[1], cfOut[2]));
+														   CreateTexture(jsonObj,
+																		 "color"),
+														   CreateTexture(jsonObj,
+																		 "ks_color"),
+														   etaIn, etaOut,
+														   Color3(cfIn[0], cfIn[1], cfIn[2]),
+														   Color3(cfOut[0], cfOut[1], cfOut[2]));
 	}
 	else if (primitiveType == "simple_emissive") {
 		float kA = SafeGetToken(jsonObj, "ka");
 		float kD = SafeGetToken(jsonObj, "kd");
-		auto colorObj = SafeGetToken(jsonObj, "color");
+		
 		newMaterial = std::make_shared<SimpleEmissiveMaterial>
-			(kA, kD, std::make_shared<SingleColorTex>(std::make_shared<NullMapping>(),
-													  Color3(colorObj[0], colorObj[1], colorObj[2])));
+			(kA, kD, CreateTexture(jsonObj, "color"));
 	}
 	else if (primitiveType == "glossy_specular") {
 		float kA = SafeGetToken(jsonObj, "ka");
@@ -124,13 +121,14 @@ std::shared_ptr<Material> CommonLoaderFunctions::CreateMaterial(
 		float cR = SafeGetToken(jsonObj, "cr");
 		float kR = SafeGetToken(jsonObj, "kr");
 		float exponent = SafeGetToken(jsonObj, "exponent");
-		auto colorObj = SafeGetToken(jsonObj, "color");
-		auto ksColor = SafeGetToken(jsonObj, "ks_color");
+		
 		newMaterial = std::make_shared<GlossySpecularMaterial>(kA, kD, kS,
-			exponent, std::make_shared<SingleColorTex>(std::make_shared<NullMapping>(),
-													   Color3(colorObj[0], colorObj[1], colorObj[2])),
-			std::make_shared<SingleColorTex>(std::make_shared<NullMapping>(),
-											 Color3(ksColor[0], ksColor[1], ksColor[2])), cR, kR);
+															   exponent,
+															   CreateTexture(jsonObj,
+																			 "color"),
+															   CreateTexture(jsonObj,
+																			 "ks_color"),
+															   cR, kR);
 	}
 	
 	if (HasKey(jsonObj, "sampler")) {
@@ -147,6 +145,26 @@ std::shared_ptr<Material> CommonLoaderFunctions::CreateMaterial(
 	}
 	
 	return newMaterial;
+}
+
+std::shared_ptr<AbstractTexture> CommonLoaderFunctions::CreateTexture(nlohmann::json const &
+																	  jsonObject,
+																	  std::string const & colorKey) {
+	auto colorObj = SafeGetToken(jsonObject, colorKey);
+	bool hasImageTextureNode = HasKey(colorObj, "image_texture");
+	
+	if (!hasImageTextureNode) {
+		return std::make_shared<SingleColorTex>(std::make_shared<NullMapping>(),
+												Color3(colorObj[0], colorObj[1],
+													   colorObj[2]));
+	}
+	
+	auto imageTextureObj = SafeGetToken(colorObj, "image_texture");
+	std::string filePath = SafeGetToken(imageTextureObj, "file_path");
+	// TODO: mapping layer
+	nlohmann::json mappingLayerJson = SafeGetToken(imageTextureObj, "mapping_layer");
+	std::shared_ptr<MappingLayer> mappingLayer = std::make_shared<NullMapping>();
+	return std::make_shared<ImageTexture>(mappingLayer, filePath);
 }
 
 void CommonLoaderFunctions::SetUpRandomSampler(nlohmann::json const & jsonObj,

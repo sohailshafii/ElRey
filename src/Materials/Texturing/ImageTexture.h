@@ -9,8 +9,13 @@ public:
 	ImageTexture(std::shared_ptr<MappingLayer> const & mappingLayer,
 				 std::string const & filePath);
 	
+	~ImageTexture();
+	
 	virtual Color3 GetColor(const ShadingInfo& shadingInfo) const override;
 
 private:
+	float *pixels;
+	int texWidth, texHeight, texChannels;
+	int stride;
 };
 

@@ -56,7 +56,14 @@
 				"kr":0.6,
 				"exponent":10,
 				"ks_color":[1.0, 1.0, 1.0],
-				"color":[0.0, 1.0, 1.0, 1.0]
+				"color":
+				{
+					"image_texture":
+					{
+						"file_path": "textures/marble07 diffuse 1k.jpg",
+						"mapping_layer": "none"
+					}
+				}
 			}
 		},
 		{

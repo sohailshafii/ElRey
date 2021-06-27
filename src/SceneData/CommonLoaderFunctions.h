@@ -6,6 +6,7 @@
 #include <string>
 
 class Material;
+class AbstractTexture;
 
 class CommonLoaderFunctions {
 public:
@@ -15,6 +16,10 @@ public:
 					   std::string const & key);
 	
 	static std::shared_ptr<Material> CreateMaterial(nlohmann::json const & jsonObj);
+	
+	static std::shared_ptr<AbstractTexture> CreateTexture(nlohmann::json const &
+														  jsonObject,
+														  std::string const & colorKey);
 	
 	static void SetUpRandomSampler(nlohmann::json const & jsonObj,
 								   RandomSamplerType & randomSamplerType,

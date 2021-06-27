@@ -8,7 +8,6 @@
 
 class PhongMaterial : public Material {
 public:
-	// TODO: mismatch between Color4 and Color3 -- should we deal with transparency in BRDFs?
 	PhongMaterial(float ka, float kd, float ks, float exponent,
 				  std::shared_ptr<AbstractTexture> const & color,
 				  std::shared_ptr<AbstractTexture> const & ksColor);

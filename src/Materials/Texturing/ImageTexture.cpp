@@ -1,15 +1,54 @@
 #include "Materials/Texturing/ImageTexture.h"
 #define STB_IMAGE_IMPLEMENTATION
 #include "ThirdParty/stb/stb_image.h"
+#include <sstream>
+#include <iostream>
 
 ImageTexture::ImageTexture(std::shared_ptr<MappingLayer> const & mappingLayer,
 						   std::string const & filePath)
 	: AbstractTexture(mappingLayer) {
-	int texWidth, texHeight, texChannels;
-	unsigned char* pixels = stbi_load(filePath.c_str(),
+#if __APPLE__
+	std::string scenePath = "../../" + filePath;
+#else
+	std::string scenePath = "../" + filePath;
+#endif
+	unsigned char *charPixels = stbi_load(scenePath.c_str(),
 		&texWidth, &texHeight, &texChannels, STBI_rgb_alpha);
+	if (charPixels == nullptr) {
+		std::stringstream exceptionMsg;
+		exceptionMsg << "Cannot open texture for reading: " <<
+			scenePath.c_str() << ".\n";
+		throw exceptionMsg;
+	}
+	else {
+		std::cout << "Read texture " << scenePath << ", dim: ("
+			<< texWidth << " x " << texHeight << "), channels: "
+			<< texChannels << ".\n";
+	}
+		
+	pixels = new float[texWidth*texHeight*texChannels];
+	int numPixels = texWidth*texHeight*texChannels;
+	float normFactor = 1.0f/255.0f;
+	for (int pixel = 0; pixel < numPixels; pixel++) {
+		pixels[pixel] = (float)charPixels[pixel]*normFactor;
+	}
+	delete [] charPixels;
+}
+
+ImageTexture::~ImageTexture() {
+	if (pixels != nullptr) {
+		delete [] pixels;
+	}
 }
 
 Color3 ImageTexture::GetColor(const ShadingInfo& shadingInfo) const {
-	return Color3::White();
+	int row, column;
+	mappingLayer->ComputeTextureCoordinates(shadingInfo, texWidth, texHeight,
+											row, column);
+	// TODO: transformations?
+	int pixelOffset = row*texChannels + column;
+	auto color = Color3(pixels[pixelOffset], pixels[pixelOffset + 1],
+						pixels[pixelOffset + 2]);
+	return Color3(pixels[pixelOffset], pixels[pixelOffset + 1],
+				  pixels[pixelOffset + 2]);
 }
