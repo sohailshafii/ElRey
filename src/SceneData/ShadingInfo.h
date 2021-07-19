@@ -21,7 +21,8 @@ public:
 		eyeDir(eyeDir),
 		wo(-eyeDir),
 		intersectionPosition(intersectionPosition),
-		intersectionPositionLocal(intersectionPosition) {
+		intersectionPositionLocal(intersectionPosition),
+		hasTransformation(false) {
 	}
 	
 	// used to obtain intersection information from a primitive
@@ -35,6 +36,7 @@ public:
 	Vector3 eyeDir;
 	Point3 intersectionPosition;
 	Point3 intersectionPositionLocal;
+	bool hasTransformation;
 	
 	// All items are in world space unless specified otherwise
 	// usually lighting deals with incoming ray facing away from surface

@@ -90,8 +90,7 @@ Primitive* InstancePrimitive::Intersect(const Ray &rayWorld, float tMin,
 	Point3 originalOrigin = rayWorld.GetOrigin();
 	// NOTE: do not normalize ray direction after transformation!
 	// the local-to-world's t value equals the world-to-local's t
-	// and that relationship is ruined if the vector is normalized
-	// see https://cs.brown.edu/courses/cs123/lectures/CS123_18_Raytracing_10.24.19.pdf
+	// and that relationship is ruined if the vector is normalized dsafures/CS123_18_Raytracing_10.24.19.pdf
 	// https://graphicscompendium.com/raytracing/12-transformations
 	// ray-object intersections don't assume normal vector anyway and should
 	// not
@@ -124,11 +123,14 @@ Vector3 InstancePrimitive::GetNormal(ShadingInfo& shadingInfo) const {
 	ShadingInfo resModified = shadingInfo;
 	auto intersectionPosLocal = GetWorldToLocalPos(resModified.intersectionPosition);
 	resModified.intersectionPosition = intersectionPosLocal;
-	shadingInfo.intersectionPositionLocal = intersectionPosLocal;
 	resModified.eyeDir = GetWorldToLocalDir(resModified.eyeDir);
 	// if our child is an instance primitive, then that one will apply its
 	// own transform too
 	Vector3 normalLocal = instancePrimitive->GetNormal(resModified);
+	// TODO: this is kind of stupid....why do this in GetNormal?
+	// FIX
+	// capture local intersection position after all children have modified it
+	shadingInfo.intersectionPositionLocal = resModified.intersectionPosition;
 	
 	return GetWorldToLocalTransposeDir(normalLocal).Normalized();
 }

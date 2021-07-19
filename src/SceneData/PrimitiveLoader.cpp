@@ -299,6 +299,11 @@ std::shared_ptr<InstancePrimitive> PrimitiveLoader::CreateInstancePrimitive(Scen
 		newPrimitive->SetTransformAndInverse(localToWorld, worldToLocal);
 	}
 	
+	std::cout << "World to local:\n";
+	newPrimitive->GetWorldToLocal().Print();
+	std::cout << "Local to world:\n";
+	newPrimitive->GetLocalToWorld().Print();
+	
 	return newPrimitive;
 }
 

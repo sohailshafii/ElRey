@@ -9,6 +9,8 @@
 #include "Materials/Texturing/SingleColorTex.h"
 #include "Materials/Texturing/ImageTexture.h"
 #include "Materials/Texturing/NullMapping.h"
+#include "Materials/Texturing/RectangularMapping.h"
+#include "Materials/Texturing/SphericalMapping.h"
 #include <sstream>
 #include <vector>
 #include <iostream>
@@ -161,9 +163,25 @@ std::shared_ptr<AbstractTexture> CommonLoaderFunctions::CreateTexture(nlohmann::
 	
 	auto imageTextureObj = SafeGetToken(colorObj, "image_texture");
 	std::string filePath = SafeGetToken(imageTextureObj, "file_path");
-	// TODO: mapping layer
-	nlohmann::json mappingLayerJson = SafeGetToken(imageTextureObj, "mapping_layer");
-	std::shared_ptr<MappingLayer> mappingLayer = std::make_shared<NullMapping>();
+	std::string mappingLayerName = SafeGetToken(imageTextureObj, "mapping_layer");
+	std::shared_ptr<MappingLayer> mappingLayer;
+	if (mappingLayerName == "rectangular") {
+		mappingLayer = std::make_shared<RectangularMapping>();
+	}
+	else if (mappingLayerName == "spherical") {
+		auto mappingData = SafeGetToken(imageTextureObj, "mapping_data");
+		float radius = SafeGetToken(mappingData, "radius");
+		mappingLayer = std::make_shared<SphericalMapping>(radius);
+	}
+	else if (mappingLayerName == "null") {
+		mappingLayer = std::make_shared<NullMapping>();
+	}
+	else {
+		std::stringstream exceptionMsg;
+		exceptionMsg << "Could not understand mapping layer: " << mappingLayerName
+			<< " in JSON object: " << imageTextureObj << ".\n";
+		throw exceptionMsg;
+	}
 	return std::make_shared<ImageTexture>(mappingLayer, filePath);
 }
 
