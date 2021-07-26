@@ -1,6 +1,7 @@
 #include "Materials/Texturing/ImageTexture.h"
 #define STB_IMAGE_IMPLEMENTATION
 #include "ThirdParty/stb/stb_image.h"
+#include "ThirdParty/stb/stb_image_write.h"
 #include <sstream>
 #include <iostream>
 
@@ -12,6 +13,7 @@ ImageTexture::ImageTexture(std::shared_ptr<MappingLayer> const & mappingLayer,
 #else
 	std::string scenePath = "../" + filePath;
 #endif
+		
 	unsigned char *charPixels = stbi_load(scenePath.c_str(),
 		&texWidth, &texHeight, &texChannels, STBI_rgb_alpha);
 	if (charPixels == nullptr) {
@@ -25,9 +27,12 @@ ImageTexture::ImageTexture(std::shared_ptr<MappingLayer> const & mappingLayer,
 			<< texWidth << " x " << texHeight << "), channels: "
 			<< texChannels << ".\n";
 	}
-		
+	
+	// we wanted alpha
+	texChannels = 4;
 	pixels = new float[texWidth*texHeight*texChannels];
 	int numPixels = texWidth*texHeight*texChannels;
+	rowStride = texWidth*texChannels;
 	float normFactor = 1.0f/255.0f;
 	for (int pixel = 0; pixel < numPixels; pixel++) {
 		pixels[pixel] = (float)charPixels[pixel]*normFactor;
@@ -47,9 +52,7 @@ Color3 ImageTexture::GetColor(const ShadingInfo& shadingInfo) const {
 											row, column);
 	// TODO: transformations?
 	// If it is nested, we need a way to represent the local intersection point
-	int pixelOffset = row*texChannels + column;
-	auto color = Color3(pixels[pixelOffset], pixels[pixelOffset + 1],
-						pixels[pixelOffset + 2]);
+	int pixelOffset = row*rowStride + column*texChannels;
 	return Color3(pixels[pixelOffset], pixels[pixelOffset + 1],
 				  pixels[pixelOffset + 2]);
 }

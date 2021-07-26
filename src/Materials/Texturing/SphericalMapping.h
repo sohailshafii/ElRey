@@ -14,6 +14,7 @@ public:
 		auto const & localHitPoint = shadingInfo.intersectionPositionLocal;
 		float theta = acos(localHitPoint[1]/radiusLocal);
 		float phi = atan2(localHitPoint[0]/radiusLocal, localHitPoint[2]/radiusLocal);
+		// atan2 returns [-pi, pi], so move to [0, 2*pi]
 		if (phi < 0.0f) {
 			phi += TWO_PI;
 		}
@@ -23,8 +24,8 @@ public:
 		float v = 1.0f - theta * INV_PI;
 		
 		// finally, map u and v to the texel coordinates
-		column = (int)(((float)width - 1.0f) * u);
-		row = (int)(((float)height - 1.0f) * v);
+		column = (int)((width - 1) * u);
+		row = (int)((height - 1) * v);
 	}
 	
 private:

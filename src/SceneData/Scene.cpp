@@ -231,8 +231,7 @@ Color3 Scene::AddContributionsFromLights(ShadingInfo const & shadingInfo,
 		else {
 			// infinite lights don't rely on normalization
 			auto lightDistanceInfinite = currentLight->IsLightDistanceInfinite();
-			vectorToLight = -currentLight->GetDirectionFromPositionScaled(
-																		  currShadingInfo);
+			vectorToLight = -currentLight->GetDirectionFromPositionScaled(currShadingInfo);
 			if (lightDistanceInfinite) {
 				vectorMagn = std::numeric_limits<float>::max();
 			}
@@ -282,10 +281,7 @@ Color3 Scene::AddContributionsFromLights(ShadingInfo const & shadingInfo,
 			}
 		}
 	}
-	if (newColor[0] > 0.0) {
-		int breakVar;
-		breakVar = 2;
-	}
+	
 	return newColor;
 }
 

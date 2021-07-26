@@ -87,6 +87,20 @@
 			"radiance":[0.4,0.4,0.4],
 			"radiance_scale":3.0,
 			"casts_shadows":true
+		},
+		{
+			"type":"environment",
+			"random_sampler_type":"multijittered",
+			"num_random_samples":4,
+			"num_random_sets":83,
+			"casts_shadows":true,
+			"material":
+			{
+				"type":"simple_emissive",
+				"ka":0.1,
+				"kd":0.2,
+				"color":[1.0, 1.0, 1.0, 1.0]
+			}
 		}
 	]
 }

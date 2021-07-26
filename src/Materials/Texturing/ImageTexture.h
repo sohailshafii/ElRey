@@ -15,7 +15,8 @@ public:
 
 private:
 	float *pixels;
-	int texWidth, texHeight, texChannels;
+	int texWidth, texHeight;
+	int texChannels, rowStride;
 	int stride;
 };
 
