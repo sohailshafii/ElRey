@@ -34,8 +34,13 @@ public:
 								 IntersectionResult &intersectionResult) = 0;
 	virtual bool IntersectShadow(const Ray &ray, float tMin, float tMax) = 0;
 	
+	virtual Point3 ComputeLocalIntersectionPoint(ShadingInfo const & shadingInfo,
+												 Point3 const & intersectionPoint) {
+		return intersectionPoint;
+	}
+	
 	virtual Vector3 ComputeHardNormal(Point3 const & position) const = 0;
-	virtual Vector3 GetNormal(ShadingInfo &shadingInfo) const = 0;
+	virtual Vector3 GetNormal(ShadingInfo const & shadingInfo) const = 0;
 	
 	// a compound object might have a different material per sub-object
 	// which is why intersection result is required

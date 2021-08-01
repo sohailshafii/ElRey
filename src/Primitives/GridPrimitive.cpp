@@ -638,7 +638,7 @@ bool GridPrimitive::BruteForceShadowFeelerIntersectsAnObject(const Ray& ray, flo
 	return false;
 }
 
-Vector3 GridPrimitive::GetNormal(ShadingInfo& shadingInfo) const {
+Vector3 GridPrimitive::GetNormal(ShadingInfo const & shadingInfo) const {
 	Primitive* childPrim = (*shadingInfo.compoundPrimitiveToIntersectedPrim)[(Primitive*)this];
 	return childPrim != nullptr ? childPrim->GetNormal(shadingInfo) : Vector3::Zero();
 }

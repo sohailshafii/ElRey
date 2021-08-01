@@ -32,7 +32,7 @@ bool OpenCylinder::IntersectShadow(const Ray &ray, float tMin, float tMax) {
 		true : false;
 }
 
-Vector3 OpenCylinder::GetNormal(ShadingInfo& shadingInfo) const {
+Vector3 OpenCylinder::GetNormal(ShadingInfo const & shadingInfo) const {
 	Vector3 rayDir = shadingInfo.eyeDir;
 	Vector3 normalVec = ComputeHardNormal(shadingInfo.intersectionPosition);
 	// inside surface?

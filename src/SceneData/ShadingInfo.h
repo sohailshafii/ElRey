@@ -21,7 +21,6 @@ public:
 		eyeDir(eyeDir),
 		wo(-eyeDir),
 		intersectionPosition(intersectionPosition),
-		intersectionPositionLocal(intersectionPosition),
 		hasTransformation(false) {
 	}
 	

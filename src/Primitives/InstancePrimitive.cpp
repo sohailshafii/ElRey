@@ -118,19 +118,23 @@ bool InstancePrimitive::IntersectShadow(const Ray &rayWorld,
 		true : false;
 }
 
-Vector3 InstancePrimitive::GetNormal(ShadingInfo& shadingInfo) const {
+Point3 InstancePrimitive::ComputeLocalIntersectionPoint(ShadingInfo const & shadingInfo,
+														Point3 const & intersectionPoint) {
+	auto localPointSoFar = GetWorldToLocalPos(intersectionPoint);
+	// instance might need to do local to world too, so pass
+	// local current local point to it and allow it to do its own
+	// transformations
+	return instancePrimitive->ComputeLocalIntersectionPoint(shadingInfo, localPointSoFar);
+}
+
+Vector3 InstancePrimitive::GetNormal(ShadingInfo const & shadingInfo) const {
 	// hack; modify intersection position so that primitive thinks it's in local space
 	ShadingInfo resModified = shadingInfo;
-	auto intersectionPosLocal = GetWorldToLocalPos(resModified.intersectionPosition);
-	resModified.intersectionPosition = intersectionPosLocal;
+	resModified.intersectionPosition = shadingInfo.intersectionPositionLocal;
 	resModified.eyeDir = GetWorldToLocalDir(resModified.eyeDir);
 	// if our child is an instance primitive, then that one will apply its
 	// own transform too
 	Vector3 normalLocal = instancePrimitive->GetNormal(resModified);
-	// TODO: this is kind of stupid....why do this in GetNormal?
-	// FIX
-	// capture local intersection position after all children have modified it
-	shadingInfo.intersectionPositionLocal = resModified.intersectionPosition;
 	
 	return GetWorldToLocalTransposeDir(normalLocal).Normalized();
 }

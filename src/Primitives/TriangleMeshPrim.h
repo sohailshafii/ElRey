@@ -27,7 +27,7 @@ public:
 	
 	virtual Vector3 ComputeHardNormal(Point3 const &position) const override;
 	
-	virtual Vector3 GetNormal(ShadingInfo &shadingInfo) const override;
+	virtual Vector3 GetNormal(ShadingInfo const & shadingInfo) const override;
 	
 	virtual void SamplePrimitive(Point3& resultingSample,
 								 const ShadingInfo &shadingInfo) override;

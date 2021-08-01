@@ -19,7 +19,10 @@ public:
 								 IntersectionResult &intersectionResult) override;
 	virtual bool IntersectShadow(const Ray &ray, float tMin, float tMax) override;
 	
-	virtual Vector3 GetNormal(ShadingInfo& shadingInfo) const override;
+	virtual Point3 ComputeLocalIntersectionPoint(ShadingInfo const & shadingInfo,
+												 Point3 const & intersectionPoint) override;
+	
+	virtual Vector3 GetNormal(ShadingInfo const & shadingInfo) const override;
 	
 	virtual Material const * GetMaterial(const ShadingInfo& shadingInfo) override;
 	

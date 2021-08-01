@@ -46,7 +46,7 @@ bool Plane::IntersectShadow(const Ray &ray, float tMin, float tMax)
 	return true;
 }
 
-Vector3 Plane::GetNormal(ShadingInfo& shadingInfo) const {
+Vector3 Plane::GetNormal(ShadingInfo const & shadingInfo) const {
 	return normal;
 }
 

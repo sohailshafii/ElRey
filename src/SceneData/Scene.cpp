@@ -89,6 +89,7 @@ float Scene::WhittedRaytrace(const Ray &ray, Color3 &newColor,
 								&intersectionResult.compoundPrimitiveToIntersectedPrim,
 								ray.GetDirection(),
 								intersectionPos);
+		shadingInfo.intersectionPositionLocal =  closestPrimitive->ComputeLocalIntersectionPoint(shadingInfo, intersectionPos);
 		Material const * primitiveMaterial = closestPrimitive->GetMaterial(shadingInfo);
 		Vector3 normalVec = closestPrimitive->GetNormal(shadingInfo);
 		shadingInfo.normalVector = normalVec;
@@ -152,6 +153,7 @@ float Scene::PathRaytrace(const Ray &ray, Color3 &newColor,
 								&intersectionResult.compoundPrimitiveToIntersectedPrim,
 								ray.GetDirection(),
 								intersectionPos);
+		shadingInfo.intersectionPositionLocal =  closestPrimitive->ComputeLocalIntersectionPoint(shadingInfo, intersectionPos);
 		Material const * primitiveMaterial = closestPrimitive->GetMaterial(shadingInfo);
 		Vector3 normalVec = closestPrimitive->GetNormal(shadingInfo);
 		shadingInfo.normalVector = normalVec;

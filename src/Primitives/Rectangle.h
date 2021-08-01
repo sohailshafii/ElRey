@@ -19,7 +19,7 @@ public:
 								 IntersectionResult &intersectionResult) override;
 	virtual bool IntersectShadow(const Ray &ray, float tMin, float tMax) override;
 	
-	virtual Vector3 GetNormal(ShadingInfo &shadingInfo) const override {
+	virtual Vector3 GetNormal(ShadingInfo const & shadingInfo) const override {
 		return normal;
 	}
 	
