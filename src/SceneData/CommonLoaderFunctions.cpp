@@ -14,6 +14,7 @@
 #include <sstream>
 #include <vector>
 #include <iostream>
+#include <cassert>
 
 nlohmann::json CommonLoaderFunctions::SafeGetToken(nlohmann::json const & jsonObj,
 												   std::string const & key) {
@@ -166,12 +167,28 @@ std::shared_ptr<AbstractTexture> CommonLoaderFunctions::CreateTexture(nlohmann::
 	std::string mappingLayerName = SafeGetToken(imageTextureObj, "mapping_layer");
 	std::shared_ptr<MappingLayer> mappingLayer;
 	if (mappingLayerName == "rectangular") {
-		mappingLayer = std::make_shared<RectangularMapping>();
+		auto mappingData = SafeGetToken(imageTextureObj, "mapping_data");
+		float recWidth = SafeGetToken(mappingData, "rec_width");
+		float recHeight = SafeGetToken(mappingData, "rec_height");
+		unsigned int widthAxis = SafeGetToken(mappingData, "width_axis");
+		unsigned int heightAxis = SafeGetToken(mappingData, "height_axis");
+		float originX = SafeGetToken(mappingData, "origin_x");
+		float originY = SafeGetToken(mappingData, "origin_y");
+		float originZ = SafeGetToken(mappingData, "origin_z");
+		assert(widthAxis < 3);
+		assert(heightAxis < 3);
+		mappingLayer = std::make_shared<RectangularMapping>(recWidth, recHeight,
+															widthAxis, heightAxis,
+															Point3(originX, originY, originZ));
 	}
 	else if (mappingLayerName == "spherical") {
 		auto mappingData = SafeGetToken(imageTextureObj, "mapping_data");
 		float radius = SafeGetToken(mappingData, "radius");
-		mappingLayer = std::make_shared<SphericalMapping>(radius);
+		float originX = SafeGetToken(mappingData, "origin_x");
+		float originY = SafeGetToken(mappingData, "origin_y");
+		float originZ = SafeGetToken(mappingData, "origin_z");
+		mappingLayer = std::make_shared<SphericalMapping>(radius,
+														  Vector3(originX, originY, originZ));
 	}
 	else if (mappingLayerName == "null") {
 		mappingLayer = std::make_shared<NullMapping>();

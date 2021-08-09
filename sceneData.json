@@ -24,9 +24,47 @@
 			"name":"main_grid",
 			"children": [
 				"ground_plane",
-				"sphere_instance1"
+				"sphere_instance1",
+				"textured_rectangle"
 			],
 			"multiplier":1.0
+		},
+		{
+			"type":"rectangle",
+			"name":"textured_rectangle",
+			"side_vec_1":[1.0, 0.0, 0.0],
+			"side_vec_2":[0.0, 1.0, 0.0],
+			"origin":[-1.5, 0.5, -0.5],
+			"material":
+			{
+				"type":"simple_emissive",
+				"ka":0.1,
+				"kd":1.95,
+				"color":
+				{
+					"image_texture":
+					{
+						"file_path": "textures/bricks07 diffuse 1k.jpg",
+						"mapping_layer": "rectangular",
+						"mapping_data":
+						{
+							"rec_width":1.0,
+							"rec_height":1.0,
+							"width_axis":1,
+							"height_axis":0,
+							"origin_x":-1.5,
+							"origin_y":0.5,
+							"origin_z":-0.5
+						}
+					}
+				}
+			},
+			"sampler":
+			{
+				"random_sampler_type":"multijittered",
+				"num_random_samples":4,
+				"num_random_sets":83
+			}
 		},
 		{
 			"type":"plane",
@@ -62,7 +100,10 @@
 						"mapping_layer": "spherical",
 						"mapping_data":
 						{
-							"radius":1.5
+							"radius":1.5,
+							"origin_x":0.0,
+							"origin_y":0.0,
+							"origin_z":0.0
 						}
 					}
 				}
@@ -91,7 +132,7 @@
 		{
 			"type":"environment",
 			"random_sampler_type":"multijittered",
-			"num_random_samples":4,
+			"num_random_samples":64,
 			"num_random_sets":83,
 			"casts_shadows":true,
 			"material":

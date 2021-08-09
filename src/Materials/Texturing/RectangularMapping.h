@@ -1,17 +1,48 @@
 #pragma once
 
 #include "Materials/Texturing/MappingLayer.h"
+#include "Math/Point3.h"
+#include "Math/Vector3.h"
+#include <cmath>
 
 class RectangularMapping : public MappingLayer {
 public:
+	RectangularMapping(float iRecWidth, float iRecHeight, unsigned int iWidthAxis,
+					   unsigned int iHeightAxis, Point3 const & iOrigin) :
+		recWidth(iRecWidth), recHeight(iRecHeight),
+		recWidthInv(1.0f/iRecWidth), recHeightInv(1.0f/iRecHeight),
+		widthAxis(iWidthAxis), heightAxis(iHeightAxis),
+		origin(iOrigin) { }
+	
 	virtual void ComputeTextureCoordinates(ShadingInfo const & shadingInfo,
 										   int width, int height,
 										   int & row, int & column) override {
-		// bias and shift to [0, 1]
-		float zPos = (shadingInfo.intersectionPositionLocal[2] + 1.0f)/2.0f;
-		float xPos = (shadingInfo.intersectionPositionLocal[0] + 1.0f)/2.0f;
-		row = (int)(zPos * (width - 1));
-		column = (int)(xPos * (height - 1));
+		// if bigger than rec width or height, tile it
+		Vector3 posOffsetFromOrigin = origin -
+			shadingInfo.intersectionPositionLocal;
+		float widthPos = posOffsetFromOrigin[widthAxis];
+		float heightPos = posOffsetFromOrigin[heightAxis];
+		
+		widthPos = fabs(fmod(widthPos, recWidth));
+		heightPos = fabs(fmod(heightPos, recHeight));
+		// now normalize
+		widthPos *= recWidthInv;
+		heightPos *= recHeightInv;
+		// remember that row is flipped in image space
+		row = (height - 1) - (int)(widthPos * (height - 1));
+		column = (int)(heightPos * (width - 1));
 	}
+	
+private:
+	float recWidth;
+	float recHeight;
+	float recWidthInv;
+	float recHeightInv;
+	
+	// 0, 1 or 2
+	unsigned int widthAxis;
+	unsigned int heightAxis;
+	
+	Point3 origin;
 };
 

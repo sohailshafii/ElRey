@@ -6,14 +6,17 @@
 
 class SphericalMapping : public MappingLayer {
 public:
-	SphericalMapping(float radiusLocal) : radiusLocal(radiusLocal) {}
+	SphericalMapping(float radiusLocal, Vector3 const &origin) : radiusLocalInv(1.0f/radiusLocal), origin(origin) {}
 	
 	virtual void ComputeTextureCoordinates(ShadingInfo const & shadingInfo,
 										   int width, int height,
 										   int & row, int & column) override {
 		auto const & localHitPoint = shadingInfo.intersectionPositionLocal;
-		float theta = acos(localHitPoint[1]/radiusLocal);
-		float phi = atan2(localHitPoint[0]/radiusLocal, localHitPoint[2]/radiusLocal);
+		
+		// handle cases where local hit point might be larger than radius
+		float theta = acos((origin[0]-localHitPoint[1])*radiusLocalInv);
+		float phi = atan2((origin[0]-localHitPoint[0])*radiusLocalInv,
+						  (origin[2]-localHitPoint[2])*radiusLocalInv);
 		// atan2 returns [-pi, pi], so move to [0, 2*pi]
 		if (phi < 0.0f) {
 			phi += TWO_PI;
@@ -25,9 +28,11 @@ public:
 		
 		// finally, map u and v to the texel coordinates
 		column = (int)((width - 1) * u);
-		row = (int)((height - 1) * v);
+		// remember that row is flipped in image space
+		row = (height - 1) - (int)((height - 1) * v);
 	}
 	
 private:
-	float radiusLocal;
+	Vector3 origin;
+	float radiusLocalInv;
 };
