@@ -165,12 +165,12 @@ std::shared_ptr<AbstractTexture> CommonLoaderFunctions::CreateTexture(nlohmann::
 	}
 	else if (HasKey(colorObj, "plane_checker")) {
 		auto planeChecker = SafeGetToken(colorObj, "plane_checker");
-		unsigned int checkerSize = SafeGetToken(colorObj, "checker_size");
-		unsigned int outlineWidth = SafeGetToken(colorObj, "outline_width");
-		auto inColor = SafeGetToken(jsonObject, "in_color");
-		auto outColor = SafeGetToken(jsonObject, "out_color");
-		auto outlineColor = SafeGetToken(jsonObject, "outline_color");
-		createdTex = std::make_shared<PlaneCheckerTex>(PlaneCheckerTex(checkerSize, outlineColor,
+		unsigned int checkerSize = SafeGetToken(planeChecker, "checker_size");
+		unsigned int outlineWidth = SafeGetToken(planeChecker, "outline_width");
+		auto inColor = SafeGetToken(planeChecker, "in_color");
+		auto outColor = SafeGetToken(planeChecker, "out_color");
+		auto outlineColor = SafeGetToken(planeChecker, "outline_color");
+		createdTex = std::make_shared<PlaneCheckerTex>(PlaneCheckerTex(checkerSize, outlineWidth,
 									 Color3(inColor[0], inColor[1], inColor[2]),
 									 Color3(outColor[0], outColor[1], outColor[2]),
 									 Color3(outlineColor[0], outlineColor[1], outlineColor[2])));
