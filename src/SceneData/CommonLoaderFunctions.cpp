@@ -11,6 +11,7 @@
 #include "Materials/Texturing/NullMapping.h"
 #include "Materials/Texturing/RectangularMapping.h"
 #include "Materials/Texturing/SphericalMapping.h"
+#include "Materials/Texturing/PlaneCheckerTex.h"
 #include <sstream>
 #include <vector>
 #include <iostream>
@@ -154,16 +155,36 @@ std::shared_ptr<AbstractTexture> CommonLoaderFunctions::CreateTexture(nlohmann::
 																	  jsonObject,
 																	  std::string const & colorKey) {
 	auto colorObj = SafeGetToken(jsonObject, colorKey);
-	bool hasImageTextureNode = HasKey(colorObj, "image_texture");
 	
-	if (!hasImageTextureNode) {
-		return std::make_shared<SingleColorTex>(std::make_shared<NullMapping>(),
-												Color3(colorObj[0], colorObj[1],
-													   colorObj[2]));
+	std::shared_ptr<AbstractTexture> createdTex = nullptr;
+	if (HasKey(colorObj, "image_texture")) {
+		auto imageTextureObj = SafeGetToken(colorObj, "image_texture");
+		std::string filePath = SafeGetToken(imageTextureObj, "file_path");
+		std::shared_ptr<MappingLayer> mappingLayer = CreateMappingLayer(imageTextureObj);
+		createdTex = std::make_shared<ImageTexture>(mappingLayer, filePath);
 	}
-	
-	auto imageTextureObj = SafeGetToken(colorObj, "image_texture");
-	std::string filePath = SafeGetToken(imageTextureObj, "file_path");
+	else if (HasKey(colorObj, "plane_checker")) {
+		auto planeChecker = SafeGetToken(colorObj, "plane_checker");
+		unsigned int checkerSize = SafeGetToken(colorObj, "checker_size");
+		unsigned int outlineWidth = SafeGetToken(colorObj, "outline_width");
+		auto inColor = SafeGetToken(jsonObject, "in_color");
+		auto outColor = SafeGetToken(jsonObject, "out_color");
+		auto outlineColor = SafeGetToken(jsonObject, "outline_color");
+		createdTex = std::make_shared<PlaneCheckerTex>(PlaneCheckerTex(checkerSize, outlineColor,
+									 Color3(inColor[0], inColor[1], inColor[2]),
+									 Color3(outColor[0], outColor[1], outColor[2]),
+									 Color3(outlineColor[0], outlineColor[1], outlineColor[2])));
+	}
+	else {
+		createdTex = std::make_shared<SingleColorTex>(std::make_shared<NullMapping>(),
+													  Color3(colorObj[0], colorObj[1],
+															 colorObj[2]));
+	}
+	return createdTex;
+}
+
+std::shared_ptr<MappingLayer> CommonLoaderFunctions::CreateMappingLayer(nlohmann::json const &
+																		imageTextureObj) {
 	std::string mappingLayerName = SafeGetToken(imageTextureObj, "mapping_layer");
 	std::shared_ptr<MappingLayer> mappingLayer;
 	if (mappingLayerName == "rectangular") {
@@ -199,7 +220,7 @@ std::shared_ptr<AbstractTexture> CommonLoaderFunctions::CreateTexture(nlohmann::
 			<< " in JSON object: " << imageTextureObj << ".\n";
 		throw exceptionMsg;
 	}
-	return std::make_shared<ImageTexture>(mappingLayer, filePath);
+	return mappingLayer;
 }
 
 void CommonLoaderFunctions::SetUpRandomSampler(nlohmann::json const & jsonObj,

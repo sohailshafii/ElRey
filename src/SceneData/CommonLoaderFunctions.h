@@ -7,6 +7,7 @@
 
 class Material;
 class AbstractTexture;
+class MappingLayer;
 
 class CommonLoaderFunctions {
 public:
@@ -20,6 +21,9 @@ public:
 	static std::shared_ptr<AbstractTexture> CreateTexture(nlohmann::json const &
 														  jsonObject,
 														  std::string const & colorKey);
+	
+	static std::shared_ptr<MappingLayer> CreateMappingLayer(nlohmann::json const &
+															imageTextureObj);
 	
 	static void SetUpRandomSampler(nlohmann::json const & jsonObj,
 								   RandomSamplerType & randomSamplerType,

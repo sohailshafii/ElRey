@@ -40,12 +40,33 @@ public:
 	float &operator[] (int index);
 	float operator[] (int index) const;
 
-	static Color3 White();
-	static Color3 Black();
-	static Color3 Red();
-	static Color3 Green();
-	static Color3 Blue();
+	static Color3 White() {
+		return white;
+	}
+
+	static Color3 Black() {
+		return black;
+	}
+
+	static Color3 Red() {
+		return red;
+	}
+
+	static Color3 Green() {
+		return green;
+	}
+
+	static Color3 Blue() {
+		return blue;
+	}
+
 
 private:
 	float comp[3];
+	
+	static Color3 white;
+	static Color3 black;
+	static Color3 red;
+	static Color3 green;
+	static Color3 blue;
 };

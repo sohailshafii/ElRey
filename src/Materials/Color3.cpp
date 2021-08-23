@@ -2,6 +2,12 @@
 #include <cstring>
 #include <cmath>
 
+Color3 Color3::white = Color3(1.0f, 1.0f, 1.0f);
+Color3 Color3::black = Color3(0.0f, 0.0f, 0.0f);
+Color3 Color3::red = Color3(1.0f, 0.0f, 0.0f);
+Color3 Color3::green = Color3(0.0f, 1.0f, 0.0f);
+Color3 Color3::blue = Color3(0.0f, 0.0f, 1.0f);
+
 Color3::Color3(const Color3 &p2) {
 	memcpy(comp, p2.comp, sizeof(float)*3);
 }
@@ -79,24 +85,4 @@ Color3& Color3::operator*=(float mult) {
 	comp[1] *= mult;
 	comp[2] *= mult;
 	return *this;
-}
-
-Color3 Color3::White() {
-	return Color3(1.0f, 1.0f, 1.0f);
-}
-
-Color3 Color3::Black() {
-	return Color3(0.0f, 0.0f, 0.0f);
-}
-
-Color3 Color3::Red() {
-	return Color3(1.0f, 0.0f, 0.0f);
-}
-
-Color3 Color3::Green() {
-	return Color3(0.0f, 1.0f, 0.0f);
-}
-
-Color3 Color3::Blue() {
-	return Color3(0.0f, 0.0f, 1.0f);
 }
