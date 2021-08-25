@@ -23,6 +23,8 @@
 #define RAD_2_DEG 180.0f/M_PI
 
 class Vector3;
+class Point3;
+class Ray;
 
 class CommonMath {
 public:
@@ -80,6 +82,11 @@ public:
 	static int SolveQuadric(double c[3], double s[2]);
 	static int SolveCubic(double c[4], double s[3]);
 	static int SolveQuartic(double c[5], double s[4]);
+	
+	static bool TestTriangle(Point3 const & p0, Point3 const & p1,
+							 Point3 const & p2, Ray const & ray,
+							 float tMin, float tMax, float& t,
+							 float &beta, float &gamma);
 
 	static const float randMaxInverse;
 

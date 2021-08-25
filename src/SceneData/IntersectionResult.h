@@ -15,6 +15,8 @@ public:
 	float genericMetadata1, genericMetadata2,
 		genericMetadata3;
 	
+	float u, v;
+	
 	// for each compound primitive, keep track of
 	// which child was intersected against
 	// TODO: needs to be reset?

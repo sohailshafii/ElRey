@@ -50,7 +50,6 @@ Color3 ImageTexture::GetColor(const ShadingInfo& shadingInfo) const {
 	int row, column;
 	mappingLayer->ComputeTextureCoordinates(shadingInfo, texWidth, texHeight,
 											row, column);
-	// TODO: transformations?
 	// If it is nested, we need a way to represent the local intersection point
 	int pixelOffset = row*rowStride + column*texChannels;
 	return Color3(pixels[pixelOffset], pixels[pixelOffset + 1],

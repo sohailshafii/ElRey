@@ -1,5 +1,7 @@
 #include "CommonMath.h"
 #include "Vector3.h"
+#include "Math/Ray.h"
+#include "Math/Point3.h"
 
 //std::random_device Common::randDevice;
 // Standard mersenne_twister_engine seeded with randDevice
@@ -272,4 +274,53 @@ int CommonMath::SolveQuartic(double c[5], double s[4]) {
 	}
 		
 	return num;
+}
+
+bool CommonMath::TestTriangle(Point3 const & p0, Point3 const & p1,
+							  Point3 const & p2, Ray const & ray,
+							  float tMin, float tMax, float& t,
+							  float &beta, float &gamma) {
+	const Point3& rayOrigin = ray.GetOrigin();
+	const Vector3& rayDirection = ray.GetDirection();
+	
+	float a = p0[0] - p1[0], b = p0[0] - p2[0],
+		c = rayDirection[0], d = p0[0] - rayOrigin[0];
+	float e = p0[1] - p1[1], f = p0[1] - p2[1],
+		g = rayDirection[1], h = p0[1] - rayOrigin[1];
+	float i = p0[2] - p1[2], j = p0[2] - p2[2],
+		k = rayDirection[2], l = p0[2] - rayOrigin[2];
+	
+	float m = f * k - g * j, n = h * k - g * l,
+		p = f * l - h * j;
+	float q = g * i - e * k, s = e * j - f * i;
+	
+	float invDenom = 1.0f / (a * m + b * q + c * s);
+	
+	float e1 = d * m - b * n - c * p;
+	beta = e1 * invDenom;
+	
+	if (beta < 0.0f) {
+		return false;
+	}
+	
+	float r = e * l - h * i;
+	float e2 = a * n + d * q + c * r;
+	gamma = e2 * invDenom;
+	
+	if (gamma < 0.0f) {
+		return false;
+	}
+	
+	if ((beta + gamma) > 1.0f) {
+		return false;
+	}
+	
+	float e3 = a * p - b * r + d * s;
+	t = e3 * invDenom;
+	
+	if (t < tMin || t > tMax) {
+		return false;
+	}
+	
+	return true;
 }

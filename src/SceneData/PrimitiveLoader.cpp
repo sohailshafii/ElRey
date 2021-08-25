@@ -517,7 +517,6 @@ void PrimitiveLoader::LoadModel(ModelPrimitiveInfo* primInfo,
 				uniqueVertices[vertex] = static_cast<uint32_t>(triangleMesh->vertices.size());
 				Point3 newPoint(vertex.pos[0], vertex.pos[1], vertex.pos[2]);
 				triangleMesh->vertices.push_back(localToWorld * newPoint);
-				// TODO: figure out transformation of texture coords
 				triangleMesh->textureCoords.push_back(Point2(vertex.texCoord[0],
 															 vertex.texCoord[1]));
 			}

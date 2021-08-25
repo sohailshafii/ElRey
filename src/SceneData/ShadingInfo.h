@@ -2,6 +2,7 @@
 
 #include "Math/Vector3.h"
 #include "Math/Point3.h"
+#include "Math/Point2.h"
 #include <unordered_map>
 
 class Primitive;
@@ -13,7 +14,8 @@ public:
 				float intGenericMetadata3,
 				std::unordered_map<Primitive*, Primitive*>* compoundPrimitiveToIntersectedPrim,
 				Vector3 const & eyeDir,
-				Point3 const & intersectionPosition)
+				Point3 const & intersectionPosition,
+				float u, float v)
 		: intGenericMetadata1(intGenericMetadata1),
 		intGenericMetadata2(intGenericMetadata2),
 		intGenericMetadata3(intGenericMetadata3),
@@ -21,7 +23,7 @@ public:
 		eyeDir(eyeDir),
 		wo(-eyeDir),
 		intersectionPosition(intersectionPosition),
-		hasTransformation(false) {
+		hasTransformation(false), u(u), v(v) {
 	}
 	
 	// used to obtain intersection information from a primitive
@@ -45,4 +47,6 @@ public:
 	Vector3 normalVector;
 	// special stuff
 	Point3 samplePointOnLight;
+	
+	float u, v;
 };

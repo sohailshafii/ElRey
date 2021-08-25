@@ -2,15 +2,12 @@
 
 #include "Materials/Texturing/MappingLayer.h"
 
-class NullMapping : public MappingLayer {
+class ModelCoordMapping : public MappingLayer {
 public:
-
 	void ComputeTextureCoordinates(ShadingInfo const & shadingInfo,
 								   int width, int height,
 								   int & row, int & column) {
-		row = 0;
-		column = 0;
+		row = (int)height*shadingInfo.u;
+		column = (int)width*shadingInfo.v;
 	}
-
 };
-

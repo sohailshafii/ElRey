@@ -25,9 +25,47 @@
 			"children": [
 				"ground_plane",
 				"sphere_instance1",
-				"textured_rectangle"
+				"textured_rectangle",
+				"teddy_bear"
 			],
 			"multiplier":1.0
+		},
+		{
+			"type":"obj_model",
+			"name":"teddy_bear",
+			"is_smooth":true,
+			"reverse_normals":false,
+			"file_name":"./teddy.obj",
+			"material":
+			{
+				"type":"phong",
+				"ka":0.1,
+				"kd":0.95,
+				"ks":0.1,
+				"exponent":10,
+				"ks_color":[1.0, 1.0, 1.0],
+				"color":
+				{
+					"image_texture":
+					{
+						"file_path": "textures/marble07 diffuse 1k.jpg",
+						"mapping_layer": "spherical",
+						"mapping_data":
+						{
+							"radius":1.5,
+							"origin_x":0.0,
+							"origin_y":0.0,
+							"origin_z":0.0
+						}
+					}
+				}
+			},
+			"local_to_world_transform":
+			[
+				{"rotate_y":180.0},
+				{"scale":[0.02, 0.02, 0.02]},
+				{"translate":[0.0, 0.5,-0.6]}
+			]
 		},
 		{
 			"type":"rectangle",

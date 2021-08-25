@@ -12,6 +12,7 @@
 #include "Materials/Texturing/RectangularMapping.h"
 #include "Materials/Texturing/SphericalMapping.h"
 #include "Materials/Texturing/PlaneCheckerTex.h"
+#include "Materials/Texturing/ModelCoordMapping.h"
 #include <sstream>
 #include <vector>
 #include <iostream>
@@ -161,6 +162,7 @@ std::shared_ptr<AbstractTexture> CommonLoaderFunctions::CreateTexture(nlohmann::
 		auto imageTextureObj = SafeGetToken(colorObj, "image_texture");
 		std::string filePath = SafeGetToken(imageTextureObj, "file_path");
 		std::shared_ptr<MappingLayer> mappingLayer = CreateMappingLayer(imageTextureObj);
+		// TODO: create texture pool
 		createdTex = std::make_shared<ImageTexture>(mappingLayer, filePath);
 	}
 	else if (HasKey(colorObj, "plane_checker")) {
@@ -210,6 +212,9 @@ std::shared_ptr<MappingLayer> CommonLoaderFunctions::CreateMappingLayer(nlohmann
 		float originZ = SafeGetToken(mappingData, "origin_z");
 		mappingLayer = std::make_shared<SphericalMapping>(radius,
 														  Vector3(originX, originY, originZ));
+	}
+	else if (mappingLayerName == "model_coord") {
+		mappingLayer = std::make_shared<ModelCoordMapping>();
 	}
 	else if (mappingLayerName == "null") {
 		mappingLayer = std::make_shared<NullMapping>();
