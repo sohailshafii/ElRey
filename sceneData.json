@@ -92,7 +92,12 @@
 							"height_axis":0,
 							"origin_x":-1.5,
 							"origin_y":0.5,
-							"origin_z":-0.5
+							"origin_z":-0.5,
+							"local_to_world_transform":
+							[
+								{"scale":[0.5, 0.5, 0.5]},
+								{"translate":[1.2, 0.9, 0.2]}
+							]
 						}
 					}
 				}

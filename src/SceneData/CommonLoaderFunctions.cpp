@@ -188,6 +188,18 @@ std::shared_ptr<AbstractTexture> CommonLoaderFunctions::CreateTexture(nlohmann::
 std::shared_ptr<MappingLayer> CommonLoaderFunctions::CreateMappingLayer(nlohmann::json const &
 																		imageTextureObj) {
 	std::string mappingLayerName = SafeGetToken(imageTextureObj, "mapping_layer");
+	
+	bool hasTransformData = false;
+	Matrix4x4 worldToLocal;
+	Matrix4x4 localToWorld;
+	// TODO: use transform in base texture class
+	if (HasKey(imageTextureObj, "mapping_data")) {
+		auto mappingData = SafeGetToken(imageTextureObj, "mapping_data");
+		if (HasKey(mappingData, "local_to_world_transform")) {
+			SetUpTransformFromJsonNode(CommonLoaderFunctions::SafeGetToken(mappingData, "local_to_world_transform"), localToWorld, worldToLocal);
+		}
+	}
+	
 	std::shared_ptr<MappingLayer> mappingLayer;
 	if (mappingLayerName == "rectangular") {
 		auto mappingData = SafeGetToken(imageTextureObj, "mapping_data");
@@ -200,6 +212,7 @@ std::shared_ptr<MappingLayer> CommonLoaderFunctions::CreateMappingLayer(nlohmann
 		float originZ = SafeGetToken(mappingData, "origin_z");
 		assert(widthAxis < 3);
 		assert(heightAxis < 3);
+		
 		mappingLayer = std::make_shared<RectangularMapping>(recWidth, recHeight,
 															widthAxis, heightAxis,
 															Point3(originX, originY, originZ));
@@ -214,6 +227,7 @@ std::shared_ptr<MappingLayer> CommonLoaderFunctions::CreateMappingLayer(nlohmann
 														  Vector3(originX, originY, originZ));
 	}
 	else if (mappingLayerName == "model_coord") {
+		auto mappingData = SafeGetToken(imageTextureObj, "mapping_data");
 		mappingLayer = std::make_shared<ModelCoordMapping>();
 	}
 	else if (mappingLayerName == "null") {

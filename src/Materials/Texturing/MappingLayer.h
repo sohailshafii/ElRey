@@ -45,6 +45,10 @@ public:
 	void ClearTransformations() {
 		invTransformMatrix.MakeIdentity();
 	}
+	
+	void SetInvTransformMatrix(Matrix4x4 const & input) {
+		invTransformMatrix = input;
+	}
 
 private:
 	Matrix4x4 invTransformMatrix;
