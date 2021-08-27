@@ -6,7 +6,6 @@
 class MappingLayer {
 public:
 	virtual ~MappingLayer() {
-		
 	}
 	
 	virtual void ComputeTextureCoordinates(ShadingInfo const & shadingInfo,
@@ -28,17 +27,17 @@ public:
 	}
 	
 	void ApplyRotationX(float angle) {
-		auto invRot = Matrix4x4::RotationMatrixX(angle);
+		auto invRot = Matrix4x4::InvRotationMatrixX(angle);
 		invTransformMatrix = invTransformMatrix * invRot;
 	}
 	
 	void ApplyRotationY(float angle) {
-		auto invRot = Matrix4x4::RotationMatrixY(angle);
+		auto invRot = Matrix4x4::InvRotationMatrixY(angle);
 		invTransformMatrix = invTransformMatrix * invRot;
 	}
 	
 	void ApplyRotationZ(float angle) {
-		auto invRot = Matrix4x4::RotationMatrixZ(angle);
+		auto invRot = Matrix4x4::InvRotationMatrixZ(angle);
 		invTransformMatrix = invTransformMatrix * invRot;
 	}
 	
@@ -50,7 +49,7 @@ public:
 		invTransformMatrix = input;
 	}
 
-private:
+protected:
 	Matrix4x4 invTransformMatrix;
 };
 

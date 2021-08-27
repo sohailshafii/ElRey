@@ -17,9 +17,10 @@ public:
 	virtual void ComputeTextureCoordinates(ShadingInfo const & shadingInfo,
 										   int width, int height,
 										   int & row, int & column) override {
+		auto intersectionPntLocal = shadingInfo.intersectionPositionLocal;
+		intersectionPntLocal = invTransformMatrix * intersectionPntLocal;
 		// if bigger than rec width or height, tile it
-		Vector3 posOffsetFromOrigin = origin -
-			shadingInfo.intersectionPositionLocal;
+		Vector3 posOffsetFromOrigin = origin - intersectionPntLocal;
 		float widthPos = posOffsetFromOrigin[widthAxis];
 		float heightPos = posOffsetFromOrigin[heightAxis];
 		
@@ -31,6 +32,8 @@ public:
 		// remember that row is flipped in image space
 		row = (height - 1) - (int)(widthPos * (height - 1));
 		column = (int)(heightPos * (width - 1));
+		CommonMath::Clamp(column, 0, width - 1);
+		CommonMath::Clamp(row, 0, height - 1);
 	}
 	
 private:

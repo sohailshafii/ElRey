@@ -11,7 +11,8 @@ public:
 	virtual void ComputeTextureCoordinates(ShadingInfo const & shadingInfo,
 										   int width, int height,
 										   int & row, int & column) override {
-		auto const & localHitPoint = shadingInfo.intersectionPositionLocal;
+		Point3 localHitPoint = shadingInfo.intersectionPositionLocal;
+		localHitPoint = invTransformMatrix * localHitPoint;
 		
 		// handle cases where local hit point might be larger than radius
 		float theta = acos((origin[0]-localHitPoint[1])*radiusLocalInv);
@@ -30,6 +31,8 @@ public:
 		column = (int)((width - 1) * u);
 		// remember that row is flipped in image space
 		row = (height - 1) - (int)((height - 1) * v);
+		CommonMath::Clamp(column, 0, width - 1);
+		CommonMath::Clamp(row, 0, height - 1);
 	}
 	
 private:

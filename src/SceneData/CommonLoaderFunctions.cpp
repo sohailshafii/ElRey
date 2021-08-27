@@ -192,7 +192,6 @@ std::shared_ptr<MappingLayer> CommonLoaderFunctions::CreateMappingLayer(nlohmann
 	bool hasTransformData = false;
 	Matrix4x4 worldToLocal;
 	Matrix4x4 localToWorld;
-	// TODO: use transform in base texture class
 	if (HasKey(imageTextureObj, "mapping_data")) {
 		auto mappingData = SafeGetToken(imageTextureObj, "mapping_data");
 		if (HasKey(mappingData, "local_to_world_transform")) {
@@ -239,6 +238,7 @@ std::shared_ptr<MappingLayer> CommonLoaderFunctions::CreateMappingLayer(nlohmann
 			<< " in JSON object: " << imageTextureObj << ".\n";
 		throw exceptionMsg;
 	}
+	mappingLayer->SetInvTransformMatrix(worldToLocal);
 	return mappingLayer;
 }
 

@@ -41,6 +41,15 @@ public:
 		//return (float)dis(gen);
 	}
 	
+	static void Clamp(float &value, float min, float max) {
+		if (value < min) {
+			value = min;
+		}
+		if (value > max) {
+			value = max;
+		}
+	}
+	
 	static float RandomRangeValue(float low, float high) {
 		return RandomUnitValue() * (high - low) + low;
 	}
