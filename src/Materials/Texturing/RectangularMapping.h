@@ -8,8 +8,9 @@
 class RectangularMapping : public MappingLayer {
 public:
 	RectangularMapping(float iRecWidth, float iRecHeight, unsigned int iWidthAxis,
-					   unsigned int iHeightAxis, Point3 const & iOrigin) :
-		recWidth(iRecWidth), recHeight(iRecHeight),
+					   unsigned int iHeightAxis, Point3 const & iOrigin,
+					   WrapType wrapType) :
+		MappingLayer(wrapType), recWidth(iRecWidth), recHeight(iRecHeight),
 		recWidthInv(1.0f/iRecWidth), recHeightInv(1.0f/iRecHeight),
 		widthAxis(iWidthAxis), heightAxis(iHeightAxis),
 		origin(iOrigin) { }
@@ -32,8 +33,9 @@ public:
 		// remember that row is flipped in image space
 		row = (height - 1) - (int)(widthPos * (height - 1));
 		column = (int)(heightPos * (width - 1));
-		CommonMath::Clamp(column, 0, width - 1);
-		CommonMath::Clamp(row, 0, height - 1);
+		
+		(*wrapFunction)(column, width - 1);
+		(*wrapFunction)(row, height - 1);
 	}
 	
 private:

@@ -2,6 +2,7 @@
 
 #include "ThirdParty/nlohmann/json.hpp"
 #include "Sampling/SamplerCreator.h"
+#include "Materials/Texturing/MappingLayer.h"
 #include "Math/Matrix4x4.h"
 #include <string>
 
@@ -34,4 +35,7 @@ public:
 	static void SetUpTransformFromJsonNode(nlohmann::json const & transformNode,
 										   Matrix4x4 & localToWorld,
 										   Matrix4x4 & worldToLocal);
+	
+private:
+	static MappingLayer::WrapType GetMappingLayerFromString(std::string wrapType);
 };

@@ -6,7 +6,9 @@
 
 class SphericalMapping : public MappingLayer {
 public:
-	SphericalMapping(float radiusLocal, Vector3 const &origin) : radiusLocalInv(1.0f/radiusLocal), origin(origin) {}
+	SphericalMapping(float radiusLocal, Vector3 const &origin,
+					 WrapType wrapType) : MappingLayer(wrapType),
+		radiusLocalInv(1.0f/radiusLocal), origin(origin) {}
 	
 	virtual void ComputeTextureCoordinates(ShadingInfo const & shadingInfo,
 										   int width, int height,
@@ -31,8 +33,8 @@ public:
 		column = (int)((width - 1) * u);
 		// remember that row is flipped in image space
 		row = (height - 1) - (int)((height - 1) * v);
-		CommonMath::Clamp(column, 0, width - 1);
-		CommonMath::Clamp(row, 0, height - 1);
+		(*wrapFunction)(column, width - 1);
+		(*wrapFunction)(row, height - 1);
 	}
 	
 private:

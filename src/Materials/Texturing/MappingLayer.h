@@ -3,8 +3,24 @@
 #include "Math/Point3.h"
 #include "Math/Matrix4x4.h"
 
+class ShadingInfo;
+
 class MappingLayer {
 public:
+	enum class WrapType {
+		Clamp,
+		Repeat
+	};
+	
+	MappingLayer(WrapType wrapType) : wrapType(wrapType) {
+		if (wrapType == WrapType::Clamp) {
+			wrapFunction = &MappingLayer::RepeatWrap;
+		}
+		else {
+			wrapFunction = &MappingLayer::ClampWrap;
+		}
+	}
+	
 	virtual ~MappingLayer() {
 	}
 	
@@ -51,5 +67,23 @@ public:
 
 protected:
 	Matrix4x4 invTransformMatrix;
+	WrapType wrapType;
+	void (*wrapFunction)(int,int);
+	
+	static void ClampWrap(int value, int high) {
+		if (value < 0) {
+			value = 0;
+		}
+		else if (value > high) {
+			value = high;
+		}
+	}
+	
+	static void RepeatWrap(int value, int high) {
+		value = value % high;
+		if (value < 0) {
+			value = high + value;
+		}
+	}
 };
 

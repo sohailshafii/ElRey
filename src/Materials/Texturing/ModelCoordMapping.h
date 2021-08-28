@@ -4,6 +4,9 @@
 
 class ModelCoordMapping : public MappingLayer {
 public:
+	ModelCoordMapping(WrapType wrapType) : MappingLayer(wrapType) {
+	}
+	
 	void ComputeTextureCoordinates(ShadingInfo const & shadingInfo,
 								   int width, int height,
 								   int & row, int & column) {
@@ -12,7 +15,7 @@ public:
 		row = (int)height*shadingInfo.u;
 		column = (int)width*shadingInfo.v;
 		
-		CommonMath::Clamp(column, 0, width - 1);
-		CommonMath::Clamp(row, 0, height - 1);
+		(*wrapFunction)(column, width - 1);
+		(*wrapFunction)(row, height - 1);
 	}
 };

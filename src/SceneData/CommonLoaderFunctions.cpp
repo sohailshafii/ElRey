@@ -209,12 +209,14 @@ std::shared_ptr<MappingLayer> CommonLoaderFunctions::CreateMappingLayer(nlohmann
 		float originX = SafeGetToken(mappingData, "origin_x");
 		float originY = SafeGetToken(mappingData, "origin_y");
 		float originZ = SafeGetToken(mappingData, "origin_z");
+		std::string wrapType = SafeGetToken(mappingData, "wrap_type");
 		assert(widthAxis < 3);
 		assert(heightAxis < 3);
 		
 		mappingLayer = std::make_shared<RectangularMapping>(recWidth, recHeight,
 															widthAxis, heightAxis,
-															Point3(originX, originY, originZ));
+															Point3(originX, originY, originZ),
+															GetMappingLayerFromString(wrapType));
 	}
 	else if (mappingLayerName == "spherical") {
 		auto mappingData = SafeGetToken(imageTextureObj, "mapping_data");
@@ -222,12 +224,15 @@ std::shared_ptr<MappingLayer> CommonLoaderFunctions::CreateMappingLayer(nlohmann
 		float originX = SafeGetToken(mappingData, "origin_x");
 		float originY = SafeGetToken(mappingData, "origin_y");
 		float originZ = SafeGetToken(mappingData, "origin_z");
+		std::string wrapType = SafeGetToken(mappingData, "wrap_type");
 		mappingLayer = std::make_shared<SphericalMapping>(radius,
-														  Vector3(originX, originY, originZ));
+														  Vector3(originX, originY, originZ),
+														  GetMappingLayerFromString(wrapType));
 	}
 	else if (mappingLayerName == "model_coord") {
 		auto mappingData = SafeGetToken(imageTextureObj, "mapping_data");
-		mappingLayer = std::make_shared<ModelCoordMapping>();
+		std::string wrapType = SafeGetToken(mappingData, "wrap_type");
+		mappingLayer = std::make_shared<ModelCoordMapping>(GetMappingLayerFromString(wrapType));
 	}
 	else if (mappingLayerName == "null") {
 		mappingLayer = std::make_shared<NullMapping>();
@@ -240,6 +245,21 @@ std::shared_ptr<MappingLayer> CommonLoaderFunctions::CreateMappingLayer(nlohmann
 	}
 	mappingLayer->SetInvTransformMatrix(worldToLocal);
 	return mappingLayer;
+}
+
+MappingLayer::WrapType CommonLoaderFunctions::GetMappingLayerFromString(std::string wrapType) {
+	if (wrapType == "clamp") {
+		return MappingLayer::WrapType::Clamp;
+	}
+	else if (wrapType == "repeat") {
+		return MappingLayer::WrapType::Repeat;
+	}
+	else {
+		std::stringstream exceptionMsg;
+		exceptionMsg << "Could not understand wrap type: " << wrapType
+			<< " in JSON object: " << wrapType << ".\n";
+		throw exceptionMsg;
+	}
 }
 
 void CommonLoaderFunctions::SetUpRandomSampler(nlohmann::json const & jsonObj,
