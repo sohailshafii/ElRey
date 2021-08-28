@@ -4,7 +4,7 @@
 
 class NullMapping : public MappingLayer {
 public:
-	NullMapping() : MappingLayer(MappingLayer::WrapType::Clamp) {
+	NullMapping() : MappingLayer(MappingLayer::WrapType::Clamp, false) {
 	}
 	
 	void ComputeTextureCoordinates(ShadingInfo const & shadingInfo,

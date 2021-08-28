@@ -9,8 +9,8 @@ class RectangularMapping : public MappingLayer {
 public:
 	RectangularMapping(float iRecWidth, float iRecHeight, unsigned int iWidthAxis,
 					   unsigned int iHeightAxis, Point3 const & iOrigin,
-					   WrapType wrapType) :
-		MappingLayer(wrapType), recWidth(iRecWidth), recHeight(iRecHeight),
+					   WrapType wrapType, bool useWorldCoordsForTex) :
+		MappingLayer(wrapType, useWorldCoordsForTex), recWidth(iRecWidth), recHeight(iRecHeight),
 		recWidthInv(1.0f/iRecWidth), recHeightInv(1.0f/iRecHeight),
 		widthAxis(iWidthAxis), heightAxis(iHeightAxis),
 		origin(iOrigin) { }
@@ -18,10 +18,11 @@ public:
 	virtual void ComputeTextureCoordinates(ShadingInfo const & shadingInfo,
 										   int width, int height,
 										   int & row, int & column) override {
-		auto intersectionPntLocal = shadingInfo.intersectionPositionLocal;
-		intersectionPntLocal = invTransformMatrix * intersectionPntLocal;
+		auto intersectionPnt = useWorldCoordsForTex ?
+			shadingInfo.intersectionPosition : shadingInfo.intersectionPositionLocal;
+		intersectionPnt = invTransformMatrix * intersectionPnt;
 		// if bigger than rec width or height, tile it
-		Vector3 posOffsetFromOrigin = origin - intersectionPntLocal;
+		Vector3 posOffsetFromOrigin = origin - intersectionPnt;
 		float widthPos = posOffsetFromOrigin[widthAxis];
 		float heightPos = posOffsetFromOrigin[heightAxis];
 		

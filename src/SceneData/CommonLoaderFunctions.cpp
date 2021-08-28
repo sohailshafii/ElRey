@@ -209,6 +209,10 @@ std::shared_ptr<MappingLayer> CommonLoaderFunctions::CreateMappingLayer(nlohmann
 		float originX = SafeGetToken(mappingData, "origin_x");
 		float originY = SafeGetToken(mappingData, "origin_y");
 		float originZ = SafeGetToken(mappingData, "origin_z");
+		bool useWorldCoordsForTex = false;
+		if (HasKey(mappingData, "use_world_coords_for_tex")) {
+			useWorldCoordsForTex = SafeGetToken(mappingData, "use_world_coords_for_tex");
+		}
 		std::string wrapType = SafeGetToken(mappingData, "wrap_type");
 		assert(widthAxis < 3);
 		assert(heightAxis < 3);
@@ -216,7 +220,8 @@ std::shared_ptr<MappingLayer> CommonLoaderFunctions::CreateMappingLayer(nlohmann
 		mappingLayer = std::make_shared<RectangularMapping>(recWidth, recHeight,
 															widthAxis, heightAxis,
 															Point3(originX, originY, originZ),
-															GetMappingLayerFromString(wrapType));
+															GetMappingLayerFromString(wrapType),
+															useWorldCoordsForTex);
 	}
 	else if (mappingLayerName == "spherical") {
 		auto mappingData = SafeGetToken(imageTextureObj, "mapping_data");
@@ -225,9 +230,14 @@ std::shared_ptr<MappingLayer> CommonLoaderFunctions::CreateMappingLayer(nlohmann
 		float originY = SafeGetToken(mappingData, "origin_y");
 		float originZ = SafeGetToken(mappingData, "origin_z");
 		std::string wrapType = SafeGetToken(mappingData, "wrap_type");
+		bool useWorldCoordsForTex = false;
+		if (HasKey(mappingData, "use_world_coords_for_tex")) {
+			useWorldCoordsForTex = SafeGetToken(mappingData, "use_world_coords_for_tex");
+		}
 		mappingLayer = std::make_shared<SphericalMapping>(radius,
 														  Vector3(originX, originY, originZ),
-														  GetMappingLayerFromString(wrapType));
+														  GetMappingLayerFromString(wrapType),
+														  useWorldCoordsForTex);
 	}
 	else if (mappingLayerName == "model_coord") {
 		auto mappingData = SafeGetToken(imageTextureObj, "mapping_data");

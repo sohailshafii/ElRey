@@ -4,7 +4,7 @@
 
 class ModelCoordMapping : public MappingLayer {
 public:
-	ModelCoordMapping(WrapType wrapType) : MappingLayer(wrapType) {
+	ModelCoordMapping(WrapType wrapType) : MappingLayer(wrapType, false) {
 	}
 	
 	void ComputeTextureCoordinates(ShadingInfo const & shadingInfo,

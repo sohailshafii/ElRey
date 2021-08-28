@@ -12,7 +12,8 @@ public:
 		Repeat
 	};
 	
-	MappingLayer(WrapType wrapType) : wrapType(wrapType) {
+	MappingLayer(WrapType wrapType, bool useWorldCoordsForTex) : wrapType(wrapType),
+		useWorldCoordsForTex(useWorldCoordsForTex) {
 		if (wrapType == WrapType::Clamp) {
 			wrapFunction = &MappingLayer::RepeatWrap;
 		}
@@ -68,6 +69,9 @@ public:
 protected:
 	Matrix4x4 invTransformMatrix;
 	WrapType wrapType;
+	// allows object to slide through texture
+	// since texture doesn't operate in local space
+	bool useWorldCoordsForTex;
 	void (*wrapFunction)(int,int);
 	
 	static void ClampWrap(int value, int high) {

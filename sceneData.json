@@ -149,7 +149,8 @@
 							"origin_x":0.0,
 							"origin_y":0.0,
 							"origin_z":0.0,
-							"wrap_type":"repeat"
+							"wrap_type":"repeat",
+							"use_world_coords_for_tex":true
 						}
 					}
 				}
