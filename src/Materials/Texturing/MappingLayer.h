@@ -65,6 +65,12 @@ public:
 	void SetInvTransformMatrix(Matrix4x4 const & input) {
 		invTransformMatrix = input;
 	}
+	
+	Point3 GetTransformedTexturePnt(Point3 const & localPoint, Point3 const & worldPoint)
+	{
+		auto intersectionPnt = useWorldCoordsForTex ? worldPoint : localPoint;
+		return invTransformMatrix * intersectionPnt;
+	}
 
 protected:
 	Matrix4x4 invTransformMatrix;

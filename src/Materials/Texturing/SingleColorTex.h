@@ -17,6 +17,10 @@ public:
 	static SingleColorTex SolidWhite() {
 		return SingleColorTex(std::make_shared<NullMapping>(), Color3::White());
 	}
+	
+	virtual Color3 GetColor(int row, int column, float rowFloat, float colFloat) const override {
+		return constantColor;
+	}
 
 private:
 	Color3 constantColor;

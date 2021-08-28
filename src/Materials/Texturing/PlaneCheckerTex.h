@@ -17,13 +17,20 @@ public:
 	}
 	
 	virtual Color3 GetColor(const ShadingInfo& shadingInfo) const override {
-		auto const & localHitPoint = shadingInfo.intersectionPositionLocal;
-		float x = localHitPoint[0];
-		float z = localHitPoint[2];
+		Point3 transformedPoint = mappingLayer->GetTransformedTexturePnt(shadingInfo.intersectionPositionLocal,
+											shadingInfo.intersectionPosition);
+		float x = transformedPoint[0];
+		float z = transformedPoint[2];
 		int cellX = floor(x / checkerSize);
 		int cellZ = floor(z / checkerSize);
-		float fractionX = x / checkerSize - cellX;
-		float fractionZ = z / checkerSize - cellZ;
+		return GetColor(cellZ, cellX, z, x);
+	}
+
+protected:
+	
+	virtual Color3 GetColor(int row, int column, float rowFloat, float colFloat) const override {
+		float fractionX = colFloat / checkerSize - column;
+		float fractionZ = rowFloat / checkerSize - row;
 		bool inOutline = (fractionX < outlineWidthHalfNormalized ||
 						  fractionX > outlineWidthHalfNormalizedUpper) ||
 						 (fractionZ < outlineWidthHalfNormalized ||
@@ -31,7 +38,7 @@ public:
 		if (inOutline) {
 			return outlineColor;
 		}
-		else if ((cellX + cellZ) % 2 == 0) {
+		else if ((column + row) % 2 == 0) {
 			return inColor;
 		}
 		else {

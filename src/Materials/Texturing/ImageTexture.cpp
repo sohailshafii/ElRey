@@ -48,10 +48,10 @@ ImageTexture::~ImageTexture() {
 
 Color3 ImageTexture::GetColor(const ShadingInfo& shadingInfo) const {
 	int row, column;
+	// TODO: call several times for bilinear interpolation
 	mappingLayer->ComputeTextureCoordinates(shadingInfo, texWidth, texHeight,
 											row, column);
-	// If it is nested, we need a way to represent the local intersection point
-	int pixelOffset = row*rowStride + column*texChannels;
-	return Color3(pixels[pixelOffset], pixels[pixelOffset + 1],
-				  pixels[pixelOffset + 2]);
+	return GetColor(row, column, (float)row, (float)column);
 }
+
+

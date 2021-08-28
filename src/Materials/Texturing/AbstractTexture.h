@@ -18,4 +18,6 @@ public:
 	
 protected:
 	std::shared_ptr<MappingLayer> mappingLayer;
+	
+	virtual Color3 GetColor(int row, int column, float rowFloat, float colFloat) const = 0;
 };
