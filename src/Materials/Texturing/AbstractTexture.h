@@ -2,7 +2,7 @@
 
 #include "Materials/Color3.h"
 #include "SceneData/ShadingInfo.h"
-#include "Materials/Texturing/MappingLayer.h"
+#include "Materials/Texturing/Mapping/MappingLayer.h"
 #include <memory>
 
 class AbstractTexture {

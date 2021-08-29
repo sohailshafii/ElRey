@@ -7,12 +7,12 @@
 #include "Materials/TransparentMaterial.h"
 #include "Materials/DielectricMaterial.h"
 #include "Materials/Texturing/SingleColorTex.h"
-#include "Materials/Texturing/ImageTexture.h"
-#include "Materials/Texturing/NullMapping.h"
-#include "Materials/Texturing/RectangularMapping.h"
-#include "Materials/Texturing/SphericalMapping.h"
+#include "Materials/Texturing/ImageTextureRegistry.h"
+#include "Materials/Texturing/Mapping/NullMapping.h"
+#include "Materials/Texturing/Mapping/RectangularMapping.h"
+#include "Materials/Texturing/Mapping/SphericalMapping.h"
 #include "Materials/Texturing/PlaneCheckerTex.h"
-#include "Materials/Texturing/ModelCoordMapping.h"
+#include "Materials/Texturing/Mapping/ModelCoordMapping.h"
 #include <sstream>
 #include <vector>
 #include <iostream>
@@ -165,8 +165,8 @@ std::shared_ptr<AbstractTexture> CommonLoaderFunctions::CreateTexture(nlohmann::
 		AbstractTexture::SamplingType sampleType = sampleTypeStr == "nearest" ?
 		AbstractTexture::SamplingType::Nearest : AbstractTexture::SamplingType::Bilinear;
 		std::shared_ptr<MappingLayer> mappingLayer = CreateMappingLayer(imageTextureObj);
-		// TODO: create texture pool
-		createdTex = std::make_shared<ImageTexture>(mappingLayer, filePath, sampleType);
+		createdTex = ImageTextureRegistry::GetInstance().GetTextureForPath(filePath, mappingLayer,
+														sampleType);
 	}
 	else if (HasKey(colorObj, "plane_checker")) {
 		auto planeChecker = SafeGetToken(colorObj, "plane_checker");

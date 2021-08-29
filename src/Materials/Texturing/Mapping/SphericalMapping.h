@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Materials/Texturing/SphericalMapping.h"
+#include "Materials/Texturing/Mapping/MappingLayer.h"
 #include "Math/CommonMath.h"
 #include <cmath>
 

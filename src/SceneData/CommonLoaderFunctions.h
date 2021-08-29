@@ -2,7 +2,7 @@
 
 #include "ThirdParty/nlohmann/json.hpp"
 #include "Sampling/SamplerCreator.h"
-#include "Materials/Texturing/MappingLayer.h"
+#include "Materials/Texturing/Mapping/MappingLayer.h"
 #include "Math/Matrix4x4.h"
 #include <string>
 

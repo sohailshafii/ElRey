@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Materials/Texturing/AbstractTexture.h"
-#include "Materials/Texturing/NullMapping.h"
+#include "Materials/Texturing/Mapping/NullMapping.h"
 
 class SingleColorTex : public AbstractTexture {
 public:

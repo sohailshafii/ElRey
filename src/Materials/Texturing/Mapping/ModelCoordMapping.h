@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Materials/Texturing/MappingLayer.h"
+#include "Materials/Texturing/Mapping/MappingLayer.h"
 
 class ModelCoordMapping : public MappingLayer {
 public:

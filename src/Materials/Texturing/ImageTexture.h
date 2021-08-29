@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Materials/Texturing/AbstractTexture.h"
-#include "Materials/Texturing/MappingLayer.h"
+#include "Materials/Texturing/Mapping/MappingLayer.h"
 #include <string>
 
 class ImageTexture : public AbstractTexture {
