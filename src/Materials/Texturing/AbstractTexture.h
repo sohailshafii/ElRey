@@ -7,8 +7,14 @@
 
 class AbstractTexture {
 public:
-	AbstractTexture(std::shared_ptr<MappingLayer> const & mappingLayer) :
-		mappingLayer(mappingLayer) {
+	enum class SamplingType {
+		Nearest,
+		Bilinear
+	};
+	
+	AbstractTexture(std::shared_ptr<MappingLayer> const & mappingLayer,
+					SamplingType samplingType) :
+		mappingLayer(mappingLayer), samplingType(samplingType) {
 	}
 	
 	virtual ~AbstractTexture() {
@@ -18,6 +24,5 @@ public:
 	
 protected:
 	std::shared_ptr<MappingLayer> mappingLayer;
-	
-	virtual Color3 GetColor(int row, int column, float rowFloat, float colFloat) const = 0;
+	SamplingType samplingType;
 };

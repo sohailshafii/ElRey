@@ -42,7 +42,8 @@ void PrimitiveLoader::CreateGridOfGrids(Scene* scene,
 										Vector3 const & origin) {
 	auto solidColorTex = std::make_shared<SingleColorTex>(
 														  SingleColorTex(std::make_shared<NullMapping>(),
-														Color3(0.68f, 0.85f, 0.91f)));
+														Color3(0.68f, 0.85f, 0.91f),
+														AbstractTexture::SamplingType::Nearest));
 	auto newMaterial = std::make_shared<LambertianMaterial>(0.1f, 0.7f,
 															solidColorTex);
 	Matrix4x4 localToWorldScale = Matrix4x4::ScaleMatrix(Vector3(bunnySize, bunnySize, bunnySize));

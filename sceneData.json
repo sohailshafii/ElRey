@@ -50,6 +50,7 @@
 					{
 						"file_path": "textures/marble07 diffuse 1k.jpg",
 						"mapping_layer": "spherical",
+						"sample_type":"nearest",
 						"mapping_data":
 						{
 							"radius":1.5,
@@ -84,6 +85,7 @@
 					"image_texture":
 					{
 						"file_path": "textures/bricks07 diffuse 1k.jpg",
+						"sample_type":"nearest",
 						"mapping_layer": "rectangular",
 						"mapping_data":
 						{
@@ -142,6 +144,7 @@
 					"image_texture":
 					{
 						"file_path": "textures/marble07 diffuse 1k.jpg",
+						"sample_type":"nearest",
 						"mapping_layer": "spherical",
 						"mapping_data":
 						{

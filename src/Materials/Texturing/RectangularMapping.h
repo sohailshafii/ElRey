@@ -17,7 +17,7 @@ public:
 	
 	virtual void ComputeTextureCoordinates(ShadingInfo const & shadingInfo,
 										   int width, int height,
-										   int & row, int & column) override {
+										   float & row, float & column) override {
 		auto intersectionPnt = useWorldCoordsForTex ?
 			shadingInfo.intersectionPosition : shadingInfo.intersectionPositionLocal;
 		intersectionPnt = invTransformMatrix * intersectionPnt;
@@ -32,11 +32,8 @@ public:
 		widthPos *= recWidthInv;
 		heightPos *= recHeightInv;
 		// remember that row is flipped in image space
-		row = (height - 1) - (int)(widthPos * (height - 1));
-		column = (int)(heightPos * (width - 1));
-		
-		(*wrapFunction)(column, width - 1);
-		(*wrapFunction)(row, height - 1);
+		row = (float)(height - 1) - widthPos * (float)(height - 1);
+		column = heightPos * (float)(width - 1);
 	}
 	
 private:

@@ -27,7 +27,7 @@ public:
 	
 	virtual void ComputeTextureCoordinates(ShadingInfo const & shadingInfo,
 										   int width, int height,
-										   int & row, int & column) = 0;
+										   float & row, float & column) = 0;
 	
 	void ApplyTransformations(Point3 & pntTransform) {
 		pntTransform = invTransformMatrix * pntTransform;
@@ -71,6 +71,10 @@ public:
 		auto intersectionPnt = useWorldCoordsForTex ? worldPoint : localPoint;
 		return invTransformMatrix * intersectionPnt;
 	}
+	
+	void ApplyWrap(int value, int high) {
+		(*wrapFunction)(value, high);
+	}
 
 protected:
 	Matrix4x4 invTransformMatrix;
@@ -78,7 +82,7 @@ protected:
 	// allows object to slide through texture
 	// since texture doesn't operate in local space
 	bool useWorldCoordsForTex;
-	void (*wrapFunction)(int,int);
+	void (*wrapFunction)(int, int);
 	
 	static void ClampWrap(int value, int high) {
 		if (value < 0) {

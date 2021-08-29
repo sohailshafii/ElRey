@@ -6,8 +6,9 @@
 #include <iostream>
 
 ImageTexture::ImageTexture(std::shared_ptr<MappingLayer> const & mappingLayer,
-						   std::string const & filePath)
-	: AbstractTexture(mappingLayer) {
+						   std::string const & filePath,
+						   SamplingType samplingType)
+	: AbstractTexture(mappingLayer, samplingType) {
 #if __APPLE__
 	std::string scenePath = "../../" + filePath;
 #else
@@ -38,6 +39,9 @@ ImageTexture::ImageTexture(std::shared_ptr<MappingLayer> const & mappingLayer,
 		pixels[pixel] = (float)charPixels[pixel]*normFactor;
 	}
 	delete [] charPixels;
+		
+	sampleFunction = samplingType == SamplingType::Nearest ?
+		&ImageTexture::SampleNearest : &ImageTexture::SampleBilinear;
 }
 
 ImageTexture::~ImageTexture() {
@@ -47,11 +51,10 @@ ImageTexture::~ImageTexture() {
 }
 
 Color3 ImageTexture::GetColor(const ShadingInfo& shadingInfo) const {
-	int row, column;
-	// TODO: call several times for bilinear interpolation
+	float row, column;
 	mappingLayer->ComputeTextureCoordinates(shadingInfo, texWidth, texHeight,
 											row, column);
-	return GetColor(row, column, (float)row, (float)column);
+	(this->*sampleFunction)(row, column, texWidth, texHeight);
 }
 
 

@@ -12,7 +12,7 @@ public:
 	
 	virtual void ComputeTextureCoordinates(ShadingInfo const & shadingInfo,
 										   int width, int height,
-										   int & row, int & column) override {
+										   float & row, float & column) override {
 		Point3 hitPnt = useWorldCoordsForTex ?
 			shadingInfo.intersectionPosition : shadingInfo.intersectionPositionLocal;
 		hitPnt = invTransformMatrix * hitPnt;
@@ -31,11 +31,9 @@ public:
 		float v = 1.0f - theta * INV_PI;
 		
 		// finally, map u and v to the texel coordinates
-		column = (int)((width - 1) * u);
+		column = (float)(width - 1) * u;
 		// remember that row is flipped in image space
-		row = (height - 1) - (int)((height - 1) * v);
-		(*wrapFunction)(column, width - 1);
-		(*wrapFunction)(row, height - 1);
+		row = (float)(height - 1) - (float)(height - 1) * v;
 	}
 	
 private:

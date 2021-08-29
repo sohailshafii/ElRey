@@ -6,7 +6,8 @@
 class SingleColorTex : public AbstractTexture {
 public:
 	SingleColorTex(std::shared_ptr<MappingLayer> const & mappingLayer,
-				   Color3 const & color) : AbstractTexture(mappingLayer),
+				   Color3 const & color,
+				   SamplingType samplingType) : AbstractTexture(mappingLayer, samplingType),
 		constantColor(color) {
 	}
 	
@@ -15,11 +16,8 @@ public:
 	}
 	
 	static SingleColorTex SolidWhite() {
-		return SingleColorTex(std::make_shared<NullMapping>(), Color3::White());
-	}
-	
-	virtual Color3 GetColor(int row, int column, float rowFloat, float colFloat) const override {
-		return constantColor;
+		return SingleColorTex(std::make_shared<NullMapping>(), Color3::White(),
+							  SamplingType::Nearest);
 	}
 
 private:

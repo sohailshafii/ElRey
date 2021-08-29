@@ -9,8 +9,8 @@ public:
 	PlaneCheckerTex(unsigned int checkerSize, unsigned int outlineWidth,
 					Color3 const & inColor, Color3 const & outColor,
 					Color3 const & outlineColor)
-		: AbstractTexture(std::make_shared<NullMapping>()), checkerSize(checkerSize),
-			inColor(inColor), outColor(outColor), outlineColor(outlineColor),
+		: AbstractTexture(std::make_shared<NullMapping>(), SamplingType::Nearest),
+			checkerSize(checkerSize), inColor(inColor), outColor(outColor), outlineColor(outlineColor),
 			outlineWidth(outlineWidth) {
 			outlineWidthHalfNormalized = 0.5f * outlineWidth / checkerSize;
 			outlineWidthHalfNormalizedUpper = 1.0f - outlineWidthHalfNormalized;
@@ -21,20 +21,15 @@ public:
 											shadingInfo.intersectionPosition);
 		float x = transformedPoint[0];
 		float z = transformedPoint[2];
-		int cellX = floor(x / checkerSize);
-		int cellZ = floor(z / checkerSize);
-		return GetColor(cellZ, cellX, z, x);
-	}
-
-protected:
-	
-	virtual Color3 GetColor(int row, int column, float rowFloat, float colFloat) const override {
-		float fractionX = colFloat / checkerSize - column;
-		float fractionZ = rowFloat / checkerSize - row;
-		bool inOutline = (fractionX < outlineWidthHalfNormalized ||
-						  fractionX > outlineWidthHalfNormalizedUpper) ||
-						 (fractionZ < outlineWidthHalfNormalized ||
-						  fractionZ > outlineWidthHalfNormalizedUpper);
+		int column = floor(x / checkerSize);
+		int row = floor(z / checkerSize);
+		float fractionCol = x / checkerSize - column;
+		float fractionRow = z / checkerSize - row;
+		
+		bool inOutline = (fractionRow < outlineWidthHalfNormalized ||
+						  fractionRow > outlineWidthHalfNormalizedUpper) ||
+						 (fractionCol < outlineWidthHalfNormalized ||
+						  fractionCol > outlineWidthHalfNormalizedUpper);
 		if (inOutline) {
 			return outlineColor;
 		}

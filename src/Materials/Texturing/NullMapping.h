@@ -7,9 +7,9 @@ public:
 	NullMapping() : MappingLayer(MappingLayer::WrapType::Clamp, false) {
 	}
 	
-	void ComputeTextureCoordinates(ShadingInfo const & shadingInfo,
-								   int width, int height,
-								   int & row, int & column) {
+	virtual void ComputeTextureCoordinates(ShadingInfo const & shadingInfo,
+										   int width, int height,
+										   float & row, float & column) override {
 		row = 0;
 		column = 0;
 	}

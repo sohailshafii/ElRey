@@ -161,9 +161,12 @@ std::shared_ptr<AbstractTexture> CommonLoaderFunctions::CreateTexture(nlohmann::
 	if (HasKey(colorObj, "image_texture")) {
 		auto imageTextureObj = SafeGetToken(colorObj, "image_texture");
 		std::string filePath = SafeGetToken(imageTextureObj, "file_path");
+		std::string sampleTypeStr = SafeGetToken(imageTextureObj, "sample_type");
+		AbstractTexture::SamplingType sampleType = sampleTypeStr == "nearest" ?
+		AbstractTexture::SamplingType::Nearest : AbstractTexture::SamplingType::Bilinear;
 		std::shared_ptr<MappingLayer> mappingLayer = CreateMappingLayer(imageTextureObj);
 		// TODO: create texture pool
-		createdTex = std::make_shared<ImageTexture>(mappingLayer, filePath);
+		createdTex = std::make_shared<ImageTexture>(mappingLayer, filePath, ImageTexture::SamplingType::Nearest);
 	}
 	else if (HasKey(colorObj, "plane_checker")) {
 		auto planeChecker = SafeGetToken(colorObj, "plane_checker");
@@ -180,7 +183,8 @@ std::shared_ptr<AbstractTexture> CommonLoaderFunctions::CreateTexture(nlohmann::
 	else {
 		createdTex = std::make_shared<SingleColorTex>(std::make_shared<NullMapping>(),
 													  Color3(colorObj[0], colorObj[1],
-															 colorObj[2]));
+															 colorObj[2]),
+													  ImageTexture::SamplingType::Nearest);
 	}
 	return createdTex;
 }
