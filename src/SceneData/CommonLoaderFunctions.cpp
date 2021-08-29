@@ -166,7 +166,7 @@ std::shared_ptr<AbstractTexture> CommonLoaderFunctions::CreateTexture(nlohmann::
 		AbstractTexture::SamplingType::Nearest : AbstractTexture::SamplingType::Bilinear;
 		std::shared_ptr<MappingLayer> mappingLayer = CreateMappingLayer(imageTextureObj);
 		// TODO: create texture pool
-		createdTex = std::make_shared<ImageTexture>(mappingLayer, filePath, ImageTexture::SamplingType::Nearest);
+		createdTex = std::make_shared<ImageTexture>(mappingLayer, filePath, sampleType);
 	}
 	else if (HasKey(colorObj, "plane_checker")) {
 		auto planeChecker = SafeGetToken(colorObj, "plane_checker");
