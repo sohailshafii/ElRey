@@ -1,0 +1,99 @@
+{
+	"scene_settings":
+	{
+		"navigation_type":"none",
+		"camera":
+		{		
+			"type":"pinhole",
+			"eye_position":[0.0,0.9,-1.3],
+			"look_at_position":[0.0,0.9,-1.1],
+			"num_columns_pixels":600,
+			"num_rows_pixels":400,
+			"view_plane_width":1.0,
+			"up_vector":[0.0,1.0,0.0],
+			"random_sampler_type":"multijittered",
+			"num_random_samples":4,
+			"num_random_sets":83
+		},
+		"path_trace":false
+	},
+	"objects":
+	[
+		{
+			"type":"grid",
+			"name":"main_grid",
+			"children": [
+				"textured_rectangle"
+			],
+			"multiplier":1.0
+		},
+		{
+			"type":"rectangle",
+			"name":"textured_rectangle",
+			"side_vec_1":[15.0, 0.0, 0.0],
+			"side_vec_2":[0.0, 15.0, 0.0],
+			"origin":[-0.5, 0.5, -1.1],
+			"material":
+			{
+				"type":"simple_emissive",
+				"ka":0.1,
+				"kd":1.95,
+				"color":
+				{
+					"image_texture":
+					{
+						"file_path": "textures/bricks07 diffuse 1k.jpg",
+						"sample_type":"nearest",
+						"mapping_layer": "rectangular",
+						"mapping_data":
+						{
+							"rec_width":1.0,
+							"rec_height":1.0,
+							"width_axis":1,
+							"height_axis":0,
+							"origin_x":-1.5,
+							"origin_y":0.5,
+							"origin_z":-0.5,
+							"wrap_type":"repeat",
+							"local_to_world_transform":
+							[
+								{"scale":[3.0, 3.0, 3.0]},
+								{"translate":[0.2, 0.0, 0.0]}
+							]
+						}
+					}
+				}
+			},
+			"sampler":
+			{
+				"random_sampler_type":"multijittered",
+				"num_random_samples":4,
+				"num_random_sets":83
+			}
+		}
+	],
+	"lights":
+	[
+		{
+			"type":"directional",
+			"direction":[-0.5,-0.7,0.3],
+			"radiance":[0.4,0.4,0.4],
+			"radiance_scale":3.0,
+			"casts_shadows":true
+		},
+		{
+			"type":"environment",
+			"random_sampler_type":"multijittered",
+			"num_random_samples":64,
+			"num_random_sets":83,
+			"casts_shadows":true,
+			"material":
+			{
+				"type":"simple_emissive",
+				"ka":0.1,
+				"kd":0.2,
+				"color":[1.0, 1.0, 1.0, 1.0]
+			}
+		}
+	]
+}

@@ -72,7 +72,7 @@ public:
 		return invTransformMatrix * intersectionPnt;
 	}
 	
-	void ApplyWrap(int value, int high) {
+	void ApplyWrap(int& value, int high) {
 		(*wrapFunction)(value, high);
 	}
 
@@ -82,9 +82,9 @@ protected:
 	// allows object to slide through texture
 	// since texture doesn't operate in local space
 	bool useWorldCoordsForTex;
-	void (*wrapFunction)(int, int);
+	void (*wrapFunction)(int&, int);
 	
-	static void ClampWrap(int value, int high) {
+	static void ClampWrap(int& value, int high) {
 		if (value < 0) {
 			value = 0;
 		}
@@ -93,7 +93,7 @@ protected:
 		}
 	}
 	
-	static void RepeatWrap(int value, int high) {
+	static void RepeatWrap(int& value, int high) {
 		value = value % high;
 		if (value < 0) {
 			value = high + value;
