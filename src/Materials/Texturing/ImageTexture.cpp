@@ -54,7 +54,7 @@ Color3 ImageTexture::GetColor(const ShadingInfo& shadingInfo) const {
 	float row, column;
 	mappingLayer->ComputeTextureCoordinates(shadingInfo, texWidth, texHeight,
 											row, column);
-	(this->*sampleFunction)(row, column, texWidth, texHeight);
+	return (this->*sampleFunction)(row, column, texWidth, texHeight);
 }
 
 
