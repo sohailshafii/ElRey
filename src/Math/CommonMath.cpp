@@ -324,3 +324,32 @@ bool CommonMath::TestTriangle(Point3 const & p0, Point3 const & p1,
 	
 	return true;
 }
+
+bool CommonMath::IsPowerOfTwo(int number) {
+	if (number <= 0) {
+		return false;
+	}
+	
+	// loop down to one, make sure number if divisible by two
+	while (number > 1) {
+		if (number % 2 != 0) {
+			return false;
+		}
+		number /= 2;
+	}
+	
+	// should end at 1
+	return number == 1;
+}
+
+int CommonMath::FindPowerOfTwo(int number) {
+	int currPower = 0;
+	int currNumber = 1;
+	
+	while (currNumber < number) {
+		currNumber *= 2;
+		currPower++;
+	}
+	
+	return currPower - 1;
+}

@@ -63,5 +63,7 @@ private:
 		return Color3(pixels[pixelOffset], pixels[pixelOffset + 1],
 					  pixels[pixelOffset + 2]);
 	}
+	
+	void ComputeMipmaps();
 };
 

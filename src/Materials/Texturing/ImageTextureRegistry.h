@@ -20,6 +20,7 @@ public:
 		std::shared_ptr<MappingLayer> const & mappingLayer,
 		AbstractTexture::SamplingType sampleType);
 	
+	// TODO: separate texture file loading from actual texture object
 private:
 	std::unordered_map<std::string, std::shared_ptr<ImageTexture>>
 		pathToTexture;

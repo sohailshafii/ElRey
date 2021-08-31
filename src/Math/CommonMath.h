@@ -96,6 +96,9 @@ public:
 							 Point3 const & p2, Ray const & ray,
 							 float tMin, float tMax, float& t,
 							 float &beta, float &gamma);
+	
+	static bool IsPowerOfTwo(int number);
+	static int FindPowerOfTwo(int number);
 
 	static const float randMaxInverse;
 

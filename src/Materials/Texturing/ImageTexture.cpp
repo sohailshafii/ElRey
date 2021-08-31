@@ -57,4 +57,28 @@ Color3 ImageTexture::GetColor(const ShadingInfo& shadingInfo) const {
 	return (this->*sampleFunction)(row, column, texWidth, texHeight);
 }
 
+void ImageTexture::ComputeMipmaps() {
+	// make sure texture's dimensions are both powers of two
+	if (!CommonMath::IsPowerOfTwo(texWidth)) {
+		std::stringstream exceptionMsg;
+		exceptionMsg << "Texture width " << texWidth << " not power of two.\n";
+		throw exceptionMsg;
+	}
+	
+	if (!CommonMath::IsPowerOfTwo(texHeight)) {
+		std::stringstream exceptionMsg;
+		exceptionMsg << "Texture width " << texHeight << " not power of two.\n";
+		throw exceptionMsg;
+	}
+	
+	// find out how many times you have to divide by two to get to smallest texture
+	int pwrTwoWidth = CommonMath::FindPowerOfTwo(texWidth);
+	int pwrTwoHeight = CommonMath::FindPowerOfTwo(texHeight);
+	int pwrOfTwo = pwrTwoHeight < pwrTwoWidth ? pwrTwoHeight : pwrTwoWidth;
+	
+	/*std::stringstream exceptionMsg;
+	exceptionMsg << "Could not find key: " << key
+		<< " in JSON object: " << jsonObj << ".\n";
+	throw exceptionMsg;*/
+}
 
