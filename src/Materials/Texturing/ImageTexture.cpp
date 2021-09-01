@@ -76,9 +76,37 @@ void ImageTexture::ComputeMipmaps() {
 	int pwrTwoHeight = CommonMath::FindPowerOfTwo(texHeight);
 	int pwrOfTwo = pwrTwoHeight < pwrTwoWidth ? pwrTwoHeight : pwrTwoWidth;
 	
-	/*std::stringstream exceptionMsg;
-	exceptionMsg << "Could not find key: " << key
-		<< " in JSON object: " << jsonObj << ".\n";
-	throw exceptionMsg;*/
+	// the resulting texture will be divided by two multiple times until
+	// the lesser dimension gets to be 1 pixel
+	std::vector<int> widthSizes, heightSizes;
+	int totalNumberOfPixels;
+	int currWidth = texWidth;
+	int currHeight = texHeight;
+	while (currWidth >= 1 && currHeight >= 1) {
+		totalNumberOfPixels += currWidth*currHeight;
+		widthSizes.push_back(currWidth);
+		heightSizes.push_back(currHeight);
+		currWidth /= 2;
+		currHeight /= 2;
+	}
+	
+	float *mipMapLevels = new float[totalNumberOfPixels*texChannels];
+	memcpy(mipMapLevels, pixels, texWidth*texHeight*texChannels*sizeof(float));
+	float *oldMipLevel, *newMipLevel;
+	int offsetBaseMip = 0;
+	for (int i = 1; i < widthSizes.size(); i++) {
+		int prevWidth = widthSizes[i - 1];
+		int prevHeight = heightSizes[i - 1];
+		
+		int currWidth = widthSizes[i];
+		int currHeight = heightSizes[i];
+		
+		oldMipLevel = &pixels[offsetBaseMip];
+		newMipLevel = &pixels[offsetBaseMip + prevWidth*prevHeight*texChannels];
+		
+		// TODO subsample here
+	}
+	
+	delete [] mipMapLevels;
 }
 
