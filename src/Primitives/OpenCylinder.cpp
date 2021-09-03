@@ -64,7 +64,7 @@ bool OpenCylinder::TestRayAndSetTMax(const Ray &ray, float tMin, float& tMax) {
 	float b = 2.0f * (originX*dirX + originZ*dirZ);
 	float c = originX*originX + originZ*originZ
 		- radiusSqr;
-	float discriminant = b * b - 4.0 * a * c;
+	float discriminant =b * b - 4.0f * a * c;
 	
 	if (discriminant < 0.0f) {
 		return false;

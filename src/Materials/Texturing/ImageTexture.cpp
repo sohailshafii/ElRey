@@ -79,7 +79,7 @@ void ImageTexture::ComputeMipmaps() {
 	// the resulting texture will be divided by two multiple times until
 	// the lesser dimension gets to be 1 pixel
 	std::vector<int> widthSizes, heightSizes;
-	int totalNumberOfPixels;
+	int totalNumberOfPixels = 0;
 	int currWidth = texWidth;
 	int currHeight = texHeight;
 	while (currWidth >= 1 && currHeight >= 1) {

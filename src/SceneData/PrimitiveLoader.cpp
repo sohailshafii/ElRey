@@ -227,7 +227,7 @@ void PrimitiveLoader::AddGridPrimitives(Scene* scene,
 				for (size_t i = 0; i < modelPrimitiveInfos.size(); i++) {
 					auto modelPrim = modelPrimitiveInfos[i];
 					if (modelPrim->name == primName) {
-						foundModelIndex = i;
+						foundModelIndex = (int)i;
 						break;
 					}
 				}
@@ -539,12 +539,12 @@ void PrimitiveLoader::LoadModel(ModelPrimitiveInfo* primInfo,
 				numTrianglesTotal++;
 				if (isSmooth) {
 					size_t faceIndex = primInfo->primitives.size()-1;
-					AddFaceIndex(triangleMesh.get(), triangleIndices[0],
-								 faceIndex);
-					AddFaceIndex(triangleMesh.get(), triangleIndices[1],
-								 faceIndex);
-					AddFaceIndex(triangleMesh.get(), triangleIndices[2],
-								 faceIndex);
+					AddFaceIndex(triangleMesh.get(), (unsigned int)triangleIndices[0],
+						(unsigned int)faceIndex);
+					AddFaceIndex(triangleMesh.get(), (unsigned int)triangleIndices[1],
+						(unsigned int)faceIndex);
+					AddFaceIndex(triangleMesh.get(), (unsigned int)triangleIndices[2],
+						(unsigned int)faceIndex);
 				}
 				triIndex = 0;
 			}
@@ -565,8 +565,8 @@ void PrimitiveLoader::LoadModel(ModelPrimitiveInfo* primInfo,
 }
 
 void PrimitiveLoader::AddFaceIndex(TriangleMesh *mesh,
-								   unsigned int vertIndex,
-								   unsigned int triIndex) {
+	unsigned int vertIndex,
+	unsigned int triIndex) {
 	auto vertFacesSize = mesh->vertexFaces.size();
 	if (vertFacesSize == 0 || vertFacesSize < vertIndex+1) {
 		std::vector<unsigned int> faceList;

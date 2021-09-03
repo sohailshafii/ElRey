@@ -55,7 +55,7 @@ Primitive* Torus::Intersect(const Ray &ray, float tMin, float& tMax,
 	for (int j = 0; j < numRealRoots; j++) {
 		if (roots[j] < tMax && roots[j] > tMin) {
 			intersected = true;
-			t = roots[j];
+			t = (float)roots[j];
 		}
 	}
 		
@@ -120,7 +120,7 @@ bool Torus::IntersectShadow(const Ray &ray, float tMin, float tMax) {
 	// the roots array is not sorted
 	for (int j = 0; j < numRealRoots; j++) {
 		if (roots[j] < tMax && roots[j] > tMin) {
-			t = roots[j];
+			t = (float)roots[j];
 			return true;
 		}
 	}
@@ -140,9 +140,9 @@ Vector3 Torus::ComputeHardNormal(Point3 const &position) const {
 	float z = position[2];
 	float sumSquared = x * x + y * y + z * z;
 	
-	normal[0] = 4.0f * x * (sumSquared - paramSquared);
-	normal[1] = 4.0f * y * (sumSquared - paramSquared + 2.0 * sweptRadiusSquared);
-	normal[2] = 4.0f * z * (sumSquared - paramSquared);
+	normal[0] = (float)(4.0 * x * (sumSquared - paramSquared));
+	normal[1] = (float)(4.0 * y * (sumSquared - paramSquared + 2.0 * sweptRadiusSquared));
+	normal[2] = (float)(4.0 * z * (sumSquared - paramSquared));
 	normal.Normalize();
 	
 	return normal;

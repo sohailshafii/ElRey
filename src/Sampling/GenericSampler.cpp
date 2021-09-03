@@ -20,7 +20,7 @@ GenericSampler::GenericSampler(const GenericSampler &other) {
 	numSets = other.numSets;
 	numSamples = other.numSamples;
 	AllocateGenericSamples();
-	for (int i = 0; i < numSets*numSamples; i++) {
+	for (unsigned int i = 0; i < numSets*numSamples; i++) {
 		samples[i] = other.samples[i];
 	}
 }
