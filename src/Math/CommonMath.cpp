@@ -351,5 +351,8 @@ int CommonMath::FindPowerOfTwo(int number) {
 		currPower++;
 	}
 	
-	return currPower - 1;
+	// will end when curr number is bigger than original number
+	// but there is an edge case where number is 1, so account for that
+	return currNumber > number ? currPower - 1 :
+		currPower;
 }

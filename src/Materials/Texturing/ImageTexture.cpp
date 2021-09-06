@@ -5,6 +5,8 @@
 #include <sstream>
 #include <iostream>
 
+// TODO: separate texture data from texture representation
+// TODO: have a texture instance block in json file
 ImageTexture::ImageTexture(std::shared_ptr<MappingLayer> const & mappingLayer,
 						   std::string const & filePath,
 						   SamplingType samplingType)
@@ -91,11 +93,13 @@ void ImageTexture::ComputeMipmaps() {
 	}
 	
 	float *mipMapLevels = new float[totalNumberOfPixels*texChannels];
+	// copy mip level 0
 	memcpy(mipMapLevels, pixels, texWidth*texHeight*texChannels*sizeof(float));
 	float *oldMipLevel, *newMipLevel;
 	int offsetBaseMip = 0;
 	float sumNormalization = 0.25f;
 	for (int i = 1; i < widthSizes.size(); i++) {
+		// prev dimensions will always be longer
 		int prevWidth = widthSizes[i - 1];
 		int prevHeight = heightSizes[i - 1];
 		
