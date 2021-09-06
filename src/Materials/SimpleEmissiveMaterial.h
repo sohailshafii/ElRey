@@ -2,6 +2,7 @@
 
 #include "Material.h"
 #include "Color3.h"
+#include <memory>
 
 class AbstractTexture;
 

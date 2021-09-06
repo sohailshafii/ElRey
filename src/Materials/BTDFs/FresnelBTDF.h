@@ -3,6 +3,7 @@
 #include "Materials/BTDFs/BTDF.h"
 #include "Sampling/GenericSampler.h"
 #include "Materials/Color3.h"
+#include <memory>
 
 class AbstractTexture;
 

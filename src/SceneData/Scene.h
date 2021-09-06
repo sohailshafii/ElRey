@@ -61,7 +61,7 @@ public:
 		return simpleWorld->GetNumPrimitives();
 	}
 	
-	unsigned int GetNumLights() const {
+	size_t GetNumLights() const {
 		return lights.size();
 	}
 	

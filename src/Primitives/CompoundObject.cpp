@@ -4,7 +4,7 @@
 
 Primitive* CompoundObject::Intersect(const Ray &ray, float tMin, float& tMax,
 									 IntersectionResult &intersectionResult) {
-	unsigned int numElements = primitives.size();
+	unsigned int numElements = (unsigned int)primitives.size();
 	Primitive* closestPrimSoFar = nullptr;
 	
 	for (unsigned int index = 0; index < numElements; index++) {
@@ -28,7 +28,7 @@ bool CompoundObject::IntersectShadow(const Ray &ray, float tMin,
 	if (ignoreShadowTest) {
 		return false;
 	}
-	unsigned int numElements = primitives.size();
+	unsigned int numElements = (unsigned int)primitives.size();
 	Primitive* hitPrimitive = nullptr;
 	
 	for (unsigned int index = 0; index < numElements; index++) {
@@ -101,7 +101,7 @@ void CompoundObject::RemovePrimitiveAtIndex(unsigned int index) {
 void CompoundObject::RemovePrimitiveWithName(std::string const & name) {
 	unsigned int indexToRemove;
 	bool foundObject;
-	unsigned int numElements = primitives.size();
+	unsigned int numElements = (unsigned int)primitives.size();
 	for(unsigned int index = 0; index < numElements; index++) {
 		if (primitives[index]->GetName() == name) {
 			foundObject = true;
@@ -117,7 +117,7 @@ void CompoundObject::RemovePrimitiveWithName(std::string const & name) {
 
 void CompoundObject::RecomputeBoundingBox() {
 	boundingBox.Reset();
-	unsigned int numElements = primitives.size();
+	unsigned int numElements = (unsigned int)primitives.size();
 	for(unsigned int index = 0; index < numElements; index++) {
 		auto primitiveBounds = primitives[index]->GetBoundingBox();
 		boundingBox.Superset(primitiveBounds);

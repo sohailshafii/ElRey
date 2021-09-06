@@ -21,8 +21,8 @@ public:
 											shadingInfo.intersectionPosition);
 		float x = transformedPoint[0];
 		float z = transformedPoint[2];
-		int column = floor(x / checkerSize);
-		int row = floor(z / checkerSize);
+		int column = (int)floor(x / checkerSize);
+		int row = (int)floor(z / checkerSize);
 		float fractionCol = x / checkerSize - column;
 		float fractionRow = z / checkerSize - row;
 		

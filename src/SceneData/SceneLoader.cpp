@@ -69,7 +69,7 @@ Scene* SceneLoader::DeserializeJSONFileIntoScene(const std::string &jsonFilePath
 		throw exceptionMsg;
 	}
 
-	unsigned int numLights = scene->GetNumLights();
+	unsigned int numLights = (unsigned int)scene->GetNumLights();
 	for (unsigned int lightIndex = 0; lightIndex <
 		 numLights; lightIndex++) {
 		Light* currentLight = scene->GetLight(lightIndex);

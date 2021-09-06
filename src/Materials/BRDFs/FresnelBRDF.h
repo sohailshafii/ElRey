@@ -3,6 +3,7 @@
 #include "Materials/BRDFs/BRDF.h"
 #include "Math/CommonMath.h"
 #include "Sampling/GenericSampler.h"
+#include <memory>
 
 class AbstractTexture;
 
