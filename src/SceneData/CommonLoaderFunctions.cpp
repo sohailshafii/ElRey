@@ -162,11 +162,17 @@ std::shared_ptr<AbstractTexture> CommonLoaderFunctions::CreateTexture(nlohmann::
 		auto imageTextureObj = SafeGetToken(colorObj, "image_texture");
 		std::string filePath = SafeGetToken(imageTextureObj, "file_path");
 		std::string sampleTypeStr = SafeGetToken(imageTextureObj, "sample_type");
-		AbstractTexture::SamplingType sampleType = sampleTypeStr == "nearest" ?
-		AbstractTexture::SamplingType::Nearest : AbstractTexture::SamplingType::Bilinear;
+		AbstractTexture::SamplingType sampleType = AbstractTexture::SamplingType::Nearest;
+		if (sampleTypeStr == "bilinear") {
+			sampleType = AbstractTexture::SamplingType::Bilinear;
+		}
+		else {
+			sampleType = AbstractTexture::SamplingType::Trilinear;
+		}
 		std::shared_ptr<MappingLayer> mappingLayer = CreateMappingLayer(imageTextureObj);
-		createdTex = ImageTextureRegistry::GetInstance().GetTextureForPath(filePath, mappingLayer,
-														sampleType);
+		createdTex = ImageTextureRegistry::GetInstance().GetTextureForPath(filePath,
+																		   mappingLayer,
+																		   sampleType);
 	}
 	else if (HasKey(colorObj, "plane_checker")) {
 		auto planeChecker = SafeGetToken(colorObj, "plane_checker");

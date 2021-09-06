@@ -34,6 +34,9 @@ public:
 		// remember that row is flipped in image space
 		row = (float)(height - 1) - widthPos * (float)(height - 1);
 		column = heightPos * (float)(width - 1);
+		if (row > height) {
+			int breakVar = 1; breakVar = 2;
+		}
 	}
 	
 private:

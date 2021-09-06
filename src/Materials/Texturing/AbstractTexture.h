@@ -9,7 +9,8 @@ class AbstractTexture {
 public:
 	enum class SamplingType {
 		Nearest,
-		Bilinear
+		Bilinear,
+		Trilinear
 	};
 	
 	AbstractTexture(std::shared_ptr<MappingLayer> const & mappingLayer,

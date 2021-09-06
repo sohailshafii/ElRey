@@ -44,6 +44,10 @@ ImageTexture::ImageTexture(std::shared_ptr<MappingLayer> const & mappingLayer,
 		
 	sampleFunction = samplingType == SamplingType::Nearest ?
 		&ImageTexture::SampleNearest : &ImageTexture::SampleBilinear;
+		
+	if (samplingType == SamplingType::Trilinear) {
+		ComputeMipmaps();
+	}
 }
 
 ImageTexture::~ImageTexture() {
@@ -106,40 +110,40 @@ void ImageTexture::ComputeMipmaps() {
 		int currWidth = widthSizes[i];
 		int currHeight = heightSizes[i];
 		
-		oldMipLevel = &pixels[offsetBaseMip];
-		newMipLevel = &pixels[offsetBaseMip + prevWidth*prevHeight*texChannels];
+		oldMipLevel = &mipMapLevels[offsetBaseMip];
+		newMipLevel = &mipMapLevels[offsetBaseMip + prevWidth*prevHeight*texChannels];
+		int sourceRowWidth = prevWidth * texChannels;
 		
 		for (int row = 0, pixel = 0; row < currHeight; row++) {
 			for (int col = 0; col < currWidth; col++, pixel += texChannels) {
 				// subsample from previous resolution
 				int sourceRow = row * 2;
 				int sourceCol = col * 2;
-				// TODO: make sure this doesn't happen
-				if (sourceRow > prevHeight - 1) {
-					sourceRow = prevHeight - 1;
-				}
-				if (sourceCol > prevWidth - 1) {
-					sourceCol = prevWidth - 1;
-				}
-				int sourceRowOffset = sourceRow * prevWidth * texChannels;
+				assert(sourceRow < prevHeight);
+				assert(sourceCol < prevWidth);
+				int sourceRowOffset = sourceRow * sourceRowWidth;
 				int sourcePixel1 = sourceRowOffset + sourceCol;
 				// one column over
-				int sourcePixel2 = sourcePixel2 + texChannels;
-				// next row
-				int sourcePixel3 = sourceRowOffset + prevWidth * texChannels;
+				int sourcePixel2 = sourcePixel1 + texChannels;
+				// gets items on next row
+				int sourcePixel3 = sourcePixel1 + sourceRowWidth;
 				// one column over
 				int sourcePixel4 = sourcePixel3 + texChannels;
 				// simple box filter
 				for (int channel = 0; channel < texChannels; channel++) {
-					newMipLevel[pixel + channel] =
-					(oldMipLevel[sourcePixel1 + channel] + oldMipLevel[sourcePixel2 + channel]
-					+ oldMipLevel[sourcePixel3 + channel] + oldMipLevel[sourcePixel4 + channel])*
-					sumNormalization;
+					newMipLevel[pixel + channel] = (oldMipLevel[sourcePixel1 + channel] +
+													oldMipLevel[sourcePixel2 + channel] +
+													oldMipLevel[sourcePixel3 + channel] +
+													oldMipLevel[sourcePixel4 + channel])*
+													sumNormalization;
 				}
 			}
 		}
+		
+		offsetBaseMip += prevWidth*prevHeight*texChannels;
 	}
 	
-	delete [] mipMapLevels;
+	delete [] pixels;
+	pixels = mipMapLevels;
 }
 

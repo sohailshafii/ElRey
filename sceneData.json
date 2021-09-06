@@ -85,7 +85,7 @@
 					"image_texture":
 					{
 						"file_path": "textures/bricks07 diffuse 1k.jpg",
-						"sample_type":"bilinear",
+						"sample_type":"trilinear",
 						"mapping_layer": "rectangular",
 						"mapping_data":
 						{
