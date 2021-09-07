@@ -46,6 +46,9 @@ ImageTexture::ImageTexture(std::shared_ptr<MappingLayer> const & mappingLayer,
 		&ImageTexture::SampleNearest : &ImageTexture::SampleBilinear;
 		
 	// TODO: write sampler function for trilinear
+	// see https://computergraphics.stackexchange.com/questions/5556/how-are-mipmap-levels-computed-in-metal
+	// https://www.khronos.org/registry/OpenGL/extensions/OES/OES_standard_derivatives.txt
+	// https://www.reddit.com/r/opengl/comments/3cdg5r/derivation_of_opengls_mipmap_level_computation/
 	if (samplingType == SamplingType::Trilinear) {
 		ComputeMipmaps();
 	}
