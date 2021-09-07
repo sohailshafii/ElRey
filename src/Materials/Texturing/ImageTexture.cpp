@@ -45,6 +45,7 @@ ImageTexture::ImageTexture(std::shared_ptr<MappingLayer> const & mappingLayer,
 	sampleFunction = samplingType == SamplingType::Nearest ?
 		&ImageTexture::SampleNearest : &ImageTexture::SampleBilinear;
 		
+	// TODO: write sampler function for trilinear
 	if (samplingType == SamplingType::Trilinear) {
 		ComputeMipmaps();
 	}
