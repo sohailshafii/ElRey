@@ -1,24 +1,34 @@
 #pragma once
 
 #include "Materials/Texturing/AbstractTexture.h"
+#include "Materials/Texturing/TextureData.h"
 #include "Materials/Texturing/Mapping/MappingLayer.h"
 #include <string>
 
 class ImageTexture : public AbstractTexture {
 public:
 	ImageTexture(std::shared_ptr<MappingLayer> const & mappingLayer,
-				 std::string const & filePath,
+				 std::shared_ptr<TextureData> const & textureData,
 				 SamplingType samplingType);
 	
-	~ImageTexture();
+	bool operator==(ImageTexture const &other) const
+	{
+		return (mappingLayer == other.mappingLayer
+			&& textureData == other.textureData
+			&& samplingType == other.samplingType);
+	}
+	
+	~ImageTexture() {
+	}
 	
 	virtual Color3 GetColor(const ShadingInfo& shadingInfo) const override;
+	
+	std::shared_ptr<TextureData> GetTextureData() const {
+		return textureData;
+	}
 
 private:
-	float *pixels;
-	int texWidth, texHeight;
-	int texChannels, rowStride;
-	int stride;
+	std::shared_ptr<TextureData> const textureData;
 	
 	Color3 (ImageTexture::*sampleFunction)(float, float, int, int) const;
 	
@@ -59,11 +69,33 @@ private:
 	}
 	
 	Color3 GetColor(int row, int col) const {
-		int pixelOffset = row*rowStride + col*texChannels;
-		return Color3(pixels[pixelOffset], pixels[pixelOffset + 1],
-					  pixels[pixelOffset + 2]);
+		int pixelOffset = row*textureData->rowStride +
+			col*textureData->texChannels;
+		return Color3(textureData->pixels[pixelOffset],
+					  textureData->pixels[pixelOffset + 1],
+					  textureData->pixels[pixelOffset + 2]);
 	}
 	
 	void ComputeMipmaps();
+};
+
+// https://stackoverflow.com/questions/17016175/c-unordered-map-using-a-custom-class-type-as-the-key
+template <>
+struct std::hash<ImageTexture>
+{
+	std::size_t operator()(ImageTexture const & k) const
+	{
+	  using std::size_t;
+	  using std::hash;
+	  using std::string;
+
+	  // Compute individual hash values for first,
+	  // second and third and combine them using XOR
+	  // and bit shifting:
+		// TODO: revise if necessary
+	  return ((std::hash<std::shared_ptr<TextureData>>()(k.GetTextureData())
+			   ^ (std::hash<std::shared_ptr<MappingLayer>>()(k.GetMappingLayer()) << 1)) >> 1)
+			   ^ (std::hash<int>()((int)k.GetSamplingType()) << 1);
+	}
 };
 

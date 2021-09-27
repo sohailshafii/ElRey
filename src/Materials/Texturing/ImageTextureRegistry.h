@@ -3,7 +3,9 @@
 #include <unordered_map>
 #include <string>
 #include <memory>
+#include "Materials/Texturing/AbstractTexture.h"
 #include "Materials/Texturing/ImageTexture.h"
+#include "Materials/Texturing/TextureData.h"
 #include "Materials/Texturing/Mapping/MappingLayer.h"
 
 class ImageTextureRegistry {
@@ -22,6 +24,8 @@ public:
 	
 	// TODO: separate texture file loading from actual texture object
 private:
+	std::unordered_map<std::string, std::shared_ptr<TextureData>>
+		pathToData;
 	std::unordered_map<std::string, std::shared_ptr<ImageTexture>>
 		pathToTexture;
 };
