@@ -22,6 +22,8 @@ public:
 	virtual const Point2& GetSampleOnUnitDisk() = 0;
 	virtual const Point3& GetSampleOnHemisphere() = 0;
 	
+	virtual const Point2& Sample2DNoShuffle() = 0;
+	
 	unsigned int GetNumSets() const {
 		return numSets;
 	}

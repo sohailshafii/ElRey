@@ -159,3 +159,7 @@ const Point3& GenericMultiSampler::GetSampleOnHemisphere() {
 	CheckForNewJumpValue();
 	return hemisphereSamples[GetNewSampleIndex()];
 }
+
+const Point2& GenericMultiSampler::Sample2DNoShuffle() {
+	return(samples[count++ % numSamples]); 
+}

@@ -17,6 +17,8 @@ public:
 	virtual const Point2& GetSampleOnUnitSquare() override;
 	virtual const Point2& GetSampleOnUnitDisk() override;
 	virtual const Point3& GetSampleOnHemisphere() override;
+	
+	virtual const Point2& Sample2DNoShuffle() override;
 
 private:
 	Point3 dummyPoint;

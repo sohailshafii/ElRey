@@ -27,3 +27,7 @@ const Point2& OneSampleSampler::GetSampleOnUnitDisk() {
 const Point3& OneSampleSampler::GetSampleOnHemisphere() {
 	return dummyPoint;
 }
+
+const Point2& OneSampleSampler::Sample2DNoShuffle() {
+	return samples[0];
+}
