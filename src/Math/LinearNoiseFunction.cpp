@@ -3,10 +3,6 @@
 #include "Sampling/MultiJitteredSampler.h"
 #include <cstdlib>
 
-#define PERM(x)          permutationTable[(x)&noiseTableMask]
-#define INDEX(ix,iy,iz)  PERM((ix)+PERM((iy)+PERM(iz)))
-#define FLOOR(x) 		 ((int)(x) - ((x) < 0 && (x) != (int) (x)))
-
 // Darwyn Peachey in Ebert et al. (2003), page 70.
 const unsigned char LinearNoiseFunction::permutationTable[noiseTableSize] =
 {
@@ -158,7 +154,6 @@ float LinearNoiseFunction::GetValueInterpolated(Point3 const & point) const {
 	return z0;
 }
 
-
 Vector3 LinearNoiseFunction::GetVectorValueInterpolated(Point3 const & point) const {
 	unsigned int 	ix, iy, iz;
 	float 	fx, fy, fz;
@@ -193,3 +188,6 @@ Vector3 LinearNoiseFunction::GetVectorValueInterpolated(Point3 const & point) co
 	
 	return z0;
 }
+
+
+
