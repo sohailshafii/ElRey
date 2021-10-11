@@ -14,6 +14,7 @@
 #include "Materials/Texturing/PlaneCheckerTex.h"
 #include "Materials/Texturing/Mapping/ModelCoordMapping.h"
 #include "Materials/Texturing/NoiseTexture.h"
+#include "Materials/Texturing/NoiseRampTexture.h"
 #include <sstream>
 #include <vector>
 #include <iostream>
