@@ -36,6 +36,9 @@ public:
 		ComputeFBMBounds();
 	}
 	
+	float GetValueInterpolated(Point3 const & point) const;
+	Vector3 GetVectorValueInterpolated(Point3 const & point) const;
+	
 protected:
 	unsigned int numOctaves;
 	float lacunarity;
@@ -51,9 +54,6 @@ private:
 	void InitValueTable();
 	void InitVectorTable();
 	void ComputeFBMBounds();
-	
-	float GetValueInterpolated(Point3 const & point) const;
-	Vector3 GetVectorValueInterpolated(Point3 const & point) const;
 	
 	float Lerp(float t, float a, float b) const {
 		return (a + t * (b - a));

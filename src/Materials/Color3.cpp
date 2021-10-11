@@ -51,6 +51,18 @@ Color3& Color3::operator+=(const Color3& p2) {
 	return *this;
 }
 
+Color3 Color3::operator-(const Color3& p2) const {
+	return Color3(comp[0] - p2[0], comp[1] - p2[1],
+		comp[2] - p2[2]);
+}
+
+Color3& Color3::operator-=(const Color3& p2) {
+	comp[0] -= p2[0];
+	comp[1] -= p2[1];
+	comp[2] -= p2[2];
+	return *this;
+}
+
 Color3 Color3::operator*(const Color3& p2) const {
 	return Color3(comp[0] * p2[0], comp[1] * p2[1],
 		comp[2] * p2[2]);

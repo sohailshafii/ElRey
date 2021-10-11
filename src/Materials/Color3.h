@@ -28,6 +28,9 @@ public:
 	Color3 operator+(const Color3& p2) const;
 	Color3& operator+=(const Color3& p2);
 	
+	Color3 operator-(const Color3& p2) const;
+	Color3& operator-=(const Color3& p2);
+	
 	Color3 operator*(const Color3& p2) const;
 	Color3& operator*=(const Color3& p2);
 

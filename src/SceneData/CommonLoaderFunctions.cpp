@@ -13,6 +13,8 @@
 #include "Materials/Texturing/Mapping/SphericalMapping.h"
 #include "Materials/Texturing/PlaneCheckerTex.h"
 #include "Materials/Texturing/Mapping/ModelCoordMapping.h"
+#include "Materials/Texturing/LinearNoiseTexture.h"
+#include "Materials/Texturing/CubicNoiseTexture.h"
 #include <sstream>
 #include <vector>
 #include <iostream>
