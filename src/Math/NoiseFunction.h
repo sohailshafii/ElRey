@@ -8,7 +8,13 @@ public:
 	virtual ~NoiseFunction() {
 	}
 	
-	virtual float GetValue(Point3 const & point) const = 0;
-	virtual Vector3 GetVectorValue(Point3 const & point) const = 0;
-	virtual float GetValueTurbulence(Point3 const & point) const = 0;
+	virtual float GetValueFBM(Point3 const & point) const = 0;
+	virtual Vector3 GetVectorValueFBM(Point3 const & point) const = 0;
+	virtual float GetValueTurbulenceFBM(Point3 const & point) const = 0;
+	
+	virtual float GetValueFractalSum(Point3 const & point) const = 0;
+	virtual Vector3 GetVectorFractalSum(Point3 const & point) const = 0;
+	
+	virtual float GetValueInterpolated(Point3 const & point) const = 0;
+	virtual Vector3 GetVectorValueInterpolated(Point3 const & point) const = 0;
 };

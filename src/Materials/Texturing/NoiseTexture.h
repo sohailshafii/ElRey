@@ -30,7 +30,7 @@ private:
 	// ideally FBM requires a proper noise func
 	Color3 GetColorNoWrapping(const ShadingInfo& shadingInfo) const {
 		Point3 const & localPoint = shadingInfo.intersectionPositionLocal;
-		float noiseValue = expansionNumber * noiseFunction->GetValue(localPoint);
+		float noiseValue = expansionNumber * noiseFunction->GetValueFBM(localPoint);
 		float value = noiseValue - floor(noiseValue);
 		
 		return minColor * value;
@@ -38,7 +38,7 @@ private:
 	
 	Color3 GetColorWrapping(const ShadingInfo& shadingInfo) const {
 		Point3 const & localPoint = shadingInfo.intersectionPositionLocal;
-		float noiseValue = noiseFunction->GetValue(localPoint);
+		float noiseValue = noiseFunction->GetValueFBM(localPoint);
 		return minColor + (maxColor - minColor) * noiseValue;
 	}
 	

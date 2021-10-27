@@ -7,7 +7,7 @@ CubicNoiseFunction::CubicNoiseFunction(unsigned int numOctaves,
 	: LinearNoiseFunction(numOctaves, lacunarity, gain) {
 }
 
-float CubicNoiseFunction::GetValue(Point3 const & point) const {
+float CubicNoiseFunction::GetValueInterpolated(Point3 const & point) const {
 	int ix, iy, iz;
 	float fx, fy, fz;
 	float xknots[4], yknots[4], zknots[4];
@@ -34,7 +34,7 @@ float CubicNoiseFunction::GetValue(Point3 const & point) const {
 	return CommonMath::Clamp(FourKnotSpline(fz, zknots), -1.0, 1.0);
 }
 
-Vector3 CubicNoiseFunction::GetVectorValue(Point3 const & point) const {
+Vector3 CubicNoiseFunction::GetVectorValueInterpolated(Point3 const & point) const {
 	int ix, iy, iz;
 	float fx, fy, fz;
 	Vector3 xknots[4], yknots[4], zknots[4];

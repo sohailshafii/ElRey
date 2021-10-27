@@ -17,10 +17,12 @@ public:
 	LinearNoiseFunction(unsigned int numOctaves,
 						float lacunarity,
 						float gain);
-	virtual float GetValue(Point3 const & point) const override;
-	virtual Vector3 GetVectorValue(Point3 const & point) const override;
+	virtual float GetValueFBM(Point3 const & point) const override;
+	virtual Vector3 GetVectorValueFBM(Point3 const & point) const override;
+	virtual float GetValueTurbulenceFBM(Point3 const & point) const override;
 	
-	virtual float GetValueTurbulence(Point3 const & point) const override;
+	virtual float GetValueFractalSum(Point3 const & p) const override;
+	virtual Vector3 GetVectorFractalSum(Point3 const & p) const override;
 	
 	void SetNumOctaves(unsigned int numOctaves) {
 		this->numOctaves = numOctaves;
@@ -36,8 +38,8 @@ public:
 		ComputeFBMBounds();
 	}
 	
-	float GetValueInterpolated(Point3 const & point) const;
-	Vector3 GetVectorValueInterpolated(Point3 const & point) const;
+	virtual float GetValueInterpolated(Point3 const & point) const override;
+	virtual Vector3 GetVectorValueInterpolated(Point3 const & point) const override;
 	
 protected:
 	unsigned int numOctaves;

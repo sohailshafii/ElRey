@@ -33,13 +33,13 @@ LinearNoiseFunction::LinearNoiseFunction(unsigned int numOctaves,
 	ComputeFBMBounds();
 }
 
-float LinearNoiseFunction::GetValue(Point3 const & point) const {
+float LinearNoiseFunction::GetValueFBM(Point3 const & point) const {
 	float amplitude = 1.0f;
 	float frequency = 1.0f;
 	float sum = 0.0f;
 	
 	for (int j = 0; j < numOctaves; j++) {
-		sum += amplitude * GetValue(point * frequency);
+		sum += amplitude * GetValueInterpolated(point * frequency);
 		amplitude *= gain;
 		frequency *= lacunarity;
 	}
@@ -49,7 +49,7 @@ float LinearNoiseFunction::GetValue(Point3 const & point) const {
 	return sum;
 }
 
-Vector3 LinearNoiseFunction::GetVectorValue(Point3 const & point) const {
+Vector3 LinearNoiseFunction::GetVectorValueFBM(Point3 const & point) const {
 	float 		amplitude 	= 1.0;
 	float		frequency 	= 1.0;
 	Vector3		sum(0.0f, 0.0f, 0.0f);
@@ -60,23 +60,53 @@ Vector3 LinearNoiseFunction::GetVectorValue(Point3 const & point) const {
 		frequency 	*= lacunarity;
 	}
 		
-	return (sum);
+	return sum;
 }
 
-float LinearNoiseFunction::GetValueTurbulence(Point3 const & point) const {
+float LinearNoiseFunction::GetValueTurbulenceFBM(Point3 const & point) const {
 	float amplitude = 1.0f;
 	float frequency = 1.0f;
 	float turbulence = 0.0f;
 	
 	for (int j = 0; j < numOctaves; j++) {
-		turbulence += amplitude * fabs(GetValue(point * frequency));
-		amplitude *= gain;
-		frequency *= lacunarity;
+		turbulence += amplitude * fabs(GetValueInterpolated(point * frequency));
+		amplitude *= 0.5f;
+		frequency *= 2.0f;
 	}
 	
 	turbulence /= fbmMax;
 	
 	return turbulence;
+}
+
+float LinearNoiseFunction::GetValueFractalSum(Point3 const & point) const {
+	float amplitude = 1.0f;
+	float frequency = 1.0f;
+	float sum = 0.0f;
+	
+	for (int j = 0; j < numOctaves; j++) {
+		sum += amplitude * GetValueInterpolated(point * frequency);
+		amplitude *= 0.5f;
+		frequency *= 2.0f;
+	}
+	
+	sum = (sum - fbmMin)/(fbmMax - fbmMin);
+	
+	return sum;
+}
+
+Vector3 LinearNoiseFunction::GetVectorFractalSum(Point3 const & point) const {
+	float 		amplitude 	= 1.0;
+	float		frequency 	= 1.0;
+	Vector3		sum(0.0f, 0.0f, 0.0f);
+			
+	for (int j = 0; j < numOctaves; j++) {
+		sum += GetVectorValueInterpolated(point * frequency) * amplitude;
+		amplitude 	*= 0.5f;
+		frequency 	*= 2.0f;
+	}
+		
+	return sum;
 }
 
 void LinearNoiseFunction::InitValueTable() {

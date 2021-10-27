@@ -19,7 +19,7 @@ public:
 	
 	virtual Color3 GetColor(const ShadingInfo& shadingInfo) const override {
 		Point3 const & localPoint = shadingInfo.intersectionPositionLocal;
-		float noiseValue = noiseFunction->GetValue(localPoint);
+		float noiseValue = noiseFunction->GetValueFBM(localPoint);
 		float y = localPoint[1] + a * noiseValue;
 		float u = 0.5 * (1.0f + sin(y));
 		int row = 0;

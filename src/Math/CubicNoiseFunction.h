@@ -8,8 +8,9 @@ public:
 	CubicNoiseFunction(unsigned int numOctaves,
 					   float lacunarity,
 					   float gain);
-	virtual float GetValue(Point3 const & point) const override;
-	virtual Vector3 GetVectorValue(Point3 const & point) const override;
+	
+	virtual float GetValueInterpolated(Point3 const & point) const override;
+	virtual Vector3 GetVectorValueInterpolated(Point3 const & point) const override;
 	
 private:
 	
