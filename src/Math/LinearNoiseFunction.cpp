@@ -113,7 +113,7 @@ void LinearNoiseFunction::InitValueTable() {
 	srand(seedValue);
 	// values are in the range [-1, +1]
 	for (unsigned int i = 0; i < noiseTableSize; i++) {
-		noiseValues[i] = 1.0 - 2.0 * CommonMath::RandomUnitValue();
+		noiseValues[i] = 1.0f - 2.0f * CommonMath::RandomUnitValue();
 	}
 }
 
@@ -135,6 +135,8 @@ void LinearNoiseFunction::InitVectorTable() {
 		float y = r * sin(phi);
 		noiseVectorValues[j] = Vector3(x, y, z).Normalized();
 	}
+	
+	delete unitSquareSampler;
 }
 
 void LinearNoiseFunction::ComputeFBMBounds() {
