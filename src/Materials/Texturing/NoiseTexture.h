@@ -17,12 +17,12 @@ public:
 	
 	NoiseTexture(Color3 const & minColor,
 				 Color3 const & maxColor,
-				 std::shared_ptr<NoiseFunction> const & noiseFunction,
+				 std::shared_ptr<NoiseFunction> const & noiseFunctionClass,
 				 bool useWrapping,
 				 float expansionNumber,
 				 FunctionType functionType)
 	: AbstractTexture(std::make_shared<NullMapping>(), SamplingType::Nearest),
-		noiseFunction(noiseFunction), minColor(minColor), maxColor(maxColor) {
+		noiseFunction(noiseFunctionClass), minColor(minColor), maxColor(maxColor) {
 		GetColorFunc = useWrapping ? &NoiseTexture::GetColorWrapping :
 			&NoiseTexture::GetColorNoWrapping;
 		switch(functionType) {

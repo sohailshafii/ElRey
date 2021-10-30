@@ -15,6 +15,8 @@
 #include "Materials/Texturing/Mapping/ModelCoordMapping.h"
 #include "Materials/Texturing/NoiseTexture.h"
 #include "Materials/Texturing/NoiseRampTexture.h"
+#include "Math/LinearNoiseFunction.h"
+#include "Math/CubicNoiseFunction.h"
 #include <sstream>
 #include <vector>
 #include <iostream>
@@ -187,6 +189,48 @@ std::shared_ptr<AbstractTexture> CommonLoaderFunctions::CreateTexture(nlohmann::
 									 Color3(inColor[0], inColor[1], inColor[2]),
 									 Color3(outColor[0], outColor[1], outColor[2]),
 									 Color3(outlineColor[0], outlineColor[1], outlineColor[2])));
+	}
+	else if (HasKey(colorObj, "noise_texture")) {
+		auto noiseTextureToken = SafeGetToken(colorObj, "noise_texture");
+		//			 std::shared_ptr<NoiseFunction> const & noiseFunction,
+		//			 FunctionType functionType)
+		auto minColorToken = SafeGetToken(noiseTextureToken, "min_color");
+		auto maxColorToken = SafeGetToken(noiseTextureToken, "max_color");
+		bool useWrapping = SafeGetToken(noiseTextureToken, "use_wrapping");
+		float expansionNumber = SafeGetToken(noiseTextureToken, "expansion_number");
+		std::string noiseFunctionClass = SafeGetToken(noiseTextureToken, "noise_function_class");
+		std::string functionType = SafeGetToken(noiseTextureToken, "function_type");
+		
+		Color3 minColor((float)minColorToken[0], (float)minColorToken[1],
+						(float)minColorToken[2]);
+		Color3 maxColor((float)maxColorToken[0], (float)maxColorToken[1],
+						(float)maxColorToken[2]);
+		std::shared_ptr<NoiseFunction> noiseFunction = nullptr;
+		unsigned int numOctaves = SafeGetToken(noiseTextureToken, "num_octaves");
+		float gain = SafeGetToken(noiseTextureToken, "gain");
+		float lacunarity = SafeGetToken(noiseTextureToken, "lacuranity");
+		if (noiseFunctionClass == "linear_noise_function") {
+			noiseFunction = std::make_shared<LinearNoiseFunction>(numOctaves,
+																  gain,
+																  lacunarity);
+		}
+		else if (noiseFunctionClass == "cubic_noise_function") {
+			noiseFunction = std::make_shared<CubicNoiseFunction>(numOctaves,
+																 gain,
+																 lacunarity);
+		}
+		else {
+			std::stringstream exceptionMsg;
+			exceptionMsg << "Could not understand noise function class: " << noiseFunctionClass
+				<< " in JSON object: " << noiseTextureToken << ".\n";
+			throw exceptionMsg;
+		}
+		
+		// TODO continue
+		if (functionType == "")
+		{
+			
+		}
 	}
 	else {
 		createdTex = std::make_shared<SingleColorTex>(std::make_shared<NullMapping>(),
