@@ -192,14 +192,12 @@ std::shared_ptr<AbstractTexture> CommonLoaderFunctions::CreateTexture(nlohmann::
 	}
 	else if (HasKey(colorObj, "noise_texture")) {
 		auto noiseTextureToken = SafeGetToken(colorObj, "noise_texture");
-		//			 std::shared_ptr<NoiseFunction> const & noiseFunction,
-		//			 FunctionType functionType)
 		auto minColorToken = SafeGetToken(noiseTextureToken, "min_color");
 		auto maxColorToken = SafeGetToken(noiseTextureToken, "max_color");
 		bool useWrapping = SafeGetToken(noiseTextureToken, "use_wrapping");
 		float expansionNumber = SafeGetToken(noiseTextureToken, "expansion_number");
 		std::string noiseFunctionClass = SafeGetToken(noiseTextureToken, "noise_function_class");
-		std::string functionType = SafeGetToken(noiseTextureToken, "function_type");
+		std::string functionTypeToken = SafeGetToken(noiseTextureToken, "function_type");
 		
 		Color3 minColor((float)minColorToken[0], (float)minColorToken[1],
 						(float)minColorToken[2]);
@@ -226,11 +224,48 @@ std::shared_ptr<AbstractTexture> CommonLoaderFunctions::CreateTexture(nlohmann::
 			throw exceptionMsg;
 		}
 		
-		// TODO continue
-		if (functionType == "")
+		NoiseTexture::FunctionType functionType = NoiseTexture::FunctionType::ValueInterp;
+		if (functionTypeToken == "value_interp")
 		{
-			
+			functionType = NoiseTexture::FunctionType::ValueInterp;
 		}
+		else if (functionTypeToken == "vector_interp")
+		{
+			functionType = NoiseTexture::FunctionType::VectorInterp;
+		}
+		else if (functionTypeToken == "value_fbm")
+		{
+			functionType = NoiseTexture::FunctionType::ValueFBM;
+		}
+		else if (functionTypeToken == "vector_fbm")
+		{
+			functionType = NoiseTexture::FunctionType::VectorFBM;
+		}
+		else if (functionTypeToken == "value_turb_fbm")
+		{
+			functionType = NoiseTexture::FunctionType::ValueTurbFBM;
+		}
+		else if (functionTypeToken == "value_fractal_sum")
+		{
+			functionType = NoiseTexture::FunctionType::ValueFractalSum;
+		}
+		else if (functionTypeToken == "vector_fractal_sum")
+		{
+			functionType = NoiseTexture::FunctionType::VectorFractalSum;
+		}
+		else
+		{
+			std::stringstream exceptionMsg;
+			exceptionMsg << "Could not understand noise function type: " << functionTypeToken
+				<< " in JSON object: " << noiseTextureToken << ".\n";
+			throw exceptionMsg;
+		}
+		
+		createdTex =
+		std::make_shared<NoiseTexture>(minColor, maxColor,
+									   noiseFunction,
+									   useWrapping, expansionNumber,
+									   functionType);
 	}
 	else {
 		createdTex = std::make_shared<SingleColorTex>(std::make_shared<NullMapping>(),
