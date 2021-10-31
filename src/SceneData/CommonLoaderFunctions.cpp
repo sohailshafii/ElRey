@@ -196,33 +196,13 @@ std::shared_ptr<AbstractTexture> CommonLoaderFunctions::CreateTexture(nlohmann::
 		auto maxColorToken = SafeGetToken(noiseTextureToken, "max_color");
 		bool useWrapping = SafeGetToken(noiseTextureToken, "use_wrapping");
 		float expansionNumber = SafeGetToken(noiseTextureToken, "expansion_number");
-		std::string noiseFunctionClass = SafeGetToken(noiseTextureToken, "noise_function_class");
 		std::string functionTypeToken = SafeGetToken(noiseTextureToken, "function_type");
 		
 		Color3 minColor((float)minColorToken[0], (float)minColorToken[1],
 						(float)minColorToken[2]);
 		Color3 maxColor((float)maxColorToken[0], (float)maxColorToken[1],
 						(float)maxColorToken[2]);
-		std::shared_ptr<NoiseFunction> noiseFunction = nullptr;
-		unsigned int numOctaves = SafeGetToken(noiseTextureToken, "num_octaves");
-		float gain = SafeGetToken(noiseTextureToken, "gain");
-		float lacunarity = SafeGetToken(noiseTextureToken, "lacuranity");
-		if (noiseFunctionClass == "linear_noise_function") {
-			noiseFunction = std::make_shared<LinearNoiseFunction>(numOctaves,
-																  gain,
-																  lacunarity);
-		}
-		else if (noiseFunctionClass == "cubic_noise_function") {
-			noiseFunction = std::make_shared<CubicNoiseFunction>(numOctaves,
-																 gain,
-																 lacunarity);
-		}
-		else {
-			std::stringstream exceptionMsg;
-			exceptionMsg << "Could not understand noise function class: " << noiseFunctionClass
-				<< " in JSON object: " << noiseTextureToken << ".\n";
-			throw exceptionMsg;
-		}
+		std::shared_ptr<NoiseFunction> noiseFunction = CreateNoiseFunction(noiseTextureToken);
 		
 		NoiseTexture::FunctionType functionType = NoiseTexture::FunctionType::ValueInterp;
 		if (functionTypeToken == "value_interp")
@@ -267,6 +247,17 @@ std::shared_ptr<AbstractTexture> CommonLoaderFunctions::CreateTexture(nlohmann::
 									   useWrapping, expansionNumber,
 									   functionType);
 	}
+	else if (HasKey(colorObj, "noise_ramp_texture")) {
+		auto noiseTextureToken = SafeGetToken(colorObj, "noise_texture");
+		float amplitude = SafeGetToken(colorObj, "amplitude");
+		std::string filePath = SafeGetToken(noiseTextureToken, "file_path");
+		std::shared_ptr<NoiseFunction> noiseFunction = CreateNoiseFunction(noiseTextureToken);
+		std::shared_ptr<TextureData> textureData =
+			ImageTextureRegistry::GetInstance().GetTextureData(filePath);
+		
+		createdTex =
+		std::make_shared<NoiseRampTexture>(textureData, noiseFunction, amplitude);
+	}
 	else {
 		createdTex = std::make_shared<SingleColorTex>(std::make_shared<NullMapping>(),
 													  Color3(colorObj[0], colorObj[1],
@@ -274,6 +265,33 @@ std::shared_ptr<AbstractTexture> CommonLoaderFunctions::CreateTexture(nlohmann::
 													  ImageTexture::SamplingType::Nearest);
 	}
 	return createdTex;
+}
+
+std::shared_ptr<NoiseFunction> CommonLoaderFunctions::CreateNoiseFunction(
+										nlohmann::json const &noiseTextureToken) {
+	std::shared_ptr<NoiseFunction> noiseFunction = nullptr;
+	std::string noiseFunctionClass = SafeGetToken(noiseTextureToken, "noise_function_class");
+	unsigned int numOctaves = SafeGetToken(noiseTextureToken, "num_octaves");
+	float gain = SafeGetToken(noiseTextureToken, "gain");
+	float lacunarity = SafeGetToken(noiseTextureToken, "lacuranity");
+	if (noiseFunctionClass == "linear_noise_function") {
+		noiseFunction = std::make_shared<LinearNoiseFunction>(numOctaves,
+															  gain,
+															  lacunarity);
+	}
+	else if (noiseFunctionClass == "cubic_noise_function") {
+		noiseFunction = std::make_shared<CubicNoiseFunction>(numOctaves,
+															 gain,
+															 lacunarity);
+	}
+	else {
+		std::stringstream exceptionMsg;
+		exceptionMsg << "Could not understand noise function class: " << noiseFunctionClass
+			<< " in JSON object: " << noiseTextureToken << ".\n";
+		throw exceptionMsg;
+	}
+	
+	return noiseFunction;
 }
 
 std::shared_ptr<MappingLayer> CommonLoaderFunctions::CreateMappingLayer(nlohmann::json const &

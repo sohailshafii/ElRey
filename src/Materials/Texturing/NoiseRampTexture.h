@@ -12,15 +12,15 @@ class NoiseRampTexture : public AbstractTexture {
 public:
 	NoiseRampTexture(std::shared_ptr<TextureData> const & rampTexture,
 				 std::shared_ptr<NoiseFunction> const & noiseFunction,
-				 float a)
+				 float amplitude)
 	: AbstractTexture(std::make_shared<NullMapping>(), SamplingType::Nearest),
-		rampTexture(rampTexture), noiseFunction(noiseFunction), a(a) {
+		rampTexture(rampTexture), noiseFunction(noiseFunction), amplitude(amplitude) {
 	}
 	
 	virtual Color3 GetColor(const ShadingInfo& shadingInfo) const override {
 		Point3 const & localPoint = shadingInfo.intersectionPositionLocal;
 		float noiseValue = noiseFunction->GetValueFBM(localPoint);
-		float y = localPoint[1] + a * noiseValue;
+		float y = localPoint[1] + amplitude * noiseValue;
 		float u = 0.5 * (1.0f + sin(y));
 		int row = 0;
 		int column = u * rampTexture->texWidth;
@@ -31,5 +31,5 @@ public:
 private:
 	std::shared_ptr<TextureData> rampTexture;
 	std::shared_ptr<NoiseFunction> noiseFunction;
-	float a;
+	float amplitude;
 };
