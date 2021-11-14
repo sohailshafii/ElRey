@@ -46,19 +46,17 @@
 				"ks_color":[1.0, 1.0, 1.0],
 				"color":
 				{
-					"image_texture":
+					"noise_texture":
 					{
-						"file_path": "textures/marble07 diffuse 1k.jpg",
-						"mapping_layer": "spherical",
-						"sample_type":"bilinear",
-						"mapping_data":
-						{
-							"radius":1.5,
-							"origin_x":0.0,
-							"origin_y":0.0,
-							"origin_z":0.0,
-							"wrap_type":"repeat"
-						}
+						"min_color": [0.5, 0.8, 0.2],
+						"max_color": [0.1, 0.1, 0.8],
+						"use_wrapping":false,
+						"expansion_number":1.0,
+						"function_type":"vector_fbm",
+						"noise_function_class":"cubic_noise_function",
+						"num_octaves":2,
+						"gain":0.5,
+						"lacuranity":2.0
 					}
 				}
 			},
@@ -68,50 +66,6 @@
 				{"scale":[0.02, 0.02, 0.02]},
 				{"translate":[0.0, 0.5,-0.6]}
 			]
-		},
-		{
-			"type":"rectangle",
-			"name":"textured_rectangle",
-			"side_vec_1":[1.0, 0.0, 0.0],
-			"side_vec_2":[0.0, 1.0, 0.0],
-			"origin":[-1.5, 0.5, -0.5],
-			"material":
-			{
-				"type":"simple_emissive",
-				"ka":0.1,
-				"kd":1.95,
-				"color":
-				{
-					"image_texture":
-					{
-						"file_path": "textures/bricks07 diffuse 1k.jpg",
-						"sample_type":"trilinear",
-						"mapping_layer": "rectangular",
-						"mapping_data":
-						{
-							"rec_width":1.0,
-							"rec_height":1.0,
-							"width_axis":1,
-							"height_axis":0,
-							"origin_x":-1.5,
-							"origin_y":0.5,
-							"origin_z":-0.5,
-							"wrap_type":"repeat",
-							"local_to_world_transform":
-							[
-								{"scale":[0.5, 0.5, 0.5]},
-								{"translate":[0.2, 0.0, 0.0]}
-							]
-						}
-					}
-				}
-			},
-			"sampler":
-			{
-				"random_sampler_type":"multijittered",
-				"num_random_samples":4,
-				"num_random_sets":83
-			}
 		},
 		{
 			"type":"plane",
@@ -125,49 +79,6 @@
 				"kd":0.7,
 				"color":[0.68,0.85,0.91,1.0]
 			}
-		},
-		{
-			"type":"sphere",
-			"position":[0.0,0.0,0.0],
-			"radius":1.5,
-			"name":"main_sphere",
-			"material":
-			{
-				"type":"phong",
-				"ka":0.1,
-				"kd":0.95,
-				"ks":0.1,
-				"exponent":10,
-				"ks_color":[1.0, 1.0, 1.0],
-				"color":
-				{
-					"image_texture":
-					{
-						"file_path": "textures/marble07 diffuse 1k.jpg",
-						"sample_type":"bilinear",
-						"mapping_layer": "spherical",
-						"mapping_data":
-						{
-							"radius":1.5,
-							"origin_x":0.0,
-							"origin_y":0.0,
-							"origin_z":0.0,
-							"wrap_type":"repeat",
-							"use_world_coords_for_tex":true
-						}
-					}
-				}
-			}
-		},
-		{
-			"type":"instance",
-			"name":"sphere_instance1",
-			"inst_name":"main_sphere",
-			"local_to_world_transform":
-			[
-				{"scale":[0.5, 0.5, 0.5]},
-				{"translate":[1.2, 0.9, 0.2]}
-			]
 		}
 	],
 	"lights":
