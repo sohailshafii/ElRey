@@ -4,6 +4,8 @@
 #include <cstdlib>
 
 // Darwyn Peachey in Ebert et al. (2003), page 70.
+// A lot of this code was borrowed from Raytracing from the Ground Up, and that code
+// was in turn borrowed from other places.
 const unsigned char LinearNoiseFunction::permutationTable[noiseTableSize] =
 {
 	225,155,210,108,175,199,221,144,203,116, 70,213, 69,158, 33,252,

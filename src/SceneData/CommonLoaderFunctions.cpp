@@ -194,7 +194,7 @@ std::shared_ptr<AbstractTexture> CommonLoaderFunctions::CreateTexture(nlohmann::
 		auto noiseTextureToken = SafeGetToken(colorObj, "noise_texture");
 		auto minColorToken = SafeGetToken(noiseTextureToken, "min_color");
 		auto maxColorToken = SafeGetToken(noiseTextureToken, "max_color");
-		bool useWrapping = SafeGetToken(noiseTextureToken, "use_wrapping");
+		auto colorTypeToken = SafeGetToken(noiseTextureToken, "color_type");
 		float expansionNumber = SafeGetToken(noiseTextureToken, "expansion_number");
 		std::string functionTypeToken = SafeGetToken(noiseTextureToken, "function_type");
 		
@@ -203,6 +203,18 @@ std::shared_ptr<AbstractTexture> CommonLoaderFunctions::CreateTexture(nlohmann::
 		Color3 maxColor((float)maxColorToken[0], (float)maxColorToken[1],
 						(float)maxColorToken[2]);
 		std::shared_ptr<NoiseFunction> noiseFunction = CreateNoiseFunction(noiseTextureToken);
+		
+		//Wrapping = 0, NoWrapping, Vector
+		NoiseTexture::ColorType colorType = NoiseTexture::ColorType::Wrapping;
+		if (colorTypeToken == "wrapping") {
+			colorTypeToken = NoiseTexture::ColorType::Wrapping;
+		}
+		else if (colorTypeToken == "no_wrapping") {
+			colorTypeToken = NoiseTexture::ColorType::NoWrapping;
+		}
+		else if (colorTypeToken == "vector") {
+			colorTypeToken = NoiseTexture::ColorType::Vector;
+		}
 		
 		NoiseTexture::FunctionType functionType = NoiseTexture::FunctionType::ValueInterp;
 		if (functionTypeToken == "value_interp")
@@ -244,7 +256,7 @@ std::shared_ptr<AbstractTexture> CommonLoaderFunctions::CreateTexture(nlohmann::
 		createdTex =
 		std::make_shared<NoiseTexture>(minColor, maxColor,
 									   noiseFunction,
-									   useWrapping, expansionNumber,
+									   colorTypeToken, expansionNumber,
 									   functionType);
 	}
 	else if (HasKey(colorObj, "noise_ramp_texture")) {

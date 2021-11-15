@@ -50,9 +50,9 @@
 					{
 						"min_color": [0.5, 0.8, 0.2],
 						"max_color": [0.1, 0.1, 0.8],
-						"use_wrapping":false,
+						"color_type": "wrapping",
 						"expansion_number":1.0,
-						"function_type":"vector_fbm",
+						"function_type":"value_fbm",
 						"noise_function_class":"cubic_noise_function",
 						"num_octaves":2,
 						"gain":0.5,
@@ -66,6 +66,40 @@
 				{"scale":[0.02, 0.02, 0.02]},
 				{"translate":[0.0, 0.5,-0.6]}
 			]
+		},
+		{
+			"type":"rectangle",
+			"name":"textured_rectangle",
+			"side_vec_1":[1.0, 0.0, 0.0],
+			"side_vec_2":[0.0, 1.0, 0.0],
+			"origin":[-1.5, 0.5, -0.5],
+			"material":
+			{
+				"type":"simple_emissive",
+				"ka":0.1,
+				"kd":1.95,
+				"color":
+				{
+					"noise_texture":
+					{
+						"min_color": [0.5, 0.8, 0.2],
+						"max_color": [0.1, 0.1, 0.8],
+						"color_type": "wrapping",
+						"expansion_number":1.0,
+						"function_type":"value_fbm",
+						"noise_function_class":"cubic_noise_function",
+						"num_octaves":2,
+						"gain":0.5,
+						"lacuranity":2.0
+					}
+				}
+			},
+			"sampler":
+			{
+				"random_sampler_type":"multijittered",
+				"num_random_samples":4,
+				"num_random_sets":83
+			}
 		},
 		{
 			"type":"plane",

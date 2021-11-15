@@ -15,16 +15,29 @@ public:
 		ValueFractalSum, VectorFractalSum
 	};
 	
+	enum class ColorType {
+		Wrapping = 0, NoWrapping, Vector
+	};
+	
 	NoiseTexture(Color3 const & minColor,
 				 Color3 const & maxColor,
 				 std::shared_ptr<NoiseFunction> const & noiseFunctionClass,
-				 bool useWrapping,
+				 ColorType colorType,
 				 float expansionNumber,
 				 FunctionType functionType)
 	: AbstractTexture(std::make_shared<NullMapping>(), SamplingType::Nearest),
 		noiseFunction(noiseFunctionClass), minColor(minColor), maxColor(maxColor) {
-		GetColorFunc = useWrapping ? &NoiseTexture::GetColorWrapping :
-			&NoiseTexture::GetColorNoWrapping;
+		switch(colorType) {
+			case ColorType::Wrapping:
+				GetColorFunc = &NoiseTexture::GetColorWrapping;
+				break;
+			case ColorType::NoWrapping:
+				GetColorFunc = &NoiseTexture::GetColorNoWrapping;
+				break;
+			case ColorType::Vector:
+				GetColorFunc = &NoiseTexture::GetColorVector;
+				break;
+		}
 		switch(functionType) {
 			case FunctionType::ValueInterp:
 				GetNoiseFunc = &NoiseTexture::GetNoiseInterp;
@@ -62,7 +75,8 @@ private:
 	// ideally FBM requires a proper noise func
 	Color3 GetColorNoWrapping(ShadingInfo const & shadingInfo) const {
 		Point3 const & localPoint = shadingInfo.intersectionPositionLocal;
-		float noiseValue = expansionNumber * noiseFunction->GetValueFBM(localPoint);
+		Color3 noiseColor = (this->*GetNoiseFunc)(shadingInfo);
+		float noiseValue = expansionNumber * noiseColor[0];
 		float value = noiseValue - floor(noiseValue);
 		
 		return minColor * value;
@@ -70,8 +84,14 @@ private:
 	
 	Color3 GetColorWrapping(ShadingInfo const & shadingInfo) const {
 		Point3 const & localPoint = shadingInfo.intersectionPositionLocal;
-		float noiseValue = noiseFunction->GetValueFBM(localPoint);
+		Color3 noiseColor = (this->*GetNoiseFunc)(shadingInfo);
+		float noiseValue = noiseColor[0];
 		return minColor + (maxColor - minColor) * noiseValue;
+	}
+	
+	Color3 GetColorVector(ShadingInfo const & shadingInfo) const {
+		Point3 const & localPoint = shadingInfo.intersectionPositionLocal;
+		return (this->*GetNoiseFunc)(shadingInfo);
 	}
 		
 	Color3 GetNoiseInterp(ShadingInfo const & shadingInfo) const {

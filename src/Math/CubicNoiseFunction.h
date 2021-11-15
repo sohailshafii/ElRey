@@ -24,7 +24,7 @@ private:
 	}
 	
 	Vector3 FourKnotSplineVec(float x, Vector3 knots[]) const {
-		Vector3 c3 = knots[0] * 0.5f + knots[1] * 1.5f - knots[2] * 1.5f + knots[3] * 0.5f;
+		Vector3 c3 = knots[0] * -0.5f + knots[1] * 1.5f - knots[2] * 1.5f + knots[3] * 0.5f;
 		Vector3 c2 = knots[0] - knots[1] * 2.5f + knots[2] * 2.0f - knots[3] * 0.5f;
 		Vector3 c1 = (-knots[0] + knots [2]) * 0.5f;
 		Vector3 c0 = knots[1];
