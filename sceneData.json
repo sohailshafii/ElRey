@@ -24,27 +24,30 @@
 			"name":"main_grid",
 			"children": [
 				"ground_plane",
-				"textured_rectangle"
+				"teddy_bear"
 			],
 			"multiplier":1.0
 		},
 		{
-			"type":"rectangle",
-			"name":"textured_rectangle",
-			"side_vec_1":[2.0, 0.0, 0.0],
-			"side_vec_2":[0.0, 2.0, 0.0],
-			"origin":[-1.5, 0.5, -0.5],
+			"type":"obj_model",
+			"name":"teddy_bear",
+			"is_smooth":true,
+			"reverse_normals":false,
+			"file_name":"./teddy.obj",
 			"material":
 			{
-				"type":"simple_emissive",
+				"type":"phong",
 				"ka":0.1,
-				"kd":1.95,
+				"kd":0.95,
+				"ks":0.1,
+				"exponent":10,
+				"ks_color":[1.0, 1.0, 1.0],
 				"color":
 				{
 					"noise_texture":
 					{
 						"min_color": [0.0, 0.0, 0.0],
-						"max_color": [1.0, 0.0, 0.0],
+						"max_color": [0.0, 1.0, 1.0],
 						"color_type": "wrapping",
 						"expansion_number":1.0,
 						"function_type":"value_fbm",
@@ -55,12 +58,12 @@
 					}
 				}
 			},
-			"sampler":
-			{
-				"random_sampler_type":"multijittered",
-				"num_random_samples":4,
-				"num_random_sets":83
-			}
+			"local_to_world_transform":
+			[
+				{"rotate_y":180.0},
+				{"scale":[0.025, 0.025, 0.025]},
+				{"translate":[0.0, 1.0,-0.6]}
+			]
 		},
 		{
 			"type":"plane",
