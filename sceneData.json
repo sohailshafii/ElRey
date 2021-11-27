@@ -24,54 +24,15 @@
 			"name":"main_grid",
 			"children": [
 				"ground_plane",
-				"sphere_instance1",
-				"textured_rectangle",
-				"teddy_bear"
+				"textured_rectangle"
 			],
 			"multiplier":1.0
 		},
 		{
-			"type":"obj_model",
-			"name":"teddy_bear",
-			"is_smooth":true,
-			"reverse_normals":false,
-			"file_name":"./teddy.obj",
-			"material":
-			{
-				"type":"phong",
-				"ka":0.1,
-				"kd":0.95,
-				"ks":0.1,
-				"exponent":10,
-				"ks_color":[1.0, 1.0, 1.0],
-				"color":
-				{
-					"noise_texture":
-					{
-						"min_color": [0.5, 0.8, 0.2],
-						"max_color": [0.1, 0.1, 0.8],
-						"color_type": "wrapping",
-						"expansion_number":1.0,
-						"function_type":"value_fbm",
-						"noise_function_class":"cubic_noise_function",
-						"num_octaves":2,
-						"gain":0.5,
-						"lacuranity":2.0
-					}
-				}
-			},
-			"local_to_world_transform":
-			[
-				{"rotate_y":180.0},
-				{"scale":[0.02, 0.02, 0.02]},
-				{"translate":[0.0, 0.5,-0.6]}
-			]
-		},
-		{
 			"type":"rectangle",
 			"name":"textured_rectangle",
-			"side_vec_1":[1.0, 0.0, 0.0],
-			"side_vec_2":[0.0, 1.0, 0.0],
+			"side_vec_1":[2.0, 0.0, 0.0],
+			"side_vec_2":[0.0, 2.0, 0.0],
 			"origin":[-1.5, 0.5, -0.5],
 			"material":
 			{
@@ -82,13 +43,13 @@
 				{
 					"noise_texture":
 					{
-						"min_color": [0.5, 0.8, 0.2],
-						"max_color": [0.1, 0.1, 0.8],
+						"min_color": [0.0, 0.0, 0.0],
+						"max_color": [1.0, 0.0, 0.0],
 						"color_type": "wrapping",
 						"expansion_number":1.0,
 						"function_type":"value_fbm",
 						"noise_function_class":"cubic_noise_function",
-						"num_octaves":2,
+						"num_octaves":10,
 						"gain":0.5,
 						"lacuranity":2.0
 					}

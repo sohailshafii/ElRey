@@ -41,7 +41,8 @@ float LinearNoiseFunction::GetValueFBM(Point3 const & point) const {
 	float sum = 0.0f;
 	
 	for (int j = 0; j < numOctaves; j++) {
-		sum += amplitude * GetValueInterpolated(point * frequency);
+		float interpValue = GetValueInterpolated(point * frequency);
+		sum += amplitude * interpValue;
 		amplitude *= gain;
 		frequency *= lacunarity;
 	}
@@ -154,7 +155,7 @@ void LinearNoiseFunction::ComputeFBMBounds() {
 }
 
 float LinearNoiseFunction::GetValueInterpolated(Point3 const & point) const {
-	unsigned int 	ix, iy, iz;
+	int 	ix, iy, iz;
 	float 	fx, fy, fz;
 	float 	d[2][2][2];
 	float 	x0, x1, x2, x3, y0, y1, z0;
@@ -171,8 +172,8 @@ float LinearNoiseFunction::GetValueInterpolated(Point3 const & point) const {
 	for (int k = 0; k <= 1; k++) {
 		for (int j = 0; j <= 1; j++) {
 			for (int i = 0; i <= 1; i++) {
-				d[k][j][i] =
-				noiseValues[INDEX(ix + i, iy + j, iz + k)];
+				int indexVal = INDEX(ix + i, iy + j, iz + k);
+				d[k][j][i] = noiseValues[indexVal];
 			}
 		}
 	}

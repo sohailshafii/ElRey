@@ -288,13 +288,13 @@ std::shared_ptr<NoiseFunction> CommonLoaderFunctions::CreateNoiseFunction(
 	float lacunarity = SafeGetToken(noiseTextureToken, "lacuranity");
 	if (noiseFunctionClass == "linear_noise_function") {
 		noiseFunction = std::make_shared<LinearNoiseFunction>(numOctaves,
-															  gain,
-															  lacunarity);
+															  lacunarity,
+															  gain);
 	}
 	else if (noiseFunctionClass == "cubic_noise_function") {
 		noiseFunction = std::make_shared<CubicNoiseFunction>(numOctaves,
-															 gain,
-															 lacunarity);
+															 lacunarity,
+															 gain);
 	}
 	else {
 		std::stringstream exceptionMsg;

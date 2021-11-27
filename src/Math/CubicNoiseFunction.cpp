@@ -15,8 +15,8 @@ float CubicNoiseFunction::GetValueInterpolated(Point3 const & point) const {
 	ix = floor(point[0]);
 	fx = point[0] - ix;
 	
-	ix = floor(point[1]);
-	fy = point[1] - ix;
+	iy = floor(point[1]);
+	fy = point[1] - iy;
 	
 	iz = floor(point[2]);
 	fz = point[2] - iz;
@@ -42,8 +42,8 @@ Vector3 CubicNoiseFunction::GetVectorValueInterpolated(Point3 const & point) con
 	ix = floor(point[0]);
 	fx = point[0] - ix;
 	
-	ix = floor(point[1]);
-	fy = point[1] - ix;
+	iy = floor(point[1]);
+	fy = point[1] - iy;
 	
 	iz = floor(point[2]);
 	fz = point[2] - iz;
