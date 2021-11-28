@@ -3,8 +3,9 @@
 
 CubicNoiseFunction::CubicNoiseFunction(unsigned int numOctaves,
 									   float lacunarity,
-									   float gain)
-	: LinearNoiseFunction(numOctaves, lacunarity, gain) {
+									   float gain,
+									   float startingFrequency)
+	: LinearNoiseFunction(numOctaves, lacunarity, gain, startingFrequency) {
 }
 
 float CubicNoiseFunction::GetValueInterpolated(Point3 const & point) const {

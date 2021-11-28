@@ -28,8 +28,10 @@ const unsigned char LinearNoiseFunction::permutationTable[noiseTableSize] =
 
 LinearNoiseFunction::LinearNoiseFunction(unsigned int numOctaves,
 										 float lacunarity,
-										 float gain)
-	: numOctaves(numOctaves), lacunarity(lacunarity), gain(gain) {
+										 float gain,
+										 float startingFrequency)
+	: numOctaves(numOctaves), lacunarity(lacunarity), gain(gain),
+		startingFrequency(startingFrequency) {
 	InitValueTable();
 	InitVectorTable();
 	ComputeFBMBounds();
@@ -37,7 +39,7 @@ LinearNoiseFunction::LinearNoiseFunction(unsigned int numOctaves,
 
 float LinearNoiseFunction::GetValueFBM(Point3 const & point) const {
 	float amplitude = 1.0f;
-	float frequency = 1.0f;
+	float frequency = startingFrequency;
 	float sum = 0.0f;
 	
 	for (int j = 0; j < numOctaves; j++) {
@@ -53,8 +55,8 @@ float LinearNoiseFunction::GetValueFBM(Point3 const & point) const {
 }
 
 Vector3 LinearNoiseFunction::GetVectorValueFBM(Point3 const & point) const {
-	float 		amplitude 	= 1.0;
-	float		frequency 	= 1.0;
+	float 		amplitude 	= 1.0f;
+	float		frequency 	= startingFrequency;
 	Vector3		sum(0.0f, 0.0f, 0.0f);
 			
 	for (int j = 0; j < numOctaves; j++) {
@@ -68,7 +70,7 @@ Vector3 LinearNoiseFunction::GetVectorValueFBM(Point3 const & point) const {
 
 float LinearNoiseFunction::GetValueTurbulenceFBM(Point3 const & point) const {
 	float amplitude = 1.0f;
-	float frequency = 1.0f;
+	float frequency = startingFrequency;
 	float turbulence = 0.0f;
 	
 	for (int j = 0; j < numOctaves; j++) {
@@ -84,7 +86,7 @@ float LinearNoiseFunction::GetValueTurbulenceFBM(Point3 const & point) const {
 
 float LinearNoiseFunction::GetValueFractalSum(Point3 const & point) const {
 	float amplitude = 1.0f;
-	float frequency = 1.0f;
+	float frequency = startingFrequency;
 	float sum = 0.0f;
 	
 	for (int j = 0; j < numOctaves; j++) {
@@ -99,8 +101,8 @@ float LinearNoiseFunction::GetValueFractalSum(Point3 const & point) const {
 }
 
 Vector3 LinearNoiseFunction::GetVectorFractalSum(Point3 const & point) const {
-	float 		amplitude 	= 1.0;
-	float		frequency 	= 1.0;
+	float 		amplitude 	= 1.0f;
+	float		frequency 	= startingFrequency;
 	Vector3		sum(0.0f, 0.0f, 0.0f);
 			
 	for (int j = 0; j < numOctaves; j++) {

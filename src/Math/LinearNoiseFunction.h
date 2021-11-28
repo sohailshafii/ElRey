@@ -16,7 +16,8 @@ public:
 	// For fractal sum and turbulence, gain must be 0.5 and lacunarity 2.0
 	LinearNoiseFunction(unsigned int numOctaves,
 						float lacunarity,
-						float gain);
+						float gain,
+						float startingFrequency);
 	virtual float GetValueFBM(Point3 const & point) const override;
 	virtual Vector3 GetVectorValueFBM(Point3 const & point) const override;
 	virtual float GetValueTurbulenceFBM(Point3 const & point) const override;
@@ -45,6 +46,7 @@ protected:
 	unsigned int numOctaves;
 	float lacunarity;
 	float gain;
+	float startingFrequency;
 	
 	float noiseValues[noiseTableSize];
 	Vector3 noiseVectorValues[noiseTableSize];

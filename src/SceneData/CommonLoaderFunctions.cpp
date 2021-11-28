@@ -286,15 +286,18 @@ std::shared_ptr<NoiseFunction> CommonLoaderFunctions::CreateNoiseFunction(
 	unsigned int numOctaves = SafeGetToken(noiseTextureToken, "num_octaves");
 	float gain = SafeGetToken(noiseTextureToken, "gain");
 	float lacunarity = SafeGetToken(noiseTextureToken, "lacuranity");
+	float startingFrequency = SafeGetToken(noiseTextureToken, "starting_frequency");
 	if (noiseFunctionClass == "linear_noise_function") {
 		noiseFunction = std::make_shared<LinearNoiseFunction>(numOctaves,
 															  lacunarity,
-															  gain);
+															  gain,
+															  startingFrequency);
 	}
 	else if (noiseFunctionClass == "cubic_noise_function") {
 		noiseFunction = std::make_shared<CubicNoiseFunction>(numOctaves,
 															 lacunarity,
-															 gain);
+															 gain,
+															 startingFrequency);
 	}
 	else {
 		std::stringstream exceptionMsg;

@@ -7,7 +7,8 @@ public:
 	// For fractal sum and turbulence, gain must be 0.5 and lacunarity 2.0
 	CubicNoiseFunction(unsigned int numOctaves,
 					   float lacunarity,
-					   float gain);
+					   float gain,
+					   float startingFrequency);
 	
 	virtual float GetValueInterpolated(Point3 const & point) const override;
 	virtual Vector3 GetVectorValueInterpolated(Point3 const & point) const override;
