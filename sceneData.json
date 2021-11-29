@@ -60,7 +60,7 @@
 				{
 					"noise_ramp_texture":
 					{
-						"amplitude":2.0,
+						"amplitude":1.0,
 						"file_path":"textures/MarbleRamp.png",
 						"noise_function_class":"cubic_noise_function",
 						"num_octaves":10,
