@@ -260,8 +260,8 @@ std::shared_ptr<AbstractTexture> CommonLoaderFunctions::CreateTexture(nlohmann::
 									   functionType);
 	}
 	else if (HasKey(colorObj, "noise_ramp_texture")) {
-		auto noiseTextureToken = SafeGetToken(colorObj, "noise_texture");
-		float amplitude = SafeGetToken(colorObj, "amplitude");
+		auto noiseTextureToken = SafeGetToken(colorObj, "noise_ramp_texture");
+		float amplitude = SafeGetToken(noiseTextureToken, "amplitude");
 		std::string filePath = SafeGetToken(noiseTextureToken, "file_path");
 		std::shared_ptr<NoiseFunction> noiseFunction = CreateNoiseFunction(noiseTextureToken);
 		std::shared_ptr<TextureData> textureData =
