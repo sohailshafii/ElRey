@@ -49,7 +49,7 @@
 			"material":
 			{
 				"type":"glossy_specular",
-				"ka":0.1,
+				"ka":0.4,
 				"kd":0.95,
 				"ks":0.1,
 				"cr":0.7,
@@ -60,7 +60,7 @@
 				{
 					"noise_ramp_texture":
 					{
-						"amplitude":1.0,
+						"amplitude":2.0,
 						"file_path":"textures/MarbleRamp.png",
 						"noise_function_class":"cubic_noise_function",
 						"num_octaves":10,
@@ -94,7 +94,7 @@
 			"type":"directional",
 			"direction":[-0.5,-0.7,0.1],
 			"radiance":[0.4,0.4,0.4],
-			"radiance_scale":3.0,
+			"radiance_scale":6.0,
 			"casts_shadows":true
 		},
 		{
