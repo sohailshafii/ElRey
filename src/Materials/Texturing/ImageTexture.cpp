@@ -5,8 +5,9 @@
 // TODO: have a texture instance block in json file
 ImageTexture::ImageTexture(std::shared_ptr<MappingLayer> const & mappingLayer,
 						   std::shared_ptr<TextureData> const & textureData,
-						   SamplingType samplingType)
-	: AbstractTexture(mappingLayer, samplingType), textureData(textureData) {
+						   SamplingType samplingType,
+						   std::string const & name)
+	: AbstractTexture(mappingLayer, samplingType, name), textureData(textureData) {
 	sampleFunction = samplingType == SamplingType::Nearest ?
 		&ImageTexture::SampleNearest : &ImageTexture::SampleBilinear;
 		

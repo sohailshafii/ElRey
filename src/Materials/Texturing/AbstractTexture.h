@@ -4,6 +4,7 @@
 #include "SceneData/ShadingInfo.h"
 #include "Materials/Texturing/Mapping/MappingLayer.h"
 #include <memory>
+#include <string>
 
 class AbstractTexture {
 public:
@@ -14,8 +15,10 @@ public:
 	};
 	
 	AbstractTexture(std::shared_ptr<MappingLayer> const & mappingLayer,
-					SamplingType samplingType) :
-		mappingLayer(mappingLayer), samplingType(samplingType) {
+					SamplingType samplingType,
+					std::string const & name) :
+		mappingLayer(mappingLayer), samplingType(samplingType),
+		name(name) {
 	}
 	
 	virtual ~AbstractTexture() {
@@ -31,7 +34,16 @@ public:
 		return samplingType;
 	}
 	
+	std::string GetName() const {
+		return name;
+	}
+	
+	void SetName(std::string const & newName) {
+		name = newName;
+	}
+	
 protected:
 	std::shared_ptr<MappingLayer> mappingLayer;
 	SamplingType samplingType;
+	std::string name;
 };

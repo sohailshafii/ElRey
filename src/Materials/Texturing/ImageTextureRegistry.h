@@ -20,7 +20,8 @@ public:
 	
 	std::shared_ptr<ImageTexture> GetTextureForPath(std::string const & filePath,
 		std::shared_ptr<MappingLayer> const & mappingLayer,
-		AbstractTexture::SamplingType sampleType);
+		AbstractTexture::SamplingType sampleType,
+		std::string const & name);
 	
 	std::shared_ptr<TextureData> GetTextureData(std::string const & filePath);
 	

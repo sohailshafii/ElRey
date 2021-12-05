@@ -9,7 +9,8 @@ class ImageTexture : public AbstractTexture {
 public:
 	ImageTexture(std::shared_ptr<MappingLayer> const & mappingLayer,
 				 std::shared_ptr<TextureData> const & textureData,
-				 SamplingType samplingType);
+				 SamplingType samplingType,
+				 std::string const & name);
 	
 	bool operator==(ImageTexture const &other) const
 	{

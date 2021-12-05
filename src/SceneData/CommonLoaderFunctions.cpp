@@ -166,6 +166,7 @@ std::shared_ptr<AbstractTexture> CommonLoaderFunctions::CreateTexture(nlohmann::
 		auto imageTextureObj = SafeGetToken(colorObj, "image_texture");
 		std::string filePath = SafeGetToken(imageTextureObj, "file_path");
 		std::string sampleTypeStr = SafeGetToken(imageTextureObj, "sample_type");
+		std::string name = SafeGetToken(imageTextureObj, "name");
 		AbstractTexture::SamplingType sampleType = AbstractTexture::SamplingType::Nearest;
 		if (sampleTypeStr == "bilinear") {
 			sampleType = AbstractTexture::SamplingType::Bilinear;
@@ -176,7 +177,8 @@ std::shared_ptr<AbstractTexture> CommonLoaderFunctions::CreateTexture(nlohmann::
 		std::shared_ptr<MappingLayer> mappingLayer = CreateMappingLayer(imageTextureObj);
 		createdTex = ImageTextureRegistry::GetInstance().GetTextureForPath(filePath,
 																		   mappingLayer,
-																		   sampleType);
+																		   sampleType,
+																		   name);
 	}
 	else if (HasKey(colorObj, "plane_checker")) {
 		auto planeChecker = SafeGetToken(colorObj, "plane_checker");
@@ -185,10 +187,12 @@ std::shared_ptr<AbstractTexture> CommonLoaderFunctions::CreateTexture(nlohmann::
 		auto inColor = SafeGetToken(planeChecker, "in_color");
 		auto outColor = SafeGetToken(planeChecker, "out_color");
 		auto outlineColor = SafeGetToken(planeChecker, "outline_color");
+		std::string name = SafeGetToken(planeChecker, "name");
 		createdTex = std::make_shared<PlaneCheckerTex>(PlaneCheckerTex(checkerSize, outlineWidth,
 									 Color3(inColor[0], inColor[1], inColor[2]),
 									 Color3(outColor[0], outColor[1], outColor[2]),
-									 Color3(outlineColor[0], outlineColor[1], outlineColor[2])));
+									 Color3(outlineColor[0], outlineColor[1], outlineColor[2]),
+																	   name));
 	}
 	else if (HasKey(colorObj, "noise_texture")) {
 		auto noiseTextureToken = SafeGetToken(colorObj, "noise_texture");
@@ -197,6 +201,7 @@ std::shared_ptr<AbstractTexture> CommonLoaderFunctions::CreateTexture(nlohmann::
 		auto colorTypeToken = SafeGetToken(noiseTextureToken, "color_type");
 		float expansionNumber = SafeGetToken(noiseTextureToken, "expansion_number");
 		std::string functionTypeToken = SafeGetToken(noiseTextureToken, "function_type");
+		std::string name = SafeGetToken(noiseTextureToken, "name");
 		
 		Color3 minColor((float)minColorToken[0], (float)minColorToken[1],
 						(float)minColorToken[2]);
@@ -254,27 +259,33 @@ std::shared_ptr<AbstractTexture> CommonLoaderFunctions::CreateTexture(nlohmann::
 		}
 		
 		createdTex =
-		std::make_shared<NoiseTexture>(minColor, maxColor,
+		std::make_shared<NoiseTexture>(minColor,
+									   maxColor,
 									   noiseFunction,
-									   colorTypeToken, expansionNumber,
-									   functionType);
+									   colorTypeToken,
+									   expansionNumber,
+									   functionType,
+									   name);
 	}
 	else if (HasKey(colorObj, "noise_ramp_texture")) {
 		auto noiseTextureToken = SafeGetToken(colorObj, "noise_ramp_texture");
 		float amplitude = SafeGetToken(noiseTextureToken, "amplitude");
 		std::string filePath = SafeGetToken(noiseTextureToken, "file_path");
+		std::string name = SafeGetToken(noiseTextureToken, "name");
 		std::shared_ptr<NoiseFunction> noiseFunction = CreateNoiseFunction(noiseTextureToken);
 		std::shared_ptr<TextureData> textureData =
 			ImageTextureRegistry::GetInstance().GetTextureData(filePath);
 		
 		createdTex =
-		std::make_shared<NoiseRampTexture>(textureData, noiseFunction, amplitude);
+		std::make_shared<NoiseRampTexture>(textureData, noiseFunction, amplitude, name);
 	}
 	else {
+		static int colorCounter = 0;
 		createdTex = std::make_shared<SingleColorTex>(std::make_shared<NullMapping>(),
 													  Color3(colorObj[0], colorObj[1],
 															 colorObj[2]),
-													  ImageTexture::SamplingType::Nearest);
+													  ImageTexture::SamplingType::Nearest,
+													  "SingleColor-"+std::to_string(colorCounter));
 	}
 	return createdTex;
 }

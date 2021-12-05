@@ -7,13 +7,14 @@ ImageTextureRegistry& ImageTextureRegistry::GetInstance() {
 
 std::shared_ptr<ImageTexture> ImageTextureRegistry::GetTextureForPath(std::string const & filePath,
 												std::shared_ptr<MappingLayer> const & mappingLayer,
-												AbstractTexture::SamplingType sampleType) {
+												AbstractTexture::SamplingType sampleType,
+												std::string const & name) {
 	if (pathToTexture.find(filePath) != pathToTexture.end()) {
 		auto foundTexture = pathToTexture[filePath];
 		return pathToTexture[filePath];
 	}
 	std::shared_ptr<TextureData> textureData = GetTextureData(filePath);
-	auto createdTex = std::make_shared<ImageTexture>(mappingLayer, textureData, sampleType);
+	auto createdTex = std::make_shared<ImageTexture>(mappingLayer, textureData, sampleType, name);
 	pathToTexture[filePath] = createdTex;
 	return createdTex;
 }

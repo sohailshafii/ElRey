@@ -24,8 +24,9 @@ public:
 				 std::shared_ptr<NoiseFunction> const & noiseFunctionClass,
 				 ColorType colorType,
 				 float expansionNumber,
-				 FunctionType functionType)
-	: AbstractTexture(std::make_shared<NullMapping>(), SamplingType::Nearest),
+				 FunctionType functionType,
+				 std::string const & name)
+	: AbstractTexture(std::make_shared<NullMapping>(), SamplingType::Nearest, name),
 		noiseFunction(noiseFunctionClass), minColor(minColor), maxColor(maxColor) {
 		switch(colorType) {
 			case ColorType::Wrapping:

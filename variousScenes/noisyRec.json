@@ -51,7 +51,8 @@
 						"num_octaves":10,
 						"gain":0.5,
 						"lacuranity":2.0,
-						"starting_frequency":8.0
+						"starting_frequency":8.0,
+						"name":"cubic_noise_sample"
 					}
 				}
 			},

@@ -8,8 +8,9 @@ class PlaneCheckerTex : public AbstractTexture {
 public:
 	PlaneCheckerTex(unsigned int checkerSize, unsigned int outlineWidth,
 					Color3 const & inColor, Color3 const & outColor,
-					Color3 const & outlineColor)
-		: AbstractTexture(std::make_shared<NullMapping>(), SamplingType::Nearest),
+					Color3 const & outlineColor,
+					std::string const & name)
+		: AbstractTexture(std::make_shared<NullMapping>(), SamplingType::Nearest, name),
 			checkerSize(checkerSize), inColor(inColor), outColor(outColor), outlineColor(outlineColor),
 			outlineWidth(outlineWidth) {
 			outlineWidthHalfNormalized = 0.5f * outlineWidth / checkerSize;

@@ -11,9 +11,10 @@
 class NoiseRampTexture : public AbstractTexture {
 public:
 	NoiseRampTexture(std::shared_ptr<TextureData> const & rampTexture,
-				 std::shared_ptr<NoiseFunction> const & noiseFunction,
-				 float amplitude)
-	: AbstractTexture(std::make_shared<NullMapping>(), SamplingType::Nearest),
+					 std::shared_ptr<NoiseFunction> const & noiseFunction,
+					 float amplitude,
+					 std::string const & name)
+	: AbstractTexture(std::make_shared<NullMapping>(), SamplingType::Nearest, name),
 		rampTexture(rampTexture), noiseFunction(noiseFunction), amplitude(amplitude) {
 	}
 	

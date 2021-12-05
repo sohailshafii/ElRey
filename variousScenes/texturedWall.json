@@ -60,7 +60,8 @@
 								{"scale":[3.0, 3.0, 3.0]},
 								{"translate":[0.2, 0.0, 0.0]}
 							]
-						}
+						},
+						"name": "bricks_diffuse_texture"
 					}
 				}
 			},

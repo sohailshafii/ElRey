@@ -58,7 +58,8 @@
 							"origin_y":0.0,
 							"origin_z":0.0,
 							"wrap_type":"repeat"
-						}
+						},
+						"name":"marbe_diffuse_texure"
 					}
 				}
 			},
@@ -102,7 +103,8 @@
 								{"scale":[0.5, 0.5, 0.5]},
 								{"translate":[0.2, 0.0, 0.0]}
 							]
-						}
+						},
+						"name":"bricks_diffuse_texure"
 					}
 				}
 			},
@@ -154,7 +156,8 @@
 							"origin_z":0.0,
 							"wrap_type":"repeat",
 							"use_world_coords_for_tex":true
-						}
+						},
+						"name":"marbe_diffuse_texure2"
 					}
 				}
 			}
