@@ -55,6 +55,7 @@ public:
 								  Vector3 const & origin);
 	
 	static void AddPrimitivesToScene(Scene* scene,
+									 nlohmann::json const & topmostJsonNode,
 									 nlohmann::json const & objectsArray);
 	static void AddInstancePrimitives(Scene* scene,
 									  std::vector<nlohmann::json> const & instancePrimitiveJsonObjs);
@@ -69,9 +70,11 @@ public:
 	
 	static std::shared_ptr<InstancePrimitive> CreateInstancePrimitive(Scene* scene,
 											  const nlohmann::json& jsonObj);
-	static std::shared_ptr<Primitive> CreatePrimitive(const nlohmann::json& jsonObj);
+	static std::shared_ptr<Primitive> CreatePrimitive(nlohmann::json const & topmostJsonNode,
+													  const nlohmann::json& jsonObj);
 	
 	static void LoadModelFromJSON(ModelPrimitiveInfo* primInfo,
+								  nlohmann::json const & topmostJsonNode,
 								  const nlohmann::json& jsonObj);
 	// OBJ only for now
 	static void LoadModel(ModelPrimitiveInfo* primInfo,

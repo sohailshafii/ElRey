@@ -2,7 +2,6 @@
 #include <sstream>
 #include <iostream>
 
-// TODO: have a texture instance block in json file
 ImageTexture::ImageTexture(std::shared_ptr<MappingLayer> const & mappingLayer,
 						   std::shared_ptr<TextureData> const & textureData,
 						   SamplingType samplingType,

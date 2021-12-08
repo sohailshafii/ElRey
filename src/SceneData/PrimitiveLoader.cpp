@@ -123,6 +123,7 @@ void PrimitiveLoader::CreateGridOfGrids(Scene* scene,
 }
 
 void PrimitiveLoader::AddPrimitivesToScene(Scene* scene,
+										   nlohmann::json const & topmostJsonNode,
 										   nlohmann::json const & objectsArray) {
 	std::vector<nlohmann::json> instancePrimitiveJsonObjs;
 	std::vector<nlohmann::json> gridPrimitives;
@@ -141,14 +142,15 @@ void PrimitiveLoader::AddPrimitivesToScene(Scene* scene,
 		}
 		else if (typeName == "obj_model") {
 			ModelPrimitiveInfo *primInfo = new ModelPrimitiveInfo();
-			PrimitiveLoader::LoadModelFromJSON(primInfo, elementJson);
+			PrimitiveLoader::LoadModelFromJSON(primInfo, topmostJsonNode, elementJson);
 			modelPrimitiveInfos.push_back(primInfo);
 		}
 		else if (typeName == "grid_of_grids") {
 			PrimitiveLoader::CreateGridOfGrids(scene, elementJson);
 		}
 		else {
-			std::shared_ptr<Primitive> newPrimitive = PrimitiveLoader::CreatePrimitive(elementJson);
+			std::shared_ptr<Primitive> newPrimitive = PrimitiveLoader::CreatePrimitive(topmostJsonNode,
+																					   elementJson);
 			scene->AddPrimitive(newPrimitive);
 		}
 	}
@@ -309,7 +311,8 @@ std::shared_ptr<InstancePrimitive> PrimitiveLoader::CreateInstancePrimitive(Scen
 	return newPrimitive;
 }
 
-std::shared_ptr<Primitive> PrimitiveLoader::CreatePrimitive(const nlohmann::json& jsonObj) {
+std::shared_ptr<Primitive> PrimitiveLoader::CreatePrimitive(nlohmann::json const & topmostJsonNode,
+															const nlohmann::json& jsonObj) {
 	std::string primitiveType = CommonLoaderFunctions::SafeGetToken(jsonObj, "type");
 	std::shared_ptr<Primitive> newPrimitive = nullptr;
 	// TODO: Re-factor, getting huge
@@ -319,7 +322,8 @@ std::shared_ptr<Primitive> PrimitiveLoader::CreatePrimitive(const nlohmann::json
 		auto materialNode = CommonLoaderFunctions::SafeGetToken(jsonObj, "material");
 		std::string objectName = CommonLoaderFunctions::SafeGetToken(jsonObj, "name");
 
-		std::shared_ptr<Material> objMaterial = CommonLoaderFunctions::CreateMaterial(materialNode);
+		std::shared_ptr<Material> objMaterial = CommonLoaderFunctions::CreateMaterial(topmostJsonNode,
+																					  materialNode);
 		newPrimitive = std::make_shared<Plane>(
 			Point3((float)planeOrigin[0],(float)planeOrigin[1],
 				(float)planeOrigin[2]),
@@ -333,7 +337,8 @@ std::shared_ptr<Primitive> PrimitiveLoader::CreatePrimitive(const nlohmann::json
 		auto materialNode = CommonLoaderFunctions::SafeGetToken(jsonObj, "material");
 		std::string objectName = CommonLoaderFunctions::SafeGetToken(jsonObj, "name");
 		
-		std::shared_ptr<Material> objMaterial = CommonLoaderFunctions::CreateMaterial(materialNode);
+		std::shared_ptr<Material> objMaterial = CommonLoaderFunctions::CreateMaterial(topmostJsonNode,
+																					  materialNode);
 		newPrimitive = std::make_shared<Sphere>(
 			Point3((float)sphereOrigin[0],(float)sphereOrigin[1],
 					(float)sphereOrigin[2]),
@@ -345,7 +350,8 @@ std::shared_ptr<Primitive> PrimitiveLoader::CreatePrimitive(const nlohmann::json
 		float sweptRadius = CommonLoaderFunctions::SafeGetToken(jsonObj, "swept_radius");
 		float tubeRadius = CommonLoaderFunctions::SafeGetToken(jsonObj, "tube_radius");
 		
-		std::shared_ptr<Material> objMaterial = CommonLoaderFunctions::CreateMaterial(materialNode);
+		std::shared_ptr<Material> objMaterial = CommonLoaderFunctions::CreateMaterial(topmostJsonNode,
+																					  materialNode);
 		newPrimitive = std::make_shared<Torus>(sweptRadius, tubeRadius,
 								 objMaterial, objectName);
 	}
@@ -356,7 +362,8 @@ std::shared_ptr<Primitive> PrimitiveLoader::CreatePrimitive(const nlohmann::json
 		std::string objectName = CommonLoaderFunctions::SafeGetToken(jsonObj, "name");
 		auto samplerNode = CommonLoaderFunctions::SafeGetToken(jsonObj, "sampler");
 		
-		std::shared_ptr<Material> objMaterial = CommonLoaderFunctions::CreateMaterial(materialNode);
+		std::shared_ptr<Material> objMaterial = CommonLoaderFunctions::CreateMaterial(topmostJsonNode,
+																					  materialNode);
 		RandomSamplerType randomSamplerType;
 		int numRandomSamples, numRandomSets;
 		CommonLoaderFunctions::SetUpRandomSampler(samplerNode, randomSamplerType, numRandomSamples,
@@ -380,7 +387,8 @@ std::shared_ptr<Primitive> PrimitiveLoader::CreatePrimitive(const nlohmann::json
 		auto materialNode = CommonLoaderFunctions::SafeGetToken(jsonObj, "material");
 		auto samplerNode = CommonLoaderFunctions::SafeGetToken(jsonObj, "sampler");
 
-		std::shared_ptr<Material> objMaterial = CommonLoaderFunctions::CreateMaterial(materialNode);
+		std::shared_ptr<Material> objMaterial = CommonLoaderFunctions::CreateMaterial(topmostJsonNode,
+																					  materialNode);
 
 		RandomSamplerType randomSamplerType;
 		int numRandomSamples, numRandomSets;
@@ -399,7 +407,8 @@ std::shared_ptr<Primitive> PrimitiveLoader::CreatePrimitive(const nlohmann::json
 	else if (primitiveType == "disk") {
 		std::string objectName = CommonLoaderFunctions::SafeGetToken(jsonObj, "name");
 		auto materialNode = CommonLoaderFunctions::SafeGetToken(jsonObj, "material");
-		std::shared_ptr<Material> objMaterial = CommonLoaderFunctions::CreateMaterial(materialNode);
+		std::shared_ptr<Material> objMaterial = CommonLoaderFunctions::CreateMaterial(topmostJsonNode,
+																					  materialNode);
 		auto centerPnt = CommonLoaderFunctions::SafeGetToken(jsonObj, "center");
 		auto normalVec = CommonLoaderFunctions::SafeGetToken(jsonObj, "normal");
 		float radius = CommonLoaderFunctions::SafeGetToken(jsonObj, "radius");
@@ -413,13 +422,14 @@ std::shared_ptr<Primitive> PrimitiveLoader::CreatePrimitive(const nlohmann::json
 	else if (primitiveType == "compound_object") {
 		std::string objectName = CommonLoaderFunctions::SafeGetToken(jsonObj, "name");
 		auto materialNode = CommonLoaderFunctions::SafeGetToken(jsonObj, "material");
-		std::shared_ptr<Material> objMaterial = CommonLoaderFunctions::CreateMaterial(materialNode);
+		std::shared_ptr<Material> objMaterial = CommonLoaderFunctions::CreateMaterial(topmostJsonNode,
+																					  materialNode);
 		
 		std::shared_ptr<CompoundObject> compoundObject = std::make_shared<CompoundObject>(objMaterial, objectName);
 		
 		nlohmann::json childrenArray = jsonObj["children"];
 		for(auto & child : childrenArray) {
-			std::shared_ptr<Primitive> childPrim = CreatePrimitive(child);
+			std::shared_ptr<Primitive> childPrim = CreatePrimitive(topmostJsonNode, child);
 			compoundObject->AddPrimitive(childPrim);
 		}
 		
@@ -432,7 +442,8 @@ std::shared_ptr<Primitive> PrimitiveLoader::CreatePrimitive(const nlohmann::json
 		float y1 = CommonLoaderFunctions::SafeGetToken(jsonObj, "y1");
 		float radius = CommonLoaderFunctions::SafeGetToken(jsonObj, "radius");
 
-		std::shared_ptr<Material> objMaterial = CommonLoaderFunctions::CreateMaterial(materialNode);
+		std::shared_ptr<Material> objMaterial = CommonLoaderFunctions::CreateMaterial(topmostJsonNode,
+																					  materialNode);
 		
 		newPrimitive = std::make_shared<OpenCylinder>(y0, y1, radius, objMaterial, objectName);
 	}
@@ -447,11 +458,13 @@ std::shared_ptr<Primitive> PrimitiveLoader::CreatePrimitive(const nlohmann::json
 }
 
 void PrimitiveLoader::LoadModelFromJSON(ModelPrimitiveInfo* primInfo,
+										nlohmann::json const & topmostJsonNode,
 										const nlohmann::json& jsonObj) {
 	std::string fileName = CommonLoaderFunctions::SafeGetToken(jsonObj, "file_name");
 	bool isSmooth = CommonLoaderFunctions::SafeGetToken(jsonObj, "is_smooth");
 	auto materialNode = CommonLoaderFunctions::SafeGetToken(jsonObj, "material");
-	std::shared_ptr<Material> objMaterial = CommonLoaderFunctions::CreateMaterial(materialNode);
+	std::shared_ptr<Material> objMaterial = CommonLoaderFunctions::CreateMaterial(topmostJsonNode,
+																				  materialNode);
 	std::string objectName = CommonLoaderFunctions::SafeGetToken(jsonObj, "name");
 	bool reverseNormals = CommonLoaderFunctions::SafeGetToken(jsonObj, "reverse_normals");
 	primInfo->name = objectName;

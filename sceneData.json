@@ -58,17 +58,7 @@
 				"ks_color":[1.0, 1.0, 1.0],
 				"color":
 				{
-					"noise_ramp_texture":
-					{
-						"amplitude":2.0,
-						"file_path":"textures/MarbleRamp.png",
-						"noise_function_class":"cubic_noise_function",
-						"num_octaves":10,
-						"gain":0.5,
-						"lacuranity":2.0,
-						"starting_frequency":8.0,
-						"name":"marbe_ramp"
-					}
+					"texture_instance":"marble_ramp"
 				},
 				"sampler":
 				{
@@ -87,6 +77,23 @@
 				{"scale":[0.5, 0.5, 0.5]},
 				{"translate":[0, 0.8, 0]}
 			]
+		}
+	],
+	"texture_instances":
+	[
+		{
+			"name":"marble_ramp",
+			"noise_ramp_texture":
+			{
+				"amplitude":2.0,
+				"file_path":"textures/MarbleRamp.png",
+				"noise_function_class":"cubic_noise_function",
+				"num_octaves":10,
+				"gain":0.5,
+				"lacuranity":2.0,
+				"starting_frequency":8.0,
+				"name":"marble_ramp"
+			}
 		}
 	],
 	"lights":

@@ -24,7 +24,7 @@
 #include "Primitives/CompoundObject.h"
 
 static Camera* CreateCamera(const nlohmann::json& jsonObj);
-static Light* CreateLight(const nlohmann::json& jsonObj);
+static Light* CreateLight(nlohmann::json const & topmostJsonNode, const nlohmann::json& jsonObj);
 
 Scene* SceneLoader::DeserializeJSONFileIntoScene(const std::string &jsonFilePath) {
 	Scene* scene;
@@ -51,11 +51,11 @@ Scene* SceneLoader::DeserializeJSONFileIntoScene(const std::string &jsonFilePath
 			scene->SetMaxBounceCount(maxBounceCount);
 		}
 		
-		PrimitiveLoader::AddPrimitivesToScene(scene, jsonObj["objects"]);
+		PrimitiveLoader::AddPrimitivesToScene(scene, jsonObj, jsonObj["objects"]);
 
 		nlohmann::json lightsArray = jsonObj["lights"];
 		for (auto& element : lightsArray.items()) {
-			Light* newLight = CreateLight(element.value());
+			Light* newLight = CreateLight(jsonObj, element.value());
 			if (newLight != nullptr) {
 				scene->AddLight(newLight);
 			}
@@ -180,7 +180,7 @@ static Camera* CreateCamera(const nlohmann::json& jsonObj) {
 	return mainCamera;
 }
 
-Light* CreateLight(const nlohmann::json& jsonObj) {
+Light* CreateLight(nlohmann::json const & topmostJsonNode, const nlohmann::json& jsonObj) {
 	std::string lightType = CommonLoaderFunctions::SafeGetToken(jsonObj, "type");
 	Light* newLight = nullptr;
 	
@@ -232,7 +232,7 @@ Light* CreateLight(const nlohmann::json& jsonObj) {
 		auto materialNode = CommonLoaderFunctions::SafeGetToken(jsonObj, "material");
 		bool castsShadows = CommonLoaderFunctions::SafeGetToken(jsonObj, "casts_shadows");
 		std::shared_ptr<Material> objMaterial =
-			CommonLoaderFunctions::CreateMaterial(materialNode);
+			CommonLoaderFunctions::CreateMaterial(topmostJsonNode, materialNode);
 		newLight = new EnvironmentLight(castsShadows, randomSamplerType,
 										numRandomSamples,
 										numRandomSets,

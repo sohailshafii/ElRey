@@ -18,11 +18,18 @@ public:
 	static bool HasKey(nlohmann::json const & jsonObj,
 					   std::string const & key);
 	
-	static std::shared_ptr<Material> CreateMaterial(nlohmann::json const & jsonObj);
+	static std::shared_ptr<Material> CreateMaterial(nlohmann::json const & topmostJsonNode,
+													nlohmann::json const & jsonObj);
 	
-	static std::shared_ptr<AbstractTexture> CreateTexture(nlohmann::json const &
-														  jsonObject,
+	static std::shared_ptr<AbstractTexture> CreateTexture(nlohmann::json const & topmostJsonNode,
+														  nlohmann::json const & jsonObject,
 														  std::string const & colorKey);
+	
+	static std::shared_ptr<AbstractTexture> CreateTextureFromNode(nlohmann::json const & jsonObject);
+	
+	static std::shared_ptr<AbstractTexture> CreateTextureInstance(nlohmann::json const & topmostJsonNode,
+														  nlohmann::json const & jsonObject);
+	
 	
 	static std::shared_ptr<NoiseFunction> CreateNoiseFunction(nlohmann::json const &noiseTextureToken);
 	
